@@ -2,7 +2,7 @@
   "$schema": "https://anthropic.com/claude-code/plugin.schema.json",
   "name": "rldyour-serena-mcp",
   "version": "0.1.0",
-  "description": "Serena MCP workflow layer for Claude Code: semantic code inspection, fullrepo-aware .serena memory sync, lifecycle hooks (UserPromptSubmit/PreToolUse/PostToolUse/Stop). Серена-первый код-воркфлоу + синхронизация .serena памяти + хуки жизненного цикла. Транспорт Serena MCP берётся из rldyour-mcps.",
+  "description": "Серена-первый воркфлоу для кода + синхронизация .serena памяти + хуки жизненного цикла (UserPromptSubmit/PreToolUse/PostToolUse/Stop). Транспорт Serena MCP берётся из rldyour-mcps. Semantic code inspection layer for Claude Code.",
   "author": {
     "name": "rldyourmnd",
     "url": "https://github.com/rldyourmnd"
