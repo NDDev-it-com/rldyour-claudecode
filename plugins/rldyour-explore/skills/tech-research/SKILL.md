@@ -1,6 +1,6 @@
 ---
 name: tech-research
-description: "Технический ресёрч библиотек и кода через Context7/DeepWiki/Grep. Use when user asks to research a library, look up official docs, find production code patterns, compare implementations, or understand open-source architecture."
+description: "Технический ресёрч библиотек и кода через Context7/DeepWiki/Grep MCP. Используй для: изучи библиотеку, исследуй фреймворк, найди официальную доку, найди production-паттерны кода, сравни реализации, разбери архитектуру."
 ---
 
 # Tech research

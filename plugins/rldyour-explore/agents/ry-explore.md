@@ -1,7 +1,7 @@
 ---
 name: ry-explore
 description: |
-  Use this agent for deep, multi-source technical and internet research with maximum reasoning effort and 1M-token context. Always prefers MCP-first lookup (Context7 → DeepWiki → Grep) before generic web search; cross-validates critical claims; cites every finding. Trigger phrases: "research deeply", "investigate thoroughly", "глубокое исследование", "исследуй детально", "разберись глубоко".
+  Используй этот агент для глубокого многоисточникового технического и интернет-исследования с максимальным reasoning effort и 1M-token контекстом. Всегда MCP-first lookup (Context7 → DeepWiki → Grep) перед generic web search; кросс-валидация критичных утверждений; цитирование каждой находки. Триггеры: "исследуй детально", "глубокое исследование", "разберись глубоко", "research deeply", "investigate thoroughly".
 
   <example>
   Context: user wants a deep technical decision backed by current sources

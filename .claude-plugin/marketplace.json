@@ -14,7 +14,7 @@
     {
       "name": "rldyour-mcps",
       "source": "rldyour-mcps",
-      "description": "Pinned MCP transport definitions — 13 servers (Serena, Sequential Thinking, Playwright, Chrome DevTools, Context7, DeepWiki, Grep, Semgrep, shadcn, Dart/Flutter, Figma, OpenAI Docs, GitHub). Транспортный слой MCP с зафиксированными версиями.",
+      "description": "Транспортный слой MCP — 13 серверов с зафиксированными версиями: Serena, Sequential Thinking, Playwright, Chrome DevTools, Context7, DeepWiki, Grep, Semgrep, shadcn, Dart/Flutter, Figma, OpenAI Docs, GitHub.",
       "version": "0.1.0",
       "author": {
         "name": "rldyourmnd"
@@ -26,7 +26,7 @@
     {
       "name": "rldyour-explore",
       "source": "rldyour-explore",
-      "description": "Auto-invoked tech and web research skills + ry-explore deep-research subagent (Opus 4.7 1M, max effort) over Context7/DeepWiki/Grep MCP. Скиллы исследования и субагент глубокого анализа через 3 MCP.",
+      "description": "Скиллы технического и веб-исследования + ry-explore субагент глубокого анализа (Opus 4.7 1M, max effort) через Context7/DeepWiki/Grep MCP. /ry-explore slash command included.",
       "version": "0.1.0",
       "author": {
         "name": "rldyourmnd"
@@ -38,7 +38,7 @@
     {
       "name": "rldyour-serena-mcp",
       "source": "rldyour-serena-mcp",
-      "description": "Serena-first semantic code workflow + .serena memory sync with lifecycle hooks (UserPromptSubmit/PreToolUse/PostToolUse/Stop). Серена-семантический воркфлоу + синхронизация памяти + хуки жизненного цикла.",
+      "description": "Семантический воркфлоу для кода через Serena MCP + синхронизация .serena памяти + хуки жизненного цикла (UserPromptSubmit/PreToolUse/PostToolUse/Stop).",
       "version": "0.1.0",
       "author": {
         "name": "rldyourmnd"
@@ -50,7 +50,7 @@
     {
       "name": "rldyour-security",
       "source": "rldyour-security",
-      "description": "Non-blocking OWASP Top 10 2025 implementation guidance + defensive Mythos-style /ry-sec-review. Безопасность по OWASP + защитный security review через slash command.",
+      "description": "Безопасность по OWASP Top 10 2025 при реализации + защитный Mythos-style security review через /ry-sec-review slash command.",
       "version": "0.1.0",
       "author": {
         "name": "rldyourmnd"

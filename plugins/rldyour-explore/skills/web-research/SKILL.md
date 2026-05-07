@@ -1,6 +1,6 @@
 ---
 name: web-research
-description: "Интернет-исследование с авторитетными источниками. Use when user needs current trends, industry news, security advisories, vendor announcements, or info beyond static docs — finds authoritative sources via WebSearch and WebFetch."
+description: "Интернет-исследование с авторитетными источниками через WebSearch + WebFetch. Используй для: текущие тренды, индустриальные новости, security advisories, vendor announcements, информация вне статичных доков, актуальные релизы."
 ---
 
 # Web research

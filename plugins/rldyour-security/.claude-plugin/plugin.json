@@ -2,7 +2,7 @@
   "$schema": "https://anthropic.com/claude-code/plugin.schema.json",
   "name": "rldyour-security",
   "version": "0.1.0",
-  "description": "Auto-invoked security guidance for Claude Code: non-blocking OWASP Top 10 2025 implementation comments + defensive Mythos-style ry-sec-review. Безопасность по OWASP Top 10 2025 + защитный security review через /ry-sec-review.",
+  "description": "Безопасность по OWASP Top 10 2025 при реализации + защитный Mythos-style security review через /ry-sec-review. Skills-only auto-invoked guidance для Claude Code.",
   "author": {
     "name": "rldyourmnd",
     "url": "https://github.com/rldyourmnd"
