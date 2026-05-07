@@ -10,5 +10,18 @@
   "metadata": {
     "pluginRoot": "./plugins"
   },
-  "plugins": []
+  "plugins": [
+    {
+      "name": "rldyour-mcps",
+      "source": "rldyour-mcps",
+      "description": "Pinned MCP transport definitions — 13 servers (Serena, Sequential Thinking, Playwright, Chrome DevTools, Context7, DeepWiki, Grep, Semgrep, shadcn, Dart/Flutter, Figma, OpenAI Docs, GitHub). Транспортный слой MCP с зафиксированными версиями.",
+      "version": "0.1.0",
+      "author": {
+        "name": "rldyourmnd"
+      },
+      "category": "infrastructure",
+      "tags": ["mcp", "transport", "rldyour"],
+      "license": "MIT"
+    }
+  ]
 }
