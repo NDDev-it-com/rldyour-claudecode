@@ -33,7 +33,7 @@ Build a verified mental model of the requested project scope before implementati
 - Do not stop at file lists. The initialized context must explain how relevant code works end to end.
 - For database-backed or API work, include fields, schemas, migrations, payloads, and caller/client paths.
 - For UI/client work, include routes/screens/components, state, API calls, design-system constraints, browser-visible behavior, and tests.
-- If agent-only files such as `AGENTS.md`, `CLAUDE.md`, `.serena/*`, `.claude/*`, `.codex/*`, `.cursor/rules/*`, or `.agents/skills/*` are needed for context, restore `fullrepo` before treating them as missing.
+- If agent-only files such as `AGENTS.md`, `CLAUDE.md`, `.serena/*`, `.claude/*`, `.cursor/rules/*`, or `.agents/skills/*` are needed for context, restore `fullrepo` before treating them as missing.
 - Runtime snapshots, server log summaries, health-check timestamps, current container status, and one-off audit observations are report material, not Serena memory material, unless they reveal a stable code/config contract.
 
 ## Output

@@ -14,7 +14,7 @@ Leave the project in a synchronized, documented, committed state. This skill run
 1. Confirm Serena memories are current. If stale, run `serena-memory-sync` first.
 2. Read `.serena/.flow_post_task_state.json` if present and run `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/flow_post_task_state.py`. Inspect `branch_cleanup_state` and run `bash ${CLAUDE_PLUGIN_ROOT}/scripts/git_sync_audit.sh` when branch/worktree cleanup is not obviously complete.
 3. Inspect uncommitted changes deeply. Separate source changes, docs, Serena knowledge, generated junk, runtime markers, and secrets.
-4. Run `instruction-docs-sync` when durable project instructions may have changed. Keep `AGENTS.md` optimized for Codex and `.claude/CLAUDE.md` optimized for Claude Code in fullrepo-managed projects.
+4. Run `instruction-docs-sync` when durable project instructions may have changed. Keep `AGENTS.md` as the concise root project-instruction file and `.claude/CLAUDE.md` as the Claude Code-native deep project memory in fullrepo-managed projects.
 5. Run applicable quality checks from project scripts and `bash ${CLAUDE_PLUGIN_ROOT}/scripts/detect_project_checks.sh`.
 6. Commit atomically with Conventional Commits. Use separate commits for implementation, tests, docs/instructions, and Serena knowledge when that improves history.
 7. Push to upstream when configured. If no upstream exists, ask before creating one.
@@ -29,7 +29,7 @@ Do not edit runtime marker files except to remove them after sync. If the Stop h
 
 ## Fullrepo Branch
 
-`fullrepo` is the portable AI-context branch. It contains the normal branch tree plus agent-only files such as project `AGENTS.md`, `.claude/CLAUDE.md`, `REVIEW.md`, `.serena` knowledge, `.claude`, `.codex`, `.cursor/rules`, `.agents/skills`, and similar agent workflow files. The main branch should not track those files in normal projects; they should be restored locally from `fullrepo` and ignored through `.git/info/exclude`.
+`fullrepo` is the portable AI-context branch. It contains the normal branch tree plus agent-only files such as project `AGENTS.md`, `.claude/CLAUDE.md`, `REVIEW.md`, `.serena` knowledge, `.claude`, `.cursor/rules`, `.agents/skills`, and similar agent workflow files. The main branch should not track those files in normal projects; they should be restored locally from `fullrepo` and ignored through `.git/info/exclude`.
 
 ## Anti-patterns
 

@@ -7,12 +7,12 @@ description: "Политика project-инструкций: AGENTS.md, .claude/
 
 ## Purpose
 
-Keep durable project instructions useful for future Claude Code (and Codex) sessions without turning them into chat history or generic advice.
+Keep durable project instructions useful for future Claude Code sessions without turning them into chat history or generic advice.
 
 ## Rules
 
-- Create or update `AGENTS.md` when durable Codex project rules, setup commands, quality gates, architecture constraints, deploy contracts, or workflow guidance change.
-- Keep `AGENTS.md` concise because Codex loads it at session start and instruction size matters.
+- Create or update `AGENTS.md` when durable root-level project rules, setup commands, quality gates, architecture constraints, deploy contracts, or workflow guidance change. `AGENTS.md` is the cross-tool standard root project-instruction file (see https://agents.md/).
+- Keep `AGENTS.md` concise; it is loaded as a high-signal entry point and instruction size matters.
 - Create or update `.claude/CLAUDE.md` for fullrepo-managed projects so Claude Code has first-class project memory.
 - Keep `.claude/CLAUDE.md` optimized for Claude Code, not as a thin `@AGENTS.md` import. Reference Claude-specific locations when relevant: `.claude/settings.json`, `.claude/skills/`, `.claude-plugin/`, `/memory`, `/context`, `/hooks`, `/mcp`, `/permissions`, `/doctor`, `/status`.
 - Do not create root `CLAUDE.md` by default; `.claude/CLAUDE.md` is the rldyour project memory path.
