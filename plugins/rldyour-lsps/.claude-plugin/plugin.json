@@ -1,0 +1,14 @@
+{
+  "$schema": "https://anthropic.com/claude-code/plugin.schema.json",
+  "name": "rldyour-lsps",
+  "version": "0.1.0",
+  "description": "LSP-воркфлоу для Claude Code: маршрутизация, health-checks, brew-first установка, Serena LSP integration. Skills + scripts + references. Покрывает Python, Rust, Dart/Flutter, TS/JS, Go, C/C++, Qt, YAML, Docker, HTML/CSS, Shell, JSON, TOML, Markdown.",
+  "author": {
+    "name": "rldyourmnd",
+    "url": "https://github.com/rldyourmnd"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/rldyourmnd/rldyour-claude/tree/main/plugins/rldyour-lsps",
+  "repository": "https://github.com/rldyourmnd/rldyour-claude",
+  "keywords": ["lsp", "language-server", "serena", "pyright", "typescript-language-server", "rust-analyzer", "gopls", "clangd", "qmlls", "yaml-language-server", "bash-language-server", "rldyour"]
+}

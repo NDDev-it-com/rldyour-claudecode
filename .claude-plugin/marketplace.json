@@ -82,6 +82,18 @@
       "category": "design",
       "tags": ["design", "figma", "shadcn", "reactbits", "fsd", "design-system", "tokens", "ry-design", "rldyour"],
       "license": "MIT"
+    },
+    {
+      "name": "rldyour-lsps",
+      "source": "rldyour-lsps",
+      "description": "LSP-воркфлоу: маршрутизация, health-check, brew-first установка, Serena LSP integration. 4 skills + 2 scripts + 3 references. Покрывает Python/Rust/Dart/TS/Go/C++/Qt/YAML/Docker/HTML/CSS/Shell/JSON/TOML/Markdown.",
+      "version": "0.1.0",
+      "author": {
+        "name": "rldyourmnd"
+      },
+      "category": "development",
+      "tags": ["lsp", "language-server", "serena", "pyright", "typescript-language-server", "rust-analyzer", "gopls", "clangd", "rldyour"],
+      "license": "MIT"
     }
   ]
 }
