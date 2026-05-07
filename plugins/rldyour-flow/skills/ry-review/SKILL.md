@@ -1,6 +1,6 @@
 ---
 name: ry-review
-description: "Report-only глубокое ревью diff/PR/scope с reviewer tracks. Используй для: /ry-review, проверь реализацию, сделай ревью, найди проблемы, audit diff, code review, инспекция кода."
+description: "Отчётное (report-only) глубокое ревью diff/PR/scope с reviewer tracks. Используй для: /ry-review, проверь реализацию, сделай ревью, найди проблемы, audit diff, code review, инспекция кода."
 ---
 
 # ry-review
