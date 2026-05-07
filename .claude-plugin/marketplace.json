@@ -94,6 +94,18 @@
       "category": "development",
       "tags": ["lsp", "language-server", "serena", "pyright", "typescript-language-server", "rust-analyzer", "gopls", "clangd", "rldyour"],
       "license": "MIT"
+    },
+    {
+      "name": "rldyour-flow",
+      "source": "rldyour-flow",
+      "description": "Автономный SDLC-воркфлоу: ry-init/start/newp/review/deploy + 6 reviewer subagents + post-task-sync + instruction-docs-sync. Хуки SessionStart/PreToolUse/Stop. Fullrepo branch.",
+      "version": "0.1.0",
+      "author": {
+        "name": "rldyourmnd"
+      },
+      "category": "development",
+      "tags": ["sdlc", "workflow", "ry-init", "ry-start", "ry-review", "ry-deploy", "reviewer", "fullrepo", "rldyour"],
+      "license": "MIT"
     }
   ]
 }
