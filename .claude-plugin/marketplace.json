@@ -22,6 +22,18 @@
       "category": "infrastructure",
       "tags": ["mcp", "transport", "rldyour"],
       "license": "MIT"
+    },
+    {
+      "name": "rldyour-explore",
+      "source": "rldyour-explore",
+      "description": "Auto-invoked tech and web research skills + ry-explore deep-research subagent (Opus 4.7 1M, max effort) over Context7/DeepWiki/Grep MCP. Скиллы исследования и субагент глубокого анализа через 3 MCP.",
+      "version": "0.1.0",
+      "author": {
+        "name": "rldyourmnd"
+      },
+      "category": "research",
+      "tags": ["research", "explore", "mcp", "context7", "deepwiki", "grep", "rldyour"],
+      "license": "MIT"
     }
   ]
 }

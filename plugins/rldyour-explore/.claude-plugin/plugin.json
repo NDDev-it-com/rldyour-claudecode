@@ -1,0 +1,14 @@
+{
+  "$schema": "https://anthropic.com/claude-code/plugin.schema.json",
+  "name": "rldyour-explore",
+  "version": "0.1.0",
+  "description": "Auto-invoked technical and web research skills + ry-explore deep-research subagent (Opus 4.7 1M, max effort) routed through Context7, DeepWiki, Grep MCP. Скиллы технического и веб-исследования + субагент глубокого анализа через 3 MCP.",
+  "author": {
+    "name": "rldyourmnd",
+    "url": "https://github.com/rldyourmnd"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/rldyourmnd/rldyour-claude/tree/main/plugins/rldyour-explore",
+  "repository": "https://github.com/rldyourmnd/rldyour-claude",
+  "keywords": ["research", "explore", "context7", "deepwiki", "grep", "rldyour"]
+}
