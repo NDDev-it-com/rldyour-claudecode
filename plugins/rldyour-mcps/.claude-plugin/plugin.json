@@ -1,0 +1,14 @@
+{
+  "$schema": "https://anthropic.com/claude-code/plugin.schema.json",
+  "name": "rldyour-mcps",
+  "version": "0.1.0",
+  "description": "Pinned MCP transport definitions for rldyour-claude — Serena, Sequential Thinking, Playwright, Chrome DevTools, Context7, DeepWiki, Grep, Semgrep, shadcn, Dart/Flutter, Figma, OpenAI Docs, GitHub. Транспортный слой MCP-серверов для маркетплейса rldyour-claude — все версии зафиксированы.",
+  "author": {
+    "name": "rldyourmnd",
+    "url": "https://github.com/rldyourmnd"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/rldyourmnd/rldyour-claude/tree/main/plugins/rldyour-mcps",
+  "repository": "https://github.com/rldyourmnd/rldyour-claude",
+  "keywords": ["mcp", "transport", "rldyour", "serena", "github", "playwright", "context7"]
+}
