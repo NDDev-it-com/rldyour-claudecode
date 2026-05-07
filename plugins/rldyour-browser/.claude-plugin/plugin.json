@@ -1,0 +1,14 @@
+{
+  "$schema": "https://anthropic.com/claude-code/plugin.schema.json",
+  "name": "rldyour-browser",
+  "version": "0.1.0",
+  "description": "Браузерные воркфлоу через Playwright и Chrome DevTools MCP — валидация UI/pixel-perfect/e2e, дебаг console/network/runtime/performance, маршрутизация между двумя MCP. Skills-only; транспорт MCP берётся из rldyour-mcps. Browser workflows via Playwright + Chrome DevTools MCP.",
+  "author": {
+    "name": "rldyourmnd",
+    "url": "https://github.com/rldyourmnd"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/rldyourmnd/rldyour-claude/tree/main/plugins/rldyour-browser",
+  "repository": "https://github.com/rldyourmnd/rldyour-claude",
+  "keywords": ["browser", "playwright", "chrome-devtools", "mcp", "ui-validation", "pixel-perfect", "responsive", "screenshots", "browser-debug", "browser-validation", "rldyour"]
+}
