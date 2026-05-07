@@ -1,0 +1,61 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+id_rsa
+id_ed25519
+
+# Logs
+*.log
+logs/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.python-version
+.venv/
+venv/
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Bun
+bun.lockb
+
+# Serena runtime markers (per fullrepo policy)
+.serena/cache/
+.serena/.gitignore
+.serena/project.local.yml
+.serena/.sync_marker
+.serena/.serena_sync_state.json
+.serena/.auto_sync_head
+.serena/.active_workflow_intent.json
+.serena/.dirty_stop_ack
+.serena/.flow_sync_marker
+.serena/.flow_post_task_state.json
+
+# Claude Code local-only
+.claude/settings.local.json
+
+# Browser artifacts
+.playwright-mcp/
+playwright-report/
+test-results/
