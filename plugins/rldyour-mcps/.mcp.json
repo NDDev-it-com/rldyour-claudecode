@@ -8,7 +8,7 @@
         "--prerelease", "allow",
         "serena", "start-mcp-server",
         "--project-from-cwd",
-        "--context=codex",
+        "--context=agent",
         "--enable-web-dashboard", "False",
         "--open-web-dashboard", "False"
       ],
