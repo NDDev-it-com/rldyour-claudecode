@@ -22,7 +22,7 @@ Core order:
 
 1. Git sync audit: dirty state, current branch, upstream ahead/behind, worktrees, local/remote branches.
 2. If uncommitted, unmerged, or stale merged branch/worktree state exists, deeply review it. If correct and consistent, synchronize it into `main`, merge safe branches, push, and remove merged worktrees/branches. If risky, ask the user with concrete options.
-3. Bootstrap agent-only context with `fullrepo_sync.py --bootstrap-init` before treating `AGENTS.md`, `CLAUDE.md`, `.serena/*`, `.claude/*`, `.codex/*`, or similar files as missing. This restores an existing `fullrepo`, publishes local agent-only files when no `fullrepo` exists, installs `.git/info/exclude`, and removes tracked agent-only files from the current branch index when migration is needed.
+3. Bootstrap agent-only context with `fullrepo_sync.py --bootstrap-init` before treating `AGENTS.md`, `CLAUDE.md`, `.serena/*`, `.claude/*`, or similar files as missing. This restores an existing `fullrepo`, publishes local agent-only files when no `fullrepo` exists, installs `.git/info/exclude`, and removes tracked agent-only files from the current branch index when migration is needed.
 4. Serena readiness: `check_onboarding_performed`, onboarding if needed, `list_memories`, relevant `read_memory`.
 5. Scope detection: project, module, sphere, or feature. For a sphere such as backend, inspect the whole sphere and its integration points.
 6. Semantic map: `get_symbols_overview`, targeted `find_symbol`, `find_referencing_symbols`, `search_for_pattern` only when needed.
@@ -67,7 +67,7 @@ Agent-only examples:
 
 - root `AGENTS.md`, `CLAUDE.md`, `REVIEW.md`, `GEMINI.md`, and `QWEN.md`;
 - `.serena/project.yml`, `.serena/memories/`, `.serena/plans/`, `.serena/research/`, `.serena/newproj/`, and `.serena/deploy/`;
-- `.claude/`, `.codex/`, `.cursor/rules/`, `.agents/skills/`, `.agents/commands/`, `.agents/hooks/`, `.github/instructions/`, and `.github/prompts/`.
+- `.claude/`, `.cursor/rules/`, `.agents/skills/`, `.agents/commands/`, `.agents/hooks/`, `.github/instructions/`, and `.github/prompts/`.
 
 Runtime files, secrets, caches, local env files, browser artifacts, tokens, cookies, and credentials must not be published to either branch.
 

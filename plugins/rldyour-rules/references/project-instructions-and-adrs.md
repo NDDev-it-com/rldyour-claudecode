@@ -2,7 +2,7 @@
 
 ## AGENTS.md
 
-Create or update `AGENTS.md` when durable Codex instructions change:
+`AGENTS.md` is the cross-tool standard root project-instruction file (see https://agents.md/). Create or update it when durable root-level project facts change:
 
 - Setup commands.
 - Quality gates.
@@ -12,7 +12,7 @@ Create or update `AGENTS.md` when durable Codex instructions change:
 - Review rules.
 - Tooling and generated artifact rules.
 
-Keep it concise. Codex reads it before work, so it should contain high-signal project rules only.
+Keep it concise. It is loaded as a high-signal entry point at session start, so it should contain high-signal project rules only.
 
 For normal product repositories, project-root `AGENTS.md` is agent-only context. Keep it local and in the `fullrepo` branch, and add it to `.git/info/exclude` through the rldyour fullrepo workflow instead of tracking it in normal branches. Repositories that are themselves agent tooling may intentionally track instruction templates as product artifacts.
 
@@ -84,6 +84,6 @@ Default agent-only paths include:
 
 - `AGENTS.md`, `.claude/CLAUDE.md`, root `CLAUDE.md` when migrating legacy projects, `REVIEW.md`, `GEMINI.md`, and `QWEN.md`.
 - `.serena/project.yml`, `.serena/memories/`, `.serena/plans/`, `.serena/research/`, `.serena/newproj/`, and `.serena/deploy/`.
-- `.claude/`, `.codex/`, `.cursor/rules/`, `.agents/skills/`, `.agents/commands/`, `.agents/hooks/`, `.github/instructions/`, and `.github/prompts/`.
+- `.claude/`, `.cursor/rules/`, `.agents/skills/`, `.agents/commands/`, `.agents/hooks/`, `.github/instructions/`, and `.github/prompts/`.
 
 Never publish runtime markers, caches, local env files, browser evidence, secrets, tokens, cookies, or credentials to `main` or `fullrepo`.
