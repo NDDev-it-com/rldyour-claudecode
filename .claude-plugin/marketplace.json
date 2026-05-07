@@ -46,6 +46,18 @@
       "category": "development",
       "tags": ["serena", "mcp", "lsp", "code-workflow", "memories", "hooks", "rldyour"],
       "license": "MIT"
+    },
+    {
+      "name": "rldyour-security",
+      "source": "rldyour-security",
+      "description": "Non-blocking OWASP Top 10 2025 implementation guidance + defensive Mythos-style /ry-sec-review. Безопасность по OWASP + защитный security review через slash command.",
+      "version": "0.1.0",
+      "author": {
+        "name": "rldyourmnd"
+      },
+      "category": "security",
+      "tags": ["security", "owasp", "asvs", "ry-sec-review", "vulnerability-review", "rldyour"],
+      "license": "MIT"
     }
   ]
 }
