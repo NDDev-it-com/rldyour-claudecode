@@ -1,0 +1,14 @@
+{
+  "$schema": "https://anthropic.com/claude-code/plugin.schema.json",
+  "name": "rldyour-rules",
+  "version": "0.1.0",
+  "description": "Quality-first инженерные правила для Claude Code: clean architecture (FSD/VSA/Hexagonal), implementation discipline, dependency policy + supply chain (SLSA L2), verification gates (pyright/ruff/ESLint v9), AGENTS.md/.claude/CLAUDE.md, ADR (MADR 4.0.0), ry-rules-review.",
+  "author": {
+    "name": "rldyourmnd",
+    "url": "https://github.com/rldyourmnd"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/rldyourmnd/rldyour-claude/tree/main/plugins/rldyour-rules",
+  "repository": "https://github.com/rldyourmnd/rldyour-claude",
+  "keywords": ["rules", "quality", "clean-architecture", "fsd", "vsa", "hexagonal", "verification", "dependency-policy", "supply-chain", "adr", "rldyour"]
+}
