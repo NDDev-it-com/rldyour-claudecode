@@ -1,0 +1,14 @@
+{
+  "$schema": "https://anthropic.com/claude-code/plugin.schema.json",
+  "name": "rldyour-flow",
+  "version": "0.1.0",
+  "description": "Автономный SDLC-воркфлоу для Claude Code: ry-init, ry-start, ry-newp, ry-review, ry-deploy + 6 reviewer subagents (architecture/quality/consistency/integration/verification/security) + flow-post-task-sync + instruction-docs-sync. SessionStart/PostToolUse/Stop хуки advisory + non-blocking. Fullrepo branch для agent-only файлов.",
+  "author": {
+    "name": "rldyourmnd",
+    "url": "https://github.com/rldyourmnd"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/rldyourmnd/rldyour-claude/tree/main/plugins/rldyour-flow",
+  "repository": "https://github.com/rldyourmnd/rldyour-claude",
+  "keywords": ["sdlc", "workflow", "ry-init", "ry-start", "ry-newp", "ry-review", "ry-deploy", "reviewer", "post-task-sync", "instruction-docs", "fullrepo", "rldyour"]
+}
