@@ -1,0 +1,14 @@
+{
+  "$schema": "https://anthropic.com/claude-code/plugin.schema.json",
+  "name": "rldyour-serena-mcp",
+  "version": "0.1.0",
+  "description": "Serena MCP workflow layer for Claude Code: semantic code inspection, fullrepo-aware .serena memory sync, lifecycle hooks (UserPromptSubmit/PreToolUse/PostToolUse/Stop). Серена-первый код-воркфлоу + синхронизация .serena памяти + хуки жизненного цикла. Транспорт Serena MCP берётся из rldyour-mcps.",
+  "author": {
+    "name": "rldyourmnd",
+    "url": "https://github.com/rldyourmnd"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/rldyourmnd/rldyour-claude/tree/main/plugins/rldyour-serena-mcp",
+  "repository": "https://github.com/rldyourmnd/rldyour-claude",
+  "keywords": ["serena", "mcp", "lsp", "semantic-code", "code-workflow", "memories", "hooks", "rldyour"]
+}
