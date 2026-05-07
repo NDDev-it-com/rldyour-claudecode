@@ -8,12 +8,10 @@
         "--prerelease", "allow",
         "serena", "start-mcp-server",
         "--project-from-cwd",
-        "--context=codex",
+        "--context=agent",
         "--enable-web-dashboard", "False",
         "--open-web-dashboard", "False"
-      ],
-      "startup_timeout_sec": 90,
-      "tool_timeout_sec": 180
+      ]
     },
     "sequential-thinking": {
       "command": "bunx",
@@ -22,9 +20,7 @@
       ],
       "env": {
         "DISABLE_THOUGHT_LOGGING": "true"
-      },
-      "startup_timeout_sec": 90,
-      "tool_timeout_sec": 120
+      }
     },
     "playwright": {
       "command": "bunx",
@@ -32,9 +28,7 @@
         "@playwright/mcp@0.0.74",
         "--headless",
         "--caps=network,storage,testing,devtools"
-      ],
-      "startup_timeout_sec": 90,
-      "tool_timeout_sec": 180
+      ]
     },
     "chrome-devtools": {
       "command": "bunx",
@@ -44,9 +38,7 @@
         "--isolated",
         "--no-usage-statistics",
         "--no-performance-crux"
-      ],
-      "startup_timeout_sec": 90,
-      "tool_timeout_sec": 180
+      ]
     },
     "context7": {
       "command": "bunx",
@@ -55,69 +47,51 @@
       ],
       "env": {
         "CONTEXT7_API_KEY": "${CONTEXT7_API_KEY}"
-      },
-      "startup_timeout_sec": 90,
-      "tool_timeout_sec": 120
+      }
     },
     "deepwiki": {
       "type": "http",
-      "url": "https://mcp.deepwiki.com/mcp",
-      "startup_timeout_sec": 60,
-      "tool_timeout_sec": 120
+      "url": "https://mcp.deepwiki.com/mcp"
     },
     "grep": {
       "type": "http",
-      "url": "https://mcp.grep.app",
-      "startup_timeout_sec": 60,
-      "tool_timeout_sec": 120
+      "url": "https://mcp.grep.app"
     },
     "semgrep": {
       "command": "uvx",
       "args": [
         "--from", "semgrep==1.161.0",
         "semgrep", "mcp"
-      ],
-      "startup_timeout_sec": 90,
-      "tool_timeout_sec": 180
+      ]
     },
     "shadcn": {
       "command": "bunx",
       "args": [
         "shadcn@4.7.0",
         "mcp"
-      ],
-      "startup_timeout_sec": 90,
-      "tool_timeout_sec": 120
+      ]
     },
     "dart-flutter": {
       "command": "dart",
       "args": [
         "mcp-server",
         "--force-roots-fallback"
-      ],
-      "startup_timeout_sec": 90,
-      "tool_timeout_sec": 180
+      ]
     },
     "figma": {
       "type": "http",
-      "url": "https://mcp.figma.com/mcp",
-      "startup_timeout_sec": 60,
-      "tool_timeout_sec": 120
+      "url": "https://mcp.figma.com/mcp"
     },
     "openai-docs": {
       "type": "http",
-      "url": "https://developers.openai.com/mcp",
-      "startup_timeout_sec": 60,
-      "tool_timeout_sec": 120
+      "url": "https://developers.openai.com/mcp"
     },
     "github": {
       "command": "github-mcp-server",
       "args": ["stdio"],
       "env": {
         "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_PERSONAL_ACCESS_TOKEN}"
-      },
-      "startup_timeout_sec": 30,
-      "tool_timeout_sec": 180
+      }
     }
   }
 }

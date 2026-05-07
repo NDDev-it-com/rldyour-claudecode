@@ -26,7 +26,7 @@ In fullrepo-managed projects, Serena knowledge is not committed to normal branch
 
 ## AGENTS.md And .claude/CLAUDE.md
 
-Codex reads `AGENTS.md` as project instructions. Update it when the task changes durable project rules, setup commands, quality gates, deploy contracts, architecture constraints, or agent workflow guidance. Keep it Codex-native and practical: repository layout, commands, checks, constraints, tool routing, and done criteria.
+`AGENTS.md` is the cross-tool root project-instruction file (see https://agents.md/). Update it when the task changes durable project rules, setup commands, quality gates, deploy contracts, architecture constraints, or agent workflow guidance. Keep it concise and practical: repository layout, commands, checks, constraints, tool routing, and done criteria.
 
 Claude Code reads project memory from `.claude/CLAUDE.md` in rldyour fullrepo-managed projects. Create and update it for every such project, optimized for Claude Code rather than as a thin copy of `AGENTS.md`: commands, architecture, workflow, conventions, Claude Code diagnostics, and Claude-specific settings/hooks/skills locations.
 

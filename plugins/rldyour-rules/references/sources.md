@@ -58,7 +58,7 @@ Primary sources used for this plugin (verified May 2026):
 ## Engineering conclusions
 
 - Keep rules as focused skills with references for progressive disclosure.
-- Use `AGENTS.md` for durable Codex instructions; `.claude/CLAUDE.md` for first-class Claude Code memory; do not reduce one to a thin import of the other.
+- Use `AGENTS.md` for the concise cross-tool root project-instruction file (https://agents.md/); `.claude/CLAUDE.md` for first-class Claude Code memory; do not reduce one to a thin import of the other.
 - Use FSD (frontend) and VSA + Hexagonal + Modular Monolith (backend) as defaults for new areas, not as forced rewrites of coherent existing projects.
 - Treat FSD `processes` layer as deprecated by default.
 - Mandate SLSA Level 2 + SBOM + Sigstore for new releases (May 2026 baseline).

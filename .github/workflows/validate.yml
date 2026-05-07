@@ -1,0 +1,114 @@
+name: validate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  validate-marketplace:
+    name: claude plugin validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+
+      - name: Install Claude Code CLI
+        run: npm install -g @anthropic-ai/claude-code
+
+      - name: claude --version
+        run: claude --version
+
+      - name: Validate marketplace manifest
+        run: claude plugin validate .
+
+      - name: Validate every plugin manifest
+        run: |
+          set -euo pipefail
+          for plugin in plugins/*/; do
+            echo "::group::$plugin"
+            claude plugin validate "$plugin"
+            echo "::endgroup::"
+          done
+
+  syntax-checks:
+    name: Python + shell + JSON syntax
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Validate JSON manifests
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import glob, json, sys
+          paths = (
+              ['.claude-plugin/marketplace.json']
+              + sorted(glob.glob('plugins/*/.claude-plugin/plugin.json'))
+              + sorted(glob.glob('plugins/*/.mcp.json'))
+              + sorted(glob.glob('plugins/*/hooks/hooks.json'))
+          )
+          for p in paths:
+              try:
+                  with open(p, 'r', encoding='utf-8') as fp:
+                      json.load(fp)
+              except Exception as exc:
+                  print(f'{p}: {exc}', file=sys.stderr)
+                  sys.exit(1)
+              else:
+                  print(f'OK {p}')
+          PY
+
+      - name: Validate Python script syntax
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import ast, glob
+          for p in sorted(glob.glob('plugins/*/scripts/*.py')) + sorted(glob.glob('plugins/*/hooks/*.py')):
+              with open(p, 'r', encoding='utf-8') as fp:
+                  ast.parse(fp.read())
+              print(f'OK {p}')
+          PY
+
+      - name: Validate shell script syntax
+        run: |
+          set -euo pipefail
+          fail=0
+          for f in $(find plugins -type f \( -name '*.sh' -path '*/scripts/*' -o -name '*.sh' -path '*/hooks/*' \)); do
+            if bash -n "$f"; then
+              echo "OK $f"
+            else
+              echo "FAIL $f"
+              fail=1
+            fi
+          done
+          test "$fail" -eq 0
+
+      - name: Markdown frontmatter present in skills/agents/commands
+        run: |
+          set -euo pipefail
+          fail=0
+          for f in $(find plugins -type f \( -name 'SKILL.md' -o -path '*/agents/*.md' -o -path '*/commands/*.md' \)); do
+            if head -1 "$f" | grep -q '^---$'; then
+              echo "OK $f"
+            else
+              echo "MISSING-FRONTMATTER $f"
+              fail=1
+            fi
+          done
+          test "$fail" -eq 0

@@ -10,5 +10,6 @@
   "license": "MIT",
   "homepage": "https://github.com/rldyourmnd/rldyour-claude/tree/main/plugins/rldyour-lsps",
   "repository": "https://github.com/rldyourmnd/rldyour-claude",
-  "keywords": ["lsp", "language-server", "serena", "pyright", "typescript-language-server", "rust-analyzer", "gopls", "clangd", "qmlls", "yaml-language-server", "bash-language-server", "rldyour"]
+  "keywords": ["lsp", "language-server", "serena", "pyright", "typescript-language-server", "rust-analyzer", "gopls", "clangd", "qmlls", "yaml-language-server", "bash-language-server", "rldyour"],
+  "dependencies": ["rldyour-mcps"]
 }

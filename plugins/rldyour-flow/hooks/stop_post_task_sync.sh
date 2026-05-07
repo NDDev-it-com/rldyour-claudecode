@@ -120,7 +120,7 @@ Continue this turn and run the flow-post-task-sync workflow now.
 
 Required order:
 1. Verify Serena memories are current. Do not duplicate Serena memory sync.
-2. Run instruction-docs-sync when instruction docs review is needed. Keep AGENTS.md Codex-native and .claude/CLAUDE.md Claude Code-native, using only verified project rules, commands, deploy contracts, quality gates, or workflow facts.
+2. Run instruction-docs-sync when instruction docs review is needed. Keep AGENTS.md as concise root project instructions and .claude/CLAUDE.md as Claude Code project memory, using only verified project rules, commands, deploy contracts, quality gates, or workflow facts.
 3. Review all uncommitted changes. Do not commit secrets, runtime markers, browser artifacts, or accidental junk.
 4. Run applicable quality checks or document why a check is unavailable.
 5. Commit atomically with Conventional Commits. Keep Serena knowledge/docs sync commits separate when useful.

@@ -75,7 +75,7 @@ Loop guard: `flow.stop_post_task_sync.sh` writes `.serena/.flow_sync_marker` wit
 
 `plugins/rldyour-mcps/.mcp.json` is the single source of MCP servers for the whole marketplace. Run `/mcp` to inspect status. Pinned servers:
 
-- `serena` — `uvx serena-agent==1.2.0` with `--context=codex`, web dashboard disabled.
+- `serena` — `uvx serena-agent==1.2.0` with `--context=agent` (canonical for generic CLI agents like Claude Code; exposes 45 of 46 Serena tools, only excludes the redundant `initial_instructions` tool). Web dashboard disabled.
 - `sequential-thinking` — `bunx @modelcontextprotocol/server-sequential-thinking@2025.12.18`.
 - `playwright` — `bunx @playwright/mcp@0.0.74 --headless --caps=network,storage,testing,devtools`.
 - `chrome-devtools` — `bunx chrome-devtools-mcp@0.25.0 --headless --isolated`.
@@ -89,13 +89,23 @@ Loop guard: `flow.stop_post_task_sync.sh` writes `.serena/.flow_sync_marker` wit
 - `openai-docs` — HTTP `https://developers.openai.com/mcp`.
 - `github` — `github-mcp-server stdio`. Requires `GITHUB_PERSONAL_ACCESS_TOKEN`.
 
+Timeouts are controlled by Claude Code env vars (canonical per `code.claude.com/docs/en/mcp`):
+- `MCP_TIMEOUT` — startup timeout for any MCP server (e.g. `MCP_TIMEOUT=10000`).
+- `MCP_TOOL_TIMEOUT` — per-tool-call timeout.
+- `MAX_MCP_OUTPUT_TOKENS` — increases the 10k-token tool-output warning threshold.
+- `MCP_CONNECTION_NONBLOCKING=1` — non-blocking startup for slow servers (per-server `alwaysLoad: true` opts back into blocking).
+
+Per-server `startup_timeout_sec`/`tool_timeout_sec` keys are NOT in the documented `.mcp.json` schema. Do not re-add them — they are silently ignored.
+
 ## Architecture Layers
 
 1. Transport — `rldyour-mcps`.
-2. Semantic code — `rldyour-serena-mcp`.
-3. SDLC orchestrator — `rldyour-flow`.
-4. Domain plugins — `rldyour-explore`, `rldyour-security`, `rldyour-browser`, `rldyour-design`, `rldyour-lsps`.
-5. Engineering rules — `rldyour-rules`.
+2. Semantic code — `rldyour-serena-mcp` (depends on `rldyour-mcps`).
+3. SDLC orchestrator — `rldyour-flow` (depends on `rldyour-mcps`, `rldyour-serena-mcp`).
+4. Domain plugins — `rldyour-explore`, `rldyour-security`, `rldyour-browser`, `rldyour-design`, `rldyour-lsps` (each depends on `rldyour-mcps`).
+5. Engineering rules — `rldyour-rules` (depends on `rldyour-mcps`).
+
+Dependencies are declared in each `plugin.json` under `"dependencies": ["..."]` (array form per docs at `code.claude.com/docs/en/plugins-reference#metadata-fields`). `claude plugin install <plugin>` resolves transitive installs and reports conflicts.
 
 Hard boundaries:
 
@@ -110,7 +120,7 @@ Hard boundaries:
 
 - root `AGENTS.md`, `CLAUDE.md`, `REVIEW.md`, `GEMINI.md`, `QWEN.md`;
 - `.cursorrules`, `.windsurfrules`, `.aider*`;
-- `.claude/**`, `.codex/**`, `.cursor/rules/**`, `.gemini/**`, `.roo/**`, `.windsurf/**`, `.openhands/**`;
+- `.claude/**`, `.cursor/rules/**`, `.gemini/**`, `.roo/**`, `.windsurf/**`, `.openhands/**`;
 - `.github/copilot-instructions.md`, `.github/instructions/**`, `.github/prompts/**`;
 - `.agents/skills/**`, `.agents/commands/**`, `.agents/hooks/**`;
 - `.serena/project.yml`, `.serena/memories/**`, `.serena/plans/**`, `.serena/research/**`, `.serena/newproj/**`, `.serena/deploy/**`.
@@ -127,7 +137,8 @@ Common operations:
 
 ## Validation And Diagnostics
 
-- `claude plugin validate` — run from repo root after editing any `marketplace.json` or `plugin.json`.
+- `claude plugin validate <path>` — run from repo root after editing any `marketplace.json` or `plugin.json`. CI mirrors this in `.github/workflows/validate.yml` on every PR.
+- Minimum Claude Code version: **v2.1.111+** for the `model: opus[1m]` bracketed syntax in agent frontmatter (`ry-explore`). Earlier versions silently ignore it.
 - `bash plugins/rldyour-flow/scripts/git_sync_audit.sh` — branch, upstream, ahead/behind, worktrees, merged-branch cleanup candidates.
 - `python3 plugins/rldyour-flow/scripts/instruction_docs_state.py --json` — whether `AGENTS.md` and `.claude/CLAUDE.md` need review.
 - `python3 plugins/rldyour-flow/scripts/flow_post_task_state.py` — fingerprint of dirty state, Serena freshness, branch cleanup candidates.

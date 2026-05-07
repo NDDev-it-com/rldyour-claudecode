@@ -2,6 +2,8 @@
 
 Personal Claude Code plugin marketplace by `rldyourmnd`. The repository ships nine plugins that compose an opinionated SDLC, semantic-code, MCP transport, security, browser, design, LSP, and rules layer for Claude Code. There is no runtime application code — every artifact in this repo is plugin metadata, skills, slash commands, agents, hooks, scripts, and references.
 
+This `AGENTS.md` is the concise root project-instruction file for any AI agent working in this repository (cross-tool standard, see https://agents.md/). The deep Claude Code-native memory lives in `.claude/CLAUDE.md`.
+
 ## Source Of Truth
 
 - `./.claude-plugin/marketplace.json` — marketplace manifest, `pluginRoot: ./plugins`, source form `./plugins/<name>`.
@@ -38,7 +40,8 @@ plugins/
 
 ## Validation And Setup
 
-- Validate manifests: `claude plugin validate` (run from repo root after editing any `marketplace.json` or `plugin.json`).
+- Validate manifests: `claude plugin validate <path>` from repo root after editing any `marketplace.json` or `plugin.json`. CI runs this on every PR via `.github/workflows/validate.yml`.
+- Minimum Claude Code version: **v2.1.111+** for `model: opus[1m]` bracketed extended-context model syntax used by the `ry-explore` agent. Earlier versions silently ignore the bracket suffix.
 - Bootstrap a fresh checkout: `python3 plugins/rldyour-flow/scripts/fullrepo_sync.py --bootstrap-init` — installs `.git/info/exclude` block for agent-only files and restores or publishes `fullrepo`.
 - Audit git/branch/worktree state: `bash plugins/rldyour-flow/scripts/git_sync_audit.sh`.
 - Quality checks for product repositories that consume this marketplace: `bash plugins/rldyour-flow/scripts/detect_project_checks.sh`. This repository has no runtime test suite by design.
@@ -46,7 +49,7 @@ plugins/
 
 ## SDLC Workflow
 
-Five orchestrated lifecycle skills live in `rldyour-flow`. Each has a Russian-leading skill description and an English `description` slash-command frontmatter.
+Five orchestrated lifecycle skills live in `rldyour-flow`. Each has a Russian-leading skill description.
 
 - `/rldyour-flow:ry-init` — read-only scope discovery and context pack, mandatory before non-trivial work.
 - `/rldyour-flow:ry-start` — full task lifecycle: init → research → plan → implement → quality gates → reviewer subagents → post-task sync.
@@ -54,7 +57,7 @@ Five orchestrated lifecycle skills live in `rldyour-flow`. Each has a Russian-le
 - `/rldyour-flow:ry-review` — report-only deep review with reviewer tracks (architecture/quality/consistency/integration/verification/security).
 - `/rldyour-flow:ry-deploy` — deploy with local↔GitHub↔server sync, log checks, fix-forward, docs/git finalization.
 
-Reviewer subagents live in `plugins/rldyour-flow/agents/flow-*-review.md`. All run on `model: sonnet`, `effort: high`, `maxTurns: 12-14`, with `disallowedTools: Edit, Write, NotebookEdit`. They are read-only and self-contained.
+Reviewer subagents live in `plugins/rldyour-flow/agents/flow-*-review.md`. All run on `model: sonnet`, `effort: high`, `maxTurns: 12-14`, with `disallowedTools: [Edit, Write, NotebookEdit]`. They are read-only and self-contained.
 
 ## Hooks Lifecycle
 
@@ -74,7 +77,7 @@ All hooks are advisory (informational `additionalContext`) and exit `0` on error
 
 ## Fullrepo Branch Policy
 
-Agent-only files live on the `fullrepo` branch only. Patterns are defined in `plugins/rldyour-flow/scripts/fullrepo_sync.py` (`AGENT_ONLY_PATTERNS`) and include: root `AGENTS.md`, `CLAUDE.md`, `REVIEW.md`, `GEMINI.md`, `QWEN.md`, `.cursorrules`, `.windsurfrules`, `.claude/**`, `.codex/**`, `.serena/project.yml`, `.serena/memories/**`, `.serena/plans/**`, `.serena/research/**`, `.serena/newproj/**`, `.serena/deploy/**`.
+Agent-only files live on the `fullrepo` branch only. Patterns are defined in `plugins/rldyour-flow/scripts/fullrepo_sync.py` (`AGENT_ONLY_PATTERNS`) and include: root `AGENTS.md`, `CLAUDE.md`, `REVIEW.md`, `GEMINI.md`, `QWEN.md`, `.cursorrules`, `.windsurfrules`, `.claude/**`, `.cursor/rules/**`, `.gemini/**`, `.roo/**`, `.windsurf/**`, `.openhands/**`, `.aider*`, `.agents/skills/**`, `.agents/commands/**`, `.agents/hooks/**`, `.github/copilot-instructions.md`, `.github/instructions/**`, `.github/prompts/**`, `.serena/project.yml`, `.serena/memories/**`, `.serena/plans/**`, `.serena/research/**`, `.serena/newproj/**`, `.serena/deploy/**`.
 
 Subcommands:
 
@@ -88,11 +91,31 @@ Subcommands:
 
 ## MCP Transport (`rldyour-mcps/.mcp.json`)
 
-13 pinned servers: `serena-agent==1.2.0`, `@modelcontextprotocol/server-sequential-thinking@2025.12.18`, `@playwright/mcp@0.0.74`, `chrome-devtools-mcp@0.25.0`, `@upstash/context7-mcp@2.2.4`, `deepwiki` (HTTP `mcp.deepwiki.com`), `grep` (HTTP `mcp.grep.app`), `semgrep==1.161.0`, `shadcn@4.7.0`, `dart mcp-server`, `figma` (HTTP `mcp.figma.com`), `openai-docs` (HTTP), `github-mcp-server`. Required env: `CONTEXT7_API_KEY`, `GITHUB_PERSONAL_ACCESS_TOKEN`.
+13 pinned servers: `serena-agent==1.2.0` (with `--context=agent` for generic CLI agents like Claude Code), `@modelcontextprotocol/server-sequential-thinking@2025.12.18`, `@playwright/mcp@0.0.74`, `chrome-devtools-mcp@0.25.0`, `@upstash/context7-mcp@2.2.4`, `deepwiki` (HTTP `mcp.deepwiki.com`), `grep` (HTTP `mcp.grep.app`), `semgrep==1.161.0`, `shadcn@4.7.0`, `dart mcp-server`, `figma` (HTTP `mcp.figma.com`), `openai-docs` (HTTP), `github-mcp-server`. Required env: `CONTEXT7_API_KEY`, `GITHUB_PERSONAL_ACCESS_TOKEN`.
 
-## Tool Routing For Codex
+MCP timeouts are controlled by Claude Code env vars (per official docs at `code.claude.com/docs/en/mcp`): `MCP_TIMEOUT` (server startup, default depends on Claude Code version) and `MCP_TOOL_TIMEOUT` (per-tool-call). Per-server `startup_timeout_sec`/`tool_timeout_sec` keys in `.mcp.json` are NOT documented and silently ignored — do not add them.
 
-- Code understanding: prefer Serena MCP tools (`get_symbols_overview`, `find_symbol`, `find_referencing_symbols`, `search_for_pattern`) over raw `rg` and full-file reads. See `plugins/rldyour-serena-mcp/skills/serena-code-workflow/SKILL.md`.
+## Cross-Plugin Dependencies
+
+Each consumer plugin declares its dependency on `rldyour-mcps` (and `rldyour-serena-mcp` for `rldyour-flow`) in `plugin.json` under `"dependencies": ["..."]`. This array of plugin names lets `claude plugin install` resolve transitive installs and surface conflicts. Schema source: https://code.claude.com/docs/en/plugins-reference#metadata-fields.
+
+Current dependency graph:
+
+| Plugin | Depends on |
+|---|---|
+| rldyour-mcps | (none) |
+| rldyour-serena-mcp | rldyour-mcps |
+| rldyour-flow | rldyour-mcps, rldyour-serena-mcp |
+| rldyour-explore | rldyour-mcps |
+| rldyour-security | rldyour-mcps |
+| rldyour-browser | rldyour-mcps |
+| rldyour-design | rldyour-mcps |
+| rldyour-lsps | rldyour-mcps |
+| rldyour-rules | rldyour-mcps |
+
+## Tool Routing
+
+- Code understanding: prefer Serena MCP tools (`get_symbols_overview`, `find_symbol`, `find_referencing_symbols`, `search_for_pattern`) over raw text reads. See `plugins/rldyour-serena-mcp/skills/serena-code-workflow/SKILL.md`.
 - Memory writes: only via `serena-memory-sync` skill (fact-only, no chat history).
 - LSP / diagnostics / refactoring: route through `plugins/rldyour-lsps/skills/lsp-routing/SKILL.md`.
 - Browser validation, debugging, performance: `plugins/rldyour-browser/skills/*`.

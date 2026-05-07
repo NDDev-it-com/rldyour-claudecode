@@ -10,7 +10,7 @@ Primary sources used for this workflow:
 - Claude Code subagents: https://code.claude.com/docs/en/sub-agents
 - Claude Code skills: https://code.claude.com/docs/en/skills
 - Claude Code slash commands: https://code.claude.com/docs/en/slash-commands
-- OpenAI Codex AGENTS.md (cross-CLI compatibility): https://developers.openai.com/codex/guides/agents-md
+- AGENTS.md cross-tool standard: https://agents.md/
 - Git ignore rules: https://git-scm.com/docs/gitignore
 - Git push force-with-lease: https://git-scm.com/docs/git-push
 - GitHub protected branches: https://docs.github.com/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches
@@ -31,7 +31,7 @@ Engineering conclusions:
 - Hooks should be deterministic and non-destructive; they should ask Claude Code to continue rather than silently mutating code.
 - Multiple Stop hooks run independently, so post-task sync must coordinate with Serena using state checks and loop markers (`stop_hook_active` field on stdin).
 - Subagents are useful for parallel reviews, but prompts must be self-contained and bounded.
-- `AGENTS.md` is Codex-native and `.claude/CLAUDE.md` is Claude Code-native in rldyour projects. Keep both optimized for their own CLI instead of reducing one to a thin import of the other.
+- `AGENTS.md` is the concise root project-instruction file (cross-tool standard, see https://agents.md/) while `.claude/CLAUDE.md` is the Claude Code-native deep project memory in rldyour projects. Keep both independently useful instead of reducing one to a thin import of the other.
 - `.git/info/exclude` is local exclude state, so it is appropriate for per-repository agent-only files that should exist locally but not in normal branch history.
 - Use `--force-with-lease` for generated `fullrepo` snapshots so unexpected remote updates are not overwritten silently.
 - Reviewer subagents (`agents/*.md`) are preferred over flag-disabled skills for orchestrated-only review tracks because Claude Code's plugin `disable-model-invocation` flag has known limitations as of May 2026.
