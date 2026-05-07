@@ -10,5 +10,6 @@
   "license": "MIT",
   "homepage": "https://github.com/rldyourmnd/rldyour-claude/tree/main/plugins/rldyour-serena-mcp",
   "repository": "https://github.com/rldyourmnd/rldyour-claude",
-  "keywords": ["serena", "mcp", "lsp", "semantic-code", "code-workflow", "memories", "hooks", "rldyour"]
+  "keywords": ["serena", "mcp", "lsp", "semantic-code", "code-workflow", "memories", "hooks", "rldyour"],
+  "dependencies": ["rldyour-mcps"]
 }

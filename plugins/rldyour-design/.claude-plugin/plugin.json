@@ -10,5 +10,6 @@
   "license": "MIT",
   "homepage": "https://github.com/rldyourmnd/rldyour-claude/tree/main/plugins/rldyour-design",
   "repository": "https://github.com/rldyourmnd/rldyour-claude",
-  "keywords": ["design", "figma", "shadcn", "reactbits", "fsd", "feature-sliced-design", "design-system", "tokens", "tailwind", "ui-implementation", "pixel-perfect", "rldyour"]
+  "keywords": ["design", "figma", "shadcn", "reactbits", "fsd", "feature-sliced-design", "design-system", "tokens", "tailwind", "ui-implementation", "pixel-perfect", "rldyour"],
+  "dependencies": ["rldyour-mcps"]
 }
