@@ -106,6 +106,18 @@
       "category": "development",
       "tags": ["sdlc", "workflow", "ry-init", "ry-start", "ry-review", "ry-deploy", "reviewer", "fullrepo", "rldyour"],
       "license": "MIT"
+    },
+    {
+      "name": "rldyour-rules",
+      "source": "rldyour-rules",
+      "description": "Quality-first инженерные правила: clean architecture (FSD/VSA/Hexagonal), implementation discipline, dependency policy + supply chain (SLSA L2), verification gates (pyright/ruff/ESLint v9), AGENTS.md/.claude/CLAUDE.md/MADR 4.0.0, /ry-rules-review.",
+      "version": "0.1.0",
+      "author": {
+        "name": "rldyourmnd"
+      },
+      "category": "development",
+      "tags": ["rules", "quality", "fsd", "vsa", "hexagonal", "supply-chain", "slsa", "adr", "ry-rules-review", "rldyour"],
+      "license": "MIT"
     }
   ]
 }
