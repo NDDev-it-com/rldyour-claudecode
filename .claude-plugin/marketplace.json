@@ -34,6 +34,18 @@
       "category": "research",
       "tags": ["research", "explore", "mcp", "context7", "deepwiki", "grep", "rldyour"],
       "license": "MIT"
+    },
+    {
+      "name": "rldyour-serena-mcp",
+      "source": "rldyour-serena-mcp",
+      "description": "Serena-first semantic code workflow + .serena memory sync with lifecycle hooks (UserPromptSubmit/PreToolUse/PostToolUse/Stop). Серена-семантический воркфлоу + синхронизация памяти + хуки жизненного цикла.",
+      "version": "0.1.0",
+      "author": {
+        "name": "rldyourmnd"
+      },
+      "category": "development",
+      "tags": ["serena", "mcp", "lsp", "code-workflow", "memories", "hooks", "rldyour"],
+      "license": "MIT"
     }
   ]
 }
