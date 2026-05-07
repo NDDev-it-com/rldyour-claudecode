@@ -10,10 +10,10 @@ from pathlib import Path
 from typing import Any
 
 
-CODEX_DOC = "AGENTS.md"
+AGENTS_DOC = "AGENTS.md"
 CLAUDE_DOC = ".claude/CLAUDE.md"
 LEGACY_CLAUDE_DOC = "CLAUDE.md"
-REQUIRED_AGENT_DOCS = (CODEX_DOC, CLAUDE_DOC)
+REQUIRED_AGENT_DOCS = (AGENTS_DOC, CLAUDE_DOC)
 INSTRUCTION_DOCS = REQUIRED_AGENT_DOCS + (LEGACY_CLAUDE_DOC,)
 
 RUNTIME_IGNORED = {
@@ -229,7 +229,7 @@ def instruction_state(root: Path) -> dict[str, Any]:
         "dirty_paths": dirty_paths,
         "committed_paths_since_upstream": committed_paths,
         "line_counts": {
-            CODEX_DOC: file_line_count(root / CODEX_DOC),
+            AGENTS_DOC: file_line_count(root / AGENTS_DOC),
             CLAUDE_DOC: file_line_count(root / CLAUDE_DOC),
             LEGACY_CLAUDE_DOC: file_line_count(root / LEGACY_CLAUDE_DOC),
         },

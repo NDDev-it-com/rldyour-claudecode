@@ -16,7 +16,6 @@ KNOWLEDGE_PREFIXES = (
     ".agents/hooks/",
     ".agents/skills/",
     ".claude/",
-    ".codex/",
     ".cursor/rules/",
     ".github/instructions/",
     ".github/prompts/",

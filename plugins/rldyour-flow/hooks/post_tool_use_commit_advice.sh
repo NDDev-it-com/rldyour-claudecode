@@ -97,7 +97,7 @@ for path in files:
 
 agent_only_patterns = [
     re.compile(r"^(AGENTS|CLAUDE|REVIEW|GEMINI|QWEN)\.md$"),
-    re.compile(r"^\.(claude|codex|gemini|roo|windsurf|openhands)/"),
+    re.compile(r"^\.(claude|gemini|roo|windsurf|openhands)/"),
     re.compile(r"^\.cursor/rules/"),
     re.compile(r"^\.agents/(skills|commands|hooks)/"),
     re.compile(r"^\.github/(copilot-instructions\.md|instructions/|prompts/)"),
