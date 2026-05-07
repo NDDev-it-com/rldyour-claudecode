@@ -70,6 +70,18 @@
       "category": "development",
       "tags": ["browser", "playwright", "chrome-devtools", "mcp", "ui-validation", "browser-debug", "rldyour"],
       "license": "MIT"
+    },
+    {
+      "name": "rldyour-design",
+      "source": "rldyour-design",
+      "description": "Сквозной дизайн-воркфлоу: Figma → код → токены → FSD → shadcn/ui → ReactBits → browser-валидация. 5 скиллов + /ry-design. Skills-only — MCP transport from rldyour-mcps.",
+      "version": "0.1.0",
+      "author": {
+        "name": "rldyourmnd"
+      },
+      "category": "design",
+      "tags": ["design", "figma", "shadcn", "reactbits", "fsd", "design-system", "tokens", "ry-design", "rldyour"],
+      "license": "MIT"
     }
   ]
 }
