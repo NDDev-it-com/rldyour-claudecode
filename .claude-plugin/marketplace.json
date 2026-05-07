@@ -1,0 +1,14 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "rldyour-claude",
+  "owner": {
+    "name": "rldyourmnd",
+    "email": "danilsilantyevnewlife+claude@gmail.com",
+    "url": "https://github.com/rldyourmnd"
+  },
+  "description": "Personal Claude Code plugin marketplace by rldyourmnd — SDLC flow, Serena, MCP, security, browser, design, LSP, rules. Персональный маркетплейс плагинов Claude Code: SDLC flow, Serena, MCP, безопасность, браузер, дизайн, LSP, правила.",
+  "metadata": {
+    "pluginRoot": "./plugins"
+  },
+  "plugins": []
+}
