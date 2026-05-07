@@ -7,6 +7,7 @@ Personal Claude Code plugin marketplace authored by `rldyourmnd`. This file is p
 - A Claude Code marketplace (`./.claude-plugin/marketplace.json`, name `rldyour-claude`, `pluginRoot: ./plugins`).
 - Nine first-party plugins all at `version: 0.1.0`, source form `./plugins/<name>`.
 - No application runtime, no test suite, no build step. Every artifact is plugin metadata, skills, agents, slash commands, hooks, scripts, or references.
+- `AGENTS.md` at repo root is the concise cross-tool root project-instruction file (https://agents.md/); this `.claude/CLAUDE.md` is the Claude Code-native deep memory complement. Both are agent-only and live on the `fullrepo` branch.
 
 ## Plugins And Components
 

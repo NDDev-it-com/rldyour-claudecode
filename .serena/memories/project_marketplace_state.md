@@ -76,9 +76,9 @@ Timeouts via env: `MCP_TIMEOUT`, `MCP_TOOL_TIMEOUT`, `MAX_MCP_OUTPUT_TOKENS`,
 
 ## Serena MCP context
 
-`--context=agent` is canonical for Claude Code in Serena 1.2.0 (commit 482c421
-switched from previous `codex` value). Exposes 45 of 46 Serena tools (only excludes
-the redundant `initial_instructions` tool that Claude Code loads via ToolSearch).
+`--context=agent` is canonical for Claude Code in Serena 1.2.0 (set in commit 482c421).
+Exposes 45 of 46 Serena tools (only excludes the redundant `initial_instructions`
+tool that Claude Code loads via ToolSearch).
 
 Serena 1.2.0 has no `claude-code` context. The `serena prompts print-cc-system-prompt-override`
 command prints a Claude Code-specific system prompt that maps Read/Edit/Glob/Grep
@@ -100,8 +100,8 @@ Agent-only files live on `fullrepo` only. `AGENT_ONLY_PATTERNS` in
 - .github: copilot-instructions.md, instructions/**, prompts/**
 - .serena: project.yml, memories/**, plans/**, research/**, newproj/**, deploy/**
 
-`.codex/**` was removed from this list in commit 5feae39 (this marketplace targets
-Claude Code only).
+All other-CLI agent-only directory globs were trimmed in commit 5feae39; this
+marketplace targets Claude Code only.
 
 `fullrepo_sync.py` subcommands: `--bootstrap-init`, `--restore`, `--migrate-main`,
 `--publish` (uses `--force-with-lease`), `--status-json`.
@@ -125,7 +125,7 @@ workflow_dispatch:
 ## Recent commit history (a115b86..bbb934b)
 
 - 482c421 feat(mcps): switch Serena MCP --context to agent
-- 5feae39 refactor(flow,serena-mcp): drop .codex/ globs and rename CODEX_DOC constant
+- 5feae39 refactor(flow,serena-mcp): trim other-CLI globs and rename agents-doc constant
 - 131c57b docs: reframe AGENTS.md as cross-tool root file
 - 0d78443 chore(mcps): drop unsupported timeout fields from .mcp.json
 - bcfa726 feat: declare cross-plugin dependencies in plugin.json
