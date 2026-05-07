@@ -1,6 +1,6 @@
 ---
 name: owasp-top-10-implementation
-description: "Non-blocking OWASP Top 10 2025 guidance during implementation. Use for безопасность, OWASP, auth/authz, права доступа, secrets, injection, XSS, SSRF, supply chain, crypto, headers, CORS, secure coding."
+description: "Незаблокирующая проверка по OWASP Top 10 2025 при реализации. Используй для: безопасность, OWASP, auth/authz, права доступа, secrets, injection, XSS, SSRF, supply chain, crypto, headers, CORS, secure coding."
 ---
 
 # OWASP Top 10 Implementation Guidance
