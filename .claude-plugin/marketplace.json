@@ -58,6 +58,18 @@
       "category": "security",
       "tags": ["security", "owasp", "asvs", "ry-sec-review", "vulnerability-review", "rldyour"],
       "license": "MIT"
+    },
+    {
+      "name": "rldyour-browser",
+      "source": "rldyour-browser",
+      "description": "Браузерные воркфлоу через Playwright и Chrome DevTools MCP — валидация UI/pixel-perfect/e2e, дебаг console/network/perf, маршрутизация. Skills-only — MCP transport from rldyour-mcps. Browser workflows.",
+      "version": "0.1.0",
+      "author": {
+        "name": "rldyourmnd"
+      },
+      "category": "development",
+      "tags": ["browser", "playwright", "chrome-devtools", "mcp", "ui-validation", "browser-debug", "rldyour"],
+      "license": "MIT"
     }
   ]
 }
