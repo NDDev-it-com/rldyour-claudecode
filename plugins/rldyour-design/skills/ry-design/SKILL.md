@@ -34,10 +34,10 @@ For very narrow tasks, prefer the matching subskill directly. Use `design-valida
 ## Workflow
 
 1. Establish scope: target page/component, Figma source, required states, responsive frames, business behavior, and acceptance criteria.
-2. Use `figma-to-code` if Figma context exists. Figma MCP (`mcp__figma__*`) is the design source of truth.
+2. Use `figma-to-code` if Figma context exists. Figma MCP (`mcp__plugin_rldyour-mcps_figma__*`) is the design source of truth.
 3. Use `design-system-implementation` to create or update centralized tokens before scattering raw design values.
 4. Use `fsd-frontend-architecture` to place code into strict FSD layers and public APIs.
-5. Use shadcn/ui MCP (`mcp__shadcn__*`) for primitives, blocks, and registry-based components.
+5. Use shadcn/ui MCP (`mcp__plugin_rldyour-mcps_shadcn__*`) for primitives, blocks, and registry-based components.
 6. Use ReactBits.dev only for purposeful motion or interactive effects that match the design.
 7. Implement code with Serena-first local code inspection when available (`get_symbols_overview`, `find_symbol`, `find_referencing_symbols`).
 8. Use `design-validation` and `rldyour-browser` to verify pixel-perfect layout, functionality, business logic, desktop/mobile, screenshots, and runtime health.
