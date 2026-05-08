@@ -47,6 +47,25 @@ for p in plugins/*/; do
   fi
 done
 
+step "dart SDK version (>=3.9.0 for dart-flutter MCP)"
+if command -v dart >/dev/null 2>&1; then
+  DART_VERSION=$(dart --version 2>&1 | sed -nE 's/.*Dart SDK version: ([0-9]+\.[0-9]+\.[0-9]+).*/\1/p')
+  if [ -z "$DART_VERSION" ]; then
+    echo "INFO dart present but version not parseable (dart-flutter MCP requires >=3.9.0)"
+  else
+    DART_MAJOR=${DART_VERSION%%.*}
+    DART_REST=${DART_VERSION#*.}
+    DART_MINOR=${DART_REST%%.*}
+    if [ "$DART_MAJOR" -gt 3 ] || { [ "$DART_MAJOR" -eq 3 ] && [ "$DART_MINOR" -ge 9 ]; }; then
+      echo "OK dart $DART_VERSION (>=3.9.0)"
+    else
+      fail "dart $DART_VERSION below 3.9.0 — dart-flutter MCP requires >=3.9.0 (https://docs.flutter.dev/ai/mcp-server)"
+    fi
+  fi
+else
+  echo "INFO dart not on PATH — dart-flutter MCP will not start until Dart SDK 3.9+ is installed"
+fi
+
 step "env example coverage"
 if [ -f plugins/rldyour-mcps/.env.example ]; then
   while IFS= read -r line; do

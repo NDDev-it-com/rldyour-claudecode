@@ -1,6 +1,6 @@
 # rldyour-claude marketplace state
 
-Last commit: 29586bd (docs: scope MCP tool names to plugin_rldyour-mcps_<server>__ in prose, 2026-05-08).
+Last commit: 3066e7f (feat(ops): Dart SDK 3.9+ gate in bootstrap_check + README note, 2026-05-08).
 Four May-2026 best-practice waves applied:
 - optimize/may-2026-best-practices: 6 commits 3fe9005..2e22652 (merged to main)
 - docs/canonical-may2026: 1 commit ca13470 (merged to main)
@@ -86,8 +86,8 @@ restart the session for the agent to appear in `Agent` tool subagent_type list.
 
 ## MCP transport (rldyour-mcps/.mcp.json)
 
-13 pinned servers; all dead `startup_timeout_sec`/`tool_timeout_sec` keys removed
-(commit 0d78443).
+13 pinned servers (8 stdio, 5 HTTP); all dead `startup_timeout_sec`/`tool_timeout_sec`
+keys removed (commit 0d78443). HTTP servers: deepwiki, grep, figma, openai-docs, github.
 
 - serena: `serena-agent==1.2.0`, `--context=agent`, web dashboard disabled,
   `alwaysLoad: true` (v2.1.121+) — eager startup since Serena drives every
@@ -103,7 +103,9 @@ restart the session for the agent to appear in `Agent` tool subagent_type list.
 - dart-flutter: `dart mcp-server --force-roots-fallback`.
 - figma: HTTP `mcp.figma.com/mcp`.
 - openai-docs: HTTP `developers.openai.com/mcp`.
-- github: `github-mcp-server stdio`. Requires `GITHUB_PERSONAL_ACCESS_TOKEN`.
+- github: HTTP `api.githubcopilot.com/mcp/`, `Authorization: Bearer ${GITHUB_PERSONAL_ACCESS_TOKEN}`.
+  Switched from stdio (`github-mcp-server stdio`) to HTTP transport in commit 47387ee;
+  matches `anthropics/claude-plugins-official` canonical pattern (commit 76b35e9).
 
 Timeouts via env: `MCP_TIMEOUT`, `MCP_TOOL_TIMEOUT`, `MAX_MCP_OUTPUT_TOKENS`,
 `MCP_CONNECTION_NONBLOCKING`.
@@ -140,6 +142,19 @@ marketplace targets Claude Code only.
 `fullrepo_sync.py` subcommands: `--bootstrap-init`, `--restore`, `--migrate-main`,
 `--publish` (uses `--force-with-lease`), `--status-json`.
 
+## LSP known limitations (added afabf41, 2026-05-08)
+
+- `extensionToLanguage` only: Claude Code `.lsp.json` schema does not support filename-based
+  routing. Files without extension (`Dockerfile`, `Containerfile`, `Makefile`, `CMakeLists.txt`,
+  `Gemfile`, `Procfile`, `Jenkinsfile`) cannot route to any LSP server.
+  Tracked: anthropics/claude-code#47748 (OPEN `area:lsp` + `enhancement`, filed 2026-04-14).
+- Compound extensions unsupported (e.g. `.spec.ts` routes only to last segment).
+  Closed `not_planned` in anthropics/claude-code#15785 (2026-02-14).
+- docker entry in `.lsp.json` is marked **Degraded** in lsp-server-matrix.md:
+  only `.dockerfile` extension routes; bare `Dockerfile`/`Containerfile` falls back to text.
+  (Source: `plugins/rldyour-lsps/references/lsp-server-matrix.md` and
+  `plugins/rldyour-lsps/references/install-profiles.md` Known limitations section.)
+
 ## CI
 
 `.github/workflows/validate.yml` (commit bbb934b) runs on push, pull_request, and
@@ -158,9 +173,11 @@ workflow_dispatch:
 
 ## Skill-listing optimizations (2026-05-08)
 
-- 10 skills declare explicit `allowed-tools`: serena-code-workflow, serena-memory-sync,
-  tech-research, web-research, browser-validation, browser-debug, lsp-routing,
-  lsp-health-check, lsp-setup, serena-lsp-integration. MCP wildcard form
+- 15 skills declare explicit `allowed-tools` (verified at HEAD via grep): serena-code-workflow,
+  serena-memory-sync, tech-research, web-research, browser-validation, browser-debug,
+  lsp-routing, lsp-health-check, lsp-setup, serena-lsp-integration, figma-to-code,
+  design-validation, design-system-implementation, ry-design (added Serena wildcard in 1d33c25),
+  flow-post-task-sync (added Bash/Read/Grep/Glob in 1d33c25). MCP wildcard form
   `mcp__plugin_rldyour-mcps_<server>__*` validated via `claude plugin validate`.
 - 2 skills marked `disable-model-invocation: true` (slash-only): ry-deploy, ry-newp.
 - User-side fix in `~/.claude/settings.json`: `skillListingBudgetFraction: 0.03`
@@ -299,6 +316,30 @@ Operations harness wave (a851d99..8123e46, branch feat/codex-port-wave):
 - Wave validated against ry-explore deep research findings (Anthropic
   claude-plugins-official patterns + EveryInc + MadAppGang + tractorjuice/arc-kit).
 - Tag convention canonical: {plugin-name}--v{version} per docs/en/plugin-dependencies.
+
+Wave 11 — plugin-validator + skill-reviewer + ry-explore audit fixes (c76487a..3066e7f, 2026-05-08):
+- c76487a fix(flow): ry-start argument-hint + canonical slash `/rldyour-flow:ry-start` + EN keywords.
+  Added `argument-hint: "<task description>"` to SKILL.md frontmatter.
+- 336fb9f fix(security): ry-sec-review When To Use now states "slash-only" instead of
+  "Use this skill without waiting for explicit invocation" (contradicted disable-model-invocation).
+- 1d33c25 fix(skills): allowed-tools alignment for orchestrator skills:
+  - ry-design: added `mcp__plugin_rldyour-mcps_serena__*` (body step 7 invokes Serena).
+  - flow-post-task-sync: added `allowed-tools: [Bash, Read, Grep, Glob]`;
+    description expanded with Stop hook advisory triggers.
+- afabf41 docs(lsps): install-profiles.md gained "Known limitations" section:
+  - Filename-only files (Dockerfile, Containerfile, Makefile, etc.) cannot route via
+    extensionToLanguage; tracked in anthropics/claude-code#47748 (OPEN, enhancement, filed 2026-04-14).
+  - Compound extensions unsupported (#15785, closed not_planned).
+  - lsp-server-matrix.md: docker entry marked "Degraded" referencing #47748.
+- 47387ee feat(mcps): github MCP switched stdio → HTTP (`type: http`,
+  `url: https://api.githubcopilot.com/mcp/`, `Authorization: Bearer ${GITHUB_PERSONAL_ACCESS_TOKEN}`).
+  Matches anthropics/claude-plugins-official canonical (commit 76b35e9). Server count still 13.
+  smoke_mcp_runtime.sh:110 — env-coverage probe now extracts `${VAR}` from both `env` (stdio)
+  and `headers` (HTTP) blocks.
+- 3066e7f feat(ops): bootstrap_check.sh — Dart SDK >=3.9 gate: fail-fast if MAJOR<3 or
+  MAJOR==3 && MINOR<9. INFO line if dart absent. rldyour-mcps/README.md gains "Runtime SDK
+  requirements" section and Special-notes line for github HTTP transport.
+  Dart 3.9+ requirement source: docs.flutter.dev/ai/mcp-server (2026-05).
 
 Plugin-dev validation wave (ba2592a..29586bd, branch audit/plugin-dev-validation):
 - ba2592a fix(lsps): drop `.hcl` from docker entry in `.lsp.json` (was mis-routing Terraform/Packer
