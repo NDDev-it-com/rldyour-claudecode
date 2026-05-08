@@ -1,5 +1,5 @@
 ---
-description: "Запустить сквозной дизайн-воркфлоу через ry-design — Figma + tokens + FSD + shadcn/ui + ReactBits + browser validation."
+description: "Запустить сквозной дизайн-воркфлоу через ry-design — Figma + tokens + FSD + shadcn/ui + ReactBits + browser validation. Run end-to-end design workflow."
 argument-hint: <scope>
 ---
 

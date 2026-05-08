@@ -1,5 +1,5 @@
 ---
-description: "Сделать report-only глубокое ревью через ry-review с reviewer tracks (architecture/quality/consistency/integration/verification/security)."
+description: "Сделать report-only глубокое ревью через ry-review с reviewer tracks (architecture/quality/consistency/integration/verification/security). Run a report-only deep review with parallel reviewer tracks."
 argument-hint: <scope>
 ---
 

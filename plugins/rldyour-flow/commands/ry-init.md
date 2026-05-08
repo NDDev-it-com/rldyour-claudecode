@@ -1,5 +1,5 @@
 ---
-description: "Запустить scoped read-only инициализацию проекта через ry-init: Serena-first discovery + fullrepo bootstrap + verified context pack."
+description: "Запустить scoped read-only инициализацию проекта через ry-init: Serena-first discovery + fullrepo bootstrap + verified context pack. Run scoped read-only project init."
 argument-hint: <scope>
 ---
 
