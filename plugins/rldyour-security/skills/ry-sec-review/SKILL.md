@@ -14,7 +14,7 @@ User-facing reports are written in Russian unless the user asks otherwise. Code,
 
 ## When To Use
 
-Use this skill without waiting for explicit invocation when the request asks to:
+This skill is slash-only (`disable-model-invocation: true`). Apply it when `/ry-sec-review` is invoked or the user explicitly asks for security review of:
 
 - Review security, vulnerabilities, exploitability, OWASP/ASVS coverage, hardening, or secure implementation quality.
 - Audit a diff, pull request, feature, full implementation, module, route, endpoint, API, auth/authz flow, admin path, file handler, webhook, parser, dependency, or configuration.
