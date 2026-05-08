@@ -8,7 +8,7 @@ Personal Claude Code plugin marketplace by `rldyourmnd`. Cross-tool overview, so
 
 ```
 rldyour-mcps         transport     0 skills • 0 cmds • 0 agents • 0 hooks  • .mcp.json (13 pinned servers)
-rldyour-serena-mcp   semantic      2 skills • 0 cmds • 0 agents • 4 hooks
+rldyour-serena-mcp   semantic      2 skills • 0 cmds • 1 agent  • 4 hooks
 rldyour-flow         SDLC          7 skills • 5 cmds • 6 agents • 3 hooks  • 7 scripts • 7 references
 rldyour-explore      research      2 skills • 1 cmd  • 1 agent  • 0 hooks
 rldyour-security     security      2 skills • 1 cmd  • 0 agents • 0 hooks
@@ -18,7 +18,7 @@ rldyour-lsps         lsp           4 skills • 0 cmds • 0 agents • 0 hooks 
 rldyour-rules        rules         7 skills • 1 cmd  • 0 agents • 0 hooks  • 6 references
 ```
 
-Total: 32 skills, 9 slash commands, 7 subagents. Slash commands (SDLC + tool-routing), plugin dependency graph, MCP transport detail, and fullrepo branch policy are listed in `./AGENTS.md`.
+Total: 32 skills, 9 slash commands, 8 subagents. Slash commands (SDLC + tool-routing), plugin dependency graph, MCP transport detail, and fullrepo branch policy are listed in `./AGENTS.md`.
 
 ## Subagent Frontmatter Matrix
 
@@ -35,6 +35,10 @@ Required fields for plugin-shipped subagents: `name`, `description`. Plugin-ship
 | ry-explore | opus[1m] | max | 90 | cyan | deep multi-source research, `context: fork` |
 
 All reviewer agents declare `disallowedTools: [Edit, Write, NotebookEdit]` (read-only). Generous `maxTurns` (×3 of naive limit) compensates MCP-rich toolsets that consume turns on tool plumbing — Serena + Context7 + DeepWiki + Grep eat 5-8 turns before useful work begins.
+
+| flow-memory-sync (rldyour-serena-mcp) | sonnet | high | 36 | yellow | fact-only Serena memory sync — invoked from main session via Agent tool with diff payload |
+
+`flow-memory-sync` is a plugin-shipped subagent with narrow tool access (Serena memory tools — `write_memory`/`edit_memory`/`delete_memory`/`rename_memory` — plus read-only `Read`/`Grep`/`Glob`/`Bash`; `disallowedTools: [Edit, Write, NotebookEdit]`). Anti-hallucination contract enforced via body: source-of-truth hierarchy code > tests > git diff > existing memories; citation required per claim; removal-first principle for unverifiable claims; `Last commit: <HEAD_SHA>` line mandatory in every touched memory; `commit_serena_knowledge.sh` runs internally; final JSON report. Stop hook advisory (`stop_memory_sync.sh`) points at this subagent rather than asking the main session to inline-edit memories. Plugin agents are loaded at session start — restart Claude Code after creating or editing the agent file before invoking via `subagent_type: "rldyour-serena-mcp:flow-memory-sync"`.
 
 ## Hooks Lifecycle
 

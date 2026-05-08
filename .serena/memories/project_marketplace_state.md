@@ -1,11 +1,12 @@
 # rldyour-claude marketplace state
 
-Last commit: f23765d (main, 2026-05-08, polish wave: deferred findings applied).
-Three May-2026 best-practice waves landed on main:
-- optimize/may-2026-best-practices: 6 commits 3fe9005..2e22652
-- docs/canonical-may2026: 1 commit ca13470 (canonical CLAUDE.md/AGENTS.md rewrite)
-- polish/deferred-findings: 3 commits 3ce7970..f23765d (defer cleanup)
-All three feature branches deleted after fast-forward merge.
+Last commit: 772f6e8 (feat/memory-sync-subagent, 2026-05-08, NOT YET merged to main).
+Four May-2026 best-practice waves applied:
+- optimize/may-2026-best-practices: 6 commits 3fe9005..2e22652 (merged to main)
+- docs/canonical-may2026: 1 commit ca13470 (merged to main)
+- polish/deferred-findings: 3 commits 3ce7970..f23765d (merged to main)
+- feat/memory-sync-subagent: 1 commit 772f6e8 (current branch, NOT YET merged)
+First three feature branches deleted after fast-forward merge.
 Marketplace name: `rldyour-claude`. Repo: github.com/rldyourmnd/rldyour-claude (private).
 
 ## Layered architecture (verified)
@@ -47,7 +48,7 @@ All hooks advisory: emit `hookSpecificOutput.additionalContext`, exit 0 on error
 Skip flags: `RLDYOUR_SKIP_FLOW_SESSION_CONTEXT`, `RLDYOUR_SKIP_STOP_GATES`,
 `RLDYOUR_SKIP_FLOW_SYNC`.
 
-## Subagent matrix
+## Subagent matrix (8 total)
 
 Reviewer (rldyour-flow/agents/flow-*-review.md): `model: sonnet`, `effort: high`,
 `maxTurns: 36` (security: `42`), `disallowedTools: [Edit, Write, NotebookEdit]`.
@@ -69,6 +70,18 @@ Tight 12-14 limits effectively gave only 4-7 reasoning turns.
 Research (rldyour-explore/agents/ry-explore.md): `model: opus[1m]`, `effort: max`,
 `maxTurns: 90` (was 30), `disallowedTools: [Edit, Write, NotebookEdit]`, `color: cyan`.
 Triggered via `/rldyour-explore:ry-explore` slash command (`context: fork`).
+
+Memory sync (rldyour-serena-mcp/agents/flow-memory-sync.md, added 772f6e8): `model: sonnet`,
+`effort: high`, `maxTurns: 36`, `disallowedTools: [Edit, Write, NotebookEdit]`, `color: yellow`.
+Plugin-shipped subagent invoked from main session via Agent tool (subagent_type
+`rldyour-serena-mcp:flow-memory-sync`). Narrow tool access — Serena memory tools
+(write_memory, edit_memory, etc.) + read-only Bash/Read/Grep/Glob; cannot mutate
+arbitrary files. Anti-hallucination guards in body: source-of-truth hierarchy
+(code > tests > git diff > existing memories), citation requirement per claim,
+removal-first principle for unverifiable claims. Receives diff context as Agent
+prompt and runs commit_serena_knowledge.sh internally. Plugin agents on Claude
+Code v2.1.x are loaded at session start — after creating/updating an agent file,
+restart the session for the agent to appear in `Agent` tool subagent_type list.
 
 ## MCP transport (rldyour-mcps/.mcp.json)
 
@@ -197,3 +210,26 @@ Polish wave (ca13470..f23765d, merged 2026-05-08):
   (security gets +6 turns for variant-hunt sweep).
 - .claude/CLAUDE.md grew by 1 line (124 total) documenting the validated pattern
   of mixing built-in tools and MCP wildcards in allowed-tools.
+
+Memory-sync wave (f23765d..772f6e8, branch feat/memory-sync-subagent):
+- 772f6e8 feat(serena-mcp): add flow-memory-sync subagent for fact-only sync.
+  - NEW: plugins/rldyour-serena-mcp/agents/flow-memory-sync.md (151 lines, sonnet/high/36/yellow).
+  - MODIFIED: stop_memory_sync.sh advisory text — now points main agent to
+    invoke rldyour-serena-mcp:flow-memory-sync via Agent tool (instead of
+    generic instructions to run serena-memory-sync workflow).
+  - MODIFIED: flow-post-task-sync skill workflow step 1 — delegates memory
+    sync to the subagent so anti-hallucination guards apply uniformly.
+  - Hook STRUCTURE intentionally unchanged (kept type:command + advisory + exit 2).
+    Research findings:
+    * type:agent reference syntax {agent: name} is undocumented in CC v2.1.133
+      (production plugins use it, but spec only documents inline prompt form).
+    * Multiple handlers in one matcher block fire IN PARALLEL, not sequential —
+      breaks intended gate-then-agent chaining.
+    * AskUserQuestion unavailable in subagents (Issue #12890 closed not_planned),
+      so subagent cannot do confirmation gates for destructive ops.
+    * Auto-merge to main / auto-push from Stop hook is anti-pattern across
+      production plugins (0 examples in Anthropic plugins-official, community
+      consensus warns of remote-history destruction risks per Issues #33402,
+      #30475, #13009).
+  - Result: surgical change with controllable invocation, not opaque automation.
+    Subagent gets durable definition with hard anti-hallucination contract.
