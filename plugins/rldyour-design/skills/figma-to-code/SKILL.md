@@ -1,6 +1,14 @@
 ---
 name: figma-to-code
 description: "Перенос Figma макетов в код pixel-perfect через Figma MCP, токены, FSD, shadcn/ui, ReactBits + browser-валидация. Используй для: перенеси из Figma, сверстай макет, реализуй frame, ссылка на Figma, design handoff."
+allowed-tools:
+  - mcp__plugin_rldyour-mcps_figma__*
+  - mcp__plugin_rldyour-mcps_shadcn__*
+  - mcp__plugin_rldyour-mcps_playwright__*
+  - mcp__plugin_rldyour-mcps_chrome-devtools__*
+  - Read
+  - Write
+  - Edit
 ---
 
 # Figma To Code
