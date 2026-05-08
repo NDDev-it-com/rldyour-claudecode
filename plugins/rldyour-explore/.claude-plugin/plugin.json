@@ -1,5 +1,5 @@
 {
-  "$schema": "https://anthropic.com/claude-code/plugin.schema.json",
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "rldyour-explore",
   "version": "0.1.0",
   "description": "Скиллы технического и веб-исследования + ry-explore субагент глубокого анализа (Opus 4.7 1M, max effort) через Context7/DeepWiki/Grep MCP. Auto-invoked skills + /ry-explore slash command для явного вызова.",
