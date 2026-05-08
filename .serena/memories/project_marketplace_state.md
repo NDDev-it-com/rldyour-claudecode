@@ -1,6 +1,6 @@
 # rldyour-claude marketplace state
 
-Last commit: 941e179 (feat/lsp-pyright-registration, 2026-05-08, awaiting merge to main).
+Last commit: 36a1788 (feat/lsp-full-matrix, 2026-05-08, awaiting merge to main).
 Four May-2026 best-practice waves applied:
 - optimize/may-2026-best-practices: 6 commits 3fe9005..2e22652 (merged to main)
 - docs/canonical-may2026: 1 commit ca13470 (merged to main)
@@ -217,19 +217,34 @@ Memory-sync subagent wave (f23765d..772f6e8, merged 2026-05-08):
   anti-hallucination contract in body — citation per claim, source-of-truth
   hierarchy code > tests > git diff > existing memories, removal-first principle).
 
-LSP registration wave (8123e46..941e179, branch feat/lsp-pyright-registration):
-- 941e179 feat(lsps): register pyright via .lsp.json for native CC LSP support.
-  - NEW: plugins/rldyour-lsps/.lsp.json — registers pyright-langserver for
-    .py/.pyi/.pyw via canonical schema (command + args + extensionToLanguage
-    + transport + initializationOptions + settings + maxRestarts).
-  - Pyright at ~/.local/bin/pyright-langserver was already installed, but
-    rldyour-lsps had no .lsp.json — only skills (lsp-routing, etc). CC's
-    native LSP feature therefore kept recommending the official pyright-lsp
-    Anthropic plugin. The .lsp.json silences that recommendation.
-  - Schema sourced from Piebald-AI/claude-code-lsps (production marketplace
-    with 30+ language LSPs) and code.claude.com/docs/en/plugins-reference.
-  - README updated with pattern for adding more languages when their LSPs
-    are installed locally (rust-analyzer, gopls, clangd, typescript-language-server, etc).
+LSP registration wave (8123e46..36a1788, branches feat/lsp-pyright-registration
++ feat/lsp-full-matrix):
+- 941e179 feat(lsps): register pyright via .lsp.json for native CC LSP support
+  — bootstrap fix for the original pyright-lsp recommendation.
+- 36a1788 feat(lsps): register full Codex LSP matrix in .lsp.json (15 languages).
+  - plugins/rldyour-lsps/.lsp.json now contains 15 entries matching the
+    Codex lsp-server-matrix.md (verified against user's ~/.local/bin,
+    /opt/homebrew/bin, ~/.bun/bin, ~/.cargo/bin paths):
+    python (pyright-langserver), typescript (typescript-language-server,
+    handles js/jsx/mjs/cjs too), rust (rust-analyzer), dart
+    (dart language-server --protocol=lsp), go (gopls), cpp (clangd for
+    .c/.h/.cc/.cpp/.cxx/.c++/.hh/.hpp/.hxx/.h++/.m/.mm), qml (qmlls),
+    yaml (yaml-language-server), docker (docker-language-server start),
+    html (vscode-html-language-server), css (vscode-css-language-server,
+    handles scss/sass/less), bash (bash-language-server start), json
+    (vscode-json-language-server, handles jsonc), toml (taplo lsp stdio),
+    markdown (marksman server).
+  - Each entry uses canonical schema: command + args + extensionToLanguage
+    + transport=stdio + initializationOptions + settings + maxRestarts=3.
+  - Schema sourced from Piebald-AI/claude-code-lsps and
+    code.claude.com/docs/en/plugins-reference.
+  - Intentional omissions: vtsls (would conflict with typescript-language-server
+    for same extensions; invoke explicitly via lsp-routing skill if needed),
+    ruff (lint companion, not full LSP; invoke via lsp-routing skill when
+    applicable). basedpyright not installed locally; pyright is sufficient.
+  - Result: CC stops recommending per-language LSP plugins (pyright-lsp etc)
+    for any of the 15 covered languages — uses user's pre-installed servers
+    directly. Servers not on PATH are silently skipped (no error).
 
 Codex-parity wave (a851d99..8123e46, branch feat/codex-port-wave):
 - adb0bc1 docs: root public files (README.md, CHANGELOG.md, VERSION 0.1.0, LICENSE MIT).
