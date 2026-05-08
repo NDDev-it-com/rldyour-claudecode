@@ -42,7 +42,14 @@ As of May 2026, `disable-model-invocation: true` on plugin skills has known limi
 - Short orchestration-focused descriptions (no "use when..." trigger phrases) to discourage implicit invocation.
 - `disallowedTools: [Edit, Write, NotebookEdit]` to enforce read-only review.
 - `model: sonnet` for cost-efficiency on read-only inspection work.
-- `effort: medium-high` per track complexity.
-- `color: yellow` for visibility in the agent task list.
+- `effort: high` (uniform across all 6 tracks).
+- `maxTurns: 36` for all tracks; `42` for `flow-security-review` (extra variant-hunt turns). Generous limits compensate for MCP-rich toolsets (Serena + Context7 + DeepWiki + Grep) consuming turns on tool plumbing — tight 12-14 caps left only 4-7 effective reasoning turns.
+- Distinct `color` per track for visual differentiation in the task list:
+  - `flow-architecture-review`: `blue`
+  - `flow-quality-review`: `green`
+  - `flow-consistency-review`: `purple`
+  - `flow-integration-review`: `orange`
+  - `flow-verification-review`: `pink`
+  - `flow-security-review`: `red`
 
 Orchestrators (`ry-start`, `ry-review`) invoke them via prose body delegation in their workflow steps.
