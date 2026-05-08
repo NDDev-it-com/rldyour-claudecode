@@ -1,8 +1,9 @@
 # rldyour-claude marketplace state
 
-Last main commit: bbb934b (main, 2026-05-07). Active feature branch:
-`optimize/may-2026-best-practices` (2026-05-08) with 5 atomic commits applying
-May-2026 best-practice findings from ry-explore deep research.
+Last commit: 2e22652 (main, 2026-05-08, fast-forwarded from feature branch
+`optimize/may-2026-best-practices`, 6 atomic commits applying May-2026
+best-practice findings from ry-explore deep research). Feature branch deleted
+after merge. Fullrepo republished at bd66de27 with 5 agent-only files.
 Marketplace name: `rldyour-claude`. Repo: github.com/rldyourmnd/rldyour-claude (private).
 
 ## Layered architecture (verified)
@@ -161,9 +162,10 @@ main (a115b86..bbb934b):
 - bcfa726 feat: declare cross-plugin dependencies in plugin.json
 - bbb934b ci: add claude plugin validate workflow
 
-optimize/may-2026-best-practices (bbb934b..HEAD):
+May-2026 best-practices wave (bbb934b..2e22652, merged 2026-05-08):
 - 3fe9005 refactor(agents): unify reviewer effort/maxTurns/colors and triple ry-explore turns
 - 2631322 chore(plugins): switch plugin.json $schema to schemastore canonical
 - db18b8a feat(mcps): mark serena MCP server alwaysLoad
 - 0f7362b feat(skills): add allowed-tools to skills with explicit toolset
 - 652a49d feat(flow): mark ry-deploy and ry-newp as slash-only
+- 2e22652 docs(flow): align reviewer-protocol with new effort/maxTurns/color matrix
