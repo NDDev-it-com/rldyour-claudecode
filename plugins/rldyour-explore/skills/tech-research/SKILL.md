@@ -24,7 +24,7 @@ Skip when: question is news / current events (use `web-research`), or it's purel
 ## Workflow
 
 1. **Pick the right transport** for the question:
-   - Official docs / API reference → **Context7** (`mcp__context7__resolve-library-id` then `mcp__context7__get-library-docs`)
+   - Official docs / API reference → **Context7** (`mcp__plugin_rldyour-mcps_context7__resolve-library-id` then `mcp__plugin_rldyour-mcps_context7__get-library-docs`)
    - Open-source repo architecture, design rationale → **DeepWiki**
    - Real-world code patterns / production usage at scale → **Grep**
 2. Query the chosen MCP first. Pull exact quotes, file paths, version numbers, section anchors.

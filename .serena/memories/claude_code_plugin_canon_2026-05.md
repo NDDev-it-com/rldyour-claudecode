@@ -4,7 +4,7 @@ Source-backed facts cross-validated against `code.claude.com/docs/en/plugins-ref
 `code.claude.com/docs/en/mcp`, `code.claude.com/docs/en/changelog`, and Anthropic's own
 `claude-plugins-official` repo. Last refresh 2026-05-08 via ry-explore deep research.
 
-Last commit: 750a798 (fix/lsp-canonical-extensions, 2026-05-08). Verification range: v2.1.111-v2.1.135.
+Last commit: 29586bd (docs: scope MCP tool names to plugin_rldyour-mcps_<server>__ in prose, 2026-05-08). Verification range: v2.1.111-v2.1.135.
 
 ## plugin.json schema
 

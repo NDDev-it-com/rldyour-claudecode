@@ -5,7 +5,7 @@ Defensive security workflows: implementation guidance + Mythos-style review.
 ## What's inside
 
 - `2` skills:
-  - `owasp-top-10-implementation` — non-blocking OWASP Top 10 2026 secure coding guidance during implementation (auth/authz, secrets, injection, XSS, SSRF, supply chain, crypto, headers, CORS).
+  - `owasp-top-10-implementation` — non-blocking OWASP Top 10 2025 secure coding guidance during implementation (auth/authz, secrets, injection, XSS, SSRF, supply chain, crypto, headers, CORS).
   - `ry-sec-review` — defensive review for diff/PR/scope. Hypothesis-driven, variant-aware (searches sibling files for the same root cause once a finding lands), source-to-sink tracing. **`disable-model-invocation: true`** — slash-only, audit operations are deliberate.
 - `1` slash command: `/rldyour-security:ry-sec-review`.
 

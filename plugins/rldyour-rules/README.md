@@ -13,7 +13,7 @@ Quality-first engineering rules. Every other plugin defers to these for hard pol
   - `project-instructions-policy` — AGENTS.md, `.claude/CLAUDE.md`, REVIEW.md, MADR 4.0.0 ADR policy.
   - `ry-rules-review` — audit implementation against rldyour rules (**`disable-model-invocation: true`** — slash-only, audit operations are deliberate).
 - `1` slash command: `/rldyour-rules:ry-rules-review`.
-- `6` references: `quality-gates.md`, `architecture-policy.md`, `implementation-discipline.md` (implicit through skill body), `dependency-policy.md`, `project-instructions-and-adrs.md`, `rules-policy.md`, `sources.md`.
+- `6` references: `quality-gates.md`, `architecture-policy.md`, `dependency-policy.md`, `project-instructions-and-adrs.md`, `rules-policy.md` (covers implementation discipline checklist), `sources.md`.
 
 ## Hard rules surfaced from this plugin
 

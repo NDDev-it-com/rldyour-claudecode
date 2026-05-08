@@ -47,7 +47,7 @@ Validate the implementation across these layers when relevant:
 
 ## Playwright Workflow
 
-Use `mcp__playwright__*` tools provided by Playwright MCP:
+Use `mcp__plugin_rldyour-mcps_playwright__*` tools provided by Playwright MCP:
 
 1. Start from a clean or explicit test state.
 2. Navigate to the changed page/flow.

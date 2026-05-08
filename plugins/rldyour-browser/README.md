@@ -12,10 +12,11 @@ Browser workflows over Playwright MCP and Chrome DevTools MCP. Skills-only consu
 
 ## `allowed-tools`
 
-All three skills declare explicit MCP wildcards:
+Two of three skills declare explicit MCP wildcards (the third is a pure routing decision skill with no tool surface):
 
 - `browser-validation`: `mcp__plugin_rldyour-mcps_playwright__*`
-- `browser-debug`: `mcp__plugin_rldyour-mcps_chrome-devtools__* + mcp__plugin_rldyour-mcps_playwright__*`
+- `browser-debug`: `mcp__plugin_rldyour-mcps_chrome-devtools__*` + `mcp__plugin_rldyour-mcps_playwright__*`
+- `browser-tool-routing`: no `allowed-tools` (intentional — pure prose routing, no tool execution)
 
 This pre-approves the relevant MCP tool sets so consumers don't get permission prompts during validation/debug runs.
 

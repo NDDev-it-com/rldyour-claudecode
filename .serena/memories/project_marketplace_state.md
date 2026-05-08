@@ -1,6 +1,6 @@
 # rldyour-claude marketplace state
 
-Last commit: 750a798 (fix/lsp-canonical-extensions, 2026-05-08, awaiting merge to main).
+Last commit: 29586bd (docs: scope MCP tool names to plugin_rldyour-mcps_<server>__ in prose, 2026-05-08).
 Four May-2026 best-practice waves applied:
 - optimize/may-2026-best-practices: 6 commits 3fe9005..2e22652 (merged to main)
 - docs/canonical-may2026: 1 commit ca13470 (merged to main)
@@ -25,7 +25,8 @@ Cross-plugin `dependencies` declared in plugin.json `dependencies: [...]` array.
 - Only `rldyour-mcps` declares `.mcp.json`.
 - Only `rldyour-flow` and `rldyour-serena-mcp` declare `hooks.json`.
 - One domain per plugin; cross-plugin overlap forbidden.
-- `rldyour-browser`/`rldyour-design` are skills-only consumers of transport.
+- `rldyour-browser` is a skills-only consumer of transport (depends on `rldyour-mcps` only).
+- `rldyour-design` depends on `rldyour-mcps` and `rldyour-browser` (declared in `plugins/rldyour-design/.claude-plugin/plugin.json` since commit 25624e5 — design-validation skill delegates to rldyour-browser:browser-validation).
 
 ## Hooks lifecycle (coordination contract)
 
@@ -221,9 +222,9 @@ LSP registration wave (8123e46..36a1788, branches feat/lsp-pyright-registration
 + feat/lsp-full-matrix):
 - 941e179 feat(lsps): register pyright via .lsp.json for native CC LSP support
   — bootstrap fix for the original pyright-lsp recommendation.
-- 36a1788 feat(lsps): register full Codex LSP matrix in .lsp.json (15 languages).
-  - plugins/rldyour-lsps/.lsp.json now contains 15 entries matching the
-    Codex lsp-server-matrix.md (verified against user's ~/.local/bin,
+- 36a1788 feat(lsps): register full LSP matrix in .lsp.json (15 languages).
+  - plugins/rldyour-lsps/.lsp.json now contains 15 entries verified against
+    user's PATH (~/.local/bin,
     /opt/homebrew/bin, ~/.bun/bin, ~/.cargo/bin paths):
     python (pyright-langserver), typescript (typescript-language-server,
     handles js/jsx/mjs/cjs too), rust (rust-analyzer), dart
@@ -259,8 +260,8 @@ LSP registration wave (8123e46..36a1788, branches feat/lsp-pyright-registration
   Helix languages.toml, nvim-lspconfig, Piebald-AI, boostvolt configs:
   - typescript: add .cts and .mts (Anthropic Official has both; modern
     ESM/CommonJS TypeScript module variants).
-  - docker: add ".hcl": "dockerbake" (docker-language-server expects three
-    language IDs — dockerfile, dockercompose, dockerbake; .hcl maps to bake).
+  - docker: add `.hcl`: "dockerbake" (docker-language-server Bake language ID; removed in
+    ba2592a as mis-routing fix — see plugin-dev validation wave below).
   - cpp: add --background-index arg (Anthropic Official clangd config has
     it for performance); add .C/.H uppercase variants (Unix/macOS convention),
     .cu/.cuh (CUDA), .cppm (C++20 modules).
@@ -279,7 +280,7 @@ LSP registration wave (8123e46..36a1788, branches feat/lsp-pyright-registration
   docker/docker-language-server, bash-lsp, artempyanykh/marksman,
   tamasfe/taplo, vscode-langservers-extracted).
 
-Codex-parity wave (a851d99..8123e46, branch feat/codex-port-wave):
+Operations harness wave (a851d99..8123e46, branch feat/codex-port-wave):
 - adb0bc1 docs: root public files (README.md, CHANGELOG.md, VERSION 0.1.0, LICENSE MIT).
 - ff14160 feat(ops): operations harness — scripts/{validate_marketplace.sh,
   validate_plugin_versions.py, validate_instruction_docs.py,
@@ -299,7 +300,25 @@ Codex-parity wave (a851d99..8123e46, branch feat/codex-port-wave):
   claude-plugins-official patterns + EveryInc + MadAppGang + tractorjuice/arc-kit).
 - Tag convention canonical: {plugin-name}--v{version} per docs/en/plugin-dependencies.
 
-Restored Codex-style advisory enforcement (refactor/restore-advisory-hooks):
+Plugin-dev validation wave (ba2592a..29586bd, branch audit/plugin-dev-validation):
+- ba2592a fix(lsps): drop `.hcl` from docker entry in `.lsp.json` (was mis-routing Terraform/Packer
+  .hcl; docker-language-server uses Bake-only .hcl support). Corrected install-profiles.md and
+  serena-lsp-integration.md: CC v2.1.x auto-loads plugin .lsp.json files directly (canonical
+  workaround for Issue #15148); `/reload-plugins` reports "15 plugin LSP servers".
+- 25624e5 fix(design): `rldyour-design/plugin.json` dependencies now `["rldyour-mcps", "rldyour-browser"]`;
+  design-validation skill body delegates to rldyour-browser:browser-validation.
+- a432f26 fix(serena-mcp): `flow-memory-sync` agent gains positive `tools:` allowlist (Serena memory
+  tools + Read/Grep/Glob/Bash); serena-memory-sync SKILL.md allowed-tools reduced to
+  `[mcp__*serena__*, Read, Bash]` (Write/Edit removed); stop_memory_sync.sh IS_CURRENT
+  parse-failure default flipped to `"false"` (fails closed).
+- e60037e docs: README corrections — OWASP Top 10 2026→2025 in rldyour-security; removed reference
+  to nonexistent `implementation-discipline.md (implicit)` in rldyour-rules; clarified 2-of-3
+  skills declare MCP wildcards in rldyour-browser (browser-tool-routing is intentional pure prose).
+- 29586bd docs: 12 files updated across rldyour-browser, rldyour-design, rldyour-explore,
+  rldyour-security — unscoped `mcp__<server>__*` references in prose changed to canonical scoped
+  form `mcp__plugin_rldyour-mcps_<server>__*` matching actual runtime tool IDs.
+
+Advisory enforcement gates restored (refactor/restore-advisory-hooks):
 - Stop hooks are advisory enforcement gates, not executors. Hooks compute
   machine-readable state via serena_memory_state.py / flow_post_task_state.py,
   block Stop with exit 2 when work remains, never perform high-blast-radius

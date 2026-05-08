@@ -10,7 +10,7 @@ Use the `ry-sec-review` skill to perform a defensive Mythos-style security revie
 Workflow the skill enforces:
 
 1. Recon — map changed files, entry points, trust boundaries, data flows. Use Serena first (`get_symbols_overview`, targeted `find_symbol`, `find_referencing_symbols`, `search_for_pattern`) when available.
-2. Baseline scan — Semgrep MCP (`mcp__semgrep__*`) and local security scripts when useful. Never the only evidence.
+2. Baseline scan — Semgrep MCP (`mcp__plugin_rldyour-mcps_semgrep__*`) and local security scripts when useful. Never the only evidence.
 3. Hypothesize against OWASP Top 10 2025 + ASVS 5.0.0 + project-specific threat boundaries.
 4. Trace source-to-sink for high-risk hypotheses; prove or reject with code evidence.
 5. Variant hunt — repeated patterns, sibling bugs, copied logic.
