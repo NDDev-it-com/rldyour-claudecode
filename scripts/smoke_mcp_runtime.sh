@@ -108,10 +108,12 @@ import json, re, sys
 mcp = json.load(open("plugins/rldyour-mcps/.mcp.json"))
 required: set[str] = set()
 for cfg in mcp.get("mcpServers", {}).values():
-    env = cfg.get("env", {})
-    for value in env.values():
-        for match in re.findall(r"\$\{([A-Z0-9_]+)\}", str(value)):
-            required.add(match)
+    # stdio servers expand ${VAR} in env, HTTP servers expand it in headers
+    for block_key in ("env", "headers"):
+        block = cfg.get(block_key, {})
+        for value in block.values():
+            for match in re.findall(r"\$\{([A-Z0-9_]+)\}", str(value)):
+                required.add(match)
 
 documented = set()
 with open("plugins/rldyour-mcps/.env.example", "r", encoding="utf-8") as fp:
