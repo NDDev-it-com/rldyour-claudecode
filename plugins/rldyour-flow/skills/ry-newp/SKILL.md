@@ -1,6 +1,6 @@
 ---
 name: ry-newp
-description: "Дизайн нового проекта: скептические вопросы, research, архитектура docs, опциональный scaffold после approval. Используй для: /ry-newp, новый проект, новый стартап, ТЗ, проект с нуля, project from scratch."
+description: "Дизайн нового проекта: скептические вопросы, research, архитектура docs, опциональный scaffold после approval. Используй для: /rldyour-flow:ry-newp, новый проект, новый стартап, ТЗ, проект с нуля, спроектируй сервис. EN triggers: new project, design new project, brief intake, scaffold project, greenfield project, MVP design, architecture docs, project from scratch."
 disable-model-invocation: true
 ---
 

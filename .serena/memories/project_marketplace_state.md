@@ -1,6 +1,6 @@
 # rldyour-claude marketplace state
 
-Last commit: 3066e7f (feat(ops): Dart SDK 3.9+ gate in bootstrap_check + README note, 2026-05-08).
+Last commit: 5e1c3d4 (feat(commands): bilingual descriptions for /help discoverability, 2026-05-08).
 Four May-2026 best-practice waves applied:
 - optimize/may-2026-best-practices: 6 commits 3fe9005..2e22652 (merged to main)
 - docs/canonical-may2026: 1 commit ca13470 (merged to main)
@@ -165,7 +165,9 @@ workflow_dispatch:
 ## Conventions
 
 - User-facing Russian; English repo artifacts.
-- Skill `description` Russian-leading.
+- Skill `description` Russian-leading; explicit bilingual pattern since wave 12 (ef1b819):
+  `"<purpose>. Используй для: <RU triggers>. EN triggers: <EN triggers>."` applied to all 32 skills.
+  Slash command descriptions also bilingual since 5e1c3d4 (7 commands updated).
 - Conventional Commits, ≤72 chars, single scope `(scope):`.
 - Atomic commits; secrets/runtime/browser artifacts never committed.
 - All MCP server versions pinned (stdio `==X.Y.Z`; HTTP by URL).
@@ -316,6 +318,18 @@ Operations harness wave (a851d99..8123e46, branch feat/codex-port-wave):
 - Wave validated against ry-explore deep research findings (Anthropic
   claude-plugins-official patterns + EveryInc + MadAppGang + tractorjuice/arc-kit).
 - Tag convention canonical: {plugin-name}--v{version} per docs/en/plugin-dependencies.
+
+Wave 12 — bilingual trigger surface (ef1b819..5e1c3d4, 2026-05-08):
+- ef1b819 feat(skills): bilingual trigger surface across all 32 skills. All 8 plugins
+  (rldyour-browser, rldyour-design, rldyour-explore, rldyour-flow, rldyour-lsps,
+  rldyour-rules, rldyour-security, rldyour-serena-mcp) follow the explicit pattern:
+  `"<purpose>. Используй для: <RU triggers>. EN triggers: <EN triggers>."` 32 SKILL.md
+  files changed (1 insertion, 1 deletion each). Plugin-qualified slash literals
+  (e.g. `/rldyour-flow:ry-start`) replace bare `/ry-start` refs in descriptions.
+- 5e1c3d4 feat(commands): bilingual descriptions for 7 slash commands. Files:
+  plugins/rldyour-design/commands/ry-design.md, plugins/rldyour-flow/commands/ry-deploy.md,
+  ry-init.md, ry-newp.md, ry-review.md, ry-start.md, plugins/rldyour-rules/commands/ry-rules-review.md.
+  Each description now contains both Russian sentence and English sentence.
 
 Wave 11 — plugin-validator + skill-reviewer + ry-explore audit fixes (c76487a..3066e7f, 2026-05-08):
 - c76487a fix(flow): ry-start argument-hint + canonical slash `/rldyour-flow:ry-start` + EN keywords.

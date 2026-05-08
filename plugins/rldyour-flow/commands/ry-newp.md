@@ -1,5 +1,5 @@
 ---
-description: "Спроектировать новый проект через ry-newp: скептические вопросы → research → архитектура docs → optional scaffold."
+description: "Спроектировать новый проект через ry-newp: скептические вопросы → research → архитектура docs → optional scaffold. Design a new project from brief intake to architecture docs and optional scaffold."
 argument-hint: <project-idea>
 ---
 

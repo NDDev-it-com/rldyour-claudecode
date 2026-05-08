@@ -1,5 +1,5 @@
 ---
-description: "Запустить полный lifecycle задачи через ry-start: init→research→plan→implement→quality gates→reviewer subagents→post-task sync."
+description: "Запустить полный lifecycle задачи через ry-start: init→research→plan→implement→quality gates→reviewer subagents→post-task sync. Run the full SDLC lifecycle from prompt to reviewed and synchronized state."
 argument-hint: <task>
 ---
 

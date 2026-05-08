@@ -1,6 +1,6 @@
 ---
 name: serena-code-workflow
-description: "Семантический воркфлоу для кода через Serena MCP — приоритет перед raw reads и grep. Используй для: изучи код, проиндексируй проект, найди символы, найди ссылки на символ, рефакторинг, проследи реализацию, инспектируй файл."
+description: "Семантический воркфлоу для кода через Serena MCP — приоритет перед raw reads и grep. Используй для: изучи код, проиндексируй проект, найди символы, найди ссылки на символ, рефакторинг, проследи реализацию, инспектируй файл. EN triggers: navigate code, find symbol, find references, semantic refactor, trace usages, inspect file, code lookup, symbol search, where is X defined."
 allowed-tools:
   - mcp__plugin_rldyour-mcps_serena__*
   - Read

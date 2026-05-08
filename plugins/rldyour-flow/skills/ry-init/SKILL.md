@@ -1,6 +1,6 @@
 ---
 name: ry-init
-description: "Инициализация project scope с Serena-first discovery + fullrepo bootstrap, read-only по умолчанию. Используй для: /ry-init, инициализируй проект, изучи проект, init scope, контекст-пак, scope/sphere/module."
+description: "Инициализация project scope с Serena-first discovery + fullrepo bootstrap, read-only по умолчанию. Используй для: /rldyour-flow:ry-init, инициализируй проект, изучи проект, контекст-пак, scope/sphere/module, разбери репозиторий. EN triggers: init project, scope discovery, project bootstrap, context pack, learn project, study repo, fullrepo init, onboard to repo."
 ---
 
 # ry-init
