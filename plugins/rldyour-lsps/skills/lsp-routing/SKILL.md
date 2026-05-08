@@ -1,6 +1,10 @@
 ---
 name: lsp-routing
 description: "Маршрутизация LSP-воркфлоу для type-check, диагностик, символов, рефакторинга. Используй для: LSP, лсп, language server, type checking, Python/Rust/Dart/TS/Go/C++/Qt/YAML/Docker/HTML/CSS/Shell."
+allowed-tools:
+  - mcp__plugin_rldyour-mcps_serena__*
+  - Bash
+  - Read
 ---
 
 # LSP Routing

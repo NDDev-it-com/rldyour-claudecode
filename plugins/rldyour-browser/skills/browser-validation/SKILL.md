@@ -1,6 +1,8 @@
 ---
 name: browser-validation
 description: "Валидация UI и пользовательских сценариев в браузере через Playwright MCP. Используй для: проверь UI, проверь в браузере, валидируй страницу, скриншот, e2e тест, регрессия, pixel-perfect, адаптив, бизнес-логика, проверь визуально."
+allowed-tools:
+  - mcp__plugin_rldyour-mcps_playwright__*
 ---
 
 # Browser Validation
