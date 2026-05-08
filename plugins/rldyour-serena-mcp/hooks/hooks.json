@@ -6,7 +6,8 @@
           {
             "type": "command",
             "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/user_prompt_submit.sh",
-            "timeout": 5
+            "timeout": 5,
+            "statusMessage": "Loading Serena workflow context"
           }
         ]
       }
@@ -18,7 +19,8 @@
           {
             "type": "command",
             "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/prepare_auto_sync.sh",
-            "timeout": 5
+            "timeout": 5,
+            "statusMessage": "Recording Serena auto-sync baseline"
           }
         ]
       }
@@ -30,7 +32,8 @@
           {
             "type": "command",
             "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/mark_sync_required.sh",
-            "timeout": 5
+            "timeout": 5,
+            "statusMessage": "Marking Serena sync needs"
           }
         ]
       }
@@ -41,7 +44,8 @@
           {
             "type": "command",
             "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/stop_memory_sync.sh",
-            "timeout": 10
+            "timeout": 10,
+            "statusMessage": "Checking Serena memory sync"
           }
         ]
       }
