@@ -1,6 +1,7 @@
 ---
 name: ry-newp
 description: "Дизайн нового проекта: скептические вопросы, research, архитектура docs, опциональный scaffold после approval. Используй для: /ry-newp, новый проект, новый стартап, ТЗ, проект с нуля, project from scratch."
+disable-model-invocation: true
 ---
 
 # ry-newp
