@@ -4,8 +4,6 @@ description: "Синхронизация .serena/memories — fact-only заме
 allowed-tools:
   - mcp__plugin_rldyour-mcps_serena__*
   - Read
-  - Write
-  - Edit
   - Bash
 ---
 
