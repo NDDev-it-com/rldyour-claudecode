@@ -1,6 +1,7 @@
 ---
 name: ry-deploy
 description: "Развёртывание с sync local↔GitHub↔server, проверками логов, fix-forward и docs/git финализацией. Используй для: /ry-deploy, задеплой, deploy, прод, продакшен, деплой на сервер, выкатить."
+disable-model-invocation: true
 ---
 
 # ry-deploy
