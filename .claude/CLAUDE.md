@@ -36,9 +36,9 @@ Required fields for plugin-shipped subagents: `name`, `description`. Plugin-ship
 
 All reviewer agents declare `disallowedTools: [Edit, Write, NotebookEdit]` (read-only). Generous `maxTurns` (×3 of naive limit) compensates MCP-rich toolsets that consume turns on tool plumbing — Serena + Context7 + DeepWiki + Grep eat 5-8 turns before useful work begins.
 
-| flow-memory-sync (rldyour-serena-mcp) | sonnet | high | 36 | yellow | fact-only Serena memory sync — invoked from main session via Agent tool with diff payload |
+| flow-memory-sync (rldyour-serena-mcp) | sonnet | high | 36 | yellow | fact-only Serena memory sync, fired by Stop hook `type: agent` handler |
 
-`flow-memory-sync` is a plugin-shipped subagent with narrow tool access (Serena memory tools — `write_memory`/`edit_memory`/`delete_memory`/`rename_memory` — plus read-only `Read`/`Grep`/`Glob`/`Bash`; `disallowedTools: [Edit, Write, NotebookEdit]`). Anti-hallucination contract enforced via body: source-of-truth hierarchy code > tests > git diff > existing memories; citation required per claim; removal-first principle for unverifiable claims; `Last commit: <HEAD_SHA>` line mandatory in every touched memory; `commit_serena_knowledge.sh` runs internally; final JSON report. Stop hook advisory (`stop_memory_sync.sh`) points at this subagent rather than asking the main session to inline-edit memories. Plugin agents are loaded at session start — restart Claude Code after creating or editing the agent file before invoking via `subagent_type: "rldyour-serena-mcp:flow-memory-sync"`.
+`flow-memory-sync` is a plugin-shipped subagent with narrow tool access (Serena memory tools — `write_memory`/`edit_memory`/`delete_memory`/`rename_memory` — plus read-only `Read`/`Grep`/`Glob`/`Bash`; `disallowedTools: [Edit, Write, NotebookEdit]`). Anti-hallucination contract enforced via body: source-of-truth hierarchy code > tests > git diff > existing memories; citation required per claim; removal-first principle for unverifiable claims; `Last commit: <HEAD_SHA>` line mandatory in every touched memory; `commit_serena_knowledge.sh` runs internally; final JSON report. The Serena Stop hook (`hooks.json`) runs two parallel handlers: a bash gate that records the sync fingerprint, and a `type: agent` handler that fires this subagent inline — payload reaches the prompt via `$ARGUMENTS`. Plugin agents are loaded at session start; the agent file lives in `plugins/rldyour-serena-mcp/agents/`.
 
 ## Hooks Lifecycle
 
@@ -54,7 +54,14 @@ Two plugins coordinate hooks. `flow.stop_post_task_sync.sh` waits for `serena_cu
 | Stop | rldyour-serena-mcp | `hooks/stop_memory_sync.sh` | 10s |
 | Stop | rldyour-flow | `hooks/stop_post_task_sync.sh` | 10s |
 
-All hooks are advisory — emit `hookSpecificOutput.additionalContext`, exit `0` on errors, never block tool use. Skip flags during local debugging: `RLDYOUR_SKIP_FLOW_SESSION_CONTEXT=1` (SessionStart), `RLDYOUR_SKIP_FLOW_COMMIT_ADVICE=1` (PostToolUse:Bash flow), `RLDYOUR_SKIP_STOP_GATES=1` (both Stop hooks), `RLDYOUR_SKIP_FLOW_SYNC=1` (flow Stop only), `RLDYOUR_SKIP_SERENA_SYNC=1` (Serena Stop only).
+Stop hooks are **fully automatic** post-task pipeline:
+
+1. **Serena Stop hook** runs two parallel handlers — a `command` gate (early-exit if `is_current=true` or loop guard matches) and a `type: agent` handler (Sonnet 4.6, 600s timeout) that synchronises `.serena/memories/*.md` against HEAD using only Serena memory tools, with anti-hallucination contract baked into the prompt.
+2. **Flow Stop hook** waits for `serena_current=true`, then `stop_post_task_sync.sh` runs the deterministic git pipeline: push feature → ff-merge into `main` → push `main` → delete merged feature branch (local + remote) → `fullrepo_sync.py --publish` (uses `--force-with-lease`, only on `fullrepo`) → cleanup merged worktrees / remote branches identified by `flow_post_task_state.py`.
+
+The pipeline aborts (`exit 2`) only on real blockers: dirty non-agent files (model is expected to commit before signalling Stop), non-fast-forward merge required, or no `main`/`master` branch found. Loop guard: `.serena/.sync_marker` and `.serena/.flow_sync_marker` carry fingerprints; if `stop_hook_active=true` and the fingerprint matches, the chain allows stop without re-running.
+
+Skip flags during local debugging: `RLDYOUR_SKIP_FLOW_SESSION_CONTEXT=1` (SessionStart), `RLDYOUR_SKIP_FLOW_COMMIT_ADVICE=1` (PostToolUse:Bash flow), `RLDYOUR_SKIP_STOP_GATES=1` (both Stop hooks), `RLDYOUR_SKIP_FLOW_SYNC=1` (flow Stop only), `RLDYOUR_SKIP_SERENA_SYNC=1` (Serena Stop only).
 
 ## Skill Listing Budget
 

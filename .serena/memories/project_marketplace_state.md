@@ -1,6 +1,6 @@
 # rldyour-claude marketplace state
 
-Last commit: 772f6e8 (feat/memory-sync-subagent, 2026-05-08, NOT YET merged to main).
+Last commit: 2ace4a0 (feat/auto-stop-pipeline, 2026-05-08, awaiting merge to main).
 Four May-2026 best-practice waves applied:
 - optimize/may-2026-best-practices: 6 commits 3fe9005..2e22652 (merged to main)
 - docs/canonical-may2026: 1 commit ca13470 (merged to main)
@@ -211,25 +211,29 @@ Polish wave (ca13470..f23765d, merged 2026-05-08):
 - .claude/CLAUDE.md grew by 1 line (124 total) documenting the validated pattern
   of mixing built-in tools and MCP wildcards in allowed-tools.
 
-Memory-sync wave (f23765d..772f6e8, branch feat/memory-sync-subagent):
+Memory-sync subagent + auto-pipeline waves:
+
+Wave 1 (f23765d..772f6e8, branch feat/memory-sync-subagent, merged):
 - 772f6e8 feat(serena-mcp): add flow-memory-sync subagent for fact-only sync.
-  - NEW: plugins/rldyour-serena-mcp/agents/flow-memory-sync.md (151 lines, sonnet/high/36/yellow).
-  - MODIFIED: stop_memory_sync.sh advisory text — now points main agent to
-    invoke rldyour-serena-mcp:flow-memory-sync via Agent tool (instead of
-    generic instructions to run serena-memory-sync workflow).
-  - MODIFIED: flow-post-task-sync skill workflow step 1 — delegates memory
-    sync to the subagent so anti-hallucination guards apply uniformly.
-  - Hook STRUCTURE intentionally unchanged (kept type:command + advisory + exit 2).
-    Research findings:
-    * type:agent reference syntax {agent: name} is undocumented in CC v2.1.133
-      (production plugins use it, but spec only documents inline prompt form).
-    * Multiple handlers in one matcher block fire IN PARALLEL, not sequential —
-      breaks intended gate-then-agent chaining.
-    * AskUserQuestion unavailable in subagents (Issue #12890 closed not_planned),
-      so subagent cannot do confirmation gates for destructive ops.
-    * Auto-merge to main / auto-push from Stop hook is anti-pattern across
-      production plugins (0 examples in Anthropic plugins-official, community
-      consensus warns of remote-history destruction risks per Issues #33402,
-      #30475, #13009).
-  - Result: surgical change with controllable invocation, not opaque automation.
-    Subagent gets durable definition with hard anti-hallucination contract.
+  - NEW: plugins/rldyour-serena-mcp/agents/flow-memory-sync.md
+    (sonnet/high/36/yellow, anti-hallucination contract in body).
+  - MODIFIED: stop_memory_sync.sh + flow-post-task-sync skill (intermediate
+    step — replaced in Wave 2 by full automation).
+
+Wave 2 (772f6e8..2ace4a0, branch feat/auto-stop-pipeline):
+- Stop hooks now fully automatic, no main-session intervention required.
+- Serena Stop hook (hooks.json): two parallel handlers in one matcher block.
+  Handler 1 — bash gate (stop_memory_sync.sh): early-exit if memories current
+  or loop guard matches, otherwise records sync fingerprint and exits 0.
+  Handler 2 — type:agent (Sonnet 4.6, 600s timeout): inline prompt invokes
+  flow-memory-sync workflow with $ARGUMENTS payload, runs Serena memory
+  tools to update memories fact-only, commits via commit_serena_knowledge.sh.
+- Flow Stop hook (stop_post_task_sync.sh): pure deterministic bash pipeline.
+  Waits for serena_current=true, then: push feature -> ff-merge into main ->
+  push main -> delete merged feature branch (local+remote) ->
+  fullrepo_sync.py --publish -> cleanup merged worktrees and remote branches
+  identified by flow_post_task_state. Aborts (exit 2) only on dirty non-agent
+  files, non-ff merge requirement, or missing default branch.
+- Result: ry-start -> task complete -> Stop -> memories synced -> git pushed
+  -> main updated -> fullrepo published -> branches cleaned up — all without
+  main agent doing manual git operations.
