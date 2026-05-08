@@ -1,5 +1,5 @@
 ---
-description: "Запустить аудит реализации против rldyour rules через ry-rules-review (report-only по умолчанию)."
+description: "Запустить аудит реализации против rldyour rules через ry-rules-review (report-only по умолчанию). Audit the implementation against rldyour rules (report-only by default)."
 argument-hint: <scope>
 ---
 
