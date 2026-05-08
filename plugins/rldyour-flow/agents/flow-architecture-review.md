@@ -3,12 +3,12 @@ name: flow-architecture-review
 description: Orchestrated architecture-review subagent invoked by /ry-start or /ry-review review phase only. Reviews boundary, dependency direction, module shape, public API surface, and data flow against the detected architecture pattern. Read-only — no file edits. Self-contained prompt expected from the orchestrator.
 model: sonnet
 effort: high
-maxTurns: 12
+maxTurns: 36
 disallowedTools:
   - Edit
   - Write
   - NotebookEdit
-color: yellow
+color: blue
 ---
 
 # Flow Architecture Review
