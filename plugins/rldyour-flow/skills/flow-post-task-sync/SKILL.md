@@ -1,6 +1,6 @@
 ---
 name: flow-post-task-sync
-description: "Финализация задачи: Serena memories, agent-only files, fullrepo, git/GitHub, branches, worktrees. Используй после ry-start/review/deploy/newp; триггеры: заверши задачу, синхронизируй, post-task sync, Stop hook advisory, fullrepo publish, ff-merge to main, branch cleanup."
+description: "Финализация задачи: Serena memories, agent-only files, fullrepo, git/GitHub, branches, worktrees. Используй после ry-start/review/deploy/newp. Используй для: заверши задачу, синхронизируй, финализируй, обнови git и docs, очисти ветки. EN triggers: post-task sync, Stop hook advisory, fullrepo publish, ff-merge to main, branch cleanup, finalize task, end-of-task sync."
 allowed-tools:
   - Bash
   - Read

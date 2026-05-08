@@ -1,6 +1,6 @@
 ---
 name: dependency-compatibility-policy
-description: "Политика зависимостей: latest-compatible, source-backed, SLSA Level 2, SBOM, lockfile discipline. Используй для: зависимости, версии, package updates, миграция, совместимость, supply chain."
+description: "Политика зависимостей: latest-compatible, source-backed, SLSA Level 2, SBOM, lockfile discipline. Используй для: зависимости, версии, обнови пакет, миграция версий, совместимость, цепочка поставок. EN triggers: bump dependencies, package version policy, latest-compatible, lockfile discipline, supply chain check, SLSA level 2, SBOM."
 ---
 
 # Dependency Compatibility Policy

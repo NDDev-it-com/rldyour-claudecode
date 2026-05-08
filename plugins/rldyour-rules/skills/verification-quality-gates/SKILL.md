@@ -1,6 +1,6 @@
 ---
 name: verification-quality-gates
-description: "Гейты качества перед delivery: тесты, lint (ruff/ESLint v9/Biome), types (pyright), LSP, browser/security/design. Используй для: проверки, тесты, линтер, типы, качество, evidence."
+description: "Гейты качества перед delivery: тесты, lint (ruff/ESLint v9/Biome), types (pyright), LSP, browser/security/design. Используй для: проверки, тесты, линтер, типы, качество, доказательства. EN triggers: quality gates, run tests, run linter, type check, run LSP checks, run all checks, verify before delivery, evidence-based pass."
 ---
 
 # Verification Quality Gates

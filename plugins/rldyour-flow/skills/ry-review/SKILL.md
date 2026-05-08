@@ -1,6 +1,6 @@
 ---
 name: ry-review
-description: "Отчётное (report-only) глубокое ревью diff/PR/scope с reviewer tracks. Используй для: /ry-review, проверь реализацию, сделай ревью, найди проблемы, audit diff, code review, инспекция кода."
+description: "Отчётное (report-only) глубокое ревью diff/PR/scope с reviewer tracks. Используй для: /rldyour-flow:ry-review, проверь реализацию, сделай ревью, найди проблемы, инспекция кода, проанализируй diff. EN triggers: review diff, review PR, code review, audit changes, find issues, deep review, report-only review, multi-track review."
 ---
 
 # ry-review
