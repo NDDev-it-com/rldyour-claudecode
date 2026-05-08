@@ -126,4 +126,4 @@ If multiple findings, repeat the Finding section per finding. Always include the
 
 ## Resource budget
 
-You have `maxTurns: 30` and a 1M-token context window. Use them. Spread phases across turns. Don't deliver a half-researched answer just to finish quickly — the whole point of this agent is depth.
+You have `maxTurns: 90` and a 1M-token context window. Use them. Spread phases across turns. Don't deliver a half-researched answer just to finish quickly — the whole point of this agent is depth.

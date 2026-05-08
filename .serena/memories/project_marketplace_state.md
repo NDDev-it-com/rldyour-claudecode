@@ -1,9 +1,9 @@
 # rldyour-claude marketplace state
 
-Last commit: 2e22652 (main, 2026-05-08, fast-forwarded from feature branch
-`optimize/may-2026-best-practices`, 6 atomic commits applying May-2026
-best-practice findings from ry-explore deep research). Feature branch deleted
-after merge. Fullrepo republished at bd66de27 with 5 agent-only files.
+Last commit: ca13470 (main, 2026-05-08, fix(explore): body maxTurns alignment
+after canonical docs rewrite). Two May-2026 best-practice waves landed on main:
+optimize/may-2026-best-practices (6 commits 3fe9005..2e22652) + docs/canonical-may2026
+(1 commit ca13470). Both feature branches deleted after fast-forward merge.
 Marketplace name: `rldyour-claude`. Repo: github.com/rldyourmnd/rldyour-claude (private).
 
 ## Layered architecture (verified)
@@ -169,3 +169,16 @@ May-2026 best-practices wave (bbb934b..2e22652, merged 2026-05-08):
 - 0f7362b feat(skills): add allowed-tools to skills with explicit toolset
 - 652a49d feat(flow): mark ry-deploy and ry-newp as slash-only
 - 2e22652 docs(flow): align reviewer-protocol with new effort/maxTurns/color matrix
+
+Canonical docs wave (2e22652..ca13470, merged 2026-05-08, agent-only files
+not in git history but published to fullrepo):
+- AGENTS.md trimmed: removed Skill Listing Budget section (Claude Code-specific),
+  added cross-ref + maintainer/living-doc HTML comments. 150 → 152 lines.
+- .claude/CLAUDE.md aggressively rewritten: removed Slash Commands table,
+  MCP Transport, Architecture Layers, Fullrepo Branch Policy (full duplicates
+  with AGENTS.md). Kept Plugins And Components, Subagent Frontmatter Matrix,
+  Hooks Lifecycle (with Timeout column), Skill Listing Budget, Hook Events Canon,
+  Engineering Conventions, Don't, Done Criteria. 206 → 123 lines (-40%).
+- ca13470 fix(explore): align ry-explore body maxTurns:90 with frontmatter
+  (caught by flow-integration-review).
+- All 5 RLDYOUR_SKIP_* flags now documented (was 3).

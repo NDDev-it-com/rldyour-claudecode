@@ -1,13 +1,8 @@
 # Claude Code Project Memory — rldyour-claude
 
-Personal Claude Code plugin marketplace authored by `rldyourmnd`. This file is project memory for Claude Code sessions working inside this repository. It is agent-only and lives on the `fullrepo` branch; it must not be committed to `main`.
+Personal Claude Code plugin marketplace by `rldyourmnd`. Cross-tool overview, source-of-truth manifests, plugin layers, and CLI commands live in `./AGENTS.md`. This file (`./.claude/CLAUDE.md`) is the Claude Code-native deep memory: subagent matrix, hook canon, skill-listing budget, frontmatter conventions, and Don't/Done rules. Both files are agent-only, live on the `fullrepo` branch, and are excluded from `main` via `.git/info/exclude`.
 
-## What This Repo Is
-
-- A Claude Code marketplace (`./.claude-plugin/marketplace.json`, name `rldyour-claude`, `pluginRoot: ./plugins`).
-- Nine first-party plugins all at `version: 0.1.0`, source form `./plugins/<name>`.
-- No application runtime, no test suite, no build step. Every artifact is plugin metadata, skills, agents, slash commands, hooks, scripts, or references.
-- `AGENTS.md` at repo root is the concise cross-tool root project-instruction file (https://agents.md/); this `.claude/CLAUDE.md` is the Claude Code-native deep memory complement. Both are agent-only and live on the `fullrepo` branch.
+<!-- Maintainer notes (HTML comments are stripped from Claude's context per CC v2.1.72): keep this file under 200 lines per Anthropic official guidance (code.claude.com/docs/en/memory). Project CLAUDE.md re-injects after /compact and is inherited by every subagent — every line is a recurring token cost. Update only when discovering durable Claude Code-specific facts; cross-tool facts belong in AGENTS.md. -->
 
 ## Plugins And Components
 
@@ -23,138 +18,45 @@ rldyour-lsps         lsp           4 skills • 0 cmds • 0 agents • 0 hooks 
 rldyour-rules        rules         7 skills • 1 cmd  • 0 agents • 0 hooks  • 6 references
 ```
 
-Total: 32 skills, 9 slash commands, 7 subagents.
+Total: 32 skills, 9 slash commands, 7 subagents. Slash commands (SDLC + tool-routing), plugin dependency graph, MCP transport detail, and fullrepo branch policy are listed in `./AGENTS.md`.
 
-## Slash Commands
+## Subagent Frontmatter Matrix
 
-| Command | Plugin | Purpose |
-|---|---|---|
-| `/rldyour-flow:ry-init` | flow | read-only scope discovery and context pack |
-| `/rldyour-flow:ry-start` | flow | full task lifecycle (init→research→plan→implement→gates→review→sync) |
-| `/rldyour-flow:ry-newp` | flow | new-project design with skeptical questions and architecture docs |
-| `/rldyour-flow:ry-review` | flow | report-only deep review with reviewer tracks |
-| `/rldyour-flow:ry-deploy` | flow | deploy with local↔GitHub↔server sync and fix-forward |
-| `/rldyour-explore:ry-explore` | explore | deep multi-source research via `ry-explore` agent (opus[1m], max effort, `context: fork`) |
-| `/rldyour-security:ry-sec-review` | security | defensive Mythos-style security review |
-| `/rldyour-design:ry-design` | design | end-to-end Figma→code→tokens→FSD→shadcn/ui→ReactBits→browser validation |
-| `/rldyour-rules:ry-rules-review` | rules | audit implementation against rldyour rules |
+Required fields for plugin-shipped subagents: `name`, `description`. Plugin-shipped subagents silently ignore `hooks`, `mcpServers`, and `permissionMode` — copy to `.claude/agents/` if those are needed.
 
-## Subagents
+| Agent | model | effort | maxTurns | color | role |
+|---|---|---|---|---|---|
+| flow-architecture-review | sonnet | high | 36 | blue | boundaries, dependency direction, public API |
+| flow-quality-review | sonnet | high | 36 | green | correctness, edge cases, lifecycle |
+| flow-consistency-review | sonnet | high | 36 | purple | naming, style, project conventions |
+| flow-integration-review | sonnet | high | 36 | orange | cross-module sync, contracts |
+| flow-verification-review | sonnet | high | 36 | pink | tests, LSP, browser/server evidence |
+| flow-security-review | sonnet | high | 42 | red | defensive auth/authz/secrets/injection |
+| ry-explore | opus[1m] | max | 90 | cyan | deep multi-source research, `context: fork` |
 
-`plugins/rldyour-flow/agents/flow-*-review.md` — six reviewer subagents invoked from `ry-start` and `ry-review`:
-
-- `flow-architecture-review` — boundaries, dependency direction, public API surface, data flow.
-- `flow-quality-review` — correctness, edge cases, error handling, resource lifecycle.
-- `flow-consistency-review` — naming, style, imports, project conventions.
-- `flow-integration-review` — cross-module sync, contracts, schemas, migrations.
-- `flow-verification-review` — test coverage, LSP, type/lint, browser/server evidence.
-- `flow-security-review` — defensive-only auth/authz, validation, secrets, deploy/rollback safety.
-
-All reviewer subagents: `model: sonnet`, `effort: high`, `maxTurns: 36` (security: `42`), `disallowedTools: [Edit, Write, NotebookEdit]`, distinct colors (architecture: blue, quality: green, consistency: purple, integration: orange, verification: pink, security: red). Generous `maxTurns` is intentional — MCP-rich toolsets (Serena + Context7 + DeepWiki + Grep) consume turns on tool plumbing; tight 12-14 turn limits left only 4-7 effective reasoning turns.
-
-`plugins/rldyour-explore/agents/ry-explore.md` — single research agent with `model: opus[1m]`, `effort: max`, `maxTurns: 90`, `disallowedTools: [Edit, Write, NotebookEdit]`, `color: cyan`. Triggered by the `/rldyour-explore:ry-explore` slash command (`context: fork`).
+All reviewer agents declare `disallowedTools: [Edit, Write, NotebookEdit]` (read-only). Generous `maxTurns` (×3 of naive limit) compensates MCP-rich toolsets that consume turns on tool plumbing — Serena + Context7 + DeepWiki + Grep eat 5-8 turns before useful work begins.
 
 ## Hooks Lifecycle
 
-Two plugins own hooks. Coordination contract: `flow.stop_post_task_sync.sh` waits for `serena_current=true` reported by Serena's Stop hook before running.
+Two plugins coordinate hooks. `flow.stop_post_task_sync.sh` waits for `serena_current=true` from the Serena Stop hook before running. Loop guard: `.serena/.flow_sync_marker` writes a fingerprint of (HEAD, dirty files, ahead/behind, branch, Serena freshness). If `stop_hook_active=true` and the fingerprint matches, the hook allows stop.
 
-| Event | Owner | Script |
-|---|---|---|
-| UserPromptSubmit | rldyour-serena-mcp | `hooks/user_prompt_submit.sh` |
-| PreToolUse:Bash | rldyour-serena-mcp | `hooks/prepare_auto_sync.sh` |
-| PostToolUse:Bash | rldyour-serena-mcp | `hooks/mark_sync_required.sh` |
-| PostToolUse:Bash | rldyour-flow | `hooks/post_tool_use_commit_advice.sh` |
-| SessionStart | rldyour-flow | `hooks/session_start_context.sh` |
-| Stop | rldyour-serena-mcp | `hooks/stop_memory_sync.sh` |
-| Stop | rldyour-flow | `hooks/stop_post_task_sync.sh` |
+| Event | Owner | Script | Timeout |
+|---|---|---|---|
+| UserPromptSubmit | rldyour-serena-mcp | `hooks/user_prompt_submit.sh` | 5s |
+| PreToolUse:Bash | rldyour-serena-mcp | `hooks/prepare_auto_sync.sh` | 5s |
+| PostToolUse:Bash | rldyour-serena-mcp | `hooks/mark_sync_required.sh` | 5s |
+| PostToolUse:Bash | rldyour-flow | `hooks/post_tool_use_commit_advice.sh` | 5s |
+| SessionStart | rldyour-flow | `hooks/session_start_context.sh` | 5s |
+| Stop | rldyour-serena-mcp | `hooks/stop_memory_sync.sh` | 10s |
+| Stop | rldyour-flow | `hooks/stop_post_task_sync.sh` | 10s |
 
-All hooks are advisory: they emit `hookSpecificOutput.additionalContext` and exit `0` on internal errors. They never block tool use. Skip flags during local debugging: `RLDYOUR_SKIP_FLOW_SESSION_CONTEXT=1`, `RLDYOUR_SKIP_STOP_GATES=1`, `RLDYOUR_SKIP_FLOW_SYNC=1`.
-
-Loop guard: `flow.stop_post_task_sync.sh` writes `.serena/.flow_sync_marker` with a fingerprint of (HEAD, dirty files, ahead/behind, branch, Serena freshness). If `stop_hook_active=true` and the same fingerprint is in the marker, the hook allows stop.
-
-## MCP Transport
-
-`plugins/rldyour-mcps/.mcp.json` is the single source of MCP servers for the whole marketplace. Run `/mcp` to inspect status. Pinned servers:
-
-- `serena` — `uvx serena-agent==1.2.0` with `--context=agent` (canonical for generic CLI agents like Claude Code; exposes 45 of 46 Serena tools, only excludes the redundant `initial_instructions` tool). Web dashboard disabled. **`alwaysLoad: true`** (v2.1.121+) — eager startup; Serena drives every UserPromptSubmit hook and code workflow, so deferring it adds latency.
-- `sequential-thinking` — `bunx @modelcontextprotocol/server-sequential-thinking@2025.12.18`.
-- `playwright` — `bunx @playwright/mcp@0.0.74 --headless --caps=network,storage,testing,devtools`.
-- `chrome-devtools` — `bunx chrome-devtools-mcp@0.25.0 --headless --isolated`.
-- `context7` — `bunx @upstash/context7-mcp@2.2.4`. Requires `CONTEXT7_API_KEY`.
-- `deepwiki` — HTTP `https://mcp.deepwiki.com/mcp`.
-- `grep` — HTTP `https://mcp.grep.app`.
-- `semgrep` — `uvx semgrep==1.161.0 mcp`.
-- `shadcn` — `bunx shadcn@4.7.0 mcp`.
-- `dart-flutter` — `dart mcp-server --force-roots-fallback`.
-- `figma` — HTTP `https://mcp.figma.com/mcp`.
-- `openai-docs` — HTTP `https://developers.openai.com/mcp`.
-- `github` — `github-mcp-server stdio`. Requires `GITHUB_PERSONAL_ACCESS_TOKEN`.
-
-Timeouts are controlled by Claude Code env vars (canonical per `code.claude.com/docs/en/mcp`):
-- `MCP_TIMEOUT` — startup timeout for any MCP server (e.g. `MCP_TIMEOUT=10000`).
-- `MCP_TOOL_TIMEOUT` — per-tool-call timeout.
-- `MAX_MCP_OUTPUT_TOKENS` — increases the 10k-token tool-output warning threshold.
-- `MCP_CONNECTION_NONBLOCKING=1` — non-blocking startup for slow servers (per-server `alwaysLoad: true` opts back into blocking).
-
-Per-server `startup_timeout_sec`/`tool_timeout_sec` keys are NOT in the documented `.mcp.json` schema. Do not re-add them — they are silently ignored.
-
-## Architecture Layers
-
-1. Transport — `rldyour-mcps`.
-2. Semantic code — `rldyour-serena-mcp` (depends on `rldyour-mcps`).
-3. SDLC orchestrator — `rldyour-flow` (depends on `rldyour-mcps`, `rldyour-serena-mcp`).
-4. Domain plugins — `rldyour-explore`, `rldyour-security`, `rldyour-browser`, `rldyour-design`, `rldyour-lsps` (each depends on `rldyour-mcps`).
-5. Engineering rules — `rldyour-rules` (depends on `rldyour-mcps`).
-
-Dependencies are declared in each `plugin.json` under `"dependencies": ["..."]` (array form per docs at `code.claude.com/docs/en/plugins-reference#metadata-fields`). `claude plugin install <plugin>` resolves transitive installs and reports conflicts.
-
-Hard boundaries:
-
-- Only `rldyour-mcps` declares `.mcp.json`.
-- Only `rldyour-flow` and `rldyour-serena-mcp` declare `hooks.json`.
-- One domain per plugin; cross-plugin overlap is forbidden.
-- `rldyour-browser` and `rldyour-design` are skills-only consumers of the transport layer.
-
-## Fullrepo Branch Policy
-
-`fullrepo` is the portable AI-context branch. It carries the normal tree plus agent-only files. `main` never carries agent-only files. Patterns are defined in `plugins/rldyour-flow/scripts/fullrepo_sync.py` (`AGENT_ONLY_PATTERNS`):
-
-- root `AGENTS.md`, `CLAUDE.md`, `REVIEW.md`, `GEMINI.md`, `QWEN.md`;
-- `.cursorrules`, `.windsurfrules`, `.aider*`;
-- `.claude/**`, `.cursor/rules/**`, `.gemini/**`, `.roo/**`, `.windsurf/**`, `.openhands/**`;
-- `.github/copilot-instructions.md`, `.github/instructions/**`, `.github/prompts/**`;
-- `.agents/skills/**`, `.agents/commands/**`, `.agents/hooks/**`;
-- `.serena/project.yml`, `.serena/memories/**`, `.serena/plans/**`, `.serena/research/**`, `.serena/newproj/**`, `.serena/deploy/**`.
-
-Runtime markers (never published, ignored by git): `.serena/cache/`, `.serena/.gitignore`, `.serena/project.local.yml`, `.serena/.sync_marker`, `.serena/.serena_sync_state.json`, `.serena/.auto_sync_head`, `.serena/.active_workflow_intent.json`, `.serena/.dirty_stop_ack`, `.serena/.flow_sync_marker`, `.serena/.flow_post_task_state.json`.
-
-Common operations:
-
-- `python3 plugins/rldyour-flow/scripts/fullrepo_sync.py --bootstrap-init` — first-time setup on a new machine.
-- `python3 plugins/rldyour-flow/scripts/fullrepo_sync.py --status-json` — machine-readable sync state.
-- `python3 plugins/rldyour-flow/scripts/fullrepo_sync.py --publish` — refresh `fullrepo` after agent-only changes (`--force-with-lease`).
-- `python3 plugins/rldyour-flow/scripts/fullrepo_sync.py --restore` — restore agent-only files from `origin/fullrepo`.
-- `python3 plugins/rldyour-flow/scripts/fullrepo_sync.py --migrate-main` — `git rm --cached` agent-only files left in the index.
-
-## Validation And Diagnostics
-
-- `claude plugin validate <path>` — run from repo root after editing any `marketplace.json` or `plugin.json`. CI mirrors this in `.github/workflows/validate.yml` on every PR.
-- `claude plugin tag --push` (v2.1.119+) — validated tagging with version-consistency check between `plugin.json` and marketplace entry; refuses dirty worktree or already-existing tag. Use for releases.
-- `claude plugin prune` (v2.1.121+) — removes auto-installed dependencies no longer required by any installed plugin. `claude plugin uninstall <plugin> --prune` cascades the removal.
-- Minimum Claude Code version: **v2.1.111+** for the `model: opus[1m]` bracketed syntax in agent frontmatter (`ry-explore`). Earlier versions silently ignore it. Current local: **v2.1.133**.
-- `bash plugins/rldyour-flow/scripts/git_sync_audit.sh` — branch, upstream, ahead/behind, worktrees, merged-branch cleanup candidates.
-- `python3 plugins/rldyour-flow/scripts/instruction_docs_state.py --json` — whether `AGENTS.md` and `.claude/CLAUDE.md` need review.
-- `python3 plugins/rldyour-flow/scripts/flow_post_task_state.py` — fingerprint of dirty state, Serena freshness, branch cleanup candidates.
-- `bash plugins/rldyour-flow/scripts/detect_project_checks.sh` — detect available product-side quality checks (this repo has none by design).
-- `bash plugins/rldyour-lsps/scripts/check_lsps.sh` — LSP health check across supported languages (used in consumer projects, not here).
-
-Useful Claude Code slash commands during work in this repo: `/mcp` (transport status), `/doctor` (env health), `/status` (session state), `/context` (current context), `/hooks` (active hooks), `/memory` (memory status).
+All hooks are advisory — emit `hookSpecificOutput.additionalContext`, exit `0` on errors, never block tool use. Skip flags during local debugging: `RLDYOUR_SKIP_FLOW_SESSION_CONTEXT=1` (SessionStart), `RLDYOUR_SKIP_FLOW_COMMIT_ADVICE=1` (PostToolUse:Bash flow), `RLDYOUR_SKIP_STOP_GATES=1` (both Stop hooks), `RLDYOUR_SKIP_FLOW_SYNC=1` (flow Stop only), `RLDYOUR_SKIP_SERENA_SYNC=1` (Serena Stop only).
 
 ## Skill Listing Budget
 
-Claude Code shows a finite slice of every skill's `description` in its triggering listing. Defaults: per-entry combined `description` + `when_to_use` cap **1,536 chars** (raised from 250 in v2.1.128); aggregate budget **1% of context window** with 8,000-char fallback. With 32+ skills the default 1% budget truncates tail-end descriptions and Claude can no longer auto-trigger them.
+Per-entry combined `description` + `when_to_use` cap: **1,536 chars** (raised from 250 in CC v2.1.128). Aggregate budget defaults to **1% of context window** with 8,000-char fallback. With 32+ skills the default budget truncates tail-end descriptions and Claude can no longer auto-trigger them.
 
-User-side fix lives in `~/.claude/settings.json`:
+User-side fix in `~/.claude/settings.json`:
 
 ```json
 {
@@ -163,44 +65,59 @@ User-side fix lives in `~/.claude/settings.json`:
 }
 ```
 
-Both keys added in v2.1.129+. `skillListingBudgetFraction` is a decimal fraction in `(0, 1]` (the validator rejects integers and `> 1`). Override at runtime with `SLASH_COMMAND_TOOL_CHAR_BUDGET` env var (raw chars). Free budget by setting low-priority entries to `"name-only"` in `skillOverrides` — but note that `skillOverrides` does **not** affect plugin-shipped skills; manage those through `/plugin`.
+Both keys added in CC v2.1.129+. `skillListingBudgetFraction` is a decimal fraction in `(0, 1]`. Runtime override: `SLASH_COMMAND_TOOL_CHAR_BUDGET` env var (raw chars). `skillOverrides` map (`"on" | "name-only" | "user-invocable-only" | "off"`) does **not** affect plugin-shipped skills — manage those through `/plugin`.
 
-Plugin-side levers (used in this repo):
-- `disable-model-invocation: true` on `skills/ry-deploy/SKILL.md` and `skills/ry-newp/SKILL.md` — they only fire via slash command, freeing budget for auto-triggered skills.
+Plugin-side levers used in this repo:
+- `disable-model-invocation: true` on `skills/ry-deploy/SKILL.md` and `skills/ry-newp/SKILL.md` — slash-only, freeing budget for auto-triggered skills.
 - `allowed-tools` on 10 skills with explicit toolsets — eliminates per-call permission prompts during work without touching listing budget.
 
 ## Hook Events Canon
 
-Claude Code v2.1.x publishes **30 canonical hook events** (per `code.claude.com/docs/en/hooks`). Per-event matcher support, blocking ability, and plugin support detailed in the official docs. Five handler types: `command`, `http`, `mcp_tool` (v2.1.118+), `prompt`, `agent`. Prompt/agent handlers spawn LLM evaluation or full subagent verification — used for runtime validation when shell hooks aren't expressive enough.
+Claude Code v2.1.x publishes **30 canonical hook events** (per `code.claude.com/docs/en/hooks`). Five handler types: `command`, `http`, `mcp_tool` (v2.1.118+), `prompt`, `agent`. Prompt/agent handlers spawn LLM evaluation or full subagent verification — used for runtime validation when shell hooks aren't expressive enough. `InstructionsLoaded` event (CC v2.1.69+) fires when CLAUDE.md or `.claude/rules/*.md` files are loaded into context.
 
 Hierarchy precedence (highest → lowest): managed policy → plugin hooks (force-enabled exempt from `allowManagedHooksOnly`) → `.claude/settings.json` → `.claude/settings.local.json` → `~/.claude/settings.json` → skill/agent frontmatter.
 
+Per Anthropic guidance: put guardrails in hooks, not in CLAUDE.md prose. CLAUDE.md is delivered as a user message after the system prompt — it is context, not enforced configuration.
+
 ## Engineering Conventions
 
-- Russian user-facing communication; English repository artifacts. Skill `description` fields are Russian-leading.
-- Skill frontmatter: `name`, `description`. Agent frontmatter: `name`, `description`, `model`, `effort`, `maxTurns`, `disallowedTools`, `color`.
-- `model: opus[1m]` is the canonical bracketed form for Opus 4.7 1M context (used by `ry-explore`).
+- Russian user-facing communication; English repository artifacts. Skill `description` fields are Russian-leading (English keywords appended).
+- Skill frontmatter: `name`, `description` (recommended). Optional: `when_to_use`, `argument-hint`, `allowed-tools`, `disable-model-invocation`, `user-invocable`, `model`, `effort`, `paths`, `context: fork`, `agent`.
+- Agent frontmatter: `name`, `description`, `model`, `effort`, `maxTurns`, `disallowedTools`, `color`. Optional: `tools`, `skills`, `memory`, `background`, `isolation`, `initialPrompt`.
+- `model: opus[1m]` is the canonical bracketed form for Opus 4.7 1M context (used by `ry-explore`); requires CC **v2.1.111+**.
 - `model: sonnet` is the canonical short form for reviewer subagents.
-- Slash command frontmatter: `description`, `argument-hint`, optional `context: fork` and `agent: <name>`.
-- Conventional Commits with separate commits for source / docs / Serena knowledge when it improves history clarity.
-- Never commit secrets, runtime markers, browser artifacts, local env files. `SECRET_RE` in `fullrepo_sync.py` blocks publishes containing `ctx7sk-*`, `ghp_*`, `github_pat_*`, `sk-*`, `xox[baprs]-*`, private-key headers, or `Bearer *`.
+- Slash command frontmatter: `description`, `argument-hint`, optional `context: fork` and `agent: <name>`. Bare `model:` on a slash command is silently ignored without `context: fork` — pair them or delegate via `agent:`.
+- Conventional Commits, ≤72 char subjects, atomic commits per logical unit. Separate commits for source / docs / Serena knowledge when it improves history clarity.
 - All MCP server versions are pinned (stdio with `==X.Y.Z`; HTTP servers by URL).
+
+## Claude Code-specific Diagnostics
+
+Beyond `claude plugin validate` and bootstrap commands documented in `./AGENTS.md`:
+
+- `/mcp` — transport status. `/doctor` — env health (skill-listing truncation warnings appear here). `/status` — session state. `/context` — token-budget breakdown by category. `/hooks` — active hooks. `/memory` — CLAUDE.md, CLAUDE.local.md, and rules files loaded.
+- `python3 plugins/rldyour-flow/scripts/instruction_docs_state.py --json` — whether AGENTS.md and `.claude/CLAUDE.md` need review.
+- `python3 plugins/rldyour-flow/scripts/flow_post_task_state.py` — fingerprint of dirty state, Serena freshness, branch cleanup candidates.
+- `python3 plugins/rldyour-serena-mcp/scripts/serena_memory_state.py` — Serena memory match-vs-HEAD state.
 
 ## Don't
 
-- Don't add a new plugin without confirming domain boundary against existing plugins.
-- Don't add `.mcp.json` outside `rldyour-mcps`.
-- Don't add `hooks.json` outside `rldyour-flow` or `rldyour-serena-mcp`.
+- Don't reduce this file to `@AGENTS.md` import — `@imports` don't reduce token cost (Anthropic memory docs); content loads at launch either way. Keep separation: AGENTS.md cross-tool, CLAUDE.md Claude Code-deep.
+- Don't grow either file past 200 lines — Anthropic empirical evidence: adherence drops, instructions get lost.
+- Don't put hard guardrails in CLAUDE.md prose ("ALWAYS X", "NEVER Y") — they are advisory user-message context. Use hooks for enforcement.
+- Don't add `.mcp.json` outside `rldyour-mcps`. Don't add `hooks.json` outside `rldyour-flow` or `rldyour-serena-mcp`. Don't add a new plugin without confirming domain boundary.
 - Don't commit `AGENTS.md`, `.claude/**`, `.serena/project.yml`, `.serena/memories/**` to `main` — fullrepo only.
-- Don't write Serena memories from `ry-init` unless the user explicitly asked or the Stop hook required it.
+- Don't write Serena memories from `ry-init` unless explicitly requested or a Stop/stale-memory hook required it.
 - Don't force-push `main`; `--force-with-lease` is allowed only for `fullrepo`.
-- Don't reduce this file to `@AGENTS.md` import; it must stay independently useful for Claude Code.
+- Don't auto-generate this file or AGENTS.md from code analysis — ETH Zurich research (cited in Augment 2026 guide) shows LLM-generated context files reduce task success 0.5-2% with 20-23% token overhead.
 
 ## Done Criteria
 
 - All touched manifests pass `claude plugin validate`.
-- `git status` clean of non-agent files; agent-only paths excluded via `.git/info/exclude` block (`# >>> rldyour fullrepo agent-only files >>>`).
-- `fullrepo_sync.py --status-json` shows `tracked_agent_paths: []` on `main`.
-- `fullrepo` is republished after any agent-only change.
+- `git status` clean of non-agent files; agent-only paths excluded via the `# >>> rldyour fullrepo agent-only files >>>` block in `.git/info/exclude`.
+- `python3 plugins/rldyour-flow/scripts/fullrepo_sync.py --status-json` shows `tracked_agent_paths: []` on `main`.
+- `fullrepo` republished after any agent-only change.
 - Plugin component cross-references (skills referencing scripts/agents/references) actually exist on disk.
 - Reviewer subagents (when invoked) produce read-only findings, never edit files.
+- This file stays under 200 lines.
+
+<!-- Living-doc note: when discovering a non-obvious Claude Code-specific fact during work, propose a CLAUDE.md edit in the same change. Treat CLAUDE.md like code — review when behavior drifts, prune regularly, test by observing whether Claude's behavior actually shifts. -->

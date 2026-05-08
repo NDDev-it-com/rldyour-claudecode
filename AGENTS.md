@@ -2,7 +2,10 @@
 
 Personal Claude Code plugin marketplace by `rldyourmnd`. The repository ships nine plugins that compose an opinionated SDLC, semantic-code, MCP transport, security, browser, design, LSP, and rules layer for Claude Code. There is no runtime application code — every artifact in this repo is plugin metadata, skills, slash commands, agents, hooks, scripts, and references.
 
-This `AGENTS.md` is the concise root project-instruction file for any AI agent working in this repository (cross-tool standard, see https://agents.md/). The deep Claude Code-native memory lives in `.claude/CLAUDE.md`.
+This `AGENTS.md` is the concise root project-instruction file for any AI agent working in this repository — cross-tool standard governed by the Linux Foundation Agentic AI Foundation (AAIF) since 2025-12-09 (see https://agents.md/). The deep Claude Code-native memory lives in `./.claude/CLAUDE.md` and contains subagent matrix, hook canon, skill-listing budget, frontmatter conventions, and Don't/Done rules that other AI tools don't need.
+
+<!-- Maintainer note (HTML comments are not parsed by most AI tools): Anthropic's claude-plugins-official ships only a 53-line README.md — no CLAUDE.md, no AGENTS.md. Our two-file split is justified by cross-tool ambition (AGENTS.md is read by 25+ tools as of May 2026) plus Claude Code-deep specifics. Keep this file under 150 lines. -->
+
 
 ## Source Of Truth
 
@@ -65,7 +68,7 @@ Reviewer subagents live in `plugins/rldyour-flow/agents/flow-*-review.md`. All r
 
 Two plugins coordinate hooks. The `flow.stop_post_task_sync.sh` hook waits for `serena_current=true` from the Serena Stop hook before running.
 
-| Event | Owner plugin | Script |
+| Event | Owner | Script |
 |---|---|---|
 | UserPromptSubmit | rldyour-serena-mcp | `hooks/user_prompt_submit.sh` |
 | PreToolUse:Bash | rldyour-serena-mcp | `hooks/prepare_auto_sync.sh` |
@@ -75,7 +78,7 @@ Two plugins coordinate hooks. The `flow.stop_post_task_sync.sh` hook waits for `
 | Stop | rldyour-serena-mcp | `hooks/stop_memory_sync.sh` |
 | Stop | rldyour-flow | `hooks/stop_post_task_sync.sh` |
 
-All hooks are advisory (informational `additionalContext`) and exit `0` on errors. Skip flags: `RLDYOUR_SKIP_FLOW_SESSION_CONTEXT`, `RLDYOUR_SKIP_STOP_GATES`, `RLDYOUR_SKIP_FLOW_SYNC`.
+All hooks are advisory (informational `additionalContext`) and exit `0` on errors. Skip flags: `RLDYOUR_SKIP_FLOW_SESSION_CONTEXT`, `RLDYOUR_SKIP_FLOW_COMMIT_ADVICE`, `RLDYOUR_SKIP_STOP_GATES`, `RLDYOUR_SKIP_FLOW_SYNC`, `RLDYOUR_SKIP_SERENA_SYNC`.
 
 ## Fullrepo Branch Policy
 
@@ -126,10 +129,6 @@ Current dependency graph:
 - Defensive security review: `/rldyour-security:ry-sec-review`.
 - Architecture/quality/consistency/integration/verification/security review for an existing diff: `/rldyour-flow:ry-review`.
 
-## Skill Listing Budget
-
-User-side `~/.claude/settings.json` should set `"skillListingBudgetFraction": 0.03` (v2.1.129+) so descriptions of all 32 skills survive the listing cap (default 1% of context truncates ~37 tail entries; per-entry cap is 1,536 chars, raised from 250 in v2.1.128). Plugin-side levers used in this repo: `disable-model-invocation: true` on `ry-deploy`/`ry-newp` (slash-only); `allowed-tools` declared explicitly on 10 skills with obvious toolsets (Serena, Context7+DeepWiki+Grep, Web*, Playwright, Chrome DevTools, Bash) to eliminate permission prompts during work.
-
 ## Engineering Constraints
 
 - Russian user-facing language; English repository artifacts (skill descriptions are Russian-leading).
@@ -148,3 +147,6 @@ User-side `~/.claude/settings.json` should set `"skillListingBudgetFraction": 0.
 - `fullrepo` is republished after any agent-only change.
 - Conventional commits for source/docs/Serena knowledge are kept separate when it improves history clarity.
 - Pre-existing reviewer subagents and skills referenced by new components actually exist on disk.
+
+<!-- Living-doc note: when discovering a non-obvious project fact during work that another AI tool would also need (cross-tool concern), propose an AGENTS.md edit in the same change. Don't auto-generate. Claude Code-specific facts (skill listing, hook canon, subagent matrix) belong in ./.claude/CLAUDE.md instead. -->
+
