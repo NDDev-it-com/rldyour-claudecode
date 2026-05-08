@@ -118,8 +118,7 @@
     "command": "docker-language-server",
     "args": ["start", "--stdio"],
     "extensionToLanguage": {
-      ".dockerfile": "dockerfile",
-      ".hcl": "dockerbake"
+      ".dockerfile": "dockerfile"
     },
     "transport": "stdio",
     "initializationOptions": {},
