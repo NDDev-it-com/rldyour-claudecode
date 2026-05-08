@@ -1,6 +1,6 @@
 ---
 name: lsp-health-check
-description: "Проверка LSP и Serena prerequisites для Python/Rust/Dart/Flutter/TS/JS/Go/C++/Qt/YAML/Docker/HTML/CSS/Shell. Используй для: проверь LSP, проверь язык-серверы, диагностики LSP, project prerequisites."
+description: "Проверка LSP и Serena prerequisites для Python/Rust/Dart/Flutter/TS/JS/Go/C++/Qt/YAML/Docker/HTML/CSS/Shell. Используй для: проверь LSP, проверь язык-серверы, диагностики LSP, доступны ли LSP в проекте. EN triggers: check LSP, language server health, LSP diagnostics, verify LSP setup, are LSP installed, LSP project prerequisites, LSP doctor."
 allowed-tools:
   - Bash
   - Read

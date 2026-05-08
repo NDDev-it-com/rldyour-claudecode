@@ -1,6 +1,6 @@
 ---
 name: ry-deploy
-description: "Развёртывание с sync local↔GitHub↔server, проверками логов, fix-forward и docs/git финализацией. Используй для: /ry-deploy, задеплой, deploy, прод, продакшен, деплой на сервер, выкатить."
+description: "Развёртывание с sync local↔GitHub↔server, проверками логов, fix-forward и docs/git финализацией. Используй для: /rldyour-flow:ry-deploy, задеплой, прод, продакшен, деплой на сервер, выкатить. EN triggers: deploy to server, ship to prod, production deploy, deploy and verify, deployment lifecycle, sync local to server, ship release, fix-forward deploy."
 disable-model-invocation: true
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: ry-design
-description: "Сквозной дизайн-воркфлоу: Figma → код → токены → FSD → shadcn/ui → ReactBits → browser validation. Используй для: /ry-design, сделай дизайн, реализуй UI, сверстай страницу, перенеси Figma макет, pixel-perfect."
+description: "Сквозной дизайн-воркфлоу: Figma → код → токены → FSD → shadcn/ui → ReactBits → browser validation. Используй для: /rldyour-design:ry-design, сделай дизайн, реализуй UI, сверстай страницу, перенеси Figma макет, лендинг, дашборд, редизайн. EN triggers: end-to-end design, build UI, ship landing page, ship dashboard, redesign feature, production-ready UI, pixel-perfect implementation, design workflow."
 allowed-tools:
   - mcp__plugin_rldyour-mcps_figma__*
   - mcp__plugin_rldyour-mcps_shadcn__*
