@@ -1,6 +1,6 @@
 # rldyour-claude marketplace state
 
-Last commit: 2ace4a0 (feat/auto-stop-pipeline, 2026-05-08, awaiting merge to main).
+Last commit: a851d99 (refactor/restore-advisory-hooks, 2026-05-08, awaiting merge to main).
 Four May-2026 best-practice waves applied:
 - optimize/may-2026-best-practices: 6 commits 3fe9005..2e22652 (merged to main)
 - docs/canonical-may2026: 1 commit ca13470 (merged to main)
@@ -211,29 +211,33 @@ Polish wave (ca13470..f23765d, merged 2026-05-08):
 - .claude/CLAUDE.md grew by 1 line (124 total) documenting the validated pattern
   of mixing built-in tools and MCP wildcards in allowed-tools.
 
-Memory-sync subagent + auto-pipeline waves:
-
-Wave 1 (f23765d..772f6e8, branch feat/memory-sync-subagent, merged):
+Memory-sync subagent wave (f23765d..772f6e8, merged 2026-05-08):
 - 772f6e8 feat(serena-mcp): add flow-memory-sync subagent for fact-only sync.
-  - NEW: plugins/rldyour-serena-mcp/agents/flow-memory-sync.md
-    (sonnet/high/36/yellow, anti-hallucination contract in body).
-  - MODIFIED: stop_memory_sync.sh + flow-post-task-sync skill (intermediate
-    step — replaced in Wave 2 by full automation).
+  NEW plugins/rldyour-serena-mcp/agents/flow-memory-sync.md (sonnet/high/36/yellow,
+  anti-hallucination contract in body — citation per claim, source-of-truth
+  hierarchy code > tests > git diff > existing memories, removal-first principle).
 
-Wave 2 (772f6e8..2ace4a0, branch feat/auto-stop-pipeline):
-- Stop hooks now fully automatic, no main-session intervention required.
-- Serena Stop hook (hooks.json): two parallel handlers in one matcher block.
-  Handler 1 — bash gate (stop_memory_sync.sh): early-exit if memories current
-  or loop guard matches, otherwise records sync fingerprint and exits 0.
-  Handler 2 — type:agent (Sonnet 4.6, 600s timeout): inline prompt invokes
-  flow-memory-sync workflow with $ARGUMENTS payload, runs Serena memory
-  tools to update memories fact-only, commits via commit_serena_knowledge.sh.
-- Flow Stop hook (stop_post_task_sync.sh): pure deterministic bash pipeline.
-  Waits for serena_current=true, then: push feature -> ff-merge into main ->
-  push main -> delete merged feature branch (local+remote) ->
-  fullrepo_sync.py --publish -> cleanup merged worktrees and remote branches
-  identified by flow_post_task_state. Aborts (exit 2) only on dirty non-agent
-  files, non-ff merge requirement, or missing default branch.
-- Result: ry-start -> task complete -> Stop -> memories synced -> git pushed
-  -> main updated -> fullrepo published -> branches cleaned up — all without
-  main agent doing manual git operations.
+Restored Codex-style advisory enforcement (refactor/restore-advisory-hooks):
+- Stop hooks are advisory enforcement gates, not executors. Hooks compute
+  machine-readable state via serena_memory_state.py / flow_post_task_state.py,
+  block Stop with exit 2 when work remains, never perform high-blast-radius
+  operations themselves.
+- stop_memory_sync.sh: advisory exit 2 when memories stale, points orchestrator
+  at flow-memory-sync subagent (preferred) or fallback Serena workflow.
+- stop_post_task_sync.sh: advisory exit 2 when needs_flow_sync=true after
+  Serena is current. Emits 9-step plan summary referencing flow-post-task-sync
+  skill which handles: checks → atomic commits → push → ff-merge into default →
+  push default → fullrepo publish → cleanup merged branches/worktrees.
+- Orchestrator (ry-start, flow-post-task-sync skill, main session) is the
+  executor of merge/push/publish/cleanup under model judgement.
+- Loop guard preserved: same fingerprint + stop_hook_active=true → exit 0.
+- Flow lifecycle when ry-start finishes a task wave:
+    1. Task work commits land on feature branch.
+    2. Stop fires.
+    3. Serena hook checks memory freshness; blocks Stop if stale.
+    4. Orchestrator invokes flow-memory-sync subagent (or fallback workflow).
+    5. After Serena is current, Flow hook checks git/docs/fullrepo/cleanup
+       state; blocks Stop if needs_flow_sync=true.
+    6. Orchestrator runs flow-post-task-sync skill which executes the full
+       pipeline.
+    7. needs_flow_sync=false, Stop allowed.

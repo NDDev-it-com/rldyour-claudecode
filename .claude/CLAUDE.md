@@ -36,9 +36,9 @@ Required fields for plugin-shipped subagents: `name`, `description`. Plugin-ship
 
 All reviewer agents declare `disallowedTools: [Edit, Write, NotebookEdit]` (read-only). Generous `maxTurns` (×3 of naive limit) compensates MCP-rich toolsets that consume turns on tool plumbing — Serena + Context7 + DeepWiki + Grep eat 5-8 turns before useful work begins.
 
-| flow-memory-sync (rldyour-serena-mcp) | sonnet | high | 36 | yellow | fact-only Serena memory sync, fired by Stop hook `type: agent` handler |
+| flow-memory-sync (rldyour-serena-mcp) | sonnet | high | 36 | yellow | fact-only Serena memory sync, invoked by orchestrator when Stop hook advisory triggers |
 
-`flow-memory-sync` is a plugin-shipped subagent with narrow tool access (Serena memory tools — `write_memory`/`edit_memory`/`delete_memory`/`rename_memory` — plus read-only `Read`/`Grep`/`Glob`/`Bash`; `disallowedTools: [Edit, Write, NotebookEdit]`). Anti-hallucination contract enforced via body: source-of-truth hierarchy code > tests > git diff > existing memories; citation required per claim; removal-first principle for unverifiable claims; `Last commit: <HEAD_SHA>` line mandatory in every touched memory; `commit_serena_knowledge.sh` runs internally; final JSON report. The Serena Stop hook (`hooks.json`) runs two parallel handlers: a bash gate that records the sync fingerprint, and a `type: agent` handler that fires this subagent inline — payload reaches the prompt via `$ARGUMENTS`. Plugin agents are loaded at session start; the agent file lives in `plugins/rldyour-serena-mcp/agents/`.
+`flow-memory-sync` is a plugin-shipped subagent with narrow tool access (Serena memory tools — `write_memory`/`edit_memory`/`delete_memory`/`rename_memory` — plus read-only `Read`/`Grep`/`Glob`/`Bash`; `disallowedTools: [Edit, Write, NotebookEdit]`). Anti-hallucination contract enforced via body: source-of-truth hierarchy code > tests > git diff > existing memories; citation required per claim; removal-first principle for unverifiable claims; `Last commit: <HEAD_SHA>` line mandatory in every touched memory; `commit_serena_knowledge.sh` runs internally; final JSON report. Invocation pattern: when the Serena Stop hook emits its advisory, the orchestrator (model in main session, or `flow-post-task-sync` skill workflow step 1) calls `Agent({subagent_type: 'rldyour-serena-mcp:flow-memory-sync', prompt: ...})` with HEAD context — keeping high-blast-radius operations under workflow control rather than letting hooks fire them silently.
 
 ## Hooks Lifecycle
 
@@ -54,12 +54,14 @@ Two plugins coordinate hooks. `flow.stop_post_task_sync.sh` waits for `serena_cu
 | Stop | rldyour-serena-mcp | `hooks/stop_memory_sync.sh` | 10s |
 | Stop | rldyour-flow | `hooks/stop_post_task_sync.sh` | 10s |
 
-Stop hooks are **fully automatic** post-task pipeline:
+Stop hooks are **advisory enforcement gates**, not executors. Pattern: hooks compute machine-readable state, block Stop (`exit 2`) until the orchestrator (`ry-start`, `flow-post-task-sync` skill, model in main session) brings the project to a clean final state. Hooks themselves do **not** push, merge, publish, or delete branches — those are high-blast-radius operations and live in the workflow executor under model judgement.
 
-1. **Serena Stop hook** runs two parallel handlers — a `command` gate (early-exit if `is_current=true` or loop guard matches) and a `type: agent` handler (Sonnet 4.6, 600s timeout) that synchronises `.serena/memories/*.md` against HEAD using only Serena memory tools, with anti-hallucination contract baked into the prompt.
-2. **Flow Stop hook** waits for `serena_current=true`, then `stop_post_task_sync.sh` runs the deterministic git pipeline: push feature → ff-merge into `main` → push `main` → delete merged feature branch (local + remote) → `fullrepo_sync.py --publish` (uses `--force-with-lease`, only on `fullrepo`) → cleanup merged worktrees / remote branches identified by `flow_post_task_state.py`.
+Sequence:
+1. **Serena Stop hook** (`stop_memory_sync.sh`) checks `serena_memory_state.py`. If memories are stale for current HEAD, blocks Stop with an advisory pointing at the `flow-memory-sync` subagent (preferred) or the equivalent Serena workflow (fallback).
+2. **Flow Stop hook** (`stop_post_task_sync.sh`) waits for `serena_current=true`, then checks `flow_post_task_state.py`. If git/docs/fullrepo/cleanup state is dirty (uncommitted, ahead of upstream, fullrepo stale, instruction docs need review, merged branches/worktrees not cleaned), blocks Stop with an advisory pointing at the `flow-post-task-sync` skill.
+3. Loop guard: `.serena/.sync_marker` and `.serena/.flow_sync_marker` carry fingerprints. If `stop_hook_active=true` and the fingerprint matches, the chain allows Stop without re-running — prevents infinite loops while still forcing real progress between Stops.
 
-The pipeline aborts (`exit 2`) only on real blockers: dirty non-agent files (model is expected to commit before signalling Stop), non-fast-forward merge required, or no `main`/`master` branch found. Loop guard: `.serena/.sync_marker` and `.serena/.flow_sync_marker` carry fingerprints; if `stop_hook_active=true` and the fingerprint matches, the chain allows stop without re-running.
+The orchestrator (skill / model in main session) does the actual work: invoke `flow-memory-sync` subagent for memories, then run the `flow-post-task-sync` skill which handles checks → atomic commits → push → ff-merge into default branch → push default → fullrepo publish (`--force-with-lease`, only on `fullrepo`) → cleanup merged branches and worktrees.
 
 Skip flags during local debugging: `RLDYOUR_SKIP_FLOW_SESSION_CONTEXT=1` (SessionStart), `RLDYOUR_SKIP_FLOW_COMMIT_ADVICE=1` (PostToolUse:Bash flow), `RLDYOUR_SKIP_STOP_GATES=1` (both Stop hooks), `RLDYOUR_SKIP_FLOW_SYNC=1` (flow Stop only), `RLDYOUR_SKIP_SERENA_SYNC=1` (Serena Stop only).
 

@@ -4,7 +4,7 @@ Source-backed facts cross-validated against `code.claude.com/docs/en/plugins-ref
 `code.claude.com/docs/en/mcp`, `code.claude.com/docs/en/changelog`, and Anthropic's own
 `claude-plugins-official` repo. Last refresh 2026-05-08 via ry-explore deep research.
 
-Last commit: 2ace4a0 (feat/auto-stop-pipeline, 2026-05-08). Verification range: v2.1.111-v2.1.135.
+Last commit: a851d99 (refactor/restore-advisory-hooks, 2026-05-08). Verification range: v2.1.111-v2.1.135.
 
 ## plugin.json schema
 
