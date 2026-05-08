@@ -6,6 +6,7 @@ allowed-tools:
   - mcp__plugin_rldyour-mcps_shadcn__*
   - mcp__plugin_rldyour-mcps_playwright__*
   - mcp__plugin_rldyour-mcps_chrome-devtools__*
+  - mcp__plugin_rldyour-mcps_serena__*
   - Read
   - Write
   - Edit
