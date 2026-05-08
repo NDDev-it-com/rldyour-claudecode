@@ -6,7 +6,8 @@
           {
             "type": "command",
             "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/session_start_context.sh",
-            "timeout": 5
+            "timeout": 5,
+            "statusMessage": "Loading rldyour-flow session context"
           }
         ]
       }
@@ -18,7 +19,8 @@
           {
             "type": "command",
             "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/post_tool_use_commit_advice.sh",
-            "timeout": 5
+            "timeout": 5,
+            "statusMessage": "Checking rldyour commit advice"
           }
         ]
       }
@@ -29,7 +31,8 @@
           {
             "type": "command",
             "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/stop_post_task_sync.sh",
-            "timeout": 10
+            "timeout": 10,
+            "statusMessage": "Checking rldyour-flow post-task sync"
           }
         ]
       }

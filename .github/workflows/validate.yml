@@ -79,7 +79,11 @@ jobs:
           set -euo pipefail
           python3 - <<'PY'
           import ast, glob
-          for p in sorted(glob.glob('plugins/*/scripts/*.py')) + sorted(glob.glob('plugins/*/hooks/*.py')):
+          for p in (
+              sorted(glob.glob('plugins/*/scripts/*.py'))
+              + sorted(glob.glob('plugins/*/hooks/*.py'))
+              + sorted(glob.glob('scripts/*.py'))
+          ):
               with open(p, 'r', encoding='utf-8') as fp:
                   ast.parse(fp.read())
               print(f'OK {p}')
@@ -89,7 +93,7 @@ jobs:
         run: |
           set -euo pipefail
           fail=0
-          for f in $(find plugins -type f \( -name '*.sh' -path '*/scripts/*' -o -name '*.sh' -path '*/hooks/*' \)); do
+          for f in $(find plugins scripts -type f -name '*.sh' 2>/dev/null); do
             if bash -n "$f"; then
               echo "OK $f"
             else
@@ -112,3 +116,12 @@ jobs:
             fi
           done
           test "$fail" -eq 0
+
+      - name: Plugin version consistency
+        run: python3 scripts/validate_plugin_versions.py
+
+      - name: MCP runtime version drift
+        run: python3 scripts/check_mcp_runtime_versions.py
+
+      - name: Skill routing policy
+        run: python3 scripts/validate_skill_routing.py
