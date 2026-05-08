@@ -9,7 +9,7 @@ LSP routing, health checks, brew-first install profiles, Serena LSP integration,
   - `lsp-health-check` — verify language servers and Serena prerequisites are available (`scripts/check_lsps.sh`).
   - `lsp-setup` — install/update LSPs via brew + toolchain (`scripts/install_lsps_brew.sh`). Only on explicit user request.
   - `serena-lsp-integration` — configure Serena MCP per project languages (`.serena/project.yml`, `ls_specific_settings`).
-- `.lsp.json` — native Claude Code LSP server registration. Registers **15 language servers** matching the Codex `lsp-server-matrix.md`:
+- `.lsp.json` — native Claude Code LSP server registration. Registers **15 language servers** following the canonical schema from `code.claude.com/docs/en/plugins-reference#lsp-servers` and cross-validated against `anthropics/claude-plugins-official`, `Piebald-AI/claude-code-lsps`, and `boostvolt/claude-code-lsps` production marketplaces:
   - `python` (pyright-langserver `--stdio` for `.py`/`.pyi`/`.pyw`)
   - `typescript` (typescript-language-server `--stdio` for `.ts`/`.tsx`/`.js`/`.jsx`/`.mjs`/`.cjs`)
   - `rust` (rust-analyzer for `.rs`)

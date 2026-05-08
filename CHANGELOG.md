@@ -9,11 +9,13 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 ### Added
 
 - Root-level public files: `README.md`, `CHANGELOG.md`, `VERSION`, `LICENSE`.
-- Codex-parity operations harness ported under Claude Code conventions:
-  marketplace validation script, smoke tests for hooks/MCP/fullrepo/branch-cleanup,
-  scheduled MCP runtime pin freshness CI, plugin-version validator, instruction-docs
-  validator, skill-routing policy tests, release manifest, runtime-version drift check,
-  diagnostics collection, local git pre-push guard installer.
+- Operations harness adapted to Claude Code conventions: marketplace
+  validation script (`scripts/validate_marketplace.sh`), smoke tests for
+  hooks / MCP runtime / fullrepo / branch-cleanup, scheduled MCP runtime
+  pin freshness CI (`.github/workflows/dependency-check.yml`), plugin-version
+  validator, instruction-docs validator, skill-routing policy tests, release
+  manifest, runtime-version drift check, diagnostics collection, local git
+  pre-push guard installer.
 - `docs/` reference set for release process, rollback/restore, dependency updates,
   observability.
 - `config/` directory: `mcp-runtime-versions.env` (canonical pinned launcher versions
