@@ -1,6 +1,6 @@
 # rldyour-claude marketplace state
 
-Last commit: 38f4cc6 (fix/lsp-canonical-alignment, 2026-05-08, awaiting merge to main).
+Last commit: 750a798 (fix/lsp-canonical-extensions, 2026-05-08, awaiting merge to main).
 Four May-2026 best-practice waves applied:
 - optimize/may-2026-best-practices: 6 commits 3fe9005..2e22652 (merged to main)
 - docs/canonical-may2026: 1 commit ca13470 (merged to main)
@@ -254,6 +254,30 @@ LSP registration wave (8123e46..36a1788, branches feat/lsp-pyright-registration
   go/cpp/typescript/yaml plus 5 unique-but-correct: docker/json/toml/markdown/qml).
   Live startup tested for marksman, taplo, bash-language-server,
   docker-language-server, vscode-json-language-server.
+- 750a798 fix(lsps): align typescript/docker/cpp with canonical extensions
+  after ry-explore deep verify against Anthropic Official marketplace,
+  Helix languages.toml, nvim-lspconfig, Piebald-AI, boostvolt configs:
+  - typescript: add .cts and .mts (Anthropic Official has both; modern
+    ESM/CommonJS TypeScript module variants).
+  - docker: add ".hcl": "dockerbake" (docker-language-server expects three
+    language IDs — dockerfile, dockercompose, dockerbake; .hcl maps to bake).
+  - cpp: add --background-index arg (Anthropic Official clangd config has
+    it for performance); add .C/.H uppercase variants (Unix/macOS convention),
+    .cu/.cuh (CUDA), .cppm (C++20 modules).
+  README.md amended with architectural caveats:
+  - Dockerfile (no extension) cannot be mapped via extensionToLanguage
+    schema — it's a fundamental Claude Code LSP-tool limitation.
+  - MDX parsed as plain markdown by marksman; JSX features need dedicated
+    mdx-analyzer.
+  - Compose files (.yml/.yaml) handled by yaml-language-server, not docker —
+    extensionToLanguage cannot map one extension to two LSPs.
+  Final verdict: 12/15 entries exact-match canonical; 3 received functional
+  fixes; 0 broken. Sources cross-checked: Anthropic Official, SchemaStore,
+  Helix, nvim-lspconfig, Piebald-AI, boostvolt, plus per-server official
+  docs (microsoft/pyright, dart-lang/sdk, golang/tools, clangd/clangd,
+  qt/qtdeclarative, redhat-developer/yaml-language-server,
+  docker/docker-language-server, bash-lsp, artempyanykh/marksman,
+  tamasfe/taplo, vscode-langservers-extracted).
 
 Codex-parity wave (a851d99..8123e46, branch feat/codex-port-wave):
 - adb0bc1 docs: root public files (README.md, CHANGELOG.md, VERSION 0.1.0, LICENSE MIT).

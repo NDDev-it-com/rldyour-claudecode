@@ -18,6 +18,8 @@
     "extensionToLanguage": {
       ".ts": "typescript",
       ".tsx": "typescriptreact",
+      ".cts": "typescript",
+      ".mts": "typescript",
       ".js": "javascript",
       ".jsx": "javascriptreact",
       ".mjs": "javascript",
@@ -64,7 +66,7 @@
   },
   "cpp": {
     "command": "clangd",
-    "args": [],
+    "args": ["--background-index"],
     "extensionToLanguage": {
       ".c": "c",
       ".h": "c",
@@ -72,10 +74,15 @@
       ".cpp": "cpp",
       ".cxx": "cpp",
       ".c++": "cpp",
+      ".C": "cpp",
       ".hh": "cpp",
       ".hpp": "cpp",
       ".hxx": "cpp",
       ".h++": "cpp",
+      ".H": "cpp",
+      ".cu": "cpp",
+      ".cuh": "cpp",
+      ".cppm": "cpp",
       ".m": "objective-c",
       ".mm": "objective-cpp"
     },
@@ -111,7 +118,8 @@
     "command": "docker-language-server",
     "args": ["start", "--stdio"],
     "extensionToLanguage": {
-      ".dockerfile": "dockerfile"
+      ".dockerfile": "dockerfile",
+      ".hcl": "dockerbake"
     },
     "transport": "stdio",
     "initializationOptions": {},

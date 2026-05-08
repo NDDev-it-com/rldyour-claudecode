@@ -18,7 +18,7 @@ LSP routing, health checks, brew-first install profiles, Serena LSP integration,
   - `cpp` (clangd for `.c`/`.h`/`.cc`/`.cpp`/`.cxx`/`.c++`/`.hh`/`.hpp`/`.hxx`/`.h++`/`.m`/`.mm`)
   - `qml` (qmlls for `.qml`)
   - `yaml` (yaml-language-server `--stdio` for `.yaml`/`.yml`)
-  - `docker` (docker-language-server `start --stdio` for `.dockerfile`)
+  - `docker` (docker-language-server `start --stdio` for `.dockerfile` and `.hcl`/Bake — see caveat below)
   - `html` (vscode-html-language-server `--stdio` for `.html`/`.htm`)
   - `css` (vscode-css-language-server `--stdio` for `.css`/`.scss`/`.sass`/`.less`)
   - `bash` (bash-language-server `start` for `.sh`/`.bash`/`.zsh`)
@@ -53,6 +53,12 @@ Markdown    marksman
 ```
 
 Optional advanced TypeScript via `vtsls` is intentionally not registered (would conflict with `typescript-language-server` for the same `.ts`/`.tsx` extensions); use `lsp-routing` skill to invoke vtsls explicitly when a project requires it.
+
+## Architectural caveats
+
+- **`Dockerfile` (no extension)**: Claude Code's LSP-tool matches files via `extensionToLanguage` only. Files without an extension (canonical `Dockerfile`, `Containerfile`, `Makefile`) cannot be mapped through this schema — the docker-language-server entry only catches `*.dockerfile` and `*.hcl` (Bake). For plain `Dockerfile` the server runs on demand only when the file is opened with an explicit language ID via the editor.
+- **MDX vs Markdown**: marksman parses `.mdx` as plain markdown — JSX expressions and front-matter tag-syntax are not understood. Install a dedicated `mdx-analyzer` LSP if MDX-aware features are required.
+- **Compose files (`docker-compose.yml`, `compose.yaml`)**: handled by `yaml-language-server`, not by `docker-language-server` — both servers cannot claim the same extension. yaml-language-server provides schema-based validation; docker-language-server's compose-specific features are not exposed via this config.
 
 ## Dependencies
 
