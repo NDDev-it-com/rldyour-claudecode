@@ -11,7 +11,8 @@
         "--context=agent",
         "--enable-web-dashboard", "False",
         "--open-web-dashboard", "False"
-      ]
+      ],
+      "alwaysLoad": true
     },
     "sequential-thinking": {
       "command": "bunx",
