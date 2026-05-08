@@ -91,6 +91,6 @@ When routing is the main task, answer in Russian with:
 
 - Использовать Chrome DevTools для simple validation когда Playwright достаточен.
 - Запускать Playwright для console/network debug без воспроизведения user flow.
-- Использовать оба МCP когда задача чисто validation OR чисто debug.
+- Использовать оба MCP когда задача чисто validation OR чисто debug.
 - Запускать на production / live site без явного разрешения.
 - Игнорировать accessibility snapshot — это часто быстрее DOM inspection.
