@@ -1,5 +1,5 @@
 ---
-description: "Задеплоить через ry-deploy: local↔GitHub↔server sync + проверки логов + fix-forward + docs/git финализация."
+description: "Задеплоить через ry-deploy: local↔GitHub↔server sync + проверки логов + fix-forward + docs/git финализация. Run the full deployment lifecycle with log verification and fix-forward."
 argument-hint: <server>
 ---
 
