@@ -1,6 +1,6 @@
 ---
 name: project-instructions-policy
-description: "Политика project-инструкций: AGENTS.md, .claude/CLAUDE.md, REVIEW.md, ADRs (MADR 4.0.0). Используй для: правила проекта, инструкции, документация, ADR, durable docs."
+description: "Политика project-инструкций: AGENTS.md, .claude/CLAUDE.md, REVIEW.md, ADRs (MADR 4.0.0). Используй для: правила проекта, инструкции, документация, ADR, долгоживущая документация. EN triggers: project rules, project instructions, ADR, MADR, write durable docs, update AGENTS.md, update CLAUDE.md, instruction policy."
 ---
 
 # Project Instructions Policy

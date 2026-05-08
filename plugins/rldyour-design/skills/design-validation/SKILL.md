@@ -1,6 +1,6 @@
 ---
 name: design-validation
-description: "Браузер-валидация дизайн-имплементации после UI/Figma/shadcn/ReactBits работы через Playwright + Chrome DevTools MCP. Используй для: проверь дизайн, проверь верстку, адаптив, pixel-perfect, скриншоты."
+description: "Браузер-валидация дизайн-имплементации после UI/Figma/shadcn/ReactBits работы через Playwright + Chrome DevTools MCP. Используй для: проверь дизайн, проверь верстку, адаптив, скриншоты, проверь визуальное соответствие макету. EN triggers: validate design, check layout, responsive validation, pixel-perfect check, design screenshots, design QA, compare to Figma frame."
 allowed-tools:
   - mcp__plugin_rldyour-mcps_playwright__*
   - mcp__plugin_rldyour-mcps_chrome-devtools__*

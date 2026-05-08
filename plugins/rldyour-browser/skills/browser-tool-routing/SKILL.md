@@ -1,6 +1,6 @@
 ---
 name: browser-tool-routing
-description: "Маршрутизация браузерных задач: Playwright vs Chrome DevTools vs оба. Используй для: выбор браузерного MCP, проверь в браузере, скриншот vs дебаг, validation vs diagnosis, какой инструмент запустить, что использовать для UI."
+description: "Маршрутизация браузерных задач: Playwright vs Chrome DevTools vs оба. Используй для: выбор браузерного MCP, проверь в браузере, скриншот vs дебаг, какой инструмент запустить, что использовать для UI. EN triggers: pick browser MCP, validation vs diagnosis, screenshot vs debug, which browser tool, route browser task, Playwright vs DevTools."
 ---
 
 # Browser Tool Routing

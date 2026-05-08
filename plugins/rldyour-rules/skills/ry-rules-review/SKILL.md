@@ -1,6 +1,6 @@
 ---
 name: ry-rules-review
-description: "Аудит реализации против rldyour rules. Используй для: /ry-rules-review, проверь по правилам, аудит правил, hard rules review, качество по правилам, rules audit."
+description: "Аудит реализации против rldyour rules. Используй для: /rldyour-rules:ry-rules-review, проверь по правилам, аудит правил, проверь жесткие правила, качество по правилам. EN triggers: rules review, hard rules audit, check against rules, rldyour rules check, policy compliance audit, rules audit."
 disable-model-invocation: true
 ---
 

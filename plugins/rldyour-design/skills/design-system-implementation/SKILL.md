@@ -1,6 +1,6 @@
 ---
 name: design-system-implementation
-description: "Централизованная дизайн-система с токенами (W3C DTCG / Tailwind v4 CSS-vars), shadcn/ui, ReactBits. Используй для: дизайн-система, токены, theme, CSS variables, цвета, типография, отступы, motion, primitives, UI-kit."
+description: "Централизованная дизайн-система с токенами (W3C DTCG / Tailwind v4 CSS-vars), shadcn/ui, ReactBits. Используй для: дизайн-система, токены, тема, цвета, типография, отступы, моушн, примитивы, UI-kit. EN triggers: design system, design tokens, build theme, color palette, typography scale, spacing scale, motion presets, design primitives, UI primitives, shadcn setup."
 allowed-tools:
   - mcp__plugin_rldyour-mcps_figma__*
   - mcp__plugin_rldyour-mcps_shadcn__*
