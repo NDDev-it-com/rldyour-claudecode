@@ -74,6 +74,8 @@ For `cpp`, the language server is only as correct as the compile database:
 
 Use `typescript` for JavaScript. A JavaScript-only project should still provide `jsconfig.json` or TypeScript configuration that lets the language server understand module resolution.
 
-## Why this plugin does not ship `.lsp.json`
+## How this plugin registers LSP servers with Claude Code
 
-Anthropic's `claude-plugins-official` LSP plugins (typescript-lsp, pyright-lsp, rust-analyzer-lsp, gopls-lsp, clangd-lsp, jdtls-lsp, swift-lsp, ruby-lsp, kotlin-lsp, lua-lsp, php-lsp, csharp-lsp) ship only LICENSE + README and document install commands for the user. As of May 2026, Claude Code does not auto-load LSPs from a plugin's `.lsp.json` schema. LSPs remain local executables consumed by Serena MCP and external IDE clients. This plugin therefore does not declare `.lsp.json` and does not invent a fake `lspServers` manifest field.
+This plugin ships `plugins/rldyour-lsps/.lsp.json` at the plugin root. Claude Code v2.1.x auto-loads `.lsp.json` from each installed plugin and registers the listed servers natively (verified empirically via `/reload-plugins` output: "15 plugin LSP servers"). Schema: `code.claude.com/docs/en/plugins-reference#lsp-servers`. Each entry maps a language key to `command + args + extensionToLanguage + transport=stdio + initializationOptions + settings + maxRestarts` (plus optional `startupTimeout`).
+
+Anthropic's `claude-plugins-official` LSP plugin folders (typescript-lsp, pyright-lsp, rust-analyzer-lsp, gopls-lsp, clangd-lsp, jdtls-lsp, etc.) ship only LICENSE + README because they declare `lspServers` in the central marketplace.json — but that propagation path is broken in CC v2.1.x (Issue #15148, still OPEN as of May 2026). Per-plugin `.lsp.json` directly avoids that bug and is the canonical workaround used by `Piebald-AI/claude-code-lsps` and `boostvolt/claude-code-lsps` production marketplaces. Local executable installation is still the user's responsibility — `.lsp.json` only registers the server with CC; the binary must already be on PATH.
