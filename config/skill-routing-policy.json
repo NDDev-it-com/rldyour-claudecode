@@ -1,0 +1,187 @@
+{
+  "version": 1,
+  "description": "Deterministic policy tests for Russian and English prompt routing into rldyour skills. Each case asserts that for the given prompt the listed skill descriptions contain the expected terms — verifying that skill descriptions stay aligned with the trigger phrases users actually type.",
+  "cases": [
+    {
+      "id": "ru-technical-research",
+      "prompt": "изучи интернет и документацию по настройке GitHub Actions",
+      "prompt_terms": ["изучи", "документацию"],
+      "expected": [
+        {
+          "skill": "rldyour-explore:tech-research",
+          "description_terms": ["исследуй", "доку", "Context7"]
+        },
+        {
+          "skill": "rldyour-explore:web-research",
+          "description_terms": ["интернет", "WebSearch"]
+        }
+      ]
+    },
+    {
+      "id": "ru-flow-start",
+      "prompt": "/ry-start реализуй фичу качественно и проверь все",
+      "prompt_terms": ["ry-start", "реализуй"],
+      "expected": [
+        {
+          "skill": "rldyour-flow:ry-start",
+          "description_terms": ["ry-start", "реализуй", "lifecycle"]
+        }
+      ]
+    },
+    {
+      "id": "ru-init-context",
+      "prompt": "/ry-init backend инициализируй проект и загрузи контекст",
+      "prompt_terms": ["ry-init", "инициализируй"],
+      "expected": [
+        {
+          "skill": "rldyour-flow:ry-init",
+          "description_terms": ["ry-init", "инициализируй", "scope"]
+        }
+      ]
+    },
+    {
+      "id": "ru-deep-review",
+      "prompt": "/ry-review проверь diff на качество и архитектуру",
+      "prompt_terms": ["ry-review", "проверь"],
+      "expected": [
+        {
+          "skill": "rldyour-flow:ry-review",
+          "description_terms": ["ry-review", "ревью"]
+        }
+      ]
+    },
+    {
+      "id": "ru-browser-validation",
+      "prompt": "проверь в браузере визуально адаптив и бизнес-логику",
+      "prompt_terms": ["проверь в браузере", "визуально"],
+      "expected": [
+        {
+          "skill": "rldyour-browser:browser-validation",
+          "description_terms": ["проверь в браузере", "визуально", "Playwright"]
+        },
+        {
+          "skill": "rldyour-browser:browser-tool-routing",
+          "description_terms": ["проверь в браузере", "Playwright", "Chrome DevTools"]
+        }
+      ]
+    },
+    {
+      "id": "ru-browser-debug",
+      "prompt": "не работает UI в браузере, console errors и сеть",
+      "prompt_terms": ["UI", "console", "сеть"],
+      "expected": [
+        {
+          "skill": "rldyour-browser:browser-debug",
+          "description_terms": ["console errors", "сеть", "Chrome DevTools"]
+        }
+      ]
+    },
+    {
+      "id": "ru-security-review",
+      "prompt": "/ry-sec-review проверь безопасность auth и OWASP",
+      "prompt_terms": ["ry-sec-review", "безопасность"],
+      "expected": [
+        {
+          "skill": "rldyour-security:ry-sec-review",
+          "description_terms": ["ry-sec-review", "проверь безопасность", "OWASP"]
+        },
+        {
+          "skill": "rldyour-security:owasp-top-10-implementation",
+          "description_terms": ["OWASP", "auth", "secure coding"]
+        }
+      ]
+    },
+    {
+      "id": "ru-design-handoff",
+      "prompt": "перенеси Figma макет в код pixel-perfect",
+      "prompt_terms": ["Figma", "макет", "pixel-perfect"],
+      "expected": [
+        {
+          "skill": "rldyour-design:figma-to-code",
+          "description_terms": ["Figma", "pixel-perfect", "design handoff"]
+        },
+        {
+          "skill": "rldyour-design:ry-design",
+          "description_terms": ["Figma", "pixel-perfect"]
+        }
+      ]
+    },
+    {
+      "id": "ru-fsd-architecture",
+      "prompt": "разложи фронтенд по слоям FSD",
+      "prompt_terms": ["FSD", "слоям", "фронтенд"],
+      "expected": [
+        {
+          "skill": "rldyour-design:fsd-frontend-architecture",
+          "description_terms": ["FSD", "фронтенд архитектура", "слои"]
+        }
+      ]
+    },
+    {
+      "id": "ru-design-system",
+      "prompt": "настрой дизайн-систему с токенами и shadcn",
+      "prompt_terms": ["дизайн-система", "токенами", "shadcn"],
+      "expected": [
+        {
+          "skill": "rldyour-design:design-system-implementation",
+          "description_terms": ["дизайн-система", "токены", "shadcn"]
+        }
+      ]
+    },
+    {
+      "id": "ru-lsp-routing",
+      "prompt": "настрой type checking для TypeScript и Python",
+      "prompt_terms": ["type checking", "TS", "Python"],
+      "expected": [
+        {
+          "skill": "rldyour-lsps:lsp-routing",
+          "description_terms": ["LSP", "type checking", "Python", "TS"]
+        }
+      ]
+    },
+    {
+      "id": "ru-rules-review",
+      "prompt": "/ry-rules-review проверь по правилам качество кода",
+      "prompt_terms": ["ry-rules-review", "правилам"],
+      "expected": [
+        {
+          "skill": "rldyour-rules:ry-rules-review",
+          "description_terms": ["ry-rules-review", "правилам", "rules audit"]
+        }
+      ]
+    },
+    {
+      "id": "ru-quality-first",
+      "prompt": "качественно реализуй без костылей",
+      "prompt_terms": ["качественно", "костылей"],
+      "expected": [
+        {
+          "skill": "rldyour-rules:quality-first-engineering",
+          "description_terms": ["качественно", "костыли", "техдолг"]
+        }
+      ]
+    },
+    {
+      "id": "ru-serena-code",
+      "prompt": "изучи код проекта семантически и найди символы",
+      "prompt_terms": ["изучи код", "найди символы"],
+      "expected": [
+        {
+          "skill": "rldyour-serena-mcp:serena-code-workflow",
+          "description_terms": ["изучи код", "найди символы", "Serena"]
+        }
+      ]
+    },
+    {
+      "id": "ru-memory-sync",
+      "prompt": "обнови serena memories после задачи",
+      "prompt_terms": ["обнови memories", "после"],
+      "expected": [
+        {
+          "skill": "rldyour-serena-mcp:serena-memory-sync",
+          "description_terms": ["обнови memories", "fact-only", ".serena/memories"]
+        }
+      ]
+    }
+  ]
+}
