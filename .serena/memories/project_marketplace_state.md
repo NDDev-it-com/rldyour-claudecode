@@ -1,6 +1,6 @@
 # rldyour-claude marketplace state
 
-Last commit: a851d99 (refactor/restore-advisory-hooks, 2026-05-08, awaiting merge to main).
+Last commit: 8123e46 (feat/codex-port-wave, 2026-05-08, awaiting merge to main — codex-parity wave).
 Four May-2026 best-practice waves applied:
 - optimize/may-2026-best-practices: 6 commits 3fe9005..2e22652 (merged to main)
 - docs/canonical-may2026: 1 commit ca13470 (merged to main)
@@ -216,6 +216,26 @@ Memory-sync subagent wave (f23765d..772f6e8, merged 2026-05-08):
   NEW plugins/rldyour-serena-mcp/agents/flow-memory-sync.md (sonnet/high/36/yellow,
   anti-hallucination contract in body — citation per claim, source-of-truth
   hierarchy code > tests > git diff > existing memories, removal-first principle).
+
+Codex-parity wave (a851d99..8123e46, branch feat/codex-port-wave):
+- adb0bc1 docs: root public files (README.md, CHANGELOG.md, VERSION 0.1.0, LICENSE MIT).
+- ff14160 feat(ops): operations harness — scripts/{validate_marketplace.sh,
+  validate_plugin_versions.py, validate_instruction_docs.py,
+  validate_skill_routing.py, check_mcp_runtime_versions.py, release_manifest.py,
+  collect_diagnostics.sh, sync_fullrepo_branch.sh} + config/{mcp-runtime-versions.env,
+  skill-routing-policy.json with 15 deterministic Russian/English routing tests}.
+- 22b8d5b feat(ci): scheduled dependency-check.yml workflow + statusMessage on
+  every hook handler in both plugins + extended validate.yml (now runs
+  validate_plugin_versions, check_mcp_runtime_versions, validate_skill_routing).
+- 4005831 docs(plugins): per-plugin README.md across all 9 plugins.
+- 2082b5d docs: docs/{release-process, rollback-restore, dependency-updates,
+  observability}.md reference set.
+- 8123e46 feat(ops): smoke tests — scripts/{smoke_hooks.sh, smoke_mcp_runtime.sh,
+  smoke_fullrepo_sync.sh, bootstrap_check.sh, install_local_git_hooks.sh}.
+- All scripts pass validate_marketplace.sh full harness on current HEAD.
+- Wave validated against ry-explore deep research findings (Anthropic
+  claude-plugins-official patterns + EveryInc + MadAppGang + tractorjuice/arc-kit).
+- Tag convention canonical: {plugin-name}--v{version} per docs/en/plugin-dependencies.
 
 Restored Codex-style advisory enforcement (refactor/restore-advisory-hooks):
 - Stop hooks are advisory enforcement gates, not executors. Hooks compute
