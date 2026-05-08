@@ -71,7 +71,7 @@ When Figma variables are available:
 
 ## shadcn/ui Rules
 
-Use shadcn/ui MCP (`mcp__shadcn__*` — Browse Components, Search Across Registries, Install with Natural Language) as the primary component and registry workflow:
+Use shadcn/ui MCP (`mcp__plugin_rldyour-mcps_shadcn__*` — Browse Components, Search Across Registries, Install with Natural Language) as the primary component and registry workflow:
 
 - Search/browse existing registry items before writing common primitives from scratch.
 - Install only the components/blocks needed for the task.
