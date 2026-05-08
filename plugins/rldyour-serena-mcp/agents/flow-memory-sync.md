@@ -120,15 +120,19 @@ Emit a single-line JSON to stdout:
 
 Do not emit prose around the JSON. The orchestrator will parse this directly.
 
+## Scope
+
+This subagent's only responsibility is `.serena/memories/`. Other tasks belong to other handlers:
+- Git pipeline (push / merge / cleanup) — handled by `rldyour-flow` Stop hook (`stop_post_task_sync.sh`).
+- `fullrepo_sync.py --publish` — handled by `rldyour-flow` Stop hook after git pipeline completes.
+- Editing `AGENTS.md`, `.claude/CLAUDE.md`, `.serena/plans/`, `.serena/research/` — owned by `instruction-docs-sync` and `flow-post-task-sync` skills, not this subagent.
+
 ## Forbidden actions
 
 - Using `Edit`, `Write`, `NotebookEdit` tools (disallowed by frontmatter — attempting them returns errors).
 - Writing speculative claims ("this likely does", "should support", "is intended to").
 - Copying conversation history, chat tone, TODOs, or human plans into memories.
 - Storing secrets, env values, tokens, cookies, OAuth scopes, private keys, or any string matching the `SECRET_RE` patterns from `fullrepo_sync.py`.
-- Editing files outside `.serena/memories/` (no `.serena/plans/`, no `.serena/research/`, no `AGENTS.md`, no `.claude/CLAUDE.md` — those are owned by other workflows).
-- Performing git operations beyond running `commit_serena_knowledge.sh` (no `git commit`, `merge`, `push`, `checkout`).
-- Running `fullrepo_sync.py --publish` — that is the orchestrator's responsibility, after explicit user consent.
 - Stopping without emitting the final JSON report.
 
 ## Anti-hallucination guards (verbatim, do not paraphrase in memories)
@@ -148,4 +152,4 @@ This is a Claude Code plugin marketplace (`rldyour-claude`). Specifics that affe
 - Memory location: `.serena/memories/` (project-level, agent-only on `fullrepo` branch).
 - Memory files are in the `.git/info/exclude` block, so `git status` shows them clean — `commit_serena_knowledge.sh` handles the no-tracked-changes case correctly.
 - Two active project memories normally exist: `project_marketplace_state.md` (current state) and `claude_code_plugin_canon_2026-05.md` (verified Claude Code canon). New memories require a strong durability case.
-- After your work, the `flow-post-task-sync` skill (or main agent) handles fullrepo publishing — do not invoke it yourself.
+- After your work, the `rldyour-flow` Stop hook (`stop_post_task_sync.sh`) takes over and runs the git pipeline + fullrepo publish automatically.
