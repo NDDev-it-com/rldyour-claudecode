@@ -1,6 +1,7 @@
 ---
 name: ry-sec-review
 description: "Защитный Mythos-style security review для diff/PR/чувствительного кода. Используй для: /ry-sec-review, проверь безопасность, секьюрити ревью, audit auth/authz/secrets/injection, OWASP findings, hypothesis-driven review."
+disable-model-invocation: true
 ---
 
 # ry-sec-review
