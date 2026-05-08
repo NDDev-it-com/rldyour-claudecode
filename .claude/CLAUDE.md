@@ -50,9 +50,9 @@ Total: 32 skills, 9 slash commands, 7 subagents.
 - `flow-verification-review` — test coverage, LSP, type/lint, browser/server evidence.
 - `flow-security-review` — defensive-only auth/authz, validation, secrets, deploy/rollback safety.
 
-All reviewer subagents: `model: sonnet`, `effort: high`, `maxTurns: 12-14`, `disallowedTools: [Edit, Write, NotebookEdit]`.
+All reviewer subagents: `model: sonnet`, `effort: high`, `maxTurns: 36` (security: `42`), `disallowedTools: [Edit, Write, NotebookEdit]`, distinct colors (architecture: blue, quality: green, consistency: purple, integration: orange, verification: pink, security: red). Generous `maxTurns` is intentional — MCP-rich toolsets (Serena + Context7 + DeepWiki + Grep) consume turns on tool plumbing; tight 12-14 turn limits left only 4-7 effective reasoning turns.
 
-`plugins/rldyour-explore/agents/ry-explore.md` — single research agent with `model: opus[1m]`, `effort: max`, `maxTurns: 30`, `disallowedTools: [Edit, Write, NotebookEdit]`, `color: cyan`. Triggered by the `/rldyour-explore:ry-explore` slash command (`context: fork`).
+`plugins/rldyour-explore/agents/ry-explore.md` — single research agent with `model: opus[1m]`, `effort: max`, `maxTurns: 90`, `disallowedTools: [Edit, Write, NotebookEdit]`, `color: cyan`. Triggered by the `/rldyour-explore:ry-explore` slash command (`context: fork`).
 
 ## Hooks Lifecycle
 
@@ -76,7 +76,7 @@ Loop guard: `flow.stop_post_task_sync.sh` writes `.serena/.flow_sync_marker` wit
 
 `plugins/rldyour-mcps/.mcp.json` is the single source of MCP servers for the whole marketplace. Run `/mcp` to inspect status. Pinned servers:
 
-- `serena` — `uvx serena-agent==1.2.0` with `--context=agent` (canonical for generic CLI agents like Claude Code; exposes 45 of 46 Serena tools, only excludes the redundant `initial_instructions` tool). Web dashboard disabled.
+- `serena` — `uvx serena-agent==1.2.0` with `--context=agent` (canonical for generic CLI agents like Claude Code; exposes 45 of 46 Serena tools, only excludes the redundant `initial_instructions` tool). Web dashboard disabled. **`alwaysLoad: true`** (v2.1.121+) — eager startup; Serena drives every UserPromptSubmit hook and code workflow, so deferring it adds latency.
 - `sequential-thinking` — `bunx @modelcontextprotocol/server-sequential-thinking@2025.12.18`.
 - `playwright` — `bunx @playwright/mcp@0.0.74 --headless --caps=network,storage,testing,devtools`.
 - `chrome-devtools` — `bunx chrome-devtools-mcp@0.25.0 --headless --isolated`.
@@ -139,7 +139,9 @@ Common operations:
 ## Validation And Diagnostics
 
 - `claude plugin validate <path>` — run from repo root after editing any `marketplace.json` or `plugin.json`. CI mirrors this in `.github/workflows/validate.yml` on every PR.
-- Minimum Claude Code version: **v2.1.111+** for the `model: opus[1m]` bracketed syntax in agent frontmatter (`ry-explore`). Earlier versions silently ignore it.
+- `claude plugin tag --push` (v2.1.119+) — validated tagging with version-consistency check between `plugin.json` and marketplace entry; refuses dirty worktree or already-existing tag. Use for releases.
+- `claude plugin prune` (v2.1.121+) — removes auto-installed dependencies no longer required by any installed plugin. `claude plugin uninstall <plugin> --prune` cascades the removal.
+- Minimum Claude Code version: **v2.1.111+** for the `model: opus[1m]` bracketed syntax in agent frontmatter (`ry-explore`). Earlier versions silently ignore it. Current local: **v2.1.133**.
 - `bash plugins/rldyour-flow/scripts/git_sync_audit.sh` — branch, upstream, ahead/behind, worktrees, merged-branch cleanup candidates.
 - `python3 plugins/rldyour-flow/scripts/instruction_docs_state.py --json` — whether `AGENTS.md` and `.claude/CLAUDE.md` need review.
 - `python3 plugins/rldyour-flow/scripts/flow_post_task_state.py` — fingerprint of dirty state, Serena freshness, branch cleanup candidates.
@@ -147,6 +149,31 @@ Common operations:
 - `bash plugins/rldyour-lsps/scripts/check_lsps.sh` — LSP health check across supported languages (used in consumer projects, not here).
 
 Useful Claude Code slash commands during work in this repo: `/mcp` (transport status), `/doctor` (env health), `/status` (session state), `/context` (current context), `/hooks` (active hooks), `/memory` (memory status).
+
+## Skill Listing Budget
+
+Claude Code shows a finite slice of every skill's `description` in its triggering listing. Defaults: per-entry combined `description` + `when_to_use` cap **1,536 chars** (raised from 250 in v2.1.128); aggregate budget **1% of context window** with 8,000-char fallback. With 32+ skills the default 1% budget truncates tail-end descriptions and Claude can no longer auto-trigger them.
+
+User-side fix lives in `~/.claude/settings.json`:
+
+```json
+{
+  "skillListingBudgetFraction": 0.03,
+  "skillListingMaxDescChars": 1536
+}
+```
+
+Both keys added in v2.1.129+. `skillListingBudgetFraction` is a decimal fraction in `(0, 1]` (the validator rejects integers and `> 1`). Override at runtime with `SLASH_COMMAND_TOOL_CHAR_BUDGET` env var (raw chars). Free budget by setting low-priority entries to `"name-only"` in `skillOverrides` — but note that `skillOverrides` does **not** affect plugin-shipped skills; manage those through `/plugin`.
+
+Plugin-side levers (used in this repo):
+- `disable-model-invocation: true` on `skills/ry-deploy/SKILL.md` and `skills/ry-newp/SKILL.md` — they only fire via slash command, freeing budget for auto-triggered skills.
+- `allowed-tools` on 10 skills with explicit toolsets — eliminates per-call permission prompts during work without touching listing budget.
+
+## Hook Events Canon
+
+Claude Code v2.1.x publishes **30 canonical hook events** (per `code.claude.com/docs/en/hooks`). Per-event matcher support, blocking ability, and plugin support detailed in the official docs. Five handler types: `command`, `http`, `mcp_tool` (v2.1.118+), `prompt`, `agent`. Prompt/agent handlers spawn LLM evaluation or full subagent verification — used for runtime validation when shell hooks aren't expressive enough.
+
+Hierarchy precedence (highest → lowest): managed policy → plugin hooks (force-enabled exempt from `allowManagedHooksOnly`) → `.claude/settings.json` → `.claude/settings.local.json` → `~/.claude/settings.json` → skill/agent frontmatter.
 
 ## Engineering Conventions
 

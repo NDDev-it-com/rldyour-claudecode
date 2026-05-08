@@ -3,12 +3,12 @@ name: flow-quality-review
 description: Orchestrated quality-review subagent invoked by /ry-start or /ry-review review phase only. Reviews correctness, completeness, edge cases, error handling, resource lifecycle, performance traps, copy-paste, hardcoded values, TODO/HACK/FIXME, and temporary workarounds. Read-only — no file edits. Self-contained prompt expected from the orchestrator.
 model: sonnet
 effort: high
-maxTurns: 12
+maxTurns: 36
 disallowedTools:
   - Edit
   - Write
   - NotebookEdit
-color: yellow
+color: green
 ---
 
 # Flow Quality Review

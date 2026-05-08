@@ -1,6 +1,9 @@
 ---
 name: browser-debug
 description: "Дебаг браузерных багов — console, network, runtime, hydration, layout, performance через Chrome DevTools MCP. Используй для: ошибка в браузере, не работает UI, console errors, сеть, network failure, hydration, Lighthouse, разбери баг."
+allowed-tools:
+  - mcp__plugin_rldyour-mcps_chrome-devtools__*
+  - mcp__plugin_rldyour-mcps_playwright__*
 ---
 
 # Browser Debug

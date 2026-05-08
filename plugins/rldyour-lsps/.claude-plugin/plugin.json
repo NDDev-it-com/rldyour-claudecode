@@ -1,5 +1,5 @@
 {
-  "$schema": "https://anthropic.com/claude-code/plugin.schema.json",
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "rldyour-lsps",
   "version": "0.1.0",
   "description": "LSP-воркфлоу для Claude Code: маршрутизация, health-checks, brew-first установка, Serena LSP integration. Skills + scripts + references. Покрывает Python, Rust, Dart/Flutter, TS/JS, Go, C/C++, Qt, YAML, Docker, HTML/CSS, Shell, JSON, TOML, Markdown.",

@@ -41,7 +41,9 @@ plugins/
 ## Validation And Setup
 
 - Validate manifests: `claude plugin validate <path>` from repo root after editing any `marketplace.json` or `plugin.json`. CI runs this on every PR via `.github/workflows/validate.yml`.
-- Minimum Claude Code version: **v2.1.111+** for `model: opus[1m]` bracketed extended-context model syntax used by the `ry-explore` agent. Earlier versions silently ignore the bracket suffix.
+- Tag releases: `claude plugin tag --push` (v2.1.119+) validates that `plugin.json` and marketplace entry agree on version, refuses dirty worktrees and pre-existing tags. Tag convention: `<plugin-name>--v<version>`.
+- Prune orphaned dependencies: `claude plugin prune` (v2.1.121+); `claude plugin uninstall <plugin> --prune` cascades.
+- Minimum Claude Code version: **v2.1.111+** for `model: opus[1m]` bracketed extended-context model syntax used by the `ry-explore` agent. Earlier versions silently ignore the bracket suffix. Current local: **v2.1.133**.
 - Bootstrap a fresh checkout: `python3 plugins/rldyour-flow/scripts/fullrepo_sync.py --bootstrap-init` — installs `.git/info/exclude` block for agent-only files and restores or publishes `fullrepo`.
 - Audit git/branch/worktree state: `bash plugins/rldyour-flow/scripts/git_sync_audit.sh`.
 - Quality checks for product repositories that consume this marketplace: `bash plugins/rldyour-flow/scripts/detect_project_checks.sh`. This repository has no runtime test suite by design.
@@ -57,7 +59,7 @@ Five orchestrated lifecycle skills live in `rldyour-flow`. Each has a Russian-le
 - `/rldyour-flow:ry-review` — report-only deep review with reviewer tracks (architecture/quality/consistency/integration/verification/security).
 - `/rldyour-flow:ry-deploy` — deploy with local↔GitHub↔server sync, log checks, fix-forward, docs/git finalization.
 
-Reviewer subagents live in `plugins/rldyour-flow/agents/flow-*-review.md`. All run on `model: sonnet`, `effort: high`, `maxTurns: 12-14`, with `disallowedTools: [Edit, Write, NotebookEdit]`. They are read-only and self-contained.
+Reviewer subagents live in `plugins/rldyour-flow/agents/flow-*-review.md`. All run on `model: sonnet`, `effort: high`, `maxTurns: 36` (security: `42`), with `disallowedTools: [Edit, Write, NotebookEdit]` and distinct colors (architecture: blue, quality: green, consistency: purple, integration: orange, verification: pink, security: red). They are read-only and self-contained. Generous `maxTurns` is intentional — MCP-heavy toolsets consume turns on tool plumbing.
 
 ## Hooks Lifecycle
 
@@ -91,7 +93,7 @@ Subcommands:
 
 ## MCP Transport (`rldyour-mcps/.mcp.json`)
 
-13 pinned servers: `serena-agent==1.2.0` (with `--context=agent` for generic CLI agents like Claude Code), `@modelcontextprotocol/server-sequential-thinking@2025.12.18`, `@playwright/mcp@0.0.74`, `chrome-devtools-mcp@0.25.0`, `@upstash/context7-mcp@2.2.4`, `deepwiki` (HTTP `mcp.deepwiki.com`), `grep` (HTTP `mcp.grep.app`), `semgrep==1.161.0`, `shadcn@4.7.0`, `dart mcp-server`, `figma` (HTTP `mcp.figma.com`), `openai-docs` (HTTP), `github-mcp-server`. Required env: `CONTEXT7_API_KEY`, `GITHUB_PERSONAL_ACCESS_TOKEN`.
+13 pinned servers: `serena-agent==1.2.0` (with `--context=agent` for generic CLI agents like Claude Code, **`alwaysLoad: true`** since v2.1.121+ — eager startup because Serena drives every UserPromptSubmit hook), `@modelcontextprotocol/server-sequential-thinking@2025.12.18`, `@playwright/mcp@0.0.74`, `chrome-devtools-mcp@0.25.0`, `@upstash/context7-mcp@2.2.4`, `deepwiki` (HTTP `mcp.deepwiki.com`), `grep` (HTTP `mcp.grep.app`), `semgrep==1.161.0`, `shadcn@4.7.0`, `dart mcp-server`, `figma` (HTTP `mcp.figma.com`), `openai-docs` (HTTP), `github-mcp-server`. Required env: `CONTEXT7_API_KEY`, `GITHUB_PERSONAL_ACCESS_TOKEN`.
 
 MCP timeouts are controlled by Claude Code env vars (per official docs at `code.claude.com/docs/en/mcp`): `MCP_TIMEOUT` (server startup, default depends on Claude Code version) and `MCP_TOOL_TIMEOUT` (per-tool-call). Per-server `startup_timeout_sec`/`tool_timeout_sec` keys in `.mcp.json` are NOT documented and silently ignored — do not add them.
 
@@ -123,6 +125,10 @@ Current dependency graph:
 - Deep research: `/rldyour-explore:ry-explore` slash command runs `agents/ry-explore.md` (opus[1m], max effort, isolated context).
 - Defensive security review: `/rldyour-security:ry-sec-review`.
 - Architecture/quality/consistency/integration/verification/security review for an existing diff: `/rldyour-flow:ry-review`.
+
+## Skill Listing Budget
+
+User-side `~/.claude/settings.json` should set `"skillListingBudgetFraction": 0.03` (v2.1.129+) so descriptions of all 32 skills survive the listing cap (default 1% of context truncates ~37 tail entries; per-entry cap is 1,536 chars, raised from 250 in v2.1.128). Plugin-side levers used in this repo: `disable-model-invocation: true` on `ry-deploy`/`ry-newp` (slash-only); `allowed-tools` declared explicitly on 10 skills with obvious toolsets (Serena, Context7+DeepWiki+Grep, Web*, Playwright, Chrome DevTools, Bash) to eliminate permission prompts during work.
 
 ## Engineering Constraints
 

@@ -31,7 +31,7 @@ description: |
   </example>
 model: opus[1m]
 effort: max
-maxTurns: 30
+maxTurns: 90
 disallowedTools:
   - Edit
   - Write

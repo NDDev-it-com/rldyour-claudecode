@@ -1,6 +1,9 @@
 ---
 name: web-research
 description: "Интернет-исследование с авторитетными источниками через WebSearch + WebFetch. Используй для: текущие тренды, индустриальные новости, security advisories, vendor announcements, информация вне статичных доков, актуальные релизы."
+allowed-tools:
+  - WebSearch
+  - WebFetch
 ---
 
 # Web research

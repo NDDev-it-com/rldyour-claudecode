@@ -1,6 +1,8 @@
 # rldyour-claude marketplace state
 
-Last commit: bbb934b (main, 2026-05-07).
+Last main commit: bbb934b (main, 2026-05-07). Active feature branch:
+`optimize/may-2026-best-practices` (2026-05-08) with 5 atomic commits applying
+May-2026 best-practice findings from ry-explore deep research.
 Marketplace name: `rldyour-claude`. Repo: github.com/rldyourmnd/rldyour-claude (private).
 
 ## Layered architecture (verified)
@@ -45,11 +47,24 @@ Skip flags: `RLDYOUR_SKIP_FLOW_SESSION_CONTEXT`, `RLDYOUR_SKIP_STOP_GATES`,
 ## Subagent matrix
 
 Reviewer (rldyour-flow/agents/flow-*-review.md): `model: sonnet`, `effort: high`,
-`maxTurns: 12-14`, `disallowedTools: [Edit, Write, NotebookEdit]`. 6 agents:
-architecture, quality, consistency, integration, verification, security.
+`maxTurns: 36` (security: `42`), `disallowedTools: [Edit, Write, NotebookEdit]`.
+6 agents with distinct colors:
+
+| Agent | maxTurns | color |
+|---|---|---|
+| flow-architecture-review | 36 | blue |
+| flow-quality-review | 36 | green |
+| flow-consistency-review | 36 | purple |
+| flow-integration-review | 36 | orange |
+| flow-verification-review | 36 | pink |
+| flow-security-review | 42 | red |
+
+`maxTurns` was raised from 12-14 to 36/42 (×3) after observing that MCP-rich
+toolsets (Serena+Context7+DeepWiki+Grep) consume turns on tool plumbing.
+Tight 12-14 limits effectively gave only 4-7 reasoning turns.
 
 Research (rldyour-explore/agents/ry-explore.md): `model: opus[1m]`, `effort: max`,
-`maxTurns: 30`, `disallowedTools: [Edit, Write, NotebookEdit]`, `color: cyan`.
+`maxTurns: 90` (was 30), `disallowedTools: [Edit, Write, NotebookEdit]`, `color: cyan`.
 Triggered via `/rldyour-explore:ry-explore` slash command (`context: fork`).
 
 ## MCP transport (rldyour-mcps/.mcp.json)
@@ -57,7 +72,9 @@ Triggered via `/rldyour-explore:ry-explore` slash command (`context: fork`).
 13 pinned servers; all dead `startup_timeout_sec`/`tool_timeout_sec` keys removed
 (commit 0d78443).
 
-- serena: `serena-agent==1.2.0`, `--context=agent`, web dashboard disabled.
+- serena: `serena-agent==1.2.0`, `--context=agent`, web dashboard disabled,
+  `alwaysLoad: true` (v2.1.121+) — eager startup since Serena drives every
+  UserPromptSubmit hook.
 - sequential-thinking: `@modelcontextprotocol/server-sequential-thinking@2025.12.18`.
 - playwright: `@playwright/mcp@0.0.74` headless.
 - chrome-devtools: `chrome-devtools-mcp@0.25.0` headless isolated.
@@ -122,11 +139,31 @@ workflow_dispatch:
 - All MCP server versions pinned (stdio `==X.Y.Z`; HTTP by URL).
 - Min Claude Code: **v2.1.111+** for `model: opus[1m]` bracket syntax in agents.
 
-## Recent commit history (a115b86..bbb934b)
+## Skill-listing optimizations (2026-05-08)
 
+- 10 skills declare explicit `allowed-tools`: serena-code-workflow, serena-memory-sync,
+  tech-research, web-research, browser-validation, browser-debug, lsp-routing,
+  lsp-health-check, lsp-setup, serena-lsp-integration. MCP wildcard form
+  `mcp__plugin_rldyour-mcps_<server>__*` validated via `claude plugin validate`.
+- 2 skills marked `disable-model-invocation: true` (slash-only): ry-deploy, ry-newp.
+- User-side fix in `~/.claude/settings.json`: `skillListingBudgetFraction: 0.03`
+  (v2.1.129+) — default 1% truncated 37/70 skill descriptions.
+- Plugin.json `$schema` URL switched to `json.schemastore.org/claude-code-plugin-manifest.json`
+  (canonical per docs).
+
+## Recent commit history (a115b86..HEAD)
+
+main (a115b86..bbb934b):
 - 482c421 feat(mcps): switch Serena MCP --context to agent
 - 5feae39 refactor(flow,serena-mcp): trim other-CLI globs and rename agents-doc constant
 - 131c57b docs: reframe AGENTS.md as cross-tool root file
 - 0d78443 chore(mcps): drop unsupported timeout fields from .mcp.json
 - bcfa726 feat: declare cross-plugin dependencies in plugin.json
 - bbb934b ci: add claude plugin validate workflow
+
+optimize/may-2026-best-practices (bbb934b..HEAD):
+- 3fe9005 refactor(agents): unify reviewer effort/maxTurns/colors and triple ry-explore turns
+- 2631322 chore(plugins): switch plugin.json $schema to schemastore canonical
+- db18b8a feat(mcps): mark serena MCP server alwaysLoad
+- 0f7362b feat(skills): add allowed-tools to skills with explicit toolset
+- 652a49d feat(flow): mark ry-deploy and ry-newp as slash-only
