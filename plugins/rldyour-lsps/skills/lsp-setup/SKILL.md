@@ -1,6 +1,9 @@
 ---
 name: lsp-setup
 description: "Установка/обновление LSP-серверов через brew + toolchain (rustup, dart, npm). Только по явному запросу. Используй для: установи LSP, обнови лсп, поставь язык-серверы, почини language server."
+allowed-tools:
+  - Bash
+  - Read
 ---
 
 # LSP Setup

@@ -1,6 +1,12 @@
 ---
 name: serena-lsp-integration
 description: "Конфигурация Serena MCP под languages проекта — LSP keys, .serena/project.yml, ls_specific_settings. Используй для: настрой Serena LSP, индексация, семантический анализ, serena project index."
+allowed-tools:
+  - mcp__plugin_rldyour-mcps_serena__*
+  - Read
+  - Write
+  - Edit
+  - Bash
 ---
 
 # Serena LSP Integration

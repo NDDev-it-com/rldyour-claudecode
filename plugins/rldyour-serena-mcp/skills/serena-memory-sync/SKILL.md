@@ -1,6 +1,12 @@
 ---
 name: serena-memory-sync
 description: "Синхронизация .serena/memories — fact-only заметки из кода/диффов/тестов. Используй для: обнови memories, синхронизируй память, после коммита, после Stop-хука, fact-only audit, .serena/plans, .serena/research, durable changes."
+allowed-tools:
+  - mcp__plugin_rldyour-mcps_serena__*
+  - Read
+  - Write
+  - Edit
+  - Bash
 ---
 
 # Serena Memory Sync
