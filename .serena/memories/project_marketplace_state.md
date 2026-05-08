@@ -1,6 +1,6 @@
 # rldyour-claude marketplace state
 
-Last commit: 8123e46 (feat/codex-port-wave, 2026-05-08, awaiting merge to main — codex-parity wave).
+Last commit: 941e179 (feat/lsp-pyright-registration, 2026-05-08, awaiting merge to main).
 Four May-2026 best-practice waves applied:
 - optimize/may-2026-best-practices: 6 commits 3fe9005..2e22652 (merged to main)
 - docs/canonical-may2026: 1 commit ca13470 (merged to main)
@@ -216,6 +216,20 @@ Memory-sync subagent wave (f23765d..772f6e8, merged 2026-05-08):
   NEW plugins/rldyour-serena-mcp/agents/flow-memory-sync.md (sonnet/high/36/yellow,
   anti-hallucination contract in body — citation per claim, source-of-truth
   hierarchy code > tests > git diff > existing memories, removal-first principle).
+
+LSP registration wave (8123e46..941e179, branch feat/lsp-pyright-registration):
+- 941e179 feat(lsps): register pyright via .lsp.json for native CC LSP support.
+  - NEW: plugins/rldyour-lsps/.lsp.json — registers pyright-langserver for
+    .py/.pyi/.pyw via canonical schema (command + args + extensionToLanguage
+    + transport + initializationOptions + settings + maxRestarts).
+  - Pyright at ~/.local/bin/pyright-langserver was already installed, but
+    rldyour-lsps had no .lsp.json — only skills (lsp-routing, etc). CC's
+    native LSP feature therefore kept recommending the official pyright-lsp
+    Anthropic plugin. The .lsp.json silences that recommendation.
+  - Schema sourced from Piebald-AI/claude-code-lsps (production marketplace
+    with 30+ language LSPs) and code.claude.com/docs/en/plugins-reference.
+  - README updated with pattern for adding more languages when their LSPs
+    are installed locally (rust-analyzer, gopls, clangd, typescript-language-server, etc).
 
 Codex-parity wave (a851d99..8123e46, branch feat/codex-port-wave):
 - adb0bc1 docs: root public files (README.md, CHANGELOG.md, VERSION 0.1.0, LICENSE MIT).

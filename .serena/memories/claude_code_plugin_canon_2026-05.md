@@ -4,7 +4,7 @@ Source-backed facts cross-validated against `code.claude.com/docs/en/plugins-ref
 `code.claude.com/docs/en/mcp`, `code.claude.com/docs/en/changelog`, and Anthropic's own
 `claude-plugins-official` repo. Last refresh 2026-05-08 via ry-explore deep research.
 
-Last commit: 8123e46 (feat/codex-port-wave, 2026-05-08). Verification range: v2.1.111-v2.1.135.
+Last commit: 941e179 (feat/lsp-pyright-registration, 2026-05-08). Verification range: v2.1.111-v2.1.135.
 
 ## plugin.json schema
 
