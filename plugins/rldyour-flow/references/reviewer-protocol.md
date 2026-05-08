@@ -43,7 +43,7 @@ As of May 2026, `disable-model-invocation: true` on plugin skills has known limi
 - `disallowedTools: [Edit, Write, NotebookEdit]` to enforce read-only review.
 - `model: sonnet` for cost-efficiency on read-only inspection work.
 - `effort: high` (uniform across all 6 tracks).
-- `maxTurns: 36` for all tracks; `42` for `flow-security-review` (extra variant-hunt turns). Generous limits compensate for MCP-rich toolsets (Serena + Context7 + DeepWiki + Grep) consuming turns on tool plumbing — tight 12-14 caps left only 4-7 effective reasoning turns.
+- `maxTurns: 36` for all tracks; `42` for `flow-security-review` (extra +6 turns reserved for variant-hunt sweep — searching sibling files and repeated helpers for the same root cause once an issue is found). Generous limits compensate for MCP-rich toolsets (Serena + Context7 + DeepWiki + Grep) consuming turns on tool plumbing — tight 12-14 caps left only 4-7 effective reasoning turns. When adding a new reviewer track, default to `maxTurns: 36` unless the track requires variant-hunting beyond the single finding.
 - Distinct `color` per track for visual differentiation in the task list:
   - `flow-architecture-review`: `blue`
   - `flow-quality-review`: `green`
