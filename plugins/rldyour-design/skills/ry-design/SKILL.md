@@ -1,6 +1,15 @@
 ---
 name: ry-design
 description: "Сквозной дизайн-воркфлоу: Figma → код → токены → FSD → shadcn/ui → ReactBits → browser validation. Используй для: /ry-design, сделай дизайн, реализуй UI, сверстай страницу, перенеси Figma макет, pixel-perfect."
+allowed-tools:
+  - mcp__plugin_rldyour-mcps_figma__*
+  - mcp__plugin_rldyour-mcps_shadcn__*
+  - mcp__plugin_rldyour-mcps_playwright__*
+  - mcp__plugin_rldyour-mcps_chrome-devtools__*
+  - Read
+  - Write
+  - Edit
+  - Bash
 ---
 
 # ry-design
