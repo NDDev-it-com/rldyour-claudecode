@@ -32,7 +32,7 @@ Do not use it for design-system-only refactors that have no Figma source; use `d
 
 ## Source Of Truth
 
-Figma MCP (`mcp__figma__*`) is the source of truth for:
+Figma MCP (`mcp__plugin_rldyour-mcps_figma__*`) is the source of truth for:
 
 - Selected frames, components, variants, variables, styles, layout data, dimensions, constraints, and assets.
 - Figma screenshots or visual references used for pixel comparison.
@@ -48,7 +48,7 @@ If Figma MCP is unavailable, say so and use only explicitly provided fallback as
 4. Map Figma variables/styles to centralized design tokens before hardcoding values.
 5. Inspect the existing codebase with Serena-first workflow to find architecture, existing design system, shadcn setup, and component placement.
 6. Choose FSD placement before writing code: `shared`, `entities`, `features`, `widgets`, `pages`, or `app`.
-7. Use shadcn/ui MCP (`mcp__shadcn__*`) for primitives and registry blocks when they fit the design.
+7. Use shadcn/ui MCP (`mcp__plugin_rldyour-mcps_shadcn__*`) for primitives and registry blocks when they fit the design.
 8. Use ReactBits.dev only for purposeful animation or interactive effects that match the design and do not harm performance or accessibility.
 9. Implement the design by adapting Figma context into project-native code. Do not paste generated code blindly.
 10. Validate in browser through `browser-validation`: desktop, mobile, key states, screenshots under `browser/`, functional flow, and runtime health.

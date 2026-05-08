@@ -25,7 +25,7 @@ For implementation tasks, after routing select the concrete skill: `browser-vali
 
 ## Default Routing
 
-Use Playwright MCP first (`mcp__playwright__*`) for:
+Use Playwright MCP first (`mcp__plugin_rldyour-mcps_playwright__*`) for:
 
 - User-flow reproduction: navigation, forms, clicks, keyboard, dialogs, tabs, uploads, waits.
 - Functional validation: feature behavior, business rules, form values, visible state, route transitions, error states.
@@ -34,7 +34,7 @@ Use Playwright MCP first (`mcp__playwright__*`) for:
 - Storage/network/testing workflows enabled through `--caps=network,storage,testing,devtools`.
 - Final re-validation after code changes.
 
-Use Chrome DevTools MCP first (`mcp__chrome-devtools__*`) for:
+Use Chrome DevTools MCP first (`mcp__plugin_rldyour-mcps_chrome-devtools__*`) for:
 
 - Console errors, warnings, thrown exceptions, source maps, runtime stack traces.
 - Network diagnosis: failing requests, status codes, payload shapes, timing, caching, CORS, redirects.

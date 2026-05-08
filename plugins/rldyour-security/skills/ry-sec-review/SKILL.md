@@ -49,7 +49,7 @@ If scope is unclear, make a reasonable assumption and state it. Do not stop unle
 ## Review Workflow
 
 1. Recon: map changed files, entry points, dependencies, configuration, privileged operations, and data flows. Use Serena first when available: `get_symbols_overview`, targeted `find_symbol`, `find_referencing_symbols`, and `search_for_pattern`.
-2. Baseline scan: use available automated help when useful — Semgrep MCP (`mcp__semgrep__*`) and local project security scripts — but do not rely on scanners as the only evidence.
+2. Baseline scan: use available automated help when useful — Semgrep MCP (`mcp__plugin_rldyour-mcps_semgrep__*`) and local project security scripts — but do not rely on scanners as the only evidence.
 3. Hypothesize: generate review hypotheses mapped to OWASP Top 10 2025, ASVS 5.0.0 concepts, and project-specific threat boundaries.
 4. Trace: prove or reject each high-risk hypothesis by following source-to-sink paths, authorization checks, validation, output handling, config, and error paths.
 5. Variant hunt: search for similar patterns in sibling files, repeated helpers, copied logic, shared middleware, and framework-specific conventions.
