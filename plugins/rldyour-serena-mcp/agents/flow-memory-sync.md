@@ -26,6 +26,21 @@ description: |
 model: sonnet
 effort: high
 maxTurns: 36
+tools:
+  - Read
+  - Grep
+  - Glob
+  - Bash
+  - mcp__plugin_rldyour-mcps_serena__list_memories
+  - mcp__plugin_rldyour-mcps_serena__read_memory
+  - mcp__plugin_rldyour-mcps_serena__write_memory
+  - mcp__plugin_rldyour-mcps_serena__edit_memory
+  - mcp__plugin_rldyour-mcps_serena__delete_memory
+  - mcp__plugin_rldyour-mcps_serena__rename_memory
+  - mcp__plugin_rldyour-mcps_serena__find_symbol
+  - mcp__plugin_rldyour-mcps_serena__get_symbols_overview
+  - mcp__plugin_rldyour-mcps_serena__find_referencing_symbols
+  - mcp__plugin_rldyour-mcps_serena__search_for_pattern
 disallowedTools:
   - Edit
   - Write
