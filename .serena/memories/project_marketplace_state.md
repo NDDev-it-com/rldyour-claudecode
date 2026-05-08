@@ -1,6 +1,6 @@
 # rldyour-claude marketplace state
 
-Last commit: 36a1788 (feat/lsp-full-matrix, 2026-05-08, awaiting merge to main).
+Last commit: 38f4cc6 (fix/lsp-canonical-alignment, 2026-05-08, awaiting merge to main).
 Four May-2026 best-practice waves applied:
 - optimize/may-2026-best-practices: 6 commits 3fe9005..2e22652 (merged to main)
 - docs/canonical-may2026: 1 commit ca13470 (merged to main)
@@ -245,6 +245,15 @@ LSP registration wave (8123e46..36a1788, branches feat/lsp-pyright-registration
   - Result: CC stops recommending per-language LSP plugins (pyright-lsp etc)
     for any of the 15 covered languages — uses user's pre-installed servers
     directly. Servers not on PATH are silently skipped (no error).
+- 38f4cc6 fix(lsps): canonical alignment after cross-check vs Piebald-AI and
+  boostvolt reference marketplaces. Two surgical fixes:
+  - dart: add "startupTimeout": 60000 (Piebald-AI canonical) for slow Dart/Flutter
+    boot.
+  - bash: add ".ksh": "shellscript" to extensionToLanguage (boostvolt canonical).
+  Other 13 entries verified exact match with canonical (pyright/html/css/rust/
+  go/cpp/typescript/yaml plus 5 unique-but-correct: docker/json/toml/markdown/qml).
+  Live startup tested for marksman, taplo, bash-language-server,
+  docker-language-server, vscode-json-language-server.
 
 Codex-parity wave (a851d99..8123e46, branch feat/codex-port-wave):
 - adb0bc1 docs: root public files (README.md, CHANGELOG.md, VERSION 0.1.0, LICENSE MIT).

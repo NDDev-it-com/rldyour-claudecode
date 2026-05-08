@@ -48,6 +48,7 @@
     "transport": "stdio",
     "initializationOptions": {},
     "settings": {},
+    "startupTimeout": 60000,
     "maxRestarts": 3
   },
   "go": {
@@ -149,7 +150,8 @@
     "extensionToLanguage": {
       ".sh": "shellscript",
       ".bash": "shellscript",
-      ".zsh": "shellscript"
+      ".zsh": "shellscript",
+      ".ksh": "shellscript"
     },
     "transport": "stdio",
     "initializationOptions": {},
