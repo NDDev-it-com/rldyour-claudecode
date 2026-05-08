@@ -89,6 +89,7 @@ Per Anthropic guidance: put guardrails in hooks, not in CLAUDE.md prose. CLAUDE.
 - Slash command frontmatter: `description`, `argument-hint`, optional `context: fork` and `agent: <name>`. Bare `model:` on a slash command is silently ignored without `context: fork` — pair them or delegate via `agent:`.
 - Conventional Commits, ≤72 char subjects, atomic commits per logical unit. Separate commits for source / docs / Serena knowledge when it improves history clarity.
 - All MCP server versions are pinned (stdio with `==X.Y.Z`; HTTP servers by URL).
+- `allowed-tools` may mix built-in tool names (`Read`, `Write`, `Edit`, `Grep`, `Glob`, `Bash`, `WebSearch`, `WebFetch`) and MCP wildcards (`mcp__plugin_rldyour-mcps_<server>__*`) in the same skill — pattern is validated by `claude plugin validate` and used by `serena-code-workflow`, `serena-memory-sync`, `lsp-routing`, `serena-lsp-integration`, `figma-to-code`, `ry-design`, `design-system-implementation`.
 
 ## Claude Code-specific Diagnostics
 

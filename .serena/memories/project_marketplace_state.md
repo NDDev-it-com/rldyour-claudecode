@@ -1,9 +1,11 @@
 # rldyour-claude marketplace state
 
-Last commit: ca13470 (main, 2026-05-08, fix(explore): body maxTurns alignment
-after canonical docs rewrite). Two May-2026 best-practice waves landed on main:
-optimize/may-2026-best-practices (6 commits 3fe9005..2e22652) + docs/canonical-may2026
-(1 commit ca13470). Both feature branches deleted after fast-forward merge.
+Last commit: f23765d (main, 2026-05-08, polish wave: deferred findings applied).
+Three May-2026 best-practice waves landed on main:
+- optimize/may-2026-best-practices: 6 commits 3fe9005..2e22652
+- docs/canonical-may2026: 1 commit ca13470 (canonical CLAUDE.md/AGENTS.md rewrite)
+- polish/deferred-findings: 3 commits 3ce7970..f23765d (defer cleanup)
+All three feature branches deleted after fast-forward merge.
 Marketplace name: `rldyour-claude`. Repo: github.com/rldyourmnd/rldyour-claude (private).
 
 ## Layered architecture (verified)
@@ -182,3 +184,16 @@ not in git history but published to fullrepo):
 - ca13470 fix(explore): align ry-explore body maxTurns:90 with frontmatter
   (caught by flow-integration-review).
 - All 5 RLDYOUR_SKIP_* flags now documented (was 3).
+
+Polish wave (ca13470..f23765d, merged 2026-05-08):
+- 3ce7970 feat(design): allowed-tools added to 4 of 5 design skills
+  (figma-to-code, design-system-implementation, design-validation, ry-design).
+  fsd-frontend-architecture intentionally without — pure reference skill.
+- 7e32688 feat(audit): disable-model-invocation:true on ry-rules-review and
+  ry-sec-review (audit operations are deliberate). Now 4 skills are slash-only:
+  ry-deploy, ry-newp, ry-rules-review, ry-sec-review. ry-init/ry-start/ry-review/
+  ry-design intentionally retain auto-trigger as orchestrators.
+- f23765d docs(flow): documented maxTurns:36/42 rationale in reviewer-protocol.md
+  (security gets +6 turns for variant-hunt sweep).
+- .claude/CLAUDE.md grew by 1 line (124 total) documenting the validated pattern
+  of mixing built-in tools and MCP wildcards in allowed-tools.

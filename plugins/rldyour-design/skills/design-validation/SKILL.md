@@ -1,6 +1,9 @@
 ---
 name: design-validation
 description: "Браузер-валидация дизайн-имплементации после UI/Figma/shadcn/ReactBits работы через Playwright + Chrome DevTools MCP. Используй для: проверь дизайн, проверь верстку, адаптив, pixel-perfect, скриншоты."
+allowed-tools:
+  - mcp__plugin_rldyour-mcps_playwright__*
+  - mcp__plugin_rldyour-mcps_chrome-devtools__*
 ---
 
 # Design Validation
