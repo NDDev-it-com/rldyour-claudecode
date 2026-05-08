@@ -1,6 +1,10 @@
 ---
 name: tech-research
 description: "Технический ресёрч библиотек и кода через Context7/DeepWiki/Grep MCP. Используй для: изучи библиотеку, исследуй фреймворк, найди официальную доку, найди production-паттерны кода, сравни реализации, разбери архитектуру."
+allowed-tools:
+  - mcp__plugin_rldyour-mcps_context7__*
+  - mcp__plugin_rldyour-mcps_deepwiki__*
+  - mcp__plugin_rldyour-mcps_grep__*
 ---
 
 # Tech research
