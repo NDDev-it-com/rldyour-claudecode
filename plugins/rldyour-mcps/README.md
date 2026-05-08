@@ -17,10 +17,15 @@ stdio servers pinned with `==X.Y.Z` (uvx) or `@X.Y.Z` (bunx). HTTP servers pinne
 
 `scripts/check_mcp_runtime_versions.py` enforces parity. CI `dependency-check.yml` runs the same check on a weekly schedule.
 
+## Runtime SDK requirements
+
+- **Dart SDK 3.9+** required by `dart-flutter` MCP (`dart mcp-server` is a Dart SDK 3.9+ feature; toolchain pinning lives in `pubspec.yaml`, not `.mcp.json`). `scripts/bootstrap_check.sh` enforces this gate on bootstrap. Source: `https://docs.flutter.dev/ai/mcp-server` (2026-05).
+
 ## Special notes
 
 - `serena` server has `alwaysLoad: true` (CC v2.1.121+) — eager startup because Serena drives every UserPromptSubmit hook. Other servers are deferred until first tool call.
 - Per-server `startup_timeout_sec` / `tool_timeout_sec` keys are NOT in the documented Claude Code `.mcp.json` schema — silently ignored. Use env vars `MCP_TIMEOUT`, `MCP_TOOL_TIMEOUT`, `MCP_CONNECTION_NONBLOCKING` instead.
+- `github` server uses HTTP transport at `https://api.githubcopilot.com/mcp/` with Bearer `${GITHUB_PERSONAL_ACCESS_TOKEN}` — matches the canonical pattern in `anthropics/claude-plugins-official/external_plugins/github/.mcp.json`. Zero-install, no version pinning needed.
 
 ## Dependencies
 
