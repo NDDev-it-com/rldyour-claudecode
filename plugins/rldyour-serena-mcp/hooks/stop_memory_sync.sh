@@ -84,17 +84,15 @@ ${COMMITS}
 Changed non-Serena-knowledge files:
 ${NON_KNOWLEDGE_FILES:-unknown}
 
-Continue this turn and run the serena-memory-sync workflow now.
+Required action — invoke the flow-memory-sync subagent now (do NOT inline-edit memories from the main session):
 
-Required actions:
-1. Use Serena MCP as the primary source for code inspection:
-   check_onboarding_performed -> list_memories -> read_memory(relevant) -> get_symbols_overview -> find_symbol(include_body=false) -> find_symbol(include_body=true only where needed) -> find_referencing_symbols -> search_for_pattern.
-2. Update .serena/memories with high-signal fact-only English content. Each memory should preserve source-of-truth paths, entry points, current behavior, contracts/data, invariants, change rules, verification, and known gaps when relevant. Code, git diff, and tests are the source of truth.
-3. Do not store chat history, generic advice, speculative plans, TODO lists, or secrets in memories. Preserve non-trivial plans in .serena/plans and long source-backed research in .serena/research only when useful for future sessions.
-4. If only .serena/memories, .serena/plans, or .serena/research changed, run:
-   ${COMMIT_SCRIPT}
-   In fullrepo-managed projects this acknowledges current memories and leaves publishing to flow-post-task-sync instead of committing AI files to the current branch.
-5. Stop again after the sync or report the exact blocker."
+  Agent({
+    description: 'Sync Serena memories against HEAD ${HEAD_SHA}',
+    subagent_type: 'rldyour-serena-mcp:flow-memory-sync',
+    prompt: 'Synchronize .serena/memories against HEAD ${HEAD_SHA}. Newest synced commit: ${NEWEST_SHA:-none}. Changed non-knowledge files: ${NON_KNOWLEDGE_FILES:-unknown}. Follow the agent definition strictly: source-of-truth hierarchy = code > tests > git diff > existing memories; never speculate; cite or omit; emit final JSON report.'
+  })
+
+The flow-memory-sync subagent has narrow tool access (Serena memory tools + Read/Grep/Glob/Bash; Edit/Write/NotebookEdit are disallowed in its frontmatter). It enforces fact-only updates with anti-hallucination guards, runs ${COMMIT_SCRIPT} at the end, and emits a JSON report. After it exits, this hook re-fires; if memories now match HEAD it lets the session stop. If you cannot invoke the subagent (e.g., not enabled), fall back to: list_memories -> read_memory -> verify against code via Serena symbol tools -> write/edit memory with 'Last commit: ${HEAD_SHA}' line -> ${COMMIT_SCRIPT}."
 
 echo "$MESSAGE" >&2
 exit 2
