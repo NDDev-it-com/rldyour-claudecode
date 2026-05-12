@@ -112,6 +112,8 @@ Available, not adopted:
 
 Smoke-script footgun (documented for future maintainers): `scripts/smoke_fullrepo_sync.sh` calls `fullrepo_sync.py --bootstrap-init`, which restores agent-only worktree files (AGENTS.md, .claude/CLAUDE.md, .serena/**) from `origin/fullrepo`. Run smoke **before** editing agent-only files in a session, or re-apply edits after smoke completes; otherwise in-progress changes are silently reverted.
 
+Capability smoke (added 2026-05-12): `scripts/smoke_mcp_capabilities.sh` performs JSON-RPC `initialize` + `tools/list` per server (stdio spawn or HTTP POST) and asserts a non-empty tool set. Used to validate `serena 1.2.0 → 1.3.0` bump — 13/13 servers pass on 2026-05-12. Serena under `--context=agent` reports 28 tools in 1.3.0 (was 45 in 1.2.0); the mode-selection refactor scopes the tool surface more tightly per context. All workflow tools we use are present.
+
 ## Engineering Conventions
 
 - Russian user-facing communication; English repository artifacts. Skill `description` fields are Russian-leading (English keywords appended).

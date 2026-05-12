@@ -1,12 +1,13 @@
 # rldyour-claude marketplace state
 
-Last commit: 6124994 (docs: reviewer-feedback consolidation — CHANGELOG Keep-a-Changelog compliance, dependency-updates placeholders, browser-debug pluralization, smoke_mcp_capabilities planned marker, 2026-05-12).
-Four May-2026 best-practice waves applied:
+Last commit: c39f220 (fix(ops): harden capability smoke after reviewer findings).
+Multiple May-2026 waves applied (all merged to main except current):
 - optimize/may-2026-best-practices: 6 commits 3fe9005..2e22652 (merged to main)
 - docs/canonical-may2026: 1 commit ca13470 (merged to main)
 - polish/deferred-findings: 3 commits 3ce7970..f23765d (merged to main)
-- feat/memory-sync-subagent: 1 commit 772f6e8 (current branch, NOT YET merged)
-First three feature branches deleted after fast-forward merge.
+- feat/memory-sync-subagent: 1 commit 772f6e8 (merged to main)
+- polish/serena-and-capabilities-smoke: 3 commits 36fb0fc..c39f220 (current branch, NOT YET merged; 3 commits ahead of origin/main)
+Prior merged branches deleted after fast-forward merge.
 Marketplace name: `rldyour-claude`. Repo: github.com/rldyourmnd/rldyour-claude (private).
 
 ## Layered architecture (verified)
@@ -89,11 +90,16 @@ restart the session for the agent to appear in `Agent` tool subagent_type list.
 13 pinned servers (8 stdio, 5 HTTP); all dead `startup_timeout_sec`/`tool_timeout_sec`
 keys removed (commit 0d78443). HTTP servers: deepwiki, grep, figma, openai-docs, github.
 
-- serena: `serena-agent==1.2.0`, `--context=agent`, web dashboard disabled,
+- serena: `serena-agent==1.3.0`, `--context=agent`, web dashboard disabled,
   `alwaysLoad: true` (v2.1.121+) — eager startup since Serena drives every
-  UserPromptSubmit hook. Upstream 1.3.0 released 2026-05-11 but deferred:
-  81-commit delta includes "Revamp mode selection" refactor touching `--context=agent`;
-  capability smoke required before bumping (CHANGELOG.md Deferred section).
+  UserPromptSubmit hook. Bumped from 1.2.0 → 1.3.0 in commit 9c941f7, verified
+  2026-05-12 via `scripts/smoke_mcp_capabilities.sh` (13/13 servers pass).
+  1.3.0 mode-selection refactor scopes tool surface to 28 tools under `--context=agent`
+  (was 45 in 1.2.0); all workflow tools we use are present. Breaking change:
+  `base_modes` override replaced by `added_modes` in project.yml — does not affect
+  this marketplace since `.serena/project.yml` leaves `base_modes:` unset.
+  New upstream LSP tools in 1.3.0: `find_declaration`, `find_implementations`,
+  `get_diagnostics_for_file`, `get_diagnostics_for_symbol`.
 - sequential-thinking: `@modelcontextprotocol/server-sequential-thinking@2025.12.18`.
 - playwright: `@playwright/mcp@0.0.75` headless.
 - chrome-devtools: `chrome-devtools-mcp@0.25.0` headless isolated.
@@ -114,14 +120,17 @@ Timeouts via env: `MCP_TIMEOUT`, `MCP_TOOL_TIMEOUT`, `MAX_MCP_OUTPUT_TOKENS`,
 
 ## Serena MCP context
 
-`--context=agent` is canonical for Claude Code in Serena 1.2.0 (set in commit 482c421).
-Exposes 45 of 46 Serena tools (only excludes the redundant `initial_instructions`
-tool that Claude Code loads via ToolSearch).
+`--context=agent` is canonical for Claude Code in Serena 1.3.0 (set in commit 482c421,
+version bumped in 9c941f7). Exposes 28 tools under `--context=agent` in 1.3.0
+(was 45 in 1.2.0; mode-selection refactor in 1.3.0 scopes tool surface more tightly
+per context). All workflow tools we use are present.
 
-Serena 1.2.0 has no `claude-code` context. The `serena prompts print-cc-system-prompt-override`
+Serena 1.3.0 has no `claude-code` context. The `serena prompts print-cc-system-prompt-override`
 command prints a Claude Code-specific system prompt that maps Read/Edit/Glob/Grep
 to Serena's symbolic tools as PRIMARY — used when running Claude Code with
 `--system-prompt` flag.
+(Source: `.claude/CLAUDE.md` line 115; AGENTS.md line 100; `.mcp.json` line 6;
+`config/mcp-runtime-versions.env` SERENA_AGENT_VERSION=1.3.0)
 
 Serena memory location: project-level via `.serena/memories/` (managed by
 `rldyour-serena-mcp`).
@@ -340,14 +349,14 @@ Audit wave (5e1c3d4..b2f4db3, branch audit/sync-and-cc-v2139, 2026-05-12):
   Versions bumped: @playwright/mcp 0.0.74→0.0.75, @upstash/context7-mcp 2.2.4→2.2.5,
   semgrep 1.161.0→1.162.0. scripts/check_mcp_runtime_versions.py now enforces URL
   parity for the github HTTP MCP server (GITHUB_MCP_URL added to env file + HTTP_TO_ENV).
-  serena-agent held at 1.2.0 (1.3.0 deferred, see MCP Transport section).
+  serena-agent held at 1.2.0 in this wave (1.3.0 bumped later in 9c941f7).
 - b2f4db3 fix(skills): align browser-debug and lsp-routing triggers with policy.
   Updated SKILL.md description fields for browser-debug and lsp-routing to
   follow bilingual trigger policy.
 AGENTS.md (fullrepo-only, not in git diff): added `claude plugin details <name>`
 (v2.1.139+) diagnostic to Validation And Setup; updated CC version note to
 `Current local: v2.1.139` (verification range v2.1.111-v2.1.139, May 2026);
-serena 1.3.0 deferral noted in MCP Transport section.
+serena 1.3.0 deferral noted as pending capability smoke (subsequently adopted in 9c941f7).
 .claude/CLAUDE.md (fullrepo-only): new `## Changelog Adoption (v2.1.133 → v2.1.139)`
 section documenting adopted vs. not-adopted CC features; smoke-script footgun note
 (`smoke_fullrepo_sync.sh` calls `--bootstrap-init` which reverts worktree agent-only
@@ -394,6 +403,31 @@ Plugin-dev validation wave (ba2592a..29586bd, branch audit/plugin-dev-validation
 - 29586bd docs: 12 files updated across rldyour-browser, rldyour-design, rldyour-explore,
   rldyour-security — unscoped `mcp__<server>__*` references in prose changed to canonical scoped
   form `mcp__plugin_rldyour-mcps_<server>__*` matching actual runtime tool IDs.
+
+Capability smoke + serena bump wave (36fb0fc..9c941f7, branch polish/serena-and-capabilities-smoke):
+- 36fb0fc feat(ops): scripts/smoke_mcp_capabilities.sh — MCP JSON-RPC handshake harness.
+  CLI: `--server <name>`, `--timeout <secs>`, `--skip-uvx`.
+  Performs JSON-RPC `initialize` + `tools/list` per server; asserts non-empty tool set.
+  Servers requiring credentials: SKIP when env absent. HTTP_AUTH_GATED servers
+  (figma, github) accept 401/403 as passing handshake. Replaces the "planned" marker
+  from 6124994. README.md, docs/dependency-updates.md, scripts/smoke_mcp_runtime.sh:13
+  comment, and CHANGELOG.md updated.
+  (Source: `/Users/rldyourmnd/Desktop/claude_base/rldyour-claudecode/scripts/smoke_mcp_capabilities.sh`,
+  verified at HEAD — 333 lines, head line confirms purpose.)
+- 9c941f7 chore(mcps): bump serena-agent 1.2.0 → 1.3.0. Verified 2026-05-12 via
+  smoke_mcp_capabilities.sh (13/13 pass). AGENTS.md and .claude/CLAUDE.md updated
+  (fullrepo-only; Changelog Adoption section added to CLAUDE.md with capability smoke facts).
+  config/mcp-runtime-versions.env: SERENA_AGENT_VERSION=1.3.0.
+- c39f220 fix(ops): harden capability smoke after reviewer findings. Rewrote
+  scripts/smoke_mcp_capabilities.sh (333 → 397 lines): subprocess.DEVNULL on stderr
+  (was PIPE, deadlock risk); select.select-based read_line_with_timeout replacing
+  blocking readline(); start_new_session=True + os.killpg for grandchild reap;
+  BINARY_REQUIRED dict {"dart-flutter": "dart"} (SKIP if binary absent instead of FAIL);
+  ENV_REQUIRED stdio-only (github HTTP removed — HTTP always exercises real handshake);
+  HTTP FAIL body redacted to byte count only (credential leak prevention);
+  REPO_ROOT renamed to ROOT + SCRIPT_DIR added + cd ROOT preamble; colored ✔/✗ banner.
+  External contract preserved: --server/--timeout/--skip-uvx; SKIP semantics; HTTP_AUTH_GATED 401/403 = pass.
+  (Source: scripts/smoke_mcp_capabilities.sh lines 28-30, 47, 70-78, 139-171, 184-195, 277-287, 333-338, 381-391.)
 
 Advisory enforcement gates restored (refactor/restore-advisory-hooks):
 - Stop hooks are advisory enforcement gates, not executors. Hooks compute

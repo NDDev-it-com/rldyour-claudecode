@@ -4,7 +4,7 @@ Source-backed facts cross-validated against `code.claude.com/docs/en/plugins-ref
 `code.claude.com/docs/en/mcp`, `code.claude.com/docs/en/changelog`, and Anthropic's own
 `claude-plugins-official` repo. Last refresh 2026-05-08 via ry-explore deep research.
 
-Last commit: 6124994 (docs: reviewer-feedback consolidation — CHANGELOG Keep-a-Changelog compliance, dependency-updates placeholders, browser-debug pluralization, smoke_mcp_capabilities planned marker, 2026-05-12). Verification range: v2.1.111-v2.1.139.
+Last commit: c39f220 (fix(ops): harden capability smoke after reviewer findings). Verification range: v2.1.111-v2.1.139.
 
 ## plugin.json schema
 

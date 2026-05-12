@@ -9,9 +9,8 @@
 #   3. Required env vars (CONTEXT7_API_KEY, GITHUB_PERSONAL_ACCESS_TOKEN) are
 #      either set or documented in .env.example.
 #
-# This is a fast (≤30s) smoke. Capability-level probes (initialize, list_tools,
-# call_tool) will live in scripts/smoke_mcp_capabilities.sh (planned — not yet
-# implemented; tracked in CHANGELOG / Unreleased and docs/dependency-updates.md).
+# This is a fast (≤30s) smoke. Capability-level probes (JSON-RPC initialize
+# + tools/list per server) live in scripts/smoke_mcp_capabilities.sh.
 
 set -euo pipefail
 

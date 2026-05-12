@@ -21,18 +21,29 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
   the `github` HTTP MCP server (added `GITHUB_MCP_URL` to env file and to
   `HTTP_TO_ENV`). Closes a tracking gap left by 47387ee when github moved
   from stdio to HTTP transport.
-- Held: `serena-agent` `1.2.0` against upstream `1.3.0` (released
-  2026-05-11). The 81-commit delta includes a "Revamp mode selection"
-  refactor (oraios/serena commit `dfe1c3d`) that touches `--context=agent`,
-  the canonical setting in `.mcp.json`. Bumping requires a capability smoke
-  of `--context=agent` and `mcp__plugin_rldyour-mcps_serena__*` tools after
-  release-day-old changes settle; tracked as follow-up.
-- Held: `scripts/smoke_mcp_capabilities.sh` harness referenced by
-  `docs/dependency-updates.md` is not yet shipped. Until it lands, pin
-  bumps follow the manual smoke documented in that file.
-
+- `serena-agent` `1.2.0` → `1.3.0` (released 2026-05-11). The 81-commit
+  delta includes new LSP tools (`find_declaration`, `find_implementations`,
+  `get_diagnostics_for_file`, `get_diagnostics_for_symbol`), Ada/SPARK and
+  Angular/HTML/SCSS experimental language support, the "Revamp mode
+  selection" mode-system refactor, and BSL/Lombok improvements. Breaking
+  change for `project.yml`: `base_modes` override is replaced by
+  `added_modes`. We do not override `base_modes` in `.serena/project.yml`,
+  so the bump is non-breaking for this marketplace. CLI flag `--context=agent`
+  is preserved; `mcp__plugin_rldyour-mcps_serena__*` tool surface narrows
+  from 45 to 28 tools under `agent` context (the mode refactor scopes tool
+  exposure more tightly per context). `scripts/smoke_mcp_capabilities.sh`
+  passed 13/13 servers post-bump on 2026-05-12.
 ### Added
 
+- `scripts/smoke_mcp_capabilities.sh` — capability-level smoke harness.
+  Spawns each pinned MCP server (stdio) or POSTs to its endpoint (HTTP),
+  performs the JSON-RPC `initialize` + `tools/list` handshake, and asserts
+  a non-empty tool set. Supports `--server <name>` for targeted probes,
+  `--timeout <s>` for slow cold-starts, and `--skip-uvx` for fast CI
+  subsets. Servers requiring credentials (`CONTEXT7_API_KEY`,
+  `GITHUB_PERSONAL_ACCESS_TOKEN`) are SKIPped when env is absent rather
+  than FAILing. Auth-gated HTTP endpoints (figma, github) accept 401/403
+  as a passing handshake.
 - Root-level public files: `README.md`, `CHANGELOG.md`, `VERSION`, `LICENSE`.
 - Operations harness adapted to Claude Code conventions: marketplace
   validation script (`scripts/validate_marketplace.sh`), smoke tests for
