@@ -1,6 +1,6 @@
 ---
 name: browser-debug
-description: "Дебаг браузерных багов — console, network, runtime, hydration, layout, performance через Chrome DevTools MCP. Используй для: ошибка в браузере, не работает UI, разбери баг, сеть, hydration, layout сломан, runtime exception. EN triggers: browser bug, debug UI, console error, network failure, hydration error, fix browser issue, Lighthouse audit, layout broken, runtime exception."
+description: "Дебаг браузерных багов — console errors, network, runtime, hydration, layout, performance через Chrome DevTools MCP. Используй для: ошибка в браузере, не работает UI, разбери баг, сеть, hydration, layout сломан, runtime exception. EN triggers: browser bug, debug UI, console errors, network failure, hydration error, fix browser issue, Lighthouse audit, layout broken, runtime exception."
 allowed-tools:
   - mcp__plugin_rldyour-mcps_chrome-devtools__*
   - mcp__plugin_rldyour-mcps_playwright__*
