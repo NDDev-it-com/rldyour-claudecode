@@ -50,6 +50,7 @@ Two plugins coordinate hooks. `flow.stop_post_task_sync.sh` waits for `serena_cu
 | PreToolUse:Bash | rldyour-serena-mcp | `hooks/prepare_auto_sync.sh` | 5s |
 | PostToolUse:Bash | rldyour-serena-mcp | `hooks/mark_sync_required.sh` | 5s |
 | PostToolUse:Bash | rldyour-flow | `hooks/post_tool_use_commit_advice.sh` | 5s |
+| SessionStart | rldyour-flow | `hooks/session_start_worktree_bootstrap.sh` | 30s |
 | SessionStart | rldyour-flow | `hooks/session_start_context.sh` | 5s |
 | Stop | rldyour-serena-mcp | `hooks/stop_memory_sync.sh` | 10s |
 | Stop | rldyour-flow | `hooks/stop_post_task_sync.sh` | 10s |
@@ -63,7 +64,7 @@ Sequence:
 
 The orchestrator (skill / model in main session) does the actual work: invoke `flow-memory-sync` subagent for memories, then run the `flow-post-task-sync` skill which handles checks → atomic commits → push → ff-merge into default branch → push default → fullrepo publish (`--force-with-lease`, only on `fullrepo`) → cleanup merged branches and worktrees.
 
-Skip flags during local debugging: `RLDYOUR_SKIP_FLOW_SESSION_CONTEXT=1` (SessionStart), `RLDYOUR_SKIP_FLOW_COMMIT_ADVICE=1` (PostToolUse:Bash flow), `RLDYOUR_SKIP_STOP_GATES=1` (both Stop hooks), `RLDYOUR_SKIP_FLOW_SYNC=1` (flow Stop only), `RLDYOUR_SKIP_SERENA_SYNC=1` (Serena Stop only).
+Skip flags during local debugging: `RLDYOUR_SKIP_FLOW_SESSION_CONTEXT=1` (SessionStart context), `RLDYOUR_SKIP_WORKTREE_BOOTSTRAP=1` (SessionStart worktree bootstrap), `RLDYOUR_SKIP_FLOW_COMMIT_ADVICE=1` (PostToolUse:Bash flow), `RLDYOUR_SKIP_STOP_GATES=1` (both Stop hooks), `RLDYOUR_SKIP_FLOW_SYNC=1` (flow Stop only), `RLDYOUR_SKIP_SERENA_SYNC=1` (Serena Stop only).
 
 ## Skill Listing Budget
 
@@ -101,11 +102,12 @@ Adopted:
 - v2.1.129 — `skillListingBudgetFraction: 0.03` in user settings; `experimental.{themes,monitors}` wrapper available (we declare neither).
 - v2.1.121 — `alwaysLoad: true` on `serena` MCP server.
 - v2.1.119 — `claude plugin tag --push` for release tagging (canonical, `<plugin>--v<version>`).
+- v2.1.x — `SessionStart` + `WorktreeRemove`/`WorktreeCreate` worktree workflow (added 2026-05-12): `hooks/session_start_worktree_bootstrap.sh` auto-restores agent-only files into a fresh worktree via `fullrepo_sync.py --restore`. `WorktreeCreate` is intentionally NOT used because the worktree path does not yet exist on disk when that event fires — `SessionStart` in the new worktree session is the correct injection point. `scripts/worktree_add.sh` covers the manual `git worktree add` flow with bootstrap baked in.
 
 Available, not adopted:
-- v2.1.133 `worktree.baseRef: "head"` (default `fresh` since 2.1.133) — irrelevant: `ry-explore` uses `context: fork`, not `isolation: worktree`. Set to `"head"` only if a future worktree-isolated agent needs unpushed commits.
+- v2.1.133 `worktree.baseRef: "head"` — user-side setting (`~/.claude/settings.json`); recommendation documented in AGENTS.md Worktree Workflow but not forced. `ry-explore` uses `context: fork`, not `isolation: worktree`.
 - v2.1.133 hook input `effort.level` + `$CLAUDE_EFFORT` env var in Bash — could enrich hook telemetry; not yet wired into `flow_post_task_state.py` or `serena_memory_state.py`.
-- v2.1.139 hook `args: string[]` exec-form (spawns without shell) — our hooks have no quoting issues; bare `command: bash ${CLAUDE_PLUGIN_ROOT}/...` form is sufficient.
+- v2.1.139 hook `args: string[]` exec-form (spawns without shell) — all 8 hooks consistently use bare `command: bash ${CLAUDE_PLUGIN_ROOT}/...` form; migrating only one would diverge style without fixing any quoting bug.
 - v2.1.139 `PostToolUse` `continueOnBlock: true` — our PostToolUse hooks are advisory-only (`exit 0` always), nothing to "block on".
 - v2.1.139 stdio MCP env receives `${CLAUDE_PROJECT_DIR}` — no current server needs project-root context.
 - v2.1.139 `claude plugin details <name>` — diagnostic only (see AGENTS.md Validation And Setup).

@@ -4,7 +4,7 @@ Personal Claude Code plugin marketplace by `rldyourmnd`. The repository ships ni
 
 This `AGENTS.md` is the concise root project-instruction file for any AI agent working in this repository — cross-tool standard governed by the Linux Foundation Agentic AI Foundation (AAIF) since 2025-12-09 (see https://agents.md/). The deep Claude Code-native memory lives in `./.claude/CLAUDE.md` and contains subagent matrix, hook canon, skill-listing budget, frontmatter conventions, and Don't/Done rules that other AI tools don't need.
 
-<!-- Maintainer note (HTML comments are not parsed by most AI tools): Anthropic's claude-plugins-official ships only a 53-line README.md — no CLAUDE.md, no AGENTS.md. Our two-file split is justified by cross-tool ambition (AGENTS.md is read by 25+ tools as of May 2026) plus Claude Code-deep specifics. Keep this file under 150 lines. -->
+<!-- Maintainer note (HTML comments are not parsed by most AI tools): Anthropic's claude-plugins-official ships only a 53-line README.md — no CLAUDE.md, no AGENTS.md. Our two-file split is justified by cross-tool ambition (AGENTS.md is read by 25+ tools as of May 2026) plus Claude Code-deep specifics. Keep this file under 180 lines (was 150 before the worktree workflow section landed in 2026-05-12). -->
 
 
 ## Source Of Truth
@@ -75,11 +75,31 @@ Two plugins coordinate hooks. The `flow.stop_post_task_sync.sh` hook waits for `
 | PreToolUse:Bash | rldyour-serena-mcp | `hooks/prepare_auto_sync.sh` |
 | PostToolUse:Bash | rldyour-serena-mcp | `hooks/mark_sync_required.sh` |
 | PostToolUse:Bash | rldyour-flow | `hooks/post_tool_use_commit_advice.sh` |
+| SessionStart | rldyour-flow | `hooks/session_start_worktree_bootstrap.sh` |
 | SessionStart | rldyour-flow | `hooks/session_start_context.sh` |
 | Stop | rldyour-serena-mcp | `hooks/stop_memory_sync.sh` |
 | Stop | rldyour-flow | `hooks/stop_post_task_sync.sh` |
 
-All hooks are advisory (informational `additionalContext`) and exit `0` on errors. Skip flags: `RLDYOUR_SKIP_FLOW_SESSION_CONTEXT`, `RLDYOUR_SKIP_FLOW_COMMIT_ADVICE`, `RLDYOUR_SKIP_STOP_GATES`, `RLDYOUR_SKIP_FLOW_SYNC`, `RLDYOUR_SKIP_SERENA_SYNC`.
+All hooks are advisory (informational `additionalContext`) and exit `0` on errors. The single hook that performs a bounded mutation is `session_start_worktree_bootstrap.sh` — it runs `fullrepo_sync.py --restore` (never `--publish`, never touches origin) only when an agent-only marker is missing in the active worktree. Skip flags: `RLDYOUR_SKIP_FLOW_SESSION_CONTEXT`, `RLDYOUR_SKIP_FLOW_COMMIT_ADVICE`, `RLDYOUR_SKIP_STOP_GATES`, `RLDYOUR_SKIP_FLOW_SYNC`, `RLDYOUR_SKIP_SERENA_SYNC`, `RLDYOUR_SKIP_WORKTREE_BOOTSTRAP`.
+
+## Worktree Workflow
+
+Multiple git worktrees can run in parallel — one worktree per feature, each driving its own Claude Code session. All worktrees share the main `.git` database but each gets its own working tree, its own per-worktree `.git/info/exclude` block, and its own copy of agent-only files. Per-worktree `.serena/memories/` prevents concurrent sessions from stomping on each other; reconciliation happens via `flow-post-task-sync` publishing to `fullrepo`.
+
+```bash
+scripts/worktree_add.sh <branch> [path]                          # create worktree + bootstrap agent-only context
+RLDYOUR_DRY_RUN=1 scripts/worktree_add.sh <branch>               # preview
+RLDYOUR_WORKTREE_BASE_REF=HEAD scripts/worktree_add.sh <branch>  # branch from local HEAD instead of origin/main
+git worktree remove <path>                                       # tear down
+```
+
+The helper invokes `fullrepo_sync.py --restore` (never `--publish`) and aborts with a clear error if `origin/fullrepo` does not yet exist — publishing is reserved for the orchestrator (`flow-post-task-sync` skill or explicit `python3 plugins/rldyour-flow/scripts/fullrepo_sync.py --publish` from the main worktree).
+
+Automatic bootstrap on `claude` startup: `hooks/session_start_worktree_bootstrap.sh` runs `fullrepo_sync.py --restore` (never `--publish`) when an agent-only marker is missing. Skip flag: `RLDYOUR_SKIP_WORKTREE_BOOTSTRAP=1`.
+
+Relevant Claude Code settings (in `~/.claude/settings.json`): `worktree.baseRef` (`"fresh"` default, or `"head"` to preserve unpushed commits), `worktree.symlinkDirectories` (keep `.serena/` and `.claude/` OUT), `worktree.sparsePaths` (large monorepos only).
+
+Trust model: agent-only files restored into a fresh worktree come from `origin/fullrepo`. A compromised origin (lost GitHub credentials, force-pushed fullrepo, MITM on unsigned git transport) would inject the attacker's `AGENTS.md` / `.claude/CLAUDE.md` / `.serena/memories/**` into every new worktree on next `claude` startup. Mitigations already in place: 2FA on GitHub, branch protection on `fullrepo`, and the optional disable switch `RLDYOUR_SKIP_WORKTREE_BOOTSTRAP=1` for paranoid sessions. This is the same trust boundary as the existing manual `fullrepo_sync.py --bootstrap-init`; the new SessionStart hook automates it, it does not expand the attack surface.
 
 ## Fullrepo Branch Policy
 

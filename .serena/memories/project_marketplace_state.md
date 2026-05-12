@@ -1,12 +1,13 @@
 # rldyour-claude marketplace state
 
-Last commit: c39f220 (fix(ops): harden capability smoke after reviewer findings).
+Last commit: d0dcf64 (fix(flow): worktree workflow — reviewer feedback consolidation).
 Multiple May-2026 waves applied (all merged to main except current):
 - optimize/may-2026-best-practices: 6 commits 3fe9005..2e22652 (merged to main)
 - docs/canonical-may2026: 1 commit ca13470 (merged to main)
 - polish/deferred-findings: 3 commits 3ce7970..f23765d (merged to main)
 - feat/memory-sync-subagent: 1 commit 772f6e8 (merged to main)
-- polish/serena-and-capabilities-smoke: 3 commits 36fb0fc..c39f220 (current branch, NOT YET merged; 3 commits ahead of origin/main)
+- polish/serena-and-capabilities-smoke: 3 commits 36fb0fc..c39f220 (merged to main)
+- feat/worktree-workflow: 2 commits 61e80b5..d0dcf64 (current branch, NOT YET merged; 2 commits ahead of origin/main at c39f220)
 Prior merged branches deleted after fast-forward merge.
 Marketplace name: `rldyour-claude`. Repo: github.com/rldyourmnd/rldyour-claude (private).
 
@@ -31,24 +32,41 @@ Cross-plugin `dependencies` declared in plugin.json `dependencies: [...]` array.
 
 ## Hooks lifecycle (coordination contract)
 
-| Event | Owner | Script |
-|---|---|---|
-| UserPromptSubmit | rldyour-serena-mcp | hooks/user_prompt_submit.sh |
-| PreToolUse:Bash | rldyour-serena-mcp | hooks/prepare_auto_sync.sh |
-| PostToolUse:Bash | rldyour-serena-mcp | hooks/mark_sync_required.sh |
-| PostToolUse:Bash | rldyour-flow | hooks/post_tool_use_commit_advice.sh |
-| SessionStart | rldyour-flow | hooks/session_start_context.sh |
-| Stop | rldyour-serena-mcp | hooks/stop_memory_sync.sh |
-| Stop | rldyour-flow | hooks/stop_post_task_sync.sh |
+| Event | Owner | Script | Timeout |
+|---|---|---|---|
+| UserPromptSubmit | rldyour-serena-mcp | hooks/user_prompt_submit.sh | 5s |
+| PreToolUse:Bash | rldyour-serena-mcp | hooks/prepare_auto_sync.sh | 5s |
+| PostToolUse:Bash | rldyour-serena-mcp | hooks/mark_sync_required.sh | 5s |
+| PostToolUse:Bash | rldyour-flow | hooks/post_tool_use_commit_advice.sh | 5s |
+| SessionStart | rldyour-flow | hooks/session_start_worktree_bootstrap.sh | 30s |
+| SessionStart | rldyour-flow | hooks/session_start_context.sh | 5s |
+| Stop | rldyour-serena-mcp | hooks/stop_memory_sync.sh | 10s |
+| Stop | rldyour-flow | hooks/stop_post_task_sync.sh | 10s |
 
 `flow.stop_post_task_sync.sh` waits for `serena_current=true` from the Serena Stop hook
 before running. Loop guard: `.serena/.flow_sync_marker` fingerprint of (HEAD, dirty,
 ahead/behind, branch, Serena freshness). If `stop_hook_active=true` and same fingerprint,
 hook allows stop.
 
-All hooks advisory: emit `hookSpecificOutput.additionalContext`, exit 0 on errors.
+`session_start_worktree_bootstrap.sh` (timeout 30s, registered before session_start_context.sh
+in hooks.json): detects missing canonical markers (.serena/project.yml, AGENTS.md,
+.claude/CLAUDE.md) → verifies origin/fullrepo via --status-json → runs
+`fullrepo_sync.py --restore` (never --publish, never mutates origin) → emits advisory
+additionalContext bounded to first 12 lines of restore output. First hook in the
+marketplace that performs bounded mutation (vs advisory-only pattern of other hooks).
+(Source: plugins/rldyour-flow/hooks/session_start_worktree_bootstrap.sh,
+plugins/rldyour-flow/hooks/hooks.json.)
+
+`WorktreeCreate` event intentionally NOT registered. Rationale: that event fires
+before the worktree exists on disk and only lets the handler print an override path
+back to Claude Code; SessionStart in the new worktree session is the correct injection
+point. Covers both manual `git worktree add` and CC's `--worktree` / `EnterWorktree` /
+`isolation: "worktree"` paths. (Source: AGENTS.md Worktree Workflow section.)
+
+All Stop hooks advisory: emit `hookSpecificOutput.additionalContext`, exit 0 on errors.
 Skip flags: `RLDYOUR_SKIP_FLOW_SESSION_CONTEXT`, `RLDYOUR_SKIP_STOP_GATES`,
-`RLDYOUR_SKIP_FLOW_SYNC`.
+`RLDYOUR_SKIP_FLOW_SYNC`, `RLDYOUR_SKIP_SERENA_SYNC`, `RLDYOUR_SKIP_WORKTREE_BOOTSTRAP`.
+(Source: scripts/smoke_hooks.sh SKIP_TESTS array, line 85-87.)
 
 ## Subagent matrix (8 total)
 
@@ -165,6 +183,27 @@ marketplace targets Claude Code only.
   only `.dockerfile` extension routes; bare `Dockerfile`/`Containerfile` falls back to text.
   (Source: `plugins/rldyour-lsps/references/lsp-server-matrix.md` and
   `plugins/rldyour-lsps/references/install-profiles.md` Known limitations section.)
+
+## Worktree workflow (added 61e80b5)
+
+`scripts/worktree_add.sh <branch> [path]` — one-step worktree creation:
+runs `git worktree add` then `fullrepo_sync.py --restore` (NOT --bootstrap-init)
+in the new worktree so agent-only files (AGENTS.md, .claude/CLAUDE.md,
+.serena/project.yml, .serena/memories/**) are present immediately. Located at
+repo root `scripts/` (not in any plugin). Supports `RLDYOUR_DRY_RUN=1` and
+`RLDYOUR_WORKTREE_BASE_REF=HEAD` (mirrors CC's `worktree.baseRef: "head"` setting;
+env var renamed from WORKTREE_BASE_REF in d0dcf64 for RLDYOUR_ prefix consistency).
+`--restore` is purely additive: fetches origin/fullrepo, installs per-worktree
+.git/info/exclude block, checks out agent-only paths. It NEVER pushes or publishes.
+Before creating the worktree, probes `--status-json` and aborts with a clear message
+if `origin/fullrepo` does not exist yet ("run --publish from main worktree first").
+(Source: scripts/worktree_add.sh, entire file at HEAD.)
+
+End-to-end verified 2026-05-12 (d0dcf64): created /tmp/rldyour-postfix-wt via
+`scripts/worktree_add.sh test/post-fix-smoke /tmp/rldyour-postfix-wt` — 5 agent-only
+files restored from origin/fullrepo via --restore, per-worktree .git/info/exclude
+block installed, origin/fullrepo SHA b2c95eca unchanged (publish contract held),
+cleaned up via `git worktree remove` + `git branch -D`.
 
 ## CI
 
@@ -428,6 +467,34 @@ Capability smoke + serena bump wave (36fb0fc..9c941f7, branch polish/serena-and-
   REPO_ROOT renamed to ROOT + SCRIPT_DIR added + cd ROOT preamble; colored ✔/✗ banner.
   External contract preserved: --server/--timeout/--skip-uvx; SKIP semantics; HTTP_AUTH_GATED 401/403 = pass.
   (Source: scripts/smoke_mcp_capabilities.sh lines 28-30, 47, 70-78, 139-171, 184-195, 277-287, 333-338, 381-391.)
+
+Worktree workflow wave (c39f220..d0dcf64, branch feat/worktree-workflow):
+- 61e80b5 feat(flow): worktree workflow + SessionStart bootstrap hook.
+  NEW plugins/rldyour-flow/hooks/session_start_worktree_bootstrap.sh (timeout 30s,
+  registered ahead of session_start_context.sh in hooks.json). Detects missing
+  canonical marker (.serena/project.yml / AGENTS.md / .claude/CLAUDE.md) → verifies
+  origin/fullrepo exists via --status-json → runs fullrepo_sync.py --restore
+  (never --publish). Emits advisory bounded to first 12 lines of restore output.
+  NEW scripts/worktree_add.sh — one-step `git worktree add` + `--bootstrap-init`.
+  scripts/smoke_hooks.sh SKIP_TESTS array extended with RLDYOUR_SKIP_WORKTREE_BOOTSTRAP entry.
+  AGENTS.md (fullrepo-only): new Worktree Workflow section, Hooks Lifecycle table row
+  added, skip-flag list updated, soft line cap raised 150 → 180.
+  .claude/CLAUDE.md (fullrepo-only): Changelog Adoption section marks worktree workflow
+  as adopted with rationale for WorktreeCreate vs SessionStart choice; Hooks Lifecycle
+  table row added. Hook total: 8 (was 7).
+- d0dcf64 fix(flow): worktree workflow — reviewer feedback consolidation.
+  HIGH (Architecture): scripts/worktree_add.sh switched from --bootstrap-init to --restore;
+  probes --status-json before worktree creation; aborts if origin/fullrepo absent.
+  LOW (Consistency): env var WORKTREE_BASE_REF renamed to RLDYOUR_WORKTREE_BASE_REF.
+  LOW (3-reviewer consensus): .claude/CLAUDE.md Hooks Lifecycle skip-flag enumeration
+  gains RLDYOUR_SKIP_WORKTREE_BOOTSTRAP.
+  LOW (Security): AGENTS.md Worktree Workflow gains Trust model paragraph (origin/fullrepo
+  trust boundary, 2FA + branch protection mitigations, RLDYOUR_SKIP_WORKTREE_BOOTSTRAP
+  escape hatch).
+  LOW (Consistency): CHANGELOG.md blank line added between Changed and Added sections.
+  Folded in: scripts/smoke_hooks.sh SKIP_TESTS entry for RLDYOUR_SKIP_WORKTREE_BOOTSTRAP
+  (should have shipped with 61e80b5).
+  (Source: scripts/worktree_add.sh, scripts/smoke_hooks.sh line 87, CHANGELOG.md at HEAD.)
 
 Advisory enforcement gates restored (refactor/restore-advisory-hooks):
 - Stop hooks are advisory enforcement gates, not executors. Hooks compute
