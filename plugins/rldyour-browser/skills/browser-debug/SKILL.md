@@ -1,6 +1,6 @@
 ---
 name: browser-debug
-description: "Дебаг браузерных багов — console, network, runtime, hydration, layout, performance через Chrome DevTools MCP. Используй для: ошибка в браузере, не работает UI, разбери баг, сеть, hydration, layout сломан, runtime exception. EN triggers: browser bug, debug UI, console error, network failure, hydration error, fix browser issue, Lighthouse audit, layout broken, runtime exception."
+description: "Дебаг браузерных багов — console errors, network, runtime, hydration, layout, performance через Chrome DevTools MCP. Используй для: ошибка в браузере, не работает UI, разбери баг, сеть, hydration, layout сломан, runtime exception. EN triggers: browser bug, debug UI, console errors, network failure, hydration error, fix browser issue, Lighthouse audit, layout broken, runtime exception."
 allowed-tools:
   - mcp__plugin_rldyour-mcps_chrome-devtools__*
   - mcp__plugin_rldyour-mcps_playwright__*
@@ -18,7 +18,7 @@ User-facing reports stay in Russian unless requested otherwise. Browser artifact
 
 Use this skill without waiting for explicit invocation when the task mentions:
 
-- Browser-only bug, broken UI in browser, hydration issue, runtime exception, console error, or source-map issue.
+- Browser-only bug, broken UI in browser, hydration issue, runtime exception, console errors, or source-map issue.
 - Network failure, unexpected API response, redirect, cache, CORS, CSP, auth/session browser behavior, or failed request.
 - Layout issue, overflow, rendering mismatch, computed style problem, DOM state mismatch, or responsive breakage.
 - Lighthouse, Core Web Vitals, performance trace, slow rendering, memory issue, long task, or layout shift.

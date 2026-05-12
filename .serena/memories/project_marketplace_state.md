@@ -1,6 +1,6 @@
 # rldyour-claude marketplace state
 
-Last commit: 5e1c3d4 (feat(commands): bilingual descriptions for /help discoverability, 2026-05-08).
+Last commit: 6124994 (docs: reviewer-feedback consolidation — CHANGELOG Keep-a-Changelog compliance, dependency-updates placeholders, browser-debug pluralization, smoke_mcp_capabilities planned marker, 2026-05-12).
 Four May-2026 best-practice waves applied:
 - optimize/may-2026-best-practices: 6 commits 3fe9005..2e22652 (merged to main)
 - docs/canonical-may2026: 1 commit ca13470 (merged to main)
@@ -91,14 +91,16 @@ keys removed (commit 0d78443). HTTP servers: deepwiki, grep, figma, openai-docs,
 
 - serena: `serena-agent==1.2.0`, `--context=agent`, web dashboard disabled,
   `alwaysLoad: true` (v2.1.121+) — eager startup since Serena drives every
-  UserPromptSubmit hook.
+  UserPromptSubmit hook. Upstream 1.3.0 released 2026-05-11 but deferred:
+  81-commit delta includes "Revamp mode selection" refactor touching `--context=agent`;
+  capability smoke required before bumping (CHANGELOG.md Deferred section).
 - sequential-thinking: `@modelcontextprotocol/server-sequential-thinking@2025.12.18`.
-- playwright: `@playwright/mcp@0.0.74` headless.
+- playwright: `@playwright/mcp@0.0.75` headless.
 - chrome-devtools: `chrome-devtools-mcp@0.25.0` headless isolated.
-- context7: `@upstash/context7-mcp@2.2.4`. Requires `CONTEXT7_API_KEY`.
+- context7: `@upstash/context7-mcp@2.2.5`. Requires `CONTEXT7_API_KEY`.
 - deepwiki: HTTP `mcp.deepwiki.com/mcp`.
 - grep: HTTP `mcp.grep.app`.
-- semgrep: `semgrep==1.161.0`.
+- semgrep: `semgrep==1.162.0`.
 - shadcn: `shadcn@4.7.0`.
 - dart-flutter: `dart mcp-server --force-roots-fallback`.
 - figma: HTTP `mcp.figma.com/mcp`.
@@ -330,6 +332,26 @@ Wave 12 — bilingual trigger surface (ef1b819..5e1c3d4, 2026-05-08):
   plugins/rldyour-design/commands/ry-design.md, plugins/rldyour-flow/commands/ry-deploy.md,
   ry-init.md, ry-newp.md, ry-review.md, ry-start.md, plugins/rldyour-rules/commands/ry-rules-review.md.
   Each description now contains both Russian sentence and English sentence.
+
+Audit wave (5e1c3d4..b2f4db3, branch audit/sync-and-cc-v2139, 2026-05-12):
+- 7330110 docs(audit): fix OWASP year, prune dead smoke-script refs.
+- c4fb0d9 docs(mcps): note CLAUDE_PROJECT_DIR availability for stdio servers.
+- 74e5a32 chore(mcps): bump playwright/context7/semgrep, track github HTTP parity.
+  Versions bumped: @playwright/mcp 0.0.74→0.0.75, @upstash/context7-mcp 2.2.4→2.2.5,
+  semgrep 1.161.0→1.162.0. scripts/check_mcp_runtime_versions.py now enforces URL
+  parity for the github HTTP MCP server (GITHUB_MCP_URL added to env file + HTTP_TO_ENV).
+  serena-agent held at 1.2.0 (1.3.0 deferred, see MCP Transport section).
+- b2f4db3 fix(skills): align browser-debug and lsp-routing triggers with policy.
+  Updated SKILL.md description fields for browser-debug and lsp-routing to
+  follow bilingual trigger policy.
+AGENTS.md (fullrepo-only, not in git diff): added `claude plugin details <name>`
+(v2.1.139+) diagnostic to Validation And Setup; updated CC version note to
+`Current local: v2.1.139` (verification range v2.1.111-v2.1.139, May 2026);
+serena 1.3.0 deferral noted in MCP Transport section.
+.claude/CLAUDE.md (fullrepo-only): new `## Changelog Adoption (v2.1.133 → v2.1.139)`
+section documenting adopted vs. not-adopted CC features; smoke-script footgun note
+(`smoke_fullrepo_sync.sh` calls `--bootstrap-init` which reverts worktree agent-only
+files — run smoke before editing agent-only files or re-apply edits after).
 
 Wave 11 — plugin-validator + skill-reviewer + ry-explore audit fixes (c76487a..3066e7f, 2026-05-08):
 - c76487a fix(flow): ry-start argument-hint + canonical slash `/rldyour-flow:ry-start` + EN keywords.

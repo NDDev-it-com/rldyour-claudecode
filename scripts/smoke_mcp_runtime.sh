@@ -10,7 +10,8 @@
 #      either set or documented in .env.example.
 #
 # This is a fast (≤30s) smoke. Capability-level probes (initialize, list_tools,
-# call_tool) live in smoke_mcp_capabilities.sh.
+# call_tool) will live in scripts/smoke_mcp_capabilities.sh (planned — not yet
+# implemented; tracked in CHANGELOG / Unreleased and docs/dependency-updates.md).
 
 set -euo pipefail
 

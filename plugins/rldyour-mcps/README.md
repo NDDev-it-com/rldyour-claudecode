@@ -26,6 +26,7 @@ stdio servers pinned with `==X.Y.Z` (uvx) or `@X.Y.Z` (bunx). HTTP servers pinne
 - `serena` server has `alwaysLoad: true` (CC v2.1.121+) — eager startup because Serena drives every UserPromptSubmit hook. Other servers are deferred until first tool call.
 - Per-server `startup_timeout_sec` / `tool_timeout_sec` keys are NOT in the documented Claude Code `.mcp.json` schema — silently ignored. Use env vars `MCP_TIMEOUT`, `MCP_TOOL_TIMEOUT`, `MCP_CONNECTION_NONBLOCKING` instead.
 - `github` server uses HTTP transport at `https://api.githubcopilot.com/mcp/` with Bearer `${GITHUB_PERSONAL_ACCESS_TOKEN}` — matches the canonical pattern in `anthropics/claude-plugins-official/external_plugins/github/.mcp.json`. Zero-install, no version pinning needed.
+- Since CC v2.1.139, stdio MCP servers receive `${CLAUDE_PROJECT_DIR}` in their environment. No server in this manifest currently consumes it; reference it in `env` or `args` only when a future server genuinely needs the active project root.
 
 ## Dependencies
 

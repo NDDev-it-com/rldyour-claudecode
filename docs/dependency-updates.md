@@ -14,7 +14,7 @@ Policy and procedure for updating MCP runtime pins and Claude Code minimum versi
 - **stdio servers**: pin with `==X.Y.Z` (uvx) or `@X.Y.Z` (bunx).
 - **HTTP servers**: pin by exact URL — there is no version field.
 - **No `@latest`, no unpinned `uvx --from`** specs. CI rejects them.
-- Update intentionally — pin bump must be paired with capability smoke (`scripts/smoke_mcp_capabilities.sh`).
+- Update intentionally — pin bump must be paired with a capability smoke (planned: `scripts/smoke_mcp_capabilities.sh`; until it lands, probe upstream manually with the launcher's `--version` and verify a deterministic read-only tool call inside an active Claude Code session before merging the bump).
 
 ## Update workflow
 
@@ -31,12 +31,18 @@ Policy and procedure for updating MCP runtime pins and Claude Code minimum versi
 
 3. **Update both pins** — in the same commit, edit `.mcp.json` and `config/mcp-runtime-versions.env`. Drift between them is a CI failure.
 
-4. **Run capability smoke** for the affected server:
+4. **Run capability smoke** for the affected server.
+   The dedicated harness is not yet shipped. Until it lands, perform a manual smoke (substitute `<pkg>` and `<NEW_VERSION>` with the bumped server's launcher spec):
 
    ```bash
-   scripts/smoke_mcp_capabilities.sh
-   # Or targeted:
-   scripts/smoke_mcp_capabilities.sh --server serena
+   # 1. Probe the new launcher version is reachable.
+   bunx --bun <pkg>@<NEW_VERSION> --help >/dev/null
+   # or, for uvx-launched servers:
+   uvx --from "<pkg>==<NEW_VERSION>" --python 3.13 --prerelease allow <bin> --version
+
+   # 2. Restart Claude Code with the new pin and invoke at least one
+   #    deterministic read-only tool from the bumped server (e.g.
+   #    mcp__plugin_rldyour-mcps_context7__resolve-library-id).
    ```
 
 5. **Update CHANGELOG** under `[Unreleased] / Changed` — list each updated server and the new pin.
@@ -75,7 +81,7 @@ When introducing a new MCP server to `rldyour-mcps`:
 1. Pin it in `.mcp.json` using stdio `==X.Y.Z` or HTTP URL form.
 2. Add a corresponding entry in `config/mcp-runtime-versions.env` and update `SERVER_TO_ENV` / `HTTP_TO_ENV` mappings in `scripts/check_mcp_runtime_versions.py`.
 3. Document the server (purpose, env requirements, special flags) in `plugins/rldyour-mcps/README.md` and `AGENTS.md` MCP transport section.
-4. Add a capability smoke probe in `scripts/smoke_mcp_capabilities.sh` if the server exposes a deterministic read-only tool.
+4. Add a capability smoke probe in `scripts/smoke_mcp_capabilities.sh` (planned) once that harness lands; until then, document the manual probe in the per-server section of `plugins/rldyour-mcps/README.md`.
 5. Mention in CHANGELOG under `[Unreleased] / Added`.
 6. If any plugin's skills should pre-approve the new server's tools, add `mcp__plugin_rldyour-mcps_<server>__*` to the relevant `allowed-tools` lists.
 

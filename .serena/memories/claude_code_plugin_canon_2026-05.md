@@ -4,7 +4,7 @@ Source-backed facts cross-validated against `code.claude.com/docs/en/plugins-ref
 `code.claude.com/docs/en/mcp`, `code.claude.com/docs/en/changelog`, and Anthropic's own
 `claude-plugins-official` repo. Last refresh 2026-05-08 via ry-explore deep research.
 
-Last commit: 5e1c3d4 (feat(commands): bilingual descriptions for /help discoverability, 2026-05-08). Verification range: v2.1.111-v2.1.135.
+Last commit: 6124994 (docs: reviewer-feedback consolidation — CHANGELOG Keep-a-Changelog compliance, dependency-updates placeholders, browser-debug pluralization, smoke_mcp_capabilities planned marker, 2026-05-12). Verification range: v2.1.111-v2.1.139.
 
 ## plugin.json schema
 
@@ -159,14 +159,15 @@ pattern in CI: `npm install -g @anthropic-ai/claude-code` then
 Other CLI commands: `plugin install`, `uninstall` (`--keep-data`, `--prune`),
 `enable`, `disable`, `update`, `list` (`--json`, `--available`), `prune` (v2.1.121+),
 `tag` (v2.1.119+, `--push` validates plugin.json/marketplace agreement, refuses
-dirty worktree or pre-existing tag), `marketplace add`. `/reload-plugins` (v2.1.116+)
-reinstalls missing dependencies whose marketplace is configured.
+dirty worktree or pre-existing tag), `marketplace add`, `details <name>` (v2.1.139+
+— shows component inventory and projected per-session token cost for a named plugin).
+`/reload-plugins` (v2.1.116+) reinstalls missing dependencies whose marketplace is configured.
 
 Range-conflict reporting (4 error types): `dependency-unsatisfied`, `range-conflict`,
 `dependency-version-unsatisfied`, `no-matching-tag`. Visible in `claude plugin list`,
 `/plugin`, `/doctor`.
 
-## Changelog highlights v2.1.111-v2.1.135
+## Changelog highlights v2.1.111-v2.1.139
 
 - v2.1.111 — `xhigh` effort for Opus 4.7; Auto mode for Max
 - v2.1.115 — `MCP_CONNECTION_NONBLOCKING=true` for `-p` mode
@@ -182,6 +183,12 @@ Range-conflict reporting (4 error types): `dependency-unsatisfied`, `range-confl
   `effort.level` JSON for hooks
 - v2.1.131 — Mantle endpoint auth fix
 - v2.1.133 — `worktree.baseRef`; `parentSettingsBehavior`; `sandbox.bwrapPath`/`socatPath`
+- v2.1.139 — hook `args: string[]` exec-form (spawns without shell); `PostToolUse`
+  `continueOnBlock: true` (allow Stop even when PostToolUse hook blocks); stdio MCP
+  env receives `${CLAUDE_PROJECT_DIR}`; `claude plugin details <name>` shows component
+  inventory and per-session token cost.
+  (Source: CLAUDE.md `## Changelog Adoption (v2.1.133 → v2.1.139)` section, verified
+  against code.claude.com/docs/en/changelog on 2026-05-12.)
 
 ## Sources
 

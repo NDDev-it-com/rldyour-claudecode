@@ -92,6 +92,26 @@ Hierarchy precedence (highest → lowest): managed policy → plugin hooks (forc
 
 Per Anthropic guidance: put guardrails in hooks, not in CLAUDE.md prose. CLAUDE.md is delivered as a user message after the system prompt — it is context, not enforced configuration.
 
+## Changelog Adoption (v2.1.133 → v2.1.139)
+
+Verified against `code.claude.com/docs/en/changelog` for v2.1.134-v2.1.139 on 2026-05-12. Current local CC: **v2.1.139** (`/Users/rldyourmnd/.local/bin/claude --version`).
+
+Adopted:
+- v2.1.128 — per-entry skill description cap `1,536` chars, used by all 32 skills.
+- v2.1.129 — `skillListingBudgetFraction: 0.03` in user settings; `experimental.{themes,monitors}` wrapper available (we declare neither).
+- v2.1.121 — `alwaysLoad: true` on `serena` MCP server.
+- v2.1.119 — `claude plugin tag --push` for release tagging (canonical, `<plugin>--v<version>`).
+
+Available, not adopted:
+- v2.1.133 `worktree.baseRef: "head"` (default `fresh` since 2.1.133) — irrelevant: `ry-explore` uses `context: fork`, not `isolation: worktree`. Set to `"head"` only if a future worktree-isolated agent needs unpushed commits.
+- v2.1.133 hook input `effort.level` + `$CLAUDE_EFFORT` env var in Bash — could enrich hook telemetry; not yet wired into `flow_post_task_state.py` or `serena_memory_state.py`.
+- v2.1.139 hook `args: string[]` exec-form (spawns without shell) — our hooks have no quoting issues; bare `command: bash ${CLAUDE_PLUGIN_ROOT}/...` form is sufficient.
+- v2.1.139 `PostToolUse` `continueOnBlock: true` — our PostToolUse hooks are advisory-only (`exit 0` always), nothing to "block on".
+- v2.1.139 stdio MCP env receives `${CLAUDE_PROJECT_DIR}` — no current server needs project-root context.
+- v2.1.139 `claude plugin details <name>` — diagnostic only (see AGENTS.md Validation And Setup).
+
+Smoke-script footgun (documented for future maintainers): `scripts/smoke_fullrepo_sync.sh` calls `fullrepo_sync.py --bootstrap-init`, which restores agent-only worktree files (AGENTS.md, .claude/CLAUDE.md, .serena/**) from `origin/fullrepo`. Run smoke **before** editing agent-only files in a session, or re-apply edits after smoke completes; otherwise in-progress changes are silently reverted.
+
 ## Engineering Conventions
 
 - Russian user-facing communication; English repository artifacts. Skill `description` fields are Russian-leading (English keywords appended).

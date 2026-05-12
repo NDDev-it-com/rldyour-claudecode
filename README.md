@@ -22,7 +22,7 @@ The active marketplace currently contains nine first-party plugins, all at `vers
 - **`rldyour-serena-mcp`** — Serena-first semantic code workflow, fact-only `.serena` memory sync via `flow-memory-sync` subagent, lifecycle hooks (UserPromptSubmit, PreToolUse:Bash, PostToolUse:Bash, Stop).
 - **`rldyour-flow`** — autonomous SDLC orchestration with five slash commands (`ry-init`, `ry-start`, `ry-newp`, `ry-review`, `ry-deploy`), six reviewer subagents (architecture/quality/consistency/integration/verification/security tracks), advisory SessionStart and Stop hooks, scoped context packs, instruction docs sync, and post-task synchronization.
 - **`rldyour-explore`** — deep multi-source research via `ry-explore` subagent (`model: opus[1m]`, `effort: max`) and tech/web research skills routing through Context7, DeepWiki, Grep, and authoritative web sources.
-- **`rldyour-security`** — non-blocking OWASP Top 10 2026 secure-implementation guidance plus the `ry-sec-review` defensive review skill.
+- **`rldyour-security`** — non-blocking OWASP Top 10 2025 secure-implementation guidance plus the `ry-sec-review` defensive review skill.
 - **`rldyour-browser`** — browser validation, debugging, and tool-routing workflows for Playwright MCP and Chrome DevTools MCP.
 - **`rldyour-design`** — Figma → code, centralized token-based design system, strict Feature-Sliced Design frontend architecture, shadcn/ui, ReactBits, and browser-validation workflows.
 - **`rldyour-lsps`** — language-server routing, health checks, brew-first setup profiles, and Serena LSP integration guidance.
@@ -76,17 +76,12 @@ scripts/validate_marketplace.sh              # full marketplace harness
 
 ## Smoke Tests
 
-The marketplace ships with smoke coverage for hooks, MCP runtime, fullrepo workflow, branch cleanup, bootstrap, and local git guard:
+The marketplace ships with smoke coverage for MCP runtime startup, hook lifecycle, and the fullrepo synchronization state machine:
 
 ```bash
-scripts/smoke_mcp_runtime.sh
-scripts/smoke_mcp_capabilities.sh
-scripts/smoke_hooks.sh
-scripts/smoke_local_git_guard.sh
-scripts/smoke_flow_branch_cleanup.sh
-scripts/smoke_clean_bootstrap.sh
-scripts/smoke_fullrepo_sync.sh
-scripts/smoke_fullrepo_bootstrap_init.sh
+scripts/smoke_mcp_runtime.sh                 # MCP servers reachable + pins parsed
+scripts/smoke_hooks.sh                       # Serena + flow hook scripts dry-run
+scripts/smoke_fullrepo_sync.sh               # fullrepo branch lifecycle state machine
 ```
 
 Targeted state checks:
