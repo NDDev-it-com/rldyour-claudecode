@@ -7,10 +7,13 @@
 # `smoke_mcp_runtime.sh`, which only checks pin discipline and HTTP
 # reachability.
 #
-# Stdio servers that require credentials (CONTEXT7_API_KEY, etc.) are
-# skipped with a SKIP marker when the env var is absent. HTTP servers
-# behind OAuth (figma, github) accept 401 as a passing handshake — the
-# server is reachable; the client just lacks an authenticated session.
+# SKIP rules (do not FAIL the harness):
+#   - stdio server in ENV_REQUIRED but the env var is absent.
+#   - stdio server in BINARY_REQUIRED but the binary is not on PATH.
+#
+# Auth-gated HTTP servers (figma, github) accept 401/403 as a passing
+# handshake — the server is reachable; the client just lacks an
+# authenticated session.
 #
 # Optional flags:
 #   --server <name>     run only this server (e.g. --server serena)
@@ -19,13 +22,14 @@
 #                       cold-start can pull ~80 packages for serena)
 #
 # Exit codes: 0 success, 1 on any FAIL.
-#
-# Required: python3, jq (jq optional — falls back to python json if absent).
 
 set -euo pipefail
 
-REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-MCP_JSON="${REPO_ROOT}/plugins/rldyour-mcps/.mcp.json"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
+cd "${ROOT}"
+
+MCP_JSON="${ROOT}/plugins/rldyour-mcps/.mcp.json"
 
 if [[ ! -f "${MCP_JSON}" ]]; then
   echo "FAIL .mcp.json not found at ${MCP_JSON}" >&2
@@ -33,13 +37,16 @@ if [[ ! -f "${MCP_JSON}" ]]; then
 fi
 
 # Forward args verbatim to the Python helper so flag parsing stays in one place.
-# REPO_ROOT and MCP_JSON are exported so the heredoc'd Python finds them
+# ROOT and MCP_JSON are exported so the heredoc'd Python finds them
 # regardless of cwd (bash __file__ does not survive `python3 -`).
-export RLDYOUR_SMOKE_REPO_ROOT="${REPO_ROOT}"
+export RLDYOUR_SMOKE_ROOT="${ROOT}"
 export RLDYOUR_SMOKE_MCP_JSON="${MCP_JSON}"
 exec python3 - "$@" <<'PY'
 import json
 import os
+import select
+import shutil
+import signal
 import subprocess
 import sys
 import time
@@ -47,28 +54,37 @@ import urllib.error
 import urllib.request
 from pathlib import Path
 
-REPO_ROOT = Path(os.environ["RLDYOUR_SMOKE_REPO_ROOT"])
+ROOT = Path(os.environ["RLDYOUR_SMOKE_ROOT"])
 MCP_JSON = Path(os.environ["RLDYOUR_SMOKE_MCP_JSON"])
 
-# Servers that require env vars; absent env → SKIP, not FAIL.
+# Stdio servers gated by credential env vars; absent env → SKIP, not FAIL.
+# HTTP servers handle their own auth via HTTP_AUTH_GATED (401/403 = pass)
+# so they are NOT listed here.
 ENV_REQUIRED = {
     "context7": "CONTEXT7_API_KEY",
-    "github": "GITHUB_PERSONAL_ACCESS_TOKEN",
 }
 
-# Servers that are slow to cold-start (uvx pulls ~80 packages first time).
+# Stdio servers that depend on a system binary on PATH (no uvx/bunx
+# bootstrap). Absent binary → SKIP, not FAIL — CI without that toolchain
+# should not regress the harness.
+BINARY_REQUIRED = {
+    "dart-flutter": "dart",
+}
+
+# Servers slow to cold-start (uvx pulls ~80 packages on first run).
 UVX_SERVERS = {"serena", "semgrep"}
 
-# Servers that are auth-gated on HTTP; 401 is a passing handshake.
+# Servers that are auth-gated on HTTP; 401/403 is a passing handshake.
 HTTP_AUTH_GATED = {"figma", "github"}
-
-# Servers known to spam stderr noise on stdio startup. We log but ignore.
-STDERR_NOISY = {"serena", "playwright", "chrome-devtools", "dart-flutter"}
 
 DEFAULT_TIMEOUT_S = 45.0
 
 PROTOCOL_VERSION = "2024-11-05"
 CLIENT_INFO = {"name": "rldyour-smoke", "version": "1.0.0"}
+
+ANSI_GREEN = "\033[1;32m"
+ANSI_RED = "\033[1;31m"
+ANSI_RESET = "\033[0m"
 
 
 def parse_args(argv):
@@ -91,7 +107,7 @@ def parse_args(argv):
             i += 1
             continue
         if a in ("-h", "--help"):
-            print(__doc__ or "smoke_mcp_capabilities.sh — see file header")
+            print("smoke_mcp_capabilities.sh — see file header for usage")
             sys.exit(0)
         print(f"unknown arg: {a!r}", file=sys.stderr)
         sys.exit(2)
@@ -110,114 +126,113 @@ def jsonrpc_request(method, rid, params=None):
     return json.dumps(msg, ensure_ascii=False)
 
 
+def jsonrpc_notify(method, params=None):
+    msg = {"jsonrpc": "2.0", "method": method}
+    if params is not None:
+        msg["params"] = params
+    return json.dumps(msg, ensure_ascii=False)
+
+
 def read_line_with_timeout(proc, deadline):
-    """Read a single newline-terminated message from proc.stdout with deadline."""
+    """Read one newline-terminated message from proc.stdout, respecting deadline.
+
+    Uses select() on the underlying fd so a stalled server can never block us
+    past the deadline (bare readline() with bufsize=1 was blocking despite the
+    poll() check in the prior implementation).
+    """
+    if proc.stdout is None:
+        return None
+    fd = proc.stdout.fileno()
+    buf = []
     while True:
-        if time.monotonic() > deadline:
+        remaining = deadline - time.monotonic()
+        if remaining <= 0:
             return None
-        if proc.poll() is not None:
-            # Process exited before producing a line.
+        if proc.poll() is not None and not select_ready(fd, 0):
+            # Process exited and no more bytes pending.
             return None
-        line = proc.stdout.readline()
-        if line:
-            return line.rstrip("\n")
-        time.sleep(0.05)
+        ready, _, _ = select.select([fd], [], [], min(remaining, 0.5))
+        if not ready:
+            continue
+        try:
+            chunk = os.read(fd, 1)
+        except OSError:
+            return None
+        if not chunk:
+            return None  # EOF
+        ch = chunk.decode("utf-8", errors="replace")
+        if ch == "\n":
+            return "".join(buf)
+        buf.append(ch)
+
+
+def select_ready(fd, timeout):
+    """Non-blocking check whether fd has data ready."""
+    ready, _, _ = select.select([fd], [], [], timeout)
+    return bool(ready)
 
 
 def smoke_stdio(name, cfg, timeout_s):
-    """Spawn stdio MCP server, do initialize + tools/list, count tools."""
+    """Spawn stdio MCP server, perform initialize + tools/list, count tools."""
     cmd = [cfg["command"]] + list(cfg.get("args", []))
     env = os.environ.copy()
     for k, v in cfg.get("env", {}).items():
         env[k] = os.path.expandvars(v)
 
     deadline = time.monotonic() + timeout_s
+
+    # start_new_session=True puts the child (and any uvx-spawned grandchildren)
+    # in a fresh process group so we can SIGTERM the entire group on cleanup.
     try:
         proc = subprocess.Popen(
             cmd,
             stdin=subprocess.PIPE,
             stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
+            stderr=subprocess.DEVNULL,
             text=True,
             env=env,
-            bufsize=1,
+            bufsize=0,
+            start_new_session=True,
         )
     except FileNotFoundError as exc:
         return ("FAIL", f"launcher not on PATH: {exc}")
 
     try:
         # 1. initialize
-        init_req = jsonrpc_request(
-            "initialize",
-            1,
-            {
-                "protocolVersion": PROTOCOL_VERSION,
-                "capabilities": {},
-                "clientInfo": CLIENT_INFO,
-            },
+        proc.stdin.write(
+            jsonrpc_request(
+                "initialize",
+                1,
+                {
+                    "protocolVersion": PROTOCOL_VERSION,
+                    "capabilities": {},
+                    "clientInfo": CLIENT_INFO,
+                },
+            )
+            + "\n"
         )
-        proc.stdin.write(init_req + "\n")
         proc.stdin.flush()
 
-        init_resp_raw = read_line_with_timeout(proc, deadline)
-        if init_resp_raw is None:
-            stderr_tail = ""
-            try:
-                proc.stderr.flush()
-            except Exception:
-                pass
-            return ("FAIL", "initialize: no response (timeout or early exit)")
-
-        # Tolerate non-JSON banner lines from noisy stdio servers — skip until we
-        # find a valid JSON-RPC object that has a matching id.
-        init_msg = None
-        scan_deadline = deadline
-        candidate = init_resp_raw
-        for _ in range(20):
-            try:
-                obj = json.loads(candidate)
-                if isinstance(obj, dict) and obj.get("id") == 1:
-                    init_msg = obj
-                    break
-            except Exception:
-                pass
-            candidate = read_line_with_timeout(proc, scan_deadline)
-            if candidate is None:
-                break
-
+        init_msg = read_json_with_id(proc, deadline, expected_id=1)
         if init_msg is None:
-            return ("FAIL", "initialize: did not receive a JSON-RPC response with id=1")
+            return ("FAIL", "initialize: no JSON-RPC response with id=1 before deadline")
         if "error" in init_msg:
             return ("FAIL", f"initialize error: {init_msg['error']}")
 
-        # Spec requires `notifications/initialized` before further calls.
+        # Per MCP spec, send `notifications/initialized` before further calls.
         try:
-            proc.stdin.write(jsonrpc_request_notify("notifications/initialized") + "\n")
+            proc.stdin.write(jsonrpc_notify("notifications/initialized") + "\n")
             proc.stdin.flush()
         except BrokenPipeError:
             return ("FAIL", "initialize accepted but stdin pipe broke before tools/list")
 
         # 2. tools/list
-        list_req = jsonrpc_request("tools/list", 2, {})
-        proc.stdin.write(list_req + "\n")
+        proc.stdin.write(jsonrpc_request("tools/list", 2, {}) + "\n")
         proc.stdin.flush()
 
-        tools_resp_raw = read_line_with_timeout(proc, deadline)
-        tools_msg = None
-        for _ in range(20):
-            if tools_resp_raw is None:
-                break
-            try:
-                obj = json.loads(tools_resp_raw)
-                if isinstance(obj, dict) and obj.get("id") == 2:
-                    tools_msg = obj
-                    break
-            except Exception:
-                pass
-            tools_resp_raw = read_line_with_timeout(proc, deadline)
-
+        tools_msg = read_json_with_id(proc, deadline, expected_id=2)
         if tools_msg is None:
-            return ("FAIL", "tools/list: no JSON-RPC response with id=2")
+            return ("FAIL", "tools/list: no JSON-RPC response with id=2 before deadline")
         if "error" in tools_msg:
             return ("FAIL", f"tools/list error: {tools_msg['error']}")
 
@@ -227,20 +242,53 @@ def smoke_stdio(name, cfg, timeout_s):
 
         return ("OK", f"{len(tools)} tools")
     finally:
+        cleanup_process(proc)
+
+
+def read_json_with_id(proc, deadline, expected_id, max_lines=40):
+    """Read up to `max_lines` JSON-RPC messages; return the one with matching id."""
+    for _ in range(max_lines):
+        line = read_line_with_timeout(proc, deadline)
+        if line is None:
+            return None
+        line = line.strip()
+        if not line:
+            continue
         try:
+            obj = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        if isinstance(obj, dict) and obj.get("id") == expected_id:
+            return obj
+    return None
+
+
+def cleanup_process(proc):
+    """Best-effort termination of the child and any grandchildren in its pgid."""
+    if proc.poll() is not None:
+        return
+    pgid = None
+    try:
+        pgid = os.getpgid(proc.pid)
+    except (ProcessLookupError, PermissionError):
+        pass
+    try:
+        if pgid is not None:
+            os.killpg(pgid, signal.SIGTERM)
+        else:
             proc.terminate()
-            proc.wait(timeout=5)
-        except subprocess.TimeoutExpired:
-            proc.kill()
-        except Exception:
+    except (ProcessLookupError, PermissionError):
+        pass
+    try:
+        proc.wait(timeout=5)
+    except subprocess.TimeoutExpired:
+        try:
+            if pgid is not None:
+                os.killpg(pgid, signal.SIGKILL)
+            else:
+                proc.kill()
+        except (ProcessLookupError, PermissionError):
             pass
-
-
-def jsonrpc_request_notify(method, params=None):
-    msg = {"jsonrpc": "2.0", "method": method}
-    if params is not None:
-        msg["params"] = params
-    return json.dumps(msg, ensure_ascii=False)
 
 
 def smoke_http(name, cfg, timeout_s):
@@ -249,7 +297,10 @@ def smoke_http(name, cfg, timeout_s):
     if not url:
         return ("FAIL", "no url in .mcp.json")
 
-    headers = {"Content-Type": "application/json", "Accept": "application/json, text/event-stream"}
+    headers = {
+        "Content-Type": "application/json",
+        "Accept": "application/json, text/event-stream",
+    }
     for k, v in cfg.get("headers", {}).items():
         headers[k] = os.path.expandvars(v)
 
@@ -281,7 +332,10 @@ def smoke_http(name, cfg, timeout_s):
         return ("OK", f"HTTP {status}")
     if status in (401, 403) and name in HTTP_AUTH_GATED:
         return ("OK", f"HTTP {status} (auth-gated, accepted)")
-    return ("FAIL", f"HTTP {status}; body[:200]={payload[:200]!r}")
+    # On unexpected 4xx/5xx we report status + body length only — never log
+    # the body itself, which could echo headers/secrets from a misconfigured
+    # upstream into a CI log.
+    return ("FAIL", f"HTTP {status} (body {len(payload)} bytes; rerun with curl for detail)")
 
 
 def main():
@@ -299,32 +353,42 @@ def main():
         if server_filter and server_filter != name:
             continue
 
-        # Skip stdio servers gated on env we don't have.
-        env_key = ENV_REQUIRED.get(name)
-        if env_key and not envvar_present(env_key):
-            print(f"SKIP {name}: env {env_key} not set")
-            skipped += 1
-            continue
-
-        if skip_uvx and name in UVX_SERVERS:
-            print(f"SKIP {name}: --skip-uvx")
-            skipped += 1
-            continue
-
         transport = scfg.get("type", "stdio")
-        if transport == "http":
-            status, detail = smoke_http(name, scfg, timeout)
-        else:
-            status, detail = smoke_stdio(name, scfg, timeout)
 
-        marker = "\033[1;32mOK\033[0m" if status == "OK" else "\033[1;31mFAIL\033[0m"
+        # Skip rules apply to stdio only — HTTP auth is handled via 401/403.
+        if transport != "http":
+            env_key = ENV_REQUIRED.get(name)
+            if env_key and not envvar_present(env_key):
+                print(f"SKIP {name}: env {env_key} not set")
+                skipped += 1
+                continue
+
+            bin_key = BINARY_REQUIRED.get(name)
+            if bin_key and shutil.which(bin_key) is None:
+                print(f"SKIP {name}: binary {bin_key!r} not on PATH")
+                skipped += 1
+                continue
+
+            if skip_uvx and name in UVX_SERVERS:
+                print(f"SKIP {name}: --skip-uvx")
+                skipped += 1
+                continue
+
+            status, detail = smoke_stdio(name, scfg, timeout)
+        else:
+            status, detail = smoke_http(name, scfg, timeout)
+
+        marker = f"{ANSI_GREEN}OK{ANSI_RESET}" if status == "OK" else f"{ANSI_RED}FAIL{ANSI_RESET}"
         print(f"{marker} {name}: {detail}")
         if status == "OK":
             passed += 1
         else:
             fail = 1
 
-    print(f"\nsummary: passed={passed} fail={fail and 'yes' or 'no'} skipped={skipped}")
+    banner = f"{ANSI_GREEN}✔ smoke_mcp_capabilities passed{ANSI_RESET}" if fail == 0 \
+        else f"{ANSI_RED}✗ smoke_mcp_capabilities failed{ANSI_RESET}"
+    print(f"\nsummary: passed={passed} skipped={skipped} fail={'yes' if fail else 'no'}")
+    print(banner)
     return fail
 
 
