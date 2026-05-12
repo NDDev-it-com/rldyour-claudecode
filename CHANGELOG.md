@@ -21,6 +21,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
   the `github` HTTP MCP server (added `GITHUB_MCP_URL` to env file and to
   `HTTP_TO_ENV`). Closes a tracking gap left by 47387ee when github moved
   from stdio to HTTP transport.
+
 - `serena-agent` `1.2.0` → `1.3.0` (released 2026-05-11). The 81-commit
   delta includes new LSP tools (`find_declaration`, `find_implementations`,
   `get_diagnostics_for_file`, `get_diagnostics_for_symbol`), Ada/SPARK and
