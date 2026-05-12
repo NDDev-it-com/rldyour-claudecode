@@ -76,10 +76,13 @@ scripts/validate_marketplace.sh              # full marketplace harness
 
 ## Smoke Tests
 
-The marketplace ships with smoke coverage for MCP runtime startup, hook lifecycle, and the fullrepo synchronization state machine:
+The marketplace ships with smoke coverage for MCP runtime startup, MCP capability handshake, hook lifecycle, and the fullrepo synchronization state machine:
 
 ```bash
-scripts/smoke_mcp_runtime.sh                 # MCP servers reachable + pins parsed
+scripts/smoke_mcp_runtime.sh                 # MCP servers reachable + pins parsed (~30s)
+scripts/smoke_mcp_capabilities.sh            # JSON-RPC initialize + tools/list per server (~2m cold, ~30s warm)
+scripts/smoke_mcp_capabilities.sh --server <name>   # narrow to one server
+scripts/smoke_mcp_capabilities.sh --skip-uvx        # skip slow uvx cold-starts
 scripts/smoke_hooks.sh                       # Serena + flow hook scripts dry-run
 scripts/smoke_fullrepo_sync.sh               # fullrepo branch lifecycle state machine
 ```
