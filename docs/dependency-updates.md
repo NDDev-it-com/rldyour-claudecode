@@ -32,12 +32,13 @@ Policy and procedure for updating MCP runtime pins and Claude Code minimum versi
 3. **Update both pins** — in the same commit, edit `.mcp.json` and `config/mcp-runtime-versions.env`. Drift between them is a CI failure.
 
 4. **Run capability smoke** for the affected server.
-   The dedicated harness is planned (`scripts/smoke_mcp_capabilities.sh`) but not yet implemented. Until it lands, perform a manual smoke:
+   The dedicated harness is not yet shipped. Until it lands, perform a manual smoke (substitute `<pkg>` and `<NEW_VERSION>` with the bumped server's launcher spec):
 
    ```bash
    # 1. Probe the new launcher version is reachable.
-   bunx --bun @upstash/context7-mcp@2.2.5 --help >/dev/null
-   uvx --from "serena-agent==1.3.0" --python 3.13 --prerelease allow serena --version
+   bunx --bun <pkg>@<NEW_VERSION> --help >/dev/null
+   # or, for uvx-launched servers:
+   uvx --from "<pkg>==<NEW_VERSION>" --python 3.13 --prerelease allow <bin> --version
 
    # 2. Restart Claude Code with the new pin and invoke at least one
    #    deterministic read-only tool from the bumped server (e.g.
