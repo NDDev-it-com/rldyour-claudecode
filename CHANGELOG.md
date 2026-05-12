@@ -6,6 +6,10 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-05-12
+
+Release boundary cut after the 2026-05-08..2026-05-12 wave of best-practice, MCP-runtime, capability-smoke, serena-bump, audit and worktree-workflow commits accumulated in the `[Unreleased]` block. Bumps every plugin from `0.1.0` to `0.1.1` so that the Claude Code plugin cache at `~/.claude/plugins/cache/rldyour-claude/<plugin>/<version>/` actually refreshes on next `claude plugin update` (cache compares plugin.json `version` strings, so content-only changes under the same version are silently ignored by the user-facing runtime).
+
 ### Changed
 
 - Bumped pinned MCP runtime versions after manual launcher smoke
@@ -34,6 +38,14 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
   from 45 to 28 tools under `agent` context (the mode refactor scopes tool
   exposure more tightly per context). `scripts/smoke_mcp_capabilities.sh`
   passed 13/13 servers post-bump on 2026-05-12.
+- Stop hooks restored to advisory enforcement gates: hooks compute
+  machine-readable state and block Stop with `exit 2` when work remains, but
+  do not perform high-blast-radius git operations (push, merge, force-with-lease,
+  branch deletion). Those operations belong to the `flow-post-task-sync` skill
+  executor under model judgement.
+- `reviewer-protocol.md` documents the canonical effort/maxTurns/color matrix
+  for reviewer subagents and the `+6 turns` security-track variant-hunt rule.
+
 ### Added
 
 - Worktree workflow:
@@ -85,16 +97,6 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
   citation per claim; removal-first principle; narrow tools — Serena memory
   MCP plus read-only Bash/Read/Grep/Glob; `disallowedTools: [Edit, Write,
   NotebookEdit]`). Invoked by orchestrator from Stop hook advisory.
-
-### Changed
-
-- Stop hooks restored to advisory enforcement gates: hooks compute
-  machine-readable state and block Stop with `exit 2` when work remains, but
-  do not perform high-blast-radius git operations (push, merge, force-with-lease,
-  branch deletion). Those operations belong to the `flow-post-task-sync` skill
-  executor under model judgement.
-- `reviewer-protocol.md` documents the canonical effort/maxTurns/color matrix
-  for reviewer subagents and the `+6 turns` security-track variant-hunt rule.
 
 ### May-2026 best-practice waves (2026-05-08, applied incrementally on `main`)
 

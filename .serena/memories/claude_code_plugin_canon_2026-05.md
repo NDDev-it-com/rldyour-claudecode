@@ -4,7 +4,7 @@ Source-backed facts cross-validated against `code.claude.com/docs/en/plugins-ref
 `code.claude.com/docs/en/mcp`, `code.claude.com/docs/en/changelog`, and Anthropic's own
 `claude-plugins-official` repo. Last refresh 2026-05-08 via ry-explore deep research.
 
-Last commit: d0dcf64 (fix(flow): worktree workflow — reviewer feedback consolidation). Verification range: v2.1.111-v2.1.139.
+Last commit: ef18bd9 (release: 0.1.1 — refresh CC plugin cache after 5 days of changes). Verification range: v2.1.111-v2.1.139.
 
 ## plugin.json schema
 

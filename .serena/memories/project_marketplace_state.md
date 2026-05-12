@@ -1,13 +1,14 @@
 # rldyour-claude marketplace state
 
-Last commit: d0dcf64 (fix(flow): worktree workflow — reviewer feedback consolidation).
-Multiple May-2026 waves applied (all merged to main except current):
+Last commit: ef18bd9 (release: 0.1.1 — refresh CC plugin cache after 5 days of changes).
+Multiple May-2026 waves applied (all merged to main):
 - optimize/may-2026-best-practices: 6 commits 3fe9005..2e22652 (merged to main)
 - docs/canonical-may2026: 1 commit ca13470 (merged to main)
 - polish/deferred-findings: 3 commits 3ce7970..f23765d (merged to main)
 - feat/memory-sync-subagent: 1 commit 772f6e8 (merged to main)
 - polish/serena-and-capabilities-smoke: 3 commits 36fb0fc..c39f220 (merged to main)
-- feat/worktree-workflow: 2 commits 61e80b5..d0dcf64 (current branch, NOT YET merged; 2 commits ahead of origin/main at c39f220)
+- feat/worktree-workflow: 2 commits 61e80b5..d0dcf64 (merged to main)
+- release/0.1.1: 1 commit ef18bd9 (merged to main; branch cleaned up post-merge)
 Prior merged branches deleted after fast-forward merge.
 Marketplace name: `rldyour-claude`. Repo: github.com/rldyourmnd/rldyour-claude (private).
 
@@ -495,6 +496,25 @@ Worktree workflow wave (c39f220..d0dcf64, branch feat/worktree-workflow):
   Folded in: scripts/smoke_hooks.sh SKIP_TESTS entry for RLDYOUR_SKIP_WORKTREE_BOOTSTRAP
   (should have shipped with 61e80b5).
   (Source: scripts/worktree_add.sh, scripts/smoke_hooks.sh line 87, CHANGELOG.md at HEAD.)
+
+Release 0.1.1 (d0dcf64..ef18bd9, branch release/0.1.1, merged 2026-05-12):
+- ef18bd9 release: 0.1.1 — refresh CC plugin cache after 5 days of changes.
+  VERSION: 0.1.0 → 0.1.1. All 9 plugin.json `version` fields: 0.1.0 → 0.1.1.
+  marketplace.json plugins[].version entries: 0.1.0 → 0.1.1.
+  CHANGELOG.md restructured: [Unreleased] content moved into [0.1.1] - 2026-05-12;
+  fresh [Unreleased] section reserved.
+  Rationale: Claude Code plugin cache at `~/.claude/plugins/cache/rldyour-claude/<plugin>/<version>/`
+  compares plugin.json `version` strings, not file contents. Content-only updates under
+  unchanged `version` are silently ignored by the runtime. The 0.1.0 → 0.1.1 bump
+  triggers `claude plugin update` to refresh the cache; verified live 2026-05-12:
+  all 9 plugins reported "updated from 0.1.0 to 0.1.1" and the cache 0.1.1 subdirectory
+  matches repo HEAD.
+  9 per-plugin tags pushed via `claude plugin tag --push`:
+  rldyour-mcps--v0.1.1, rldyour-flow--v0.1.1, rldyour-serena-mcp--v0.1.1,
+  rldyour-security--v0.1.1, rldyour-browser--v0.1.1, rldyour-design--v0.1.1,
+  rldyour-explore--v0.1.1, rldyour-lsps--v0.1.1, rldyour-rules--v0.1.1.
+  (Source: .claude-plugin/marketplace.json, plugins/*/\.claude-plugin/plugin.json,
+  VERSION, CHANGELOG.md, and git tag listing at HEAD ef18bd9.)
 
 Advisory enforcement gates restored (refactor/restore-advisory-hooks):
 - Stop hooks are advisory enforcement gates, not executors. Hooks compute
