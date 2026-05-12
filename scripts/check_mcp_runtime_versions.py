@@ -14,7 +14,6 @@ Exit codes: 0 success, 1 on any drift.
 from __future__ import annotations
 
 import json
-import re
 import sys
 from pathlib import Path
 
@@ -35,6 +34,7 @@ HTTP_TO_ENV = {
     "grep": "GREP_MCP_URL",
     "figma": "FIGMA_MCP_URL",
     "openai-docs": "OPENAI_DOCS_MCP_URL",
+    "github": "GITHUB_MCP_URL",
 }
 
 

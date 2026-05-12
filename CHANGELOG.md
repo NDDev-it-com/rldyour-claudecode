@@ -6,6 +6,34 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+### Changed
+
+- Bumped pinned MCP runtime versions after manual launcher smoke
+  (release notes verified via GitHub Releases on 2026-05-12):
+  - `@playwright/mcp` `0.0.74` → `0.0.75` (bug fixes: serialize shared browser
+    launch in `--isolated`, forward browser-level CDP commands in extension
+    mode; we use neither, low risk).
+  - `@upstash/context7-mcp` `2.2.4` → `2.2.5` (accept hallucinated arg names
+    on `tools/call` requests; backwards-compatible quality fix).
+  - `semgrep` `1.161.0` → `1.162.0` (taint tracking through nested functions,
+    ~5x faster JSON rule parsing; backwards-compatible).
+- `scripts/check_mcp_runtime_versions.py` now also enforces URL parity for
+  the `github` HTTP MCP server (added `GITHUB_MCP_URL` to env file and to
+  `HTTP_TO_ENV`). Closes a tracking gap left by 47387ee when github moved
+  from stdio to HTTP transport.
+
+### Deferred
+
+- `serena-agent` `1.2.0` is held against upstream `1.3.0` (released
+  2026-05-11). The 81-commit delta includes a "Revamp mode selection"
+  refactor (oraios/serena commit `dfe1c3d`) that touches `--context=agent`,
+  the canonical setting in `.mcp.json`. Bumping requires a capability smoke
+  of `--context=agent` and `mcp__plugin_rldyour-mcps_serena__*` tools after
+  release-day-old changes settle; tracked as follow-up.
+- `scripts/smoke_mcp_capabilities.sh` harness referenced by
+  `docs/dependency-updates.md` is not yet shipped. Until it lands, pin
+  bumps follow the manual smoke documented in that file.
+
 ### Added
 
 - Root-level public files: `README.md`, `CHANGELOG.md`, `VERSION`, `LICENSE`.
