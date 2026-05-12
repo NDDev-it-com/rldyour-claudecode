@@ -1,0 +1,122 @@
+#!/usr/bin/env bash
+# worktree_add.sh — one-step git worktree creation for the rldyour-claude
+# marketplace.
+#
+# Wraps `git worktree add` + `fullrepo_sync.py --bootstrap-init` so a fresh
+# worktree comes up with the full agent-only context (AGENTS.md,
+# .claude/CLAUDE.md, .serena/project.yml, .serena/memories/**) already in
+# place. Designed for the parallel-sessions workflow: each worktree gets its
+# own working directory and its own agent-only file copy, while sharing the
+# same .git object database with the main worktree.
+#
+# Usage:
+#   scripts/worktree_add.sh <branch> [path]
+#
+# Examples:
+#   scripts/worktree_add.sh feat/foo
+#       Creates a worktree at ../rldyour-claudecode-feat-foo on branch
+#       feat/foo. If the branch doesn't exist, it is created off
+#       origin/main (configurable via WORKTREE_BASE_REF).
+#
+#   scripts/worktree_add.sh feat/foo /tmp/rldyour-foo
+#       Same, with an explicit worktree path.
+#
+# Environment:
+#   WORKTREE_BASE_REF   Ref to branch from when creating a new branch.
+#                       Default: origin/main. Set to "HEAD" to preserve
+#                       unpushed local commits, mirroring Claude Code's
+#                       `worktree.baseRef: "head"` setting.
+#   RLDYOUR_DRY_RUN=1   Print what would happen, do not execute.
+#
+# Exit codes: 0 success, non-zero on git failure or bootstrap failure.
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
+cd "${ROOT}"
+
+BRANCH="${1:-}"
+EXPLICIT_PATH="${2:-}"
+
+if [[ -z "${BRANCH}" ]]; then
+  cat >&2 <<EOF
+usage: scripts/worktree_add.sh <branch> [path]
+
+Creates a git worktree and runs fullrepo_sync.py --bootstrap-init so the
+worktree is immediately usable for a parallel Claude Code session.
+
+See file header for environment variables and examples.
+EOF
+  exit 2
+fi
+
+BASE_REF="${WORKTREE_BASE_REF:-origin/main}"
+DRY_RUN="${RLDYOUR_DRY_RUN:-0}"
+
+# Default worktree path: sibling of main repo, suffixed with the branch
+# (with slashes replaced by hyphens for filesystem safety).
+if [[ -n "${EXPLICIT_PATH}" ]]; then
+  WT_PATH="${EXPLICIT_PATH}"
+else
+  REPO_NAME="$(basename "${ROOT}")"
+  SAFE_BRANCH="$(printf '%s' "${BRANCH}" | tr '/' '-')"
+  WT_PATH="$(cd "${ROOT}/.." && pwd)/${REPO_NAME}-${SAFE_BRANCH}"
+fi
+
+WT_PATH="$(python3 -c 'import os,sys; print(os.path.abspath(sys.argv[1]))' "${WT_PATH}")"
+
+if [[ -e "${WT_PATH}" ]]; then
+  echo "FAIL worktree path already exists: ${WT_PATH}" >&2
+  exit 1
+fi
+
+# Decide: does the branch exist locally, on origin, or do we need to create it?
+if git show-ref --verify --quiet "refs/heads/${BRANCH}"; then
+  BRANCH_MODE="existing-local"
+  GIT_ARGS=(worktree add "${WT_PATH}" "${BRANCH}")
+elif git show-ref --verify --quiet "refs/remotes/origin/${BRANCH}"; then
+  BRANCH_MODE="existing-remote"
+  GIT_ARGS=(worktree add --track -b "${BRANCH}" "${WT_PATH}" "origin/${BRANCH}")
+else
+  BRANCH_MODE="new-from-${BASE_REF}"
+  GIT_ARGS=(worktree add -b "${BRANCH}" "${WT_PATH}" "${BASE_REF}")
+fi
+
+echo "==> rldyour-claude worktree_add"
+echo "    branch     : ${BRANCH} (${BRANCH_MODE})"
+echo "    path       : ${WT_PATH}"
+echo "    base ref   : ${BASE_REF}"
+echo "    main root  : ${ROOT}"
+
+if [[ "${DRY_RUN}" = "1" ]]; then
+  echo "    [dry-run] would run: git ${GIT_ARGS[*]}"
+  echo "    [dry-run] would run: python3 plugins/rldyour-flow/scripts/fullrepo_sync.py --bootstrap-init (cwd: ${WT_PATH})"
+  exit 0
+fi
+
+# Create the worktree.
+git "${GIT_ARGS[@]}"
+
+# Bootstrap agent-only context into the new worktree. The script reads the
+# active worktree from `git rev-parse --show-toplevel`, so we cd in.
+(
+  cd "${WT_PATH}"
+  python3 "${ROOT}/plugins/rldyour-flow/scripts/fullrepo_sync.py" --bootstrap-init
+)
+
+cat <<EOF
+
+==> worktree ready
+    cd "${WT_PATH}"
+    claude        # opens Claude Code with full agent-only context
+
+The new worktree shares the same .git database with the main repo (origin,
+fullrepo, refs, packs). Each worktree has its own:
+  - working tree
+  - .git/info/exclude block (per-worktree)
+  - .serena/memories/ (restored from origin/fullrepo at bootstrap)
+
+To remove later:
+    git worktree remove "${WT_PATH}"
+EOF

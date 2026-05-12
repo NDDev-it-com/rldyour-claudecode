@@ -35,6 +35,25 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
   passed 13/13 servers post-bump on 2026-05-12.
 ### Added
 
+- Worktree workflow:
+  - `plugins/rldyour-flow/hooks/session_start_worktree_bootstrap.sh` —
+    `SessionStart` hook (timeout 30s) that detects a fresh worktree
+    (missing AGENTS.md / .claude/CLAUDE.md / .serena/project.yml marker)
+    and auto-runs `fullrepo_sync.py --restore` to install the
+    per-worktree `.git/info/exclude` block and check out agent-only
+    paths from `origin/fullrepo`. Skip via
+    `RLDYOUR_SKIP_WORKTREE_BOOTSTRAP=1`. The hook never publishes,
+    never mutates origin.
+  - `scripts/worktree_add.sh` — one-step helper for the manual
+    `git worktree add` flow: detects whether the branch is local /
+    remote / new, runs `git worktree add` with the right ref, then
+    bootstraps agent-only context. Supports `RLDYOUR_DRY_RUN=1` and
+    `WORKTREE_BASE_REF=HEAD` to mirror Claude Code's
+    `worktree.baseRef: "head"` setting.
+  - AGENTS.md "Worktree Workflow" section documenting the manual + auto
+    flow, the Claude Code v2.1.139 `worktree.{baseRef,symlinkDirectories,
+    sparsePaths}` settings, and the maintenance contract (per-worktree
+    `.serena/memories/`, reconciled via `flow-post-task-sync` publish).
 - `scripts/smoke_mcp_capabilities.sh` — capability-level smoke harness.
   Spawns each pinned MCP server (stdio) or POSTs to its endpoint (HTTP),
   performs the JSON-RPC `initialize` + `tools/list` handshake, and asserts

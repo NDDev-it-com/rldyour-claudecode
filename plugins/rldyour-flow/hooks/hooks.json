@@ -5,6 +5,12 @@
         "hooks": [
           {
             "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/session_start_worktree_bootstrap.sh",
+            "timeout": 30,
+            "statusMessage": "Checking worktree agent-only bootstrap"
+          },
+          {
+            "type": "command",
             "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/session_start_context.sh",
             "timeout": 5,
             "statusMessage": "Loading rldyour-flow session context"
