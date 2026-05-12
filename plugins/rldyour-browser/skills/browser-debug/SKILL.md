@@ -18,7 +18,7 @@ User-facing reports stay in Russian unless requested otherwise. Browser artifact
 
 Use this skill without waiting for explicit invocation when the task mentions:
 
-- Browser-only bug, broken UI in browser, hydration issue, runtime exception, console error, or source-map issue.
+- Browser-only bug, broken UI in browser, hydration issue, runtime exception, console errors, or source-map issue.
 - Network failure, unexpected API response, redirect, cache, CORS, CSP, auth/session browser behavior, or failed request.
 - Layout issue, overflow, rendering mismatch, computed style problem, DOM state mismatch, or responsive breakage.
 - Lighthouse, Core Web Vitals, performance trace, slow rendering, memory issue, long task, or layout shift.
