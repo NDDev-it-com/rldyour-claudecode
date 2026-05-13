@@ -14,6 +14,9 @@ Exit codes: 0 success, 1 on any drift.
 from __future__ import annotations
 
 import json
+import re
+import shutil
+import subprocess
 import sys
 from pathlib import Path
 
@@ -34,8 +37,39 @@ HTTP_TO_ENV = {
     "grep": "GREP_MCP_URL",
     "figma": "FIGMA_MCP_URL",
     "openai-docs": "OPENAI_DOCS_MCP_URL",
-    "github": "GITHUB_MCP_URL",
 }
+
+# Host-binary MCP servers: command must match `binary`, version is probed via
+# `<binary> --version` and parsed against `version_regex` (first capture group).
+# Used for github-mcp-server (Homebrew bottle) where .mcp.json args carry no
+# version literal.
+SYSTEM_BINARY_TO_ENV = {
+    "github": {
+        "env_key": "GITHUB_MCP_SERVER_VERSION",
+        "binary": "github-mcp-server",
+        "version_regex": r"Version:\s*(\S+)",
+    },
+}
+
+
+def probe_binary_version(binary: str, regex: str) -> str | None:
+    """Run `<binary> --version` and extract the version with the given regex."""
+    path = shutil.which(binary)
+    if not path:
+        return None
+    try:
+        proc = subprocess.run(
+            [path, "--version"],
+            capture_output=True,
+            text=True,
+            timeout=10,
+            check=False,
+        )
+    except (OSError, subprocess.TimeoutExpired):
+        return None
+    blob = (proc.stdout or "") + (proc.stderr or "")
+    match = re.search(regex, blob)
+    return match.group(1) if match else None
 
 
 def load_env(path: Path) -> dict[str, str]:
@@ -127,6 +161,43 @@ def main() -> int:
             fail = 1
             continue
         print(f"OK {name}: {actual_url}")
+
+    for name, spec in SYSTEM_BINARY_TO_ENV.items():
+        cfg = servers.get(name)
+        if not cfg:
+            print(f"FAIL .mcp.json missing system-binary server {name!r}", file=sys.stderr)
+            fail = 1
+            continue
+        actual_cmd = cfg.get("command", "")
+        if actual_cmd != spec["binary"]:
+            print(
+                f"FAIL {name}: expected command={spec['binary']!r} in .mcp.json, got {actual_cmd!r}",
+                file=sys.stderr,
+            )
+            fail = 1
+            continue
+        expected = env.get(spec["env_key"], "")
+        if not expected:
+            print(f"FAIL {env_path.name} missing {spec['env_key']} (server {name})", file=sys.stderr)
+            fail = 1
+            continue
+        actual = probe_binary_version(spec["binary"], spec["version_regex"])
+        if actual is None:
+            print(
+                f"INFO {name}: binary {spec['binary']!r} absent on PATH — "
+                f"pin {spec['env_key']}={expected} cannot be enforced locally"
+            )
+            continue
+        if actual != expected:
+            print(
+                f"FAIL {name}: drift detected — host {spec['binary']} reports {actual!r}, "
+                f"{env_path.name} pins {spec['env_key']}={expected!r}. "
+                f"Run `brew upgrade {spec['binary']}` or update the env pin.",
+                file=sys.stderr,
+            )
+            fail = 1
+            continue
+        print(f"OK {name}: {actual} (host binary)")
 
     return fail
 
