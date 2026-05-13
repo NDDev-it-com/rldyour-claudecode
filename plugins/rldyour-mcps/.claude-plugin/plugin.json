@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "rldyour-mcps",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Транспортный слой MCP-серверов для маркетплейса rldyour-claude — все версии зафиксированы. 13 серверов: Serena, Sequential Thinking, Playwright, Chrome DevTools, Context7, DeepWiki, Grep, Semgrep, shadcn, Dart/Flutter, Figma, OpenAI Docs, GitHub.",
   "author": {
     "name": "rldyourmnd",
