@@ -4,7 +4,7 @@ Source-backed facts cross-validated against `code.claude.com/docs/en/plugins-ref
 `code.claude.com/docs/en/mcp`, `code.claude.com/docs/en/changelog`, and Anthropic's own
 `claude-plugins-official` repo. Last refresh 2026-05-08 via ry-explore deep research.
 
-Last commit: ef18bd9 (release: 0.1.1 — refresh CC plugin cache after 5 days of changes). Verification range: v2.1.111-v2.1.139.
+Last commit: d50e94c (release: 0.1.2 — github MCP transport hotfix + smoke hardening). Verification range: v2.1.111-v2.1.139.
 
 ## plugin.json schema
 
@@ -39,6 +39,12 @@ stdio: `command` (required), `args[]`, `env{}`, `cwd`, optional `type: "stdio"`.
 HTTP: `type: "http"`, `url`, `headers{}`, `oauth{}`.
 SSE: `type: "sse"`, `url`, `headers{}`. Documented as deprecated; prefer HTTP.
 
+Anti-pattern (verified 2026-05-13): `https://api.githubcopilot.com/mcp/` (shipped by
+`anthropics/claude-plugins-official`) is Copilot-entitlement-gated — HTTP 403 for non-allowlist
+accounts. Use local stdio instead: `github-mcp-server stdio --toolsets=repos,issues,pull_requests,users,context`
+with `GITHUB_PERSONAL_ACCESS_TOKEN` env. Homebrew bottle v1.0.4; 39 tools; PAT scopes `repo`+`read:org`.
+(Source: plugins/rldyour-mcps/.mcp.json github entry at HEAD d50e94c; CHANGELOG.md [0.1.2].)
+
 `startup_timeout_sec` and `tool_timeout_sec` are NOT in the documented Claude Code
 .mcp.json schema. Silently ignored; do not add them. Verified by:
 - `code.claude.com/docs/en/mcp` (no mention)
@@ -56,6 +62,16 @@ Canonical timeout/output env vars:
 Reconnection: 5 attempts exponential backoff (1s start, doubling) for HTTP/SSE.
 Initial connection: 3 retries on transient errors (5xx / connection refused / timeout)
 since v2.1.121.
+
+MCP HTTP smoke canon (verified 2026-05-13 via scripts/smoke_mcp_capabilities.sh at HEAD d50e94c):
+- Send `MCP-Protocol-Version: 2024-11-05` header on initialize POST.
+- Parse both `application/json` and `text/event-stream` (SSE) response bodies.
+- 200 + `result.serverInfo.name` present → OK; 200 without serverInfo → FAIL (silent-misconfig).
+- 401 + no auth header sent → SKIP (server reachable, CI lacks credentials).
+- 401 + auth header sent → FAIL (token rejected).
+- 403 → FAIL (entitlement denied or org policy; not a credential problem).
+- Blanket 401/403 = PASS is an anti-pattern — it hid the github Copilot 403 denial.
+(Source: scripts/smoke_mcp_capabilities.sh lines 91, 307-330, 374-443.)
 
 ## Skills (SKILL.md frontmatter)
 

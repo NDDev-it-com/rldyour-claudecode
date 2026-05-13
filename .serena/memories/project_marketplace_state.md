@@ -1,6 +1,6 @@
 # rldyour-claude marketplace state
 
-Last commit: ef18bd9 (release: 0.1.1 — refresh CC plugin cache after 5 days of changes).
+Last commit: d50e94c (release: 0.1.2 — github MCP transport hotfix + smoke hardening).
 Multiple May-2026 waves applied (all merged to main):
 - optimize/may-2026-best-practices: 6 commits 3fe9005..2e22652 (merged to main)
 - docs/canonical-may2026: 1 commit ca13470 (merged to main)
@@ -9,6 +9,7 @@ Multiple May-2026 waves applied (all merged to main):
 - polish/serena-and-capabilities-smoke: 3 commits 36fb0fc..c39f220 (merged to main)
 - feat/worktree-workflow: 2 commits 61e80b5..d0dcf64 (merged to main)
 - release/0.1.1: 1 commit ef18bd9 (merged to main; branch cleaned up post-merge)
+- fix(mcps)+fix(ops): 3 commits 5bb9393..d50e94c (merged to main; github stdio hotfix + smoke hardening + 0.1.2 release)
 Prior merged branches deleted after fast-forward merge.
 Marketplace name: `rldyour-claude`. Repo: github.com/rldyourmnd/rldyour-claude (private).
 
@@ -106,8 +107,9 @@ restart the session for the agent to appear in `Agent` tool subagent_type list.
 
 ## MCP transport (rldyour-mcps/.mcp.json)
 
-13 pinned servers (8 stdio, 5 HTTP); all dead `startup_timeout_sec`/`tool_timeout_sec`
-keys removed (commit 0d78443). HTTP servers: deepwiki, grep, figma, openai-docs, github.
+13 pinned servers (9 stdio, 4 HTTP); all dead `startup_timeout_sec`/`tool_timeout_sec`
+keys removed (commit 0d78443). HTTP servers: deepwiki, grep, figma, openai-docs.
+github is now stdio (switched in 5bb9393 from Copilot-gated HTTP `api.githubcopilot.com/mcp/`).
 
 - serena: `serena-agent==1.3.0`, `--context=agent`, web dashboard disabled,
   `alwaysLoad: true` (v2.1.121+) — eager startup since Serena drives every
@@ -130,9 +132,12 @@ keys removed (commit 0d78443). HTTP servers: deepwiki, grep, figma, openai-docs,
 - dart-flutter: `dart mcp-server --force-roots-fallback`.
 - figma: HTTP `mcp.figma.com/mcp`.
 - openai-docs: HTTP `developers.openai.com/mcp`.
-- github: HTTP `api.githubcopilot.com/mcp/`, `Authorization: Bearer ${GITHUB_PERSONAL_ACCESS_TOKEN}`.
-  Switched from stdio (`github-mcp-server stdio`) to HTTP transport in commit 47387ee;
-  matches `anthropics/claude-plugins-official` canonical pattern (commit 76b35e9).
+- github: stdio `github-mcp-server stdio --toolsets=repos,issues,pull_requests,users,context`,
+  `GITHUB_PERSONAL_ACCESS_TOKEN` env. Homebrew bottle v1.0.4 (released 2026-05-11); 39 tools.
+  PAT scopes `repo` + `read:org`; Copilot subscription NOT required.
+  Switched from HTTP `api.githubcopilot.com/mcp/` (Copilot-gated, HTTP 403 for non-allowlist accounts)
+  to stdio in commit 5bb9393. Version pin: `config/mcp-runtime-versions.env` `GITHUB_MCP_SERVER_VERSION=1.0.4`.
+  (Source: plugins/rldyour-mcps/.mcp.json github entry at HEAD; config/mcp-runtime-versions.env at HEAD.)
 
 Timeouts via env: `MCP_TIMEOUT`, `MCP_TOOL_TIMEOUT`, `MAX_MCP_OUTPUT_TOKENS`,
 `MCP_CONNECTION_NONBLOCKING`.
@@ -448,12 +453,19 @@ Capability smoke + serena bump wave (36fb0fc..9c941f7, branch polish/serena-and-
 - 36fb0fc feat(ops): scripts/smoke_mcp_capabilities.sh — MCP JSON-RPC handshake harness.
   CLI: `--server <name>`, `--timeout <secs>`, `--skip-uvx`.
   Performs JSON-RPC `initialize` + `tools/list` per server; asserts non-empty tool set.
-  Servers requiring credentials: SKIP when env absent. HTTP_AUTH_GATED servers
-  (figma, github) accept 401/403 as passing handshake. Replaces the "planned" marker
-  from 6124994. README.md, docs/dependency-updates.md, scripts/smoke_mcp_runtime.sh:13
-  comment, and CHANGELOG.md updated.
-  (Source: `/Users/rldyourmnd/Desktop/claude_base/rldyour-claudecode/scripts/smoke_mcp_capabilities.sh`,
-  verified at HEAD — 333 lines, head line confirms purpose.)
+  Servers requiring credentials: SKIP when env absent. HTTP_AUTH_GATED = {"figma"} (github
+  is now stdio; removed from gated set in 6775610). Replaces the "planned" marker from 6124994.
+  README.md, docs/dependency-updates.md, scripts/smoke_mcp_runtime.sh:13 comment, and CHANGELOG.md updated.
+  (Source: scripts/smoke_mcp_capabilities.sh at HEAD — verified `HTTP_AUTH_GATED = {"figma"}` at line 91.)
+- 6775610 fix(ops): smoke_mcp_capabilities — real HTTP initialize harness (hardened in d50e94c wave).
+  Removed blanket 401/403 = PASS shortcut from HTTP_AUTH_GATED (was hiding Copilot 403 denial).
+  New `expand_headers()` helper tracks empty ${VAR} substitutions → SKIP when no auth sent.
+  New `parse_mcp_response_body()` handles both `application/json` and `text/event-stream` (SSE).
+  HTTP failure classification: 401 + no auth → SKIP; 401 + auth → FAIL (token rejected);
+  403 → FAIL with "switch to stdio github-mcp-server" hint; 200 + no `result.serverInfo` → FAIL.
+  Sends `MCP-Protocol-Version: 2024-11-05` header. Added `import re`. github removed from HTTP_AUTH_GATED.
+  Verified live: 10 OK / 3 SKIP / 0 FAIL with `--skip-uvx`.
+  (Source: scripts/smoke_mcp_capabilities.sh lines 91, 307-330, 374-443 at HEAD.)
 - 9c941f7 chore(mcps): bump serena-agent 1.2.0 → 1.3.0. Verified 2026-05-12 via
   smoke_mcp_capabilities.sh (13/13 pass). AGENTS.md and .claude/CLAUDE.md updated
   (fullrepo-only; Changelog Adoption section added to CLAUDE.md with capability smoke facts).
@@ -466,8 +478,9 @@ Capability smoke + serena bump wave (36fb0fc..9c941f7, branch polish/serena-and-
   ENV_REQUIRED stdio-only (github HTTP removed — HTTP always exercises real handshake);
   HTTP FAIL body redacted to byte count only (credential leak prevention);
   REPO_ROOT renamed to ROOT + SCRIPT_DIR added + cd ROOT preamble; colored ✔/✗ banner.
-  External contract preserved: --server/--timeout/--skip-uvx; SKIP semantics; HTTP_AUTH_GATED 401/403 = pass.
-  (Source: scripts/smoke_mcp_capabilities.sh lines 28-30, 47, 70-78, 139-171, 184-195, 277-287, 333-338, 381-391.)
+  External contract preserved: --server/--timeout/--skip-uvx; SKIP semantics.
+  Note: HTTP_AUTH_GATED 401/403 = pass shortcut subsequently removed in 6775610 (see above).
+  (Source: scripts/smoke_mcp_capabilities.sh; c39f220 hardened the stdio path; 6775610 hardened HTTP.)
 
 Worktree workflow wave (c39f220..d0dcf64, branch feat/worktree-workflow):
 - 61e80b5 feat(flow): worktree workflow + SessionStart bootstrap hook.
@@ -496,6 +509,26 @@ Worktree workflow wave (c39f220..d0dcf64, branch feat/worktree-workflow):
   Folded in: scripts/smoke_hooks.sh SKIP_TESTS entry for RLDYOUR_SKIP_WORKTREE_BOOTSTRAP
   (should have shipped with 61e80b5).
   (Source: scripts/worktree_add.sh, scripts/smoke_hooks.sh line 87, CHANGELOG.md at HEAD.)
+
+Release 0.1.2 (ef18bd9..d50e94c, branch release/0.1.2, merged 2026-05-13):
+- 5bb9393 fix(mcps): github MCP → stdio github-mcp-server v1.0.4.
+  .mcp.json `github` entry: HTTP `api.githubcopilot.com/mcp/` → stdio `github-mcp-server stdio
+  --toolsets=repos,issues,pull_requests,users,context` + `GITHUB_PERSONAL_ACCESS_TOKEN` env.
+  config/mcp-runtime-versions.env: added `GITHUB_MCP_SERVER_VERSION=1.0.4`; removed `GITHUB_MCP_URL`.
+  scripts/check_mcp_runtime_versions.py: added `SYSTEM_BINARY_TO_ENV` dict + `probe_binary_version()`
+  helper (runs `<binary> --version`, parses with regex). Missing binary on PATH → INFO (not FAIL).
+  Drift between binary and env pin → FAIL with `brew upgrade` hint.
+- 6775610 fix(ops): smoke_mcp_capabilities — real HTTP initialize harness (no 401/403 blanket pass).
+  (See capability smoke section above for detail.)
+- d50e94c release: 0.1.2 — github MCP transport hotfix.
+  VERSION: 0.1.1 → 0.1.2. All 9 plugin.json `version` fields: 0.1.1 → 0.1.2.
+  marketplace.json plugins[].version entries: 0.1.1 → 0.1.2.
+  CHANGELOG.md: [Unreleased] content moved into [0.1.2] - 2026-05-13.
+  9 per-plugin tags pushed via `claude plugin tag --push`:
+  rldyour-mcps--v0.1.2, rldyour-flow--v0.1.2, rldyour-serena-mcp--v0.1.2,
+  rldyour-security--v0.1.2, rldyour-browser--v0.1.2, rldyour-design--v0.1.2,
+  rldyour-explore--v0.1.2, rldyour-lsps--v0.1.2, rldyour-rules--v0.1.2.
+  (Source: VERSION, CHANGELOG.md, plugins/*/\.claude-plugin/plugin.json at HEAD d50e94c.)
 
 Release 0.1.1 (d0dcf64..ef18bd9, branch release/0.1.1, merged 2026-05-12):
 - ef18bd9 release: 0.1.1 — refresh CC plugin cache after 5 days of changes.
