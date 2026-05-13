@@ -10,10 +10,19 @@
 # SKIP rules (do not FAIL the harness):
 #   - stdio server in ENV_REQUIRED but the env var is absent.
 #   - stdio server in BINARY_REQUIRED but the binary is not on PATH.
+#   - HTTP server expects ${ENV_VAR} in headers and the var is empty (auth
+#     header would resolve to empty bearer — counted as SKIP, not FAIL).
 #
-# Auth-gated HTTP servers (figma, github) accept 401/403 as a passing
-# handshake — the server is reachable; the client just lacks an
-# authenticated session.
+# HTTP auth handling (no blanket 401/403 = PASS shortcut):
+#   - 200/204 + parseable initialize.result.serverInfo → OK
+#   - 200/204 without serverInfo → FAIL (server is reachable but speaks the
+#     wrong protocol; this is exactly the silent-misconfig we want to catch)
+#   - 401 with no env-substituted auth header sent → SKIP (server reachable;
+#     CI just lacks credentials)
+#   - 401 with auth header sent → FAIL (token rejected — wrong scopes/expired)
+#   - 403 always → FAIL with explicit message ("entitlement-denied or org
+#     policy blocks the configured token") — this is the failure mode that
+#     `api.githubcopilot.com/mcp/` returns for non-Copilot accounts.
 #
 # Optional flags:
 #   --server <name>     run only this server (e.g. --server serena)
@@ -44,6 +53,7 @@ export RLDYOUR_SMOKE_MCP_JSON="${MCP_JSON}"
 exec python3 - "$@" <<'PY'
 import json
 import os
+import re
 import select
 import shutil
 import signal
@@ -74,8 +84,11 @@ BINARY_REQUIRED = {
 # Servers slow to cold-start (uvx pulls ~80 packages on first run).
 UVX_SERVERS = {"serena", "semgrep"}
 
-# Servers that are auth-gated on HTTP; 401/403 is a passing handshake.
-HTTP_AUTH_GATED = {"figma", "github"}
+# Servers that authenticate via a bearer header containing an ${ENV_VAR}
+# placeholder. If the var is empty after substitution we SKIP rather than FAIL;
+# the server is reachable but the harness has no token to drive a real
+# handshake with. 401 with a real token still FAILs.
+HTTP_AUTH_GATED = {"figma"}
 
 DEFAULT_TIMEOUT_S = 45.0
 
@@ -291,18 +304,85 @@ def cleanup_process(proc):
             pass
 
 
+def expand_headers(raw_headers):
+    """Substitute ${VAR} in header values and report which vars were empty.
+
+    Returns (expanded_dict, missing_var_names). A header keeps its slot even
+    if its value substituted to empty — we want to know whether the *upstream*
+    treats the request as authenticated (the empty bearer typically yields
+    401), not silently drop the header and accidentally pass an unauth probe.
+    """
+    expanded = {}
+    missing = []
+    var_pattern = re.compile(r"\$\{([A-Z_][A-Z0-9_]*)\}")
+    for k, v in raw_headers.items():
+        names = var_pattern.findall(v)
+        substituted = os.path.expandvars(v)
+        # Detect "all referenced vars were empty" — common in CI without secrets.
+        if names and all(not os.environ.get(n, "").strip() for n in names):
+            missing.extend(names)
+        expanded[k] = substituted
+    return expanded, missing
+
+
+def parse_mcp_response_body(payload, content_type):
+    """Decode an MCP HTTP response body into a JSON-RPC object.
+
+    Per MCP spec 2025-06-18 the body is either:
+      - application/json: single JSON object
+      - text/event-stream: SSE frames with `event: message` + `data: {...}`
+    We try JSON first, then fall back to extracting the first `data:` line.
+    """
+    if not payload:
+        return None
+    text = payload.decode("utf-8", errors="replace").strip()
+    if not text:
+        return None
+    # Plain JSON path.
+    if (content_type or "").startswith("application/json") or text.startswith("{"):
+        try:
+            return json.loads(text)
+        except json.JSONDecodeError:
+            pass
+    # SSE path: pick the first `data: …` line and json-decode it.
+    for line in text.splitlines():
+        line = line.strip()
+        if not line.startswith("data:"):
+            continue
+        data = line[len("data:"):].strip()
+        if not data:
+            continue
+        try:
+            return json.loads(data)
+        except json.JSONDecodeError:
+            continue
+    return None
+
+
 def smoke_http(name, cfg, timeout_s):
-    """POST initialize JSON-RPC to an HTTP MCP server endpoint."""
+    """POST initialize JSON-RPC to an HTTP MCP server endpoint.
+
+    Verifies a real protocol handshake — the server must return a JSON-RPC
+    `result.serverInfo` object, not just an HTTP 200. 401/403 are evaluated
+    against whether a real auth header was actually sent.
+    """
     url = cfg.get("url", "")
     if not url:
         return ("FAIL", "no url in .mcp.json")
 
+    base_headers = cfg.get("headers", {}) or {}
+    expanded_headers, missing_vars = expand_headers(base_headers)
+    auth_sent = bool(expanded_headers.get("Authorization", "").replace("Bearer ", "").strip())
+
+    if missing_vars and not auth_sent:
+        return ("SKIP", f"auth headers reference unset env: {','.join(sorted(set(missing_vars)))}")
+
     headers = {
         "Content-Type": "application/json",
         "Accept": "application/json, text/event-stream",
+        "MCP-Protocol-Version": PROTOCOL_VERSION,
     }
-    for k, v in cfg.get("headers", {}).items():
-        headers[k] = os.path.expandvars(v)
+    headers.update(expanded_headers)
 
     body = jsonrpc_request(
         "initialize",
@@ -315,27 +395,54 @@ def smoke_http(name, cfg, timeout_s):
     ).encode("utf-8")
 
     req = urllib.request.Request(url, data=body, headers=headers, method="POST")
+    content_type = ""
     try:
         with urllib.request.urlopen(req, timeout=timeout_s) as resp:
             status = resp.status
-            payload = resp.read(8192)
+            content_type = resp.headers.get("Content-Type", "")
+            payload = resp.read(16384)
     except urllib.error.HTTPError as exc:
         status = exc.code
+        content_type = exc.headers.get("Content-Type", "") if exc.headers else ""
         try:
-            payload = exc.read(8192)
+            payload = exc.read(16384)
         except Exception:
             payload = b""
     except Exception as exc:
         return ("FAIL", f"HTTP error: {exc}")
 
-    if status in (200, 204):
-        return ("OK", f"HTTP {status}")
-    if status in (401, 403) and name in HTTP_AUTH_GATED:
-        return ("OK", f"HTTP {status} (auth-gated, accepted)")
-    # On unexpected 4xx/5xx we report status + body length only — never log
-    # the body itself, which could echo headers/secrets from a misconfigured
-    # upstream into a CI log.
-    return ("FAIL", f"HTTP {status} (body {len(payload)} bytes; rerun with curl for detail)")
+    if status == 401:
+        if not auth_sent:
+            return ("SKIP", f"HTTP 401 with no auth sent — server reachable, no credentials in env")
+        return ("FAIL", f"HTTP 401 with auth sent — token rejected (check scopes/expiry)")
+
+    if status == 403:
+        return (
+            "FAIL",
+            "HTTP 403 — entitlement denied (token valid but account/org lacks access; "
+            "for github MCP this means no Copilot allowlist — switch to stdio github-mcp-server)"
+        )
+
+    if status not in (200, 204):
+        # Never echo body — it may contain upstream headers/tokens.
+        return ("FAIL", f"HTTP {status} (body {len(payload)} bytes)")
+
+    # 200/204: must parse as JSON-RPC and contain serverInfo.
+    msg = parse_mcp_response_body(payload, content_type)
+    if not msg:
+        return ("FAIL", f"HTTP {status} but response body is not a JSON-RPC payload")
+    if "error" in msg:
+        return ("FAIL", f"initialize error: {msg['error']}")
+    server_info = msg.get("result", {}).get("serverInfo") or {}
+    server_name = server_info.get("name")
+    if not server_name:
+        # Some servers (figma) accept initialize but don't return serverInfo
+        # until after a session id is established. Fall back to "auth-gated
+        # reachable" only when we explicitly opted in.
+        if name in HTTP_AUTH_GATED:
+            return ("OK", f"HTTP {status} (auth-gated handshake, no serverInfo yet)")
+        return ("FAIL", f"HTTP {status} but result.serverInfo missing")
+    return ("OK", f"serverInfo={server_name}")
 
 
 def main():
@@ -377,6 +484,11 @@ def main():
             status, detail = smoke_stdio(name, scfg, timeout)
         else:
             status, detail = smoke_http(name, scfg, timeout)
+
+        if status == "SKIP":
+            print(f"SKIP {name}: {detail}")
+            skipped += 1
+            continue
 
         marker = f"{ANSI_GREEN}OK{ANSI_RESET}" if status == "OK" else f"{ANSI_RED}FAIL{ANSI_RESET}"
         print(f"{marker} {name}: {detail}")
