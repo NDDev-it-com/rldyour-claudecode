@@ -33,6 +33,8 @@
 # Exit codes: 0 success, 1 on any FAIL.
 
 set -euo pipefail
+IFS=$'\n\t'
+unset CDPATH
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"

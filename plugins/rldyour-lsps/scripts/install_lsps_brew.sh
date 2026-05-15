@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
+IFS=$'\n\t'
+unset CDPATH
 
 if ! command -v brew >/dev/null 2>&1; then
   printf 'Homebrew is required for this install profile.\n' >&2

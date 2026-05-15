@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
+IFS=$'\n\t'
+unset CDPATH
 
 FULLREPO_BRANCH=${RLDYOUR_FULLREPO_BRANCH:-fullrepo}
 ZERO_SHA_RE='^0{40}$'

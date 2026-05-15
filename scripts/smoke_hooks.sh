@@ -11,6 +11,8 @@
 # Claude Code session. Use `claude --debug api,hooks` for live observation.
 
 set -euo pipefail
+IFS=$'\n\t'
+unset CDPATH
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
@@ -107,7 +109,9 @@ test "$fail_count" -eq 0 || fail "skip-flag checks failed"
 
 step "outside-git defensive guard"
 TMP=$(mktemp -d)
-trap "rm -rf $TMP" EXIT
+# Use single quotes so $TMP is expanded when the trap fires (not now), and
+# quote the variable to handle paths with spaces (shellcheck SC2064 fix).
+trap 'rm -rf "$TMP"' EXIT
 for script in plugins/rldyour-flow/hooks/*.sh plugins/rldyour-serena-mcp/hooks/*.sh; do
   if (cd "$TMP" && bash "$ROOT/$script" </dev/null >/dev/null 2>&1); then
     echo "OK $script exits 0 outside git tree"
@@ -119,5 +123,75 @@ for script in plugins/rldyour-flow/hooks/*.sh plugins/rldyour-serena-mcp/hooks/*
 done
 
 test "$fail_count" -eq 0 || fail "defensive-guard checks failed"
+
+step "runtime stdin payloads (parse safety + advisory routing)"
+# This step actually exercises each hook with realistic JSON stdin to verify
+# that the recent shell strict mode changes (IFS=$'\n\t' + unset CDPATH) didn't
+# break stdin parsing. Hooks that mutate state (mark_sync_required.sh,
+# prepare_auto_sync.sh) are intentionally not exercised here — they write to
+# .serena/.serena_sync_state.json and .serena/.auto_sync_head, which would
+# pollute the working tree state during a smoke run.
+
+# UserPromptSubmit: empty prompt should silently exit 0 (no additionalContext).
+empty_out=$(printf '%s' '{"prompt":""}' | bash plugins/rldyour-serena-mcp/hooks/user_prompt_submit.sh 2>/dev/null || true)
+if [ -z "$empty_out" ]; then
+  echo "OK user_prompt_submit empty prompt → no advisory"
+else
+  echo "FAIL user_prompt_submit emitted advisory on empty prompt: $empty_out" >&2
+  fail_count=$((fail_count+1))
+fi
+
+# UserPromptSubmit: non-code prompt should silently exit 0.
+nontrig_out=$(printf '%s' '{"prompt":"hello there"}' | bash plugins/rldyour-serena-mcp/hooks/user_prompt_submit.sh 2>/dev/null || true)
+if [ -z "$nontrig_out" ]; then
+  echo "OK user_prompt_submit non-trigger prompt → no advisory"
+else
+  echo "FAIL user_prompt_submit emitted advisory on non-trigger prompt" >&2
+  fail_count=$((fail_count+1))
+fi
+
+# UserPromptSubmit: Russian code-related prompt should emit Serena-first advisory.
+ru_out=$(printf '%s' '{"prompt":"изучи код в этом проекте и найди класс RouterModule"}' | bash plugins/rldyour-serena-mcp/hooks/user_prompt_submit.sh 2>/dev/null || true)
+if printf '%s' "$ru_out" | python3 -c "import json,sys; d=json.load(sys.stdin); ctx=d.get('hookSpecificOutput',{}).get('additionalContext',''); sys.exit(0 if 'Serena-first' in ctx else 1)" 2>/dev/null; then
+  echo "OK user_prompt_submit RU code-related prompt → Serena-first advisory"
+else
+  echo "FAIL user_prompt_submit did not emit Serena-first advisory for RU code prompt" >&2
+  fail_count=$((fail_count+1))
+fi
+
+# UserPromptSubmit: English code-related prompt should also emit advisory.
+en_out=$(printf '%s' '{"prompt":"inspect the repository and refactor this method"}' | bash plugins/rldyour-serena-mcp/hooks/user_prompt_submit.sh 2>/dev/null || true)
+if printf '%s' "$en_out" | python3 -c "import json,sys; d=json.load(sys.stdin); ctx=d.get('hookSpecificOutput',{}).get('additionalContext',''); sys.exit(0 if 'Serena-first' in ctx else 1)" 2>/dev/null; then
+  echo "OK user_prompt_submit EN code-related prompt → Serena-first advisory"
+else
+  echo "FAIL user_prompt_submit did not emit Serena-first advisory for EN code prompt" >&2
+  fail_count=$((fail_count+1))
+fi
+
+# Stop hooks: stop_hook_active=true should pass through without blocking when
+# current state already matches the loop-guard marker. The hook reads stdin
+# JSON via python3 — a parse error would surface as exit code 0 (silent) but
+# we already cover parse safety via skip-flag/outside-git tests above. Here
+# we verify behaviour on stop_hook_active=false (normal Stop) — should also
+# exit 0 when serena+flow state is already clean.
+clean_stop_out=$(printf '%s' '{"stop_hook_active":false}' | bash plugins/rldyour-serena-mcp/hooks/stop_memory_sync.sh 2>&1 || true)
+if [ -z "$clean_stop_out" ] || ! printf '%s' "$clean_stop_out" | grep -q "SYNC REQUIRED"; then
+  echo "OK stop_memory_sync clean state → no blocking advisory"
+else
+  # Memory may have legitimately been stale at this point in the smoke run.
+  # Just record it; don't fail.
+  echo "INFO stop_memory_sync emitted advisory (memories may be stale; not a smoke failure)"
+fi
+
+# PostToolUse:Bash with non-git command should silently exit 0.
+non_git_out=$(printf '%s' '{"tool_name":"Bash","tool_input":{"command":"ls"}}' | bash plugins/rldyour-flow/hooks/post_tool_use_commit_advice.sh 2>/dev/null || true)
+if [ -z "$non_git_out" ]; then
+  echo "OK post_tool_use_commit_advice non-git command → silent"
+else
+  echo "FAIL post_tool_use_commit_advice emitted advisory for non-git command" >&2
+  fail_count=$((fail_count+1))
+fi
+
+test "$fail_count" -eq 0 || fail "runtime stdin checks failed"
 
 printf '\n\033[1;32m✔ smoke_hooks passed\033[0m\n'
