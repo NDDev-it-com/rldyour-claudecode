@@ -32,7 +32,7 @@ Briefly:
 
 - **`rldyour-mcps`** — single-owner MCP transport (13 pinned servers: Serena, Sequential Thinking, Playwright, Chrome DevTools, Context7, DeepWiki, Grep, Semgrep, shadcn, Dart/Flutter, Figma, OpenAI Docs, GitHub).
 - **`rldyour-serena-mcp`** — Serena-first semantic code workflow, numbered fact-only `.serena` memory sync via `flow-memory-sync` subagent, lifecycle hooks (UserPromptSubmit, PreToolUse:Bash, PostToolUse:Bash, Stop).
-- **`rldyour-flow`** — autonomous SDLC orchestration with five slash commands (`ry-init`, `ry-start`, `ry-newp`, `ry-review`, `ry-deploy`), six reviewer subagents (architecture/quality/consistency/integration/verification/security tracks), advisory SessionStart and Stop hooks, scoped context packs, instruction docs sync, and post-task synchronization.
+- **`rldyour-flow`** — autonomous SDLC orchestration with five slash commands (`ry-init`, `ry-start`, `ry-newp`, `ry-review`, `ry-deploy`), six reviewer subagents (architecture/quality/consistency/integration/verification/security tracks), advisory SessionStart, PostToolUse:Bash, and Stop hooks, scoped context packs, instruction docs sync, and post-task synchronization.
 - **`rldyour-explore`** — deep multi-source research via `ry-explore` subagent (`model: opus[1m]`, `effort: max`) and tech/web research skills routing through Context7, DeepWiki, Grep, and authoritative web sources.
 - **`rldyour-security`** — non-blocking OWASP Top 10 2025 secure-implementation guidance plus the `ry-sec-review` defensive review skill.
 - **`rldyour-browser`** — browser validation, debugging, and tool-routing workflows for Playwright MCP and Chrome DevTools MCP.
