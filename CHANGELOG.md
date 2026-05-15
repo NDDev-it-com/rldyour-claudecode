@@ -6,6 +6,18 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+## [0.1.3] - 2026-05-15
+
+### Changed
+
+- `plugins/rldyour-mcps/.mcp.json` updated MCP runtime pins to latest verified:
+  - `chrome-devtools-mcp` `0.25.0` → `0.26.0`
+  - `semgrep` `1.162.0` → `1.163.0`
+- `config/mcp-runtime-versions.env` aligned with MCP pin updates.
+- `plugins/rldyour-mcps/README.md` updated transport documentation for GitHub MCP stdio transport and current CC context behavior note.
+- `AGENTS.md` and `.claude/CLAUDE.md` synchronized with local Claude Code `v2.1.142` and verified MCP pin set.
+- `plugins/rldyour-mcps` version bumped to `0.1.3` in both `plugin.json` and marketplace manifest to ensure cache refresh on `claude plugin update`.
+
 ## [0.1.2] - 2026-05-13
 
 Hotfix for GitHub MCP server: the previous `https://api.githubcopilot.com/mcp/` HTTP endpoint is entitlement-gated and returns `HTTP 403 "unauthorized: not authorized to use this Copilot feature"` for accounts without an active GitHub Copilot allowlist, even when the bearer PAT is otherwise valid. Switched to the canonical local stdio transport via the Homebrew-installed `github-mcp-server` binary (v1.0.4, released 2026-05-11), which works with a standard `gho_*`/`github_pat_*` PAT and exposes 39 tools by default (`repos,issues,pull_requests,users,context` toolset). Cache-bump release so users get the new `.mcp.json` on `claude plugin update`.

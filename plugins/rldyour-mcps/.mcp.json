@@ -34,7 +34,7 @@
     "chrome-devtools": {
       "command": "bunx",
       "args": [
-        "chrome-devtools-mcp@0.25.0",
+        "chrome-devtools-mcp@0.26.0",
         "--headless",
         "--isolated",
         "--no-usage-statistics",
@@ -61,7 +61,7 @@
     "semgrep": {
       "command": "uvx",
       "args": [
-        "--from", "semgrep==1.162.0",
+        "--from", "semgrep==1.163.0",
         "semgrep", "mcp"
       ]
     },
