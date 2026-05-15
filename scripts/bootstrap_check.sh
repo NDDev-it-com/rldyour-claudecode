@@ -84,4 +84,20 @@ else
   fail "missing plugins/rldyour-mcps/.env.example"
 fi
 
+step "git pre-push hook (advisory)"
+if [ ! -d .git ]; then
+  echo "INFO not in a git repository; skipping pre-push hook check"
+elif [ -e .git/hooks/pre-push ] && grep -q "rldyour" .git/hooks/pre-push 2>/dev/null; then
+  echo "OK rldyour pre-push guard installed at .git/hooks/pre-push"
+elif [ -e .git/hooks/pre-push ]; then
+  echo "INFO .git/hooks/pre-push exists but is not the rldyour guard."
+  echo "     To install/upgrade: bash scripts/install_local_git_hooks.sh --apply"
+else
+  echo "INFO no .git/hooks/pre-push installed."
+  echo "     To enable the rldyour pre-push guard (recommended for product"
+  echo "     repositories that consume this marketplace):"
+  echo "       bash scripts/install_local_git_hooks.sh --dry-run    # preview"
+  echo "       bash scripts/install_local_git_hooks.sh --apply      # install"
+fi
+
 printf '\n\033[1;32m✔ bootstrap_check passed\033[0m\n'
