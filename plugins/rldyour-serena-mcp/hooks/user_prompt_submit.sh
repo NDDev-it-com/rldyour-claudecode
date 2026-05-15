@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
+IFS=$'\n\t'
+unset CDPATH
 
 INPUT=$(cat 2>/dev/null || true)
 PROMPT=$(printf "%s" "$INPUT" | python3 -c '
