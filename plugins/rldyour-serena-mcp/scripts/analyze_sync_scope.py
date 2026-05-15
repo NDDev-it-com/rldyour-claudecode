@@ -200,6 +200,8 @@ def _memory_targets_by_areas(areas: set[str]) -> list[tuple[str, str]]:
     targets: set[tuple[str, str]] = set()
     for area in areas:
         plugin = area.split(":", 1)[0] if ":" in area else None
+        plugin_contract_change = area.endswith((":manifest", ":hooks", ":skills", ":commands", ":agents"))
+        plugin_docs_change = area.endswith((":docs", ":references"))
 
         if area in {
             "marketplace-manifest",
@@ -212,10 +214,14 @@ def _memory_targets_by_areas(areas: set[str]) -> list[tuple[str, str]]:
         }:
             targets.add(("CORE-02-MARKETPLACE.md", "plugin manifests and marketplace contracts changed"))
             targets.add(("RELEASE-01-VALIDATION.md", "release or version contract changed"))
+            targets.add(("CLAUDECODE-01-PLUGIN-CANON.md", "Claude Code plugin metadata contract changed"))
             if plugin in {"rldyour-serena-mcp", "rldyour-flow"}:
                 targets.add(("SERENA-01-MEMORY-SYNC.md", "workflow and memory contracts changed"))
 
-        if area.endswith(":hooks") or area.endswith(":skills") or area.endswith(":commands") or area.endswith(":agents") or area.endswith(":scripts"):
+        if plugin_contract_change:
+            targets.add(("CLAUDECODE-01-PLUGIN-CANON.md", "Claude Code plugin component contract changed"))
+
+        if area.endswith(":hooks") or area.endswith(":skills") or area.endswith(":commands") or area.endswith(":agents") or area.endswith(":scripts") or plugin_docs_change:
             if plugin == "rldyour-serena-mcp":
                 targets.add(("SERENA-01-MEMORY-SYNC.md", "Serena hooks/workflow automation changed"))
                 targets.add(("HOOKS-01-LIFECYCLE.md", "Serena hook coordination changed"))
@@ -237,6 +243,7 @@ def _memory_targets_by_areas(areas: set[str]) -> list[tuple[str, str]]:
 
         if area in {"agent-instructions", "marketplace-support"}:
             targets.add(("DOCS-01-INSTRUCTIONS.md", "agent instruction context changed"))
+            targets.add(("CLAUDECODE-01-PLUGIN-CANON.md", "Claude Code instruction context changed"))
             targets.add(("TECHDEBT-01-NOW.md", "agent context and process constraints changed"))
 
         if area in {"repo-scripts", "ci-workflows", "docs", "release-docs", "release-versioning", "repo-config"}:

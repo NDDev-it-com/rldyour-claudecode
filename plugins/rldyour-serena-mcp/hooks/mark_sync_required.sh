@@ -90,38 +90,13 @@ try:
 except (OSError, json.JSONDecodeError):
     analysis = {}
 
-KNOWLEDGE_PREFIXES = (
-    ".agents/commands/",
-    ".agents/hooks/",
-    ".agents/skills/",
-    ".claude/",
-    ".cursor/rules/",
-    ".gemini/",
-    ".roo/",
-    ".windsurf/",
-    ".openhands/",
-    ".github/instructions/",
-    ".github/prompts/",
+SERENA_KNOWLEDGE_PREFIXES = (
     ".serena/memories/",
     ".serena/plans/",
     ".serena/research/",
     ".serena/newproj/",
     ".serena/deploy/",
 )
-
-KNOWLEDGE_FILES = {
-    ".cursorrules",
-    ".windsurfrules",
-    ".aider",
-    ".aider.conf.yml",
-    "AGENTS.md",
-    "CLAUDE.md",
-    "GEMINI.md",
-    "QWEN.md",
-    "REVIEW.md",
-    ".github/copilot-instructions.md",
-    ".serena/project.yml",
-}
 
 RUNTIME_IGNORED = {
     ".serena/.sync_marker",
@@ -135,7 +110,7 @@ RUNTIME_IGNORED = {
 
 
 def is_knowledge_path(path: str) -> bool:
-    return path in KNOWLEDGE_FILES or path.startswith(".aider") or any(path.startswith(prefix) for prefix in KNOWLEDGE_PREFIXES)
+    return any(path.startswith(prefix) for prefix in SERENA_KNOWLEDGE_PREFIXES)
 
 changed_files = analysis.get("changed_files") or []
 if not isinstance(changed_files, list):

@@ -21,6 +21,11 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
     `HOOKS-01-LIFECYCLE.md`, `FLOW-01-SDLC.md`, `MCP-01-TRANSPORT.md`,
     `DOCS-01-INSTRUCTIONS.md`, `RELEASE-01-VALIDATION.md`, and
     `TECHDEBT-01-NOW.md`.
+  - Added `CLAUDECODE-01-PLUGIN-CANON.md` targeting for plugin component and
+    instruction contract changes.
+  - Fixed memory freshness gating so agent-instruction-only commits (`AGENTS.md`,
+    `.claude/**`, `.agents/**`, and similar instruction files) require memory sync
+    instead of being treated as knowledge-only no-ops.
   - Updated Stop-hook guidance and memory-sync instructions so sync runs maintain
     the index, split broad files, and keep stable numbering instead of appending
     unrelated facts to catch-all memories.
@@ -28,6 +33,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
     topic layouts remain freshness-aware.
   - Aligned `commit_serena_knowledge.sh` runtime-marker filtering with flow sync
     markers (`.serena/.flow_sync_marker`, `.serena/.flow_post_task_state.json`).
+  - Hardened `commit_serena_knowledge.sh` so fullrepo-managed stale memories are
+    refused instead of acknowledged with an empty tracked diff.
+  - Added `scripts/smoke_serena_memory_taxonomy.sh` and wired it into
+    `scripts/validate_marketplace.sh` to assert analyzer schema/targets, nested
+    memory scanning, Stop-hook taxonomy advisory, agent-instruction sync markers,
+    and fullrepo-managed acknowledgement behavior.
   - Bumped plugin version to `0.1.5` in plugin manifest and marketplace entry.
 - Migrated project Serena memories from broad dated filenames to the numbered
   topic taxonomy and synchronized agent-only `AGENTS.md` / `.claude/CLAUDE.md`

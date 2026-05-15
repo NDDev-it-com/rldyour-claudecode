@@ -96,6 +96,7 @@ scripts/smoke_mcp_capabilities.sh            # JSON-RPC initialize + tools/list 
 scripts/smoke_mcp_capabilities.sh --server <name>   # narrow to one server
 scripts/smoke_mcp_capabilities.sh --skip-uvx        # skip slow uvx cold-starts
 scripts/smoke_hooks.sh                       # Serena + flow hook scripts dry-run
+scripts/smoke_serena_memory_taxonomy.sh      # analyzer schema/targets + memory freshness edge cases
 scripts/smoke_fullrepo_sync.sh               # fullrepo branch lifecycle state machine
 ```
 
