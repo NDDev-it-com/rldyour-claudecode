@@ -61,6 +61,26 @@ EOF
   exit 2
 fi
 
+# Defensive validation: reject branch names containing characters that would
+# let `git worktree add` interpret them as options (e.g. -c, --upload-pack).
+# Allowed set covers normal git ref characters (letters, digits, dot, slash,
+# underscore, hyphen) with a 255-char ceiling. If you legitimately need
+# something exotic (Unicode, +, =), update this regex consciously rather than
+# loosening it on first failure.
+if ! [[ "${BRANCH}" =~ ^[A-Za-z0-9._/-]{1,255}$ ]]; then
+  echo "FAIL invalid branch name '${BRANCH}' — must match ^[A-Za-z0-9._/-]{1,255}\$ (rejected to prevent git-option injection via crafted branch strings)" >&2
+  exit 1
+fi
+
+# Second gate: git's own check-ref-format. The regex above is conservative but
+# allows refs git itself rejects (leading hyphen, leading slash, `..`, trailing
+# slash, etc.). Asking git to validate gives us the exact rules of
+# git-check-ref-format(1) without re-implementing them.
+if ! git check-ref-format --branch "${BRANCH}" >/dev/null 2>&1; then
+  echo "FAIL branch name '${BRANCH}' rejected by git check-ref-format (invalid ref structure)" >&2
+  exit 1
+fi
+
 BASE_REF="${RLDYOUR_WORKTREE_BASE_REF:-origin/main}"
 DRY_RUN="${RLDYOUR_DRY_RUN:-0}"
 
@@ -84,13 +104,13 @@ fi
 # Decide: does the branch exist locally, on origin, or do we need to create it?
 if git show-ref --verify --quiet "refs/heads/${BRANCH}"; then
   BRANCH_MODE="existing-local"
-  GIT_ARGS=(worktree add "${WT_PATH}" "${BRANCH}")
+  GIT_ARGS=(worktree add -- "${WT_PATH}" "${BRANCH}")
 elif git show-ref --verify --quiet "refs/remotes/origin/${BRANCH}"; then
   BRANCH_MODE="existing-remote"
-  GIT_ARGS=(worktree add --track -b "${BRANCH}" "${WT_PATH}" "origin/${BRANCH}")
+  GIT_ARGS=(worktree add --track -b "${BRANCH}" -- "${WT_PATH}" "origin/${BRANCH}")
 else
   BRANCH_MODE="new-from-${BASE_REF}"
-  GIT_ARGS=(worktree add -b "${BRANCH}" "${WT_PATH}" "${BASE_REF}")
+  GIT_ARGS=(worktree add -b "${BRANCH}" -- "${WT_PATH}" "${BASE_REF}")
 fi
 
 echo "==> rldyour-claude worktree_add"
