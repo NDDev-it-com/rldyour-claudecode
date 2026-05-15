@@ -55,7 +55,24 @@ rldyour-flow orchestration contracts for init/start/review/deploy workflows, rev
 ## Verification
 
 - `python3 plugins/rldyour-flow/scripts/fullrepo_sync.py --status-json`: verifies tracked agent paths and fullrepo state.
-- `scripts/sync_fullrepo_branch.sh --status`: wrapper status check.
+- `bash scripts/sync_fullrepo_branch.sh --status`: wrapper status check.
 - `bash plugins/rldyour-flow/scripts/git_sync_audit.sh`: branch/worktree audit.
 - `python3 plugins/rldyour-flow/scripts/flow_post_task_state.py`: Stop gate state.
 - `bash scripts/smoke_hooks.sh`: hook integration dry-run.
+
+## Cross-References
+
+- Quality philosophy and May 2026 defaults: [[PHILOSOPHY-01-QUALITY-FIRST]].
+- Canonical implementation patterns (frontmatter, paths, hook templates, sanitization): [[PATTERNS-01-CANONICAL]].
+- Hook lifecycle details and Stop gate coordination: [[HOOKS-01-LIFECYCLE]].
+- Memory freshness contract (consumed by `flow-post-task-sync` step 1): [[SERENA-01-MEMORY-SYNC]].
+- Rules enforcement during `ry-start` quality gates: [[RULES-01-POLICY]] (`verification-quality-gates` skill).
+- Security review track invoked from `ry-start`/`ry-review`: [[SECURITY-01-OWASP]] (`flow-security-review` parallel reviewer subagent).
+- Browser validation track for UI-visible changes: [[BROWSER-01-WORKFLOW]].
+- Design workflow track for Figma/FSD/shadcn changes: [[DESIGN-01-WORKFLOW]].
+- LSP routing for type-check / lint gates: [[LSPS-01-LANGUAGE-SERVERS]].
+- Research escalation when implementation requires authoritative sources: [[EXPLORE-01-RESEARCH]].
+- Release boundary, plugin version bumps, CHANGELOG conventions: [[RELEASE-01-VALIDATION]].
+- Instruction-doc sync (AGENTS.md, .claude/CLAUDE.md, REVIEW.md): [[DOCS-01-INSTRUCTIONS]].
+- Marketplace boundaries and per-plugin domain pointers: [[CORE-02-MARKETPLACE]].
+- Open / closed technical debt: [[TECHDEBT-01-NOW]].
