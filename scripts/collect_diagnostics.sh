@@ -16,6 +16,8 @@
 #   scripts/collect_diagnostics.sh --print   # also print bundle contents to stdout
 
 set -euo pipefail
+IFS=$'\n\t'
+unset CDPATH
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"

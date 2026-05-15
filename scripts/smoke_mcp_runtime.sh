@@ -13,6 +13,8 @@
 # + tools/list per server) live in scripts/smoke_mcp_capabilities.sh.
 
 set -euo pipefail
+IFS=$'\n\t'
+unset CDPATH
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
