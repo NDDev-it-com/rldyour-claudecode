@@ -17,6 +17,8 @@
 # Skip flag: RLDYOUR_SKIP_WORKTREE_BOOTSTRAP=1 → exit 0 immediately.
 
 set -euo pipefail
+IFS=$'\n\t'
+unset CDPATH
 
 if [ "${RLDYOUR_SKIP_WORKTREE_BOOTSTRAP:-0}" = "1" ]; then
   exit 0
