@@ -93,9 +93,9 @@ Hierarchy precedence (highest → lowest): managed policy → plugin hooks (forc
 
 Per Anthropic guidance: put guardrails in hooks, not in CLAUDE.md prose. CLAUDE.md is delivered as a user message after the system prompt — it is context, not enforced configuration.
 
-## Changelog Adoption (v2.1.133 → v2.1.139)
+## Changelog Adoption (v2.1.133 → v2.1.142)
 
-Verified against `code.claude.com/docs/en/changelog` for v2.1.134-v2.1.139 on 2026-05-12. Current local CC: **v2.1.139** (`/Users/rldyourmnd/.local/bin/claude --version`).
+Verified against `code.claude.com/docs/en/changelog` for v2.1.133-v2.1.142 on 2026-05-15. Current local CC: **v2.1.142** (`$(which claude) --version`).
 
 Adopted:
 - v2.1.128 — per-entry skill description cap `1,536` chars, used by all 32 skills.
@@ -107,6 +107,9 @@ Adopted:
 Available, not adopted:
 - v2.1.133 `worktree.baseRef: "head"` — user-side setting (`~/.claude/settings.json`); recommendation documented in AGENTS.md Worktree Workflow but not forced. `ry-explore` uses `context: fork`, not `isolation: worktree`.
 - v2.1.133 hook input `effort.level` + `$CLAUDE_EFFORT` env var in Bash — could enrich hook telemetry; not yet wired into `flow_post_task_state.py` or `serena_memory_state.py`.
+- v2.1.142 added `claude agents` flags (`--add-dir`, `--settings`, `--mcp-config`, `--plugin-dir`, `--permission-mode`, `--model`, `--effort`, `--dangerously-skip-permissions`) and made fast mode default to Opus 4.7.
+- v2.1.142 fixed `MCP_TOOL_TIMEOUT` behavior for HTTP/SSE servers so per-request timeout applies to all MCP calls.
+- v2.1.141 `claude agents --cwd <path>` and `terminalSequence` hook field were added; hook and daemon regressions were fixed.
 - v2.1.139 hook `args: string[]` exec-form (spawns without shell) — all 8 hooks consistently use bare `command: bash ${CLAUDE_PLUGIN_ROOT}/...` form; migrating only one would diverge style without fixing any quoting bug.
 - v2.1.139 `PostToolUse` `continueOnBlock: true` — our PostToolUse hooks are advisory-only (`exit 0` always), nothing to "block on".
 - v2.1.139 stdio MCP env receives `${CLAUDE_PROJECT_DIR}` — no current server needs project-root context.
