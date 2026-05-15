@@ -39,7 +39,7 @@
       "name": "rldyour-serena-mcp",
       "source": "./plugins/rldyour-serena-mcp",
       "description": "Семантический воркфлоу для кода через Serena MCP + синхронизация .serena памяти + хуки жизненного цикла (UserPromptSubmit/PreToolUse/PostToolUse/Stop).",
-      "version": "0.1.4",
+      "version": "0.1.5",
       "author": {
         "name": "rldyourmnd"
       },
