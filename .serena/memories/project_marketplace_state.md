@@ -237,9 +237,11 @@ workflow_dispatch:
   design-validation, design-system-implementation, ry-design (added Serena wildcard in 1d33c25),
   flow-post-task-sync (added Bash/Read/Grep/Glob in 1d33c25). MCP wildcard form
   `mcp__plugin_rldyour-mcps_<server>__*` validated via `claude plugin validate`.
-- 2 skills marked `disable-model-invocation: true` (slash-only): ry-deploy, ry-newp.
+- 4 skills marked `disable-model-invocation: true` (slash-only): ry-deploy, ry-newp,
+  ry-rules-review, ry-sec-review (ry-rules-review and ry-sec-review added in 7e32688).
+  (Source: grep on plugins/*/skills/*/SKILL.md at HEAD.)
 - User-side fix in `~/.claude/settings.json`: `skillListingBudgetFraction: 0.03`
-  (v2.1.129+) — default 1% truncated 37/70 skill descriptions.
+  (v2.1.129+).
 - Plugin.json `$schema` URL switched to `json.schemastore.org/claude-code-plugin-manifest.json`
   (canonical per docs).
 
@@ -552,7 +554,7 @@ Release 0.1.1 (d0dcf64..ef18bd9, branch release/0.1.1, merged 2026-05-12):
 Universal installer (57aeea7, post-0.1.2, on main 2026-05-15):
 
 - 57aeea7 feat(scripts): install-rldyour-marketplace.sh universal installer.
-  NEW scripts/install-rldyour-marketplace.sh (538 lines, mode 755). Universal
+  NEW scripts/install-rldyour-marketplace.sh (538 lines, mode 775). Universal
   one-shot installer for any Claude Code install. 8 stages (0-7): self-replacement
   guard (mandatory --i-exited-claude flag + pgrep + CLAUDE_CODE_SESSION_ID + sessions
   mtime probe), pre-flight backup to ~/.claude/backups/rldyour-install-<UTC-ts>/,
