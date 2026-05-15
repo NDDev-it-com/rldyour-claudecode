@@ -1,6 +1,6 @@
 # rldyour-claude marketplace state
 
-Last commit: 57aeea7 (feat(scripts): install-rldyour-marketplace.sh universal installer).
+Last commit: b2681b6 (chore(marketplace): bump chrome-devtools and semgrep pins).
 Multiple May-2026 waves applied (all merged to main):
 - optimize/may-2026-best-practices: 6 commits 3fe9005..2e22652 (merged to main)
 - docs/canonical-may2026: 1 commit ca13470 (merged to main)
@@ -10,6 +10,7 @@ Multiple May-2026 waves applied (all merged to main):
 - feat/worktree-workflow: 2 commits 61e80b5..d0dcf64 (merged to main)
 - release/0.1.1: 1 commit ef18bd9 (merged to main; branch cleaned up post-merge)
 - fix(mcps)+fix(ops): 3 commits 5bb9393..d50e94c (merged to main; github stdio hotfix + smoke hardening + 0.1.2 release)
+- release/0.1.3: 1 commit b2681b6 (chore(marketplace): bump chrome-devtools and semgrep pins).
 Prior merged branches deleted after fast-forward merge.
 Marketplace name: `rldyour-claude`. Repo: github.com/rldyourmnd/rldyour-claude (private).
 
@@ -123,11 +124,11 @@ github is now stdio (switched in 5bb9393 from Copilot-gated HTTP `api.githubcopi
   `get_diagnostics_for_file`, `get_diagnostics_for_symbol`.
 - sequential-thinking: `@modelcontextprotocol/server-sequential-thinking@2025.12.18`.
 - playwright: `@playwright/mcp@0.0.75` headless.
-- chrome-devtools: `chrome-devtools-mcp@0.25.0` headless isolated.
+- chrome-devtools: `chrome-devtools-mcp@0.26.0` headless isolated.
 - context7: `@upstash/context7-mcp@2.2.5`. Requires `CONTEXT7_API_KEY`.
 - deepwiki: HTTP `mcp.deepwiki.com/mcp`.
 - grep: HTTP `mcp.grep.app`.
-- semgrep: `semgrep==1.162.0`.
+- semgrep: `semgrep==1.163.0`.
 - shadcn: `shadcn@4.7.0`.
 - dart-flutter: `dart mcp-server --force-roots-fallback`.
 - figma: HTTP `mcp.figma.com/mcp`.
@@ -401,11 +402,11 @@ Audit wave (5e1c3d4..b2f4db3, branch audit/sync-and-cc-v2139, 2026-05-12):
   Updated SKILL.md description fields for browser-debug and lsp-routing to
   follow bilingual trigger policy.
 AGENTS.md (fullrepo-only, not in git diff): added `claude plugin details <name>`
-(v2.1.139+) diagnostic to Validation And Setup; updated CC version note to
-`Current local: v2.1.139` (verification range v2.1.111-v2.1.139, May 2026);
+(`v2.1.139+`) diagnostic to Validation And Setup; updated CC version note to
+`Current local: v2.1.142` (verification range v2.1.111-v2.1.142, May 2026);
 serena 1.3.0 deferral noted as pending capability smoke (subsequently adopted in 9c941f7).
-.claude/CLAUDE.md (fullrepo-only): new `## Changelog Adoption (v2.1.133 → v2.1.139)`
-section documenting adopted vs. not-adopted CC features; smoke-script footgun note
+.claude/CLAUDE.md (fullrepo-only): new `## Changelog Adoption (v2.1.133 → v2.1.142)`
+section documenting adopted vs. not-adopted CC features, local CC sync policy, and smoke-script footgun note
 (`smoke_fullrepo_sync.sh` calls `--bootstrap-init` which reverts worktree agent-only
 files — run smoke before editing agent-only files or re-apply edits after).
 
@@ -511,6 +512,20 @@ Worktree workflow wave (c39f220..d0dcf64, branch feat/worktree-workflow):
   Folded in: scripts/smoke_hooks.sh SKIP_TESTS entry for RLDYOUR_SKIP_WORKTREE_BOOTSTRAP
   (should have shipped with 61e80b5).
   (Source: scripts/worktree_add.sh, scripts/smoke_hooks.sh line 87, CHANGELOG.md at HEAD.)
+
+Release 0.1.3 (d50e94c..b2681b6, branch release/0.1.3, merged 2026-05-15):
+- b2681b6 chore(marketplace): bump chrome-devtools and semgrep pins.
+  - `plugins/rldyour-mcps/.mcp.json`: `chrome-devtools-mcp@0.25.0` → `0.26.0`,
+    `semgrep` `1.162.0` → `1.163.0`.
+  - `config/mcp-runtime-versions.env`: aligned with new MCP pin set.
+  - `plugins/rldyour-mcps/README.md`: transport docs aligned with current stdio GitHub MCP and pin policy.
+  - `plugins/rldyour-mcps/.claude-plugin/plugin.json` and `.claude-plugin/marketplace.json` `rldyour-mcps` entry:
+    `0.1.2` → `0.1.3` in both places.
+  - `CHANGELOG.md` and `VERSION` advanced to `0.1.3`.
+  - `.claude/CLAUDE.md` and AGENTS metadata synchronized with MCP pin set and local Claude Code `2.1.142`.
+  (Source: `VERSION`, `CHANGELOG.md [0.1.3]`, `plugins/rldyour-mcps/.claude-plugin/plugin.json`,
+  `plugins/rldyour-mcps/.mcp.json`, `config/mcp-runtime-versions.env`,
+  `.claude-plugin/marketplace.json`, `plugins/rldyour-mcps/README.md`, `.claude/CLAUDE.md` at HEAD b2681b6.)
 
 Release 0.1.2 (ef18bd9..d50e94c, branch release/0.1.2, merged 2026-05-13):
 - 5bb9393 fix(mcps): github MCP → stdio github-mcp-server v1.0.4.

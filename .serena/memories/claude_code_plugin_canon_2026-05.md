@@ -2,9 +2,9 @@
 
 Source-backed facts cross-validated against `code.claude.com/docs/en/plugins-reference`,
 `code.claude.com/docs/en/mcp`, `code.claude.com/docs/en/changelog`, and Anthropic's own
-`claude-plugins-official` repo. Last refresh 2026-05-08 via ry-explore deep research.
+`claude-plugins-official` repo. Last refresh 2026-05-15 via ry-explore deep research.
 
-Last commit: 57aeea7 (feat(scripts): install-rldyour-marketplace.sh universal installer). Verification range: v2.1.111-v2.1.139.
+Last commit: b2681b6 (chore(marketplace): bump chrome-devtools and semgrep pins). Verification range: v2.1.111-v2.1.142.
 
 ## plugin.json schema
 
@@ -183,7 +183,7 @@ Range-conflict reporting (4 error types): `dependency-unsatisfied`, `range-confl
 `dependency-version-unsatisfied`, `no-matching-tag`. Visible in `claude plugin list`,
 `/plugin`, `/doctor`.
 
-## Changelog highlights v2.1.111-v2.1.139
+## Changelog highlights v2.1.111-v2.1.142
 
 - v2.1.111 — `xhigh` effort for Opus 4.7; Auto mode for Max
 - v2.1.115 — `MCP_CONNECTION_NONBLOCKING=true` for `-p` mode
@@ -203,8 +203,14 @@ Range-conflict reporting (4 error types): `dependency-unsatisfied`, `range-confl
   `continueOnBlock: true` (allow Stop even when PostToolUse hook blocks); stdio MCP
   env receives `${CLAUDE_PROJECT_DIR}`; `claude plugin details <name>` shows component
   inventory and per-session token cost.
-  (Source: CLAUDE.md `## Changelog Adoption (v2.1.133 → v2.1.139)` section, verified
-  against code.claude.com/docs/en/changelog on 2026-05-12.)
+- v2.1.140 — `Agent` matching now tolerates case/separator variants; plugin details now show LSP servers; `/web-setup` warns before replacing an existing GitHub App connection.
+- v2.1.141 — `terminalSequence` hook output added; `CLAUDE_CODE_PLUGIN_PREFER_HTTPS`, `ANTHROPIC_WORKSPACE_ID`; plus `claude agents --cwd <path>`.
+- v2.1.142 — fast mode now defaults to Opus 4.7; `claude agents` added eight flags
+  (`--add-dir`, `--settings`, `--mcp-config`, `--plugin-dir`, `--permission-mode`,
+  `--model`, `--effort`, `--dangerously-skip-permissions`); `MCP_TOOL_TIMEOUT`
+  now applies per request for HTTP/SSE servers (and several agent/plugin regressions fixed).
+  (Source: CLAUDE.md `## Changelog Adoption (v2.1.133 → v2.1.142)` section, verified
+  against code.claude.com/docs/en/changelog on 2026-05-15.)
 
 ## Sources
 
