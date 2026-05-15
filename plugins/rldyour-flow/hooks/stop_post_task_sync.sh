@@ -15,6 +15,8 @@
 #     allowing the session to stop.
 
 set -euo pipefail
+IFS=$'\n\t'
+unset CDPATH
 
 if [ "${RLDYOUR_SKIP_STOP_GATES:-0}" = "1" ] || [ "${RLDYOUR_SKIP_FLOW_SYNC:-0}" = "1" ]; then
   exit 0

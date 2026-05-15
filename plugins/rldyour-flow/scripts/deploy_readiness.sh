@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
+IFS=$'\n\t'
+unset CDPATH
 
 SERVER="${1:-}"
 ROOT="${2:-$(pwd)}"
