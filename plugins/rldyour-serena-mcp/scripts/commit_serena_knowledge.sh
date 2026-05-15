@@ -13,7 +13,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 STATE_SCRIPT="$SCRIPT_DIR/serena_memory_state.py"
 
 KNOWLEDGE_PATTERN='^.. \.serena/(memories|plans|research)(/|$)'
-RUNTIME_PATTERN='^.. \.serena/(\.sync_marker|\.serena_sync_state\.json|\.auto_sync_head|\.active_workflow_intent\.json|\.dirty_stop_ack)$'
+RUNTIME_PATTERN='^.. \.serena/(\.sync_marker|\.serena_sync_state\.json|\.auto_sync_head|\.active_workflow_intent\.json|\.dirty_stop_ack|\.flow_sync_marker|\.flow_post_task_state\.json)$'
 
 STATUS=$(git status --porcelain 2>/dev/null | grep -vE "$RUNTIME_PATTERN" || true)
 if [ -z "$STATUS" ]; then

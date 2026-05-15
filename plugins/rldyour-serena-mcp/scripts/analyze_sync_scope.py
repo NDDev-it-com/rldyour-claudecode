@@ -11,10 +11,28 @@ from collections import defaultdict
 from typing import Any, Iterable
 
 
+MEMORY_TAXONOMY = {
+    "version": 1,
+    "filename_pattern": "AREA-01-SLUG.md",
+    "index_memory": "CORE-01-INDEX.md",
+    "split_rule": "one durable topic per memory; split when a file starts carrying multiple responsibilities",
+    "areas": [
+        {"area": "CORE", "purpose": "project index, marketplace architecture, plugin boundaries"},
+        {"area": "CLAUDECODE", "purpose": "Claude Code plugin, skill, agent, hook and CLI canon"},
+        {"area": "MCP", "purpose": "MCP transport, runtime pins, capability smoke contracts"},
+        {"area": "SERENA", "purpose": "Serena memory sync, freshness state, analyzer contracts"},
+        {"area": "HOOKS", "purpose": "Claude Code lifecycle hooks and advisory gate coordination"},
+        {"area": "FLOW", "purpose": "ry-* SDLC workflow, fullrepo, worktree, post-task sync"},
+        {"area": "DOCS", "purpose": "AGENTS.md, CLAUDE.md, durable instruction policy"},
+        {"area": "RELEASE", "purpose": "versioning, changelog, validation and release gates"},
+        {"area": "TECHDEBT", "purpose": "open debt, closed error patterns, anti-regression rules"},
+    ],
+}
+
 MEMORY_CANDIDATE_MEMORY_FILES = {
-    "project_marketplace_state.md",
-    "serena_memory_sync_protocol_2026-05.md",
-    "technical_debt_register_2026-05.md",
+    "CORE-01-INDEX.md",
+    "CORE-02-MARKETPLACE.md",
+    "TECHDEBT-01-NOW.md",
 }
 
 KNOWN_MEMORIES = (
@@ -192,37 +210,45 @@ def _memory_targets_by_areas(areas: set[str]) -> list[tuple[str, str]]:
             "rldyour-serena-mcp:manifest",
             "rldyour-flow:manifest",
         }:
-            targets.add(("project_marketplace_state.md", "plugin manifests and marketplace contracts changed"))
-            targets.add(("serena_memory_sync_protocol_2026-05.md", "workflow and memory contracts changed"))
+            targets.add(("CORE-02-MARKETPLACE.md", "plugin manifests and marketplace contracts changed"))
+            targets.add(("RELEASE-01-VALIDATION.md", "release or version contract changed"))
+            if plugin in {"rldyour-serena-mcp", "rldyour-flow"}:
+                targets.add(("SERENA-01-MEMORY-SYNC.md", "workflow and memory contracts changed"))
 
         if area.endswith(":hooks") or area.endswith(":skills") or area.endswith(":commands") or area.endswith(":agents") or area.endswith(":scripts"):
             if plugin == "rldyour-serena-mcp":
-                targets.add(("serena_memory_sync_protocol_2026-05.md", "Serena hooks/workflow automation changed"))
-                targets.add(("project_marketplace_state.md", "Serena plugin contract changed"))
+                targets.add(("SERENA-01-MEMORY-SYNC.md", "Serena hooks/workflow automation changed"))
+                targets.add(("HOOKS-01-LIFECYCLE.md", "Serena hook coordination changed"))
+                targets.add(("CORE-02-MARKETPLACE.md", "Serena plugin contract changed"))
+            elif plugin == "rldyour-flow":
+                targets.add(("FLOW-01-SDLC.md", "flow workflow automation changed"))
+                if area.endswith(":hooks"):
+                    targets.add(("HOOKS-01-LIFECYCLE.md", "flow hook coordination changed"))
             else:
-                targets.add(("project_marketplace_state.md", "plugin architecture and boundaries changed"))
+                targets.add(("CORE-02-MARKETPLACE.md", "plugin architecture and boundaries changed"))
 
         if area in {"mcp-runtime-config", "rldyour-mcps:mcp-transport"}:
-            targets.add(("project_marketplace_state.md", "MCP runtime or transport contract changed"))
-            targets.add(("claude_code_plugin_canon_2026-05.md", "Claude Code MCP canon and runtime pins changed"))
-            targets.add(("technical_debt_register_2026-05.md", "MCP drift and validation guardrails changed"))
+            targets.add(("MCP-01-TRANSPORT.md", "MCP runtime or transport contract changed"))
+            targets.add(("TECHDEBT-01-NOW.md", "MCP drift and validation guardrails changed"))
 
         if area.startswith("rldyour-flow:") and area.endswith((":hooks", ":scripts")):
-            targets.add(("project_marketplace_state.md", "workflow orchestration changed"))
-            targets.add(("technical_debt_register_2026-05.md", "operational sequencing and guardrails changed"))
+            targets.add(("FLOW-01-SDLC.md", "workflow orchestration changed"))
+            targets.add(("TECHDEBT-01-NOW.md", "operational sequencing and guardrails changed"))
 
         if area in {"agent-instructions", "marketplace-support"}:
-            targets.add(("technical_debt_register_2026-05.md", "agent context and process constraints changed"))
+            targets.add(("DOCS-01-INSTRUCTIONS.md", "agent instruction context changed"))
+            targets.add(("TECHDEBT-01-NOW.md", "agent context and process constraints changed"))
 
         if area in {"repo-scripts", "ci-workflows", "docs", "release-docs", "release-versioning", "repo-config"}:
-            targets.add(("technical_debt_register_2026-05.md", "operational/process implications captured"))
+            targets.add(("RELEASE-01-VALIDATION.md", "operational or release validation contract changed"))
+            targets.add(("TECHDEBT-01-NOW.md", "operational/process implications captured"))
 
     durable_non_runtime_areas = {
         area for area in areas if not area.startswith(".serena/") and area != "serena-runtime"
     }
     if durable_non_runtime_areas and not targets:
         for memory in MEMORY_CANDIDATE_MEMORY_FILES:
-            if memory == "serena_memory_sync_protocol_2026-05.md":
+            if memory == "SERENA-01-MEMORY-SYNC.md":
                 continue
             targets.add((memory, "baseline project memory update"))
 
@@ -275,7 +301,8 @@ def analyze(paths: list[str]) -> dict[str, Any]:
     sync_focus = "high" if high_impact_areas else ("medium" if memory_targets or (areas_sorted and not knowledge_only) else "low")
 
     return {
-        "schema_version": 1,
+        "schema_version": 2,
+        "memory_taxonomy": MEMORY_TAXONOMY,
         "file_count": len(normalized),
         "changed_files": normalized,
         "areas": areas_sorted,
