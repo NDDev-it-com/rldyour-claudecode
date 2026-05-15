@@ -11,12 +11,17 @@ from typing import Any
 
 MEMORY_DIR = Path(".serena/memories")
 SYNC_STATE = Path(".serena/.serena_sync_state.json")
+ANALYZE_SCRIPT = Path(__file__).resolve().parent / "analyze_sync_scope.py"
 KNOWLEDGE_PREFIXES = (
     ".agents/commands/",
     ".agents/hooks/",
     ".agents/skills/",
     ".claude/",
     ".cursor/rules/",
+    ".gemini/",
+    ".roo/",
+    ".windsurf/",
+    ".openhands/",
     ".github/instructions/",
     ".github/prompts/",
     ".serena/memories/",
@@ -28,6 +33,8 @@ KNOWLEDGE_PREFIXES = (
 KNOWLEDGE_FILES = {
     ".cursorrules",
     ".windsurfrules",
+    ".aider",
+    ".aider.conf.yml",
     "AGENTS.md",
     "CLAUDE.md",
     "GEMINI.md",
@@ -42,6 +49,8 @@ RUNTIME_IGNORED = {
     ".serena/.auto_sync_head",
     ".serena/.active_workflow_intent.json",
     ".serena/.dirty_stop_ack",
+    ".serena/.flow_sync_marker",
+    ".serena/.flow_post_task_state.json",
 }
 LAST_COMMIT_RE = re.compile(r"^Last commit:\s+([a-f0-9]{7,40})\b", re.MULTILINE)
 
@@ -76,8 +85,77 @@ def _newest_synced_commit(candidates: list[tuple[str, str]]) -> tuple[str, str] 
     return newest
 
 
+def _analysis_from_ref_range(from_ref: str, to_ref: str) -> dict[str, Any] | None:
+    if not from_ref or not to_ref or not ANALYZE_SCRIPT.is_file():
+        return None
+
+    proc = subprocess.run(
+        [
+            "python3",
+            str(ANALYZE_SCRIPT),
+            "--from-ref",
+            from_ref,
+            "--to-ref",
+            to_ref,
+        ],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    if proc.returncode != 0 or not proc.stdout.strip():
+        return None
+    try:
+        payload = json.loads(proc.stdout)
+    except json.JSONDecodeError:
+        return None
+    return payload if isinstance(payload, dict) else None
+
+
+def _analysis_from_changed_files(paths: list[str], state: dict[str, Any]) -> tuple[dict[str, Any], str]:
+    explicit = state.get("analysis")
+    if isinstance(explicit, dict) and explicit:
+        return explicit, "sync_marker"
+
+    marker_previous = str(state.get("previous_head_full") or "")
+    marker_head = str(state.get("head_full") or "")
+    if marker_previous and marker_head:
+        analysis = _analysis_from_ref_range(marker_previous, marker_head)
+        if isinstance(analysis, dict) and analysis:
+            return analysis, f"sync_marker_ref_range:{marker_previous[:7]}..{marker_head[:7]}"
+
+    if state.get("analysis") is not None and not isinstance(state.get("analysis"), dict):
+        # defensive: ignore non-dict payloads instead of surfacing malformed JSON to callers
+        pass
+
+    newest_synced = state.get("newest_synced_full")
+    if isinstance(newest_synced, str) and newest_synced:
+        head_full = state.get("head_full")
+        if isinstance(head_full, str):
+            analysis = _analysis_from_ref_range(newest_synced, head_full)
+            if isinstance(analysis, dict) and analysis:
+                return analysis, f"newest_sync_ref_range:{newest_synced[:7]}..{head_full[:7]}"
+
+    if paths and ANALYZE_SCRIPT.is_file():
+        proc = subprocess.run(
+            ["python3", str(ANALYZE_SCRIPT), "--stdin"],
+            input="\n".join(paths) + "\n",
+            text=True,
+            check=False,
+            capture_output=True,
+        )
+        if proc.returncode == 0 and proc.stdout.strip():
+            try:
+                payload = json.loads(proc.stdout)
+            except json.JSONDecodeError:
+                payload = {}
+            if isinstance(payload, dict):
+                return payload, "path_list"
+
+    return {}, "none"
+
+
 def _is_knowledge_path(path: str) -> bool:
-    return path in KNOWLEDGE_FILES or any(path.startswith(prefix) for prefix in KNOWLEDGE_PREFIXES)
+    return path in KNOWLEDGE_FILES or path.startswith(".aider") or any(path.startswith(prefix) for prefix in KNOWLEDGE_PREFIXES)
 
 
 def _non_knowledge_paths(paths: list[str]) -> list[str]:
@@ -141,6 +219,10 @@ def status() -> dict[str, Any]:
 
     sync_state = _load_sync_state()
     marker_requires_sync = bool(sync_state.get("required"))
+    sync_state_for_analysis = dict(sync_state)
+    sync_state_for_analysis["newest_synced_full"] = newest_full
+    sync_state_for_analysis["head_full"] = head_full
+    analysis, analysis_source = _analysis_from_changed_files(changed_files, sync_state_for_analysis)
     marker_head = str(sync_state.get("head_full") or sync_state.get("head") or "")
     marker_matches_head = marker_requires_sync and bool(head_full) and marker_head in {head_full, head_short}
 
@@ -179,6 +261,8 @@ def status() -> dict[str, Any]:
         "memory_match_reason": memory_match_reason,
         "changed_files_since_sync": changed_files,
         "non_knowledge_changed_files_since_sync": non_knowledge_changed_files,
+        "analysis": analysis,
+        "analysis_source": analysis_source,
         "only_knowledge_changes_since_sync": only_knowledge_changes_since_sync,
         "sync_state": sync_state,
         "is_current": is_current,
@@ -187,6 +271,7 @@ def status() -> dict[str, Any]:
 
 def main() -> int:
     json.dump(status(), sys.stdout, sort_keys=True)
+    sys.stdout.write("\n")
     return 0
 
 

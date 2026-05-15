@@ -16,7 +16,7 @@
 #   scripts/worktree_add.sh feat/foo
 #       Creates a worktree at ../rldyour-claude-feat-foo on branch
 #       feat/foo. If the branch doesn't exist, it is created off
-#       origin/main (configurable via WORKTREE_BASE_REF).
+#       origin/main (configurable via RLDYOUR_WORKTREE_BASE_REF).
 #
 #   scripts/worktree_add.sh feat/foo /tmp/rldyour-foo
 #       Same, with an explicit worktree path.

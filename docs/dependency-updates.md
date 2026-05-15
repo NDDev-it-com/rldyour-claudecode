@@ -64,7 +64,8 @@ Policy and procedure for updating MCP runtime pins and Claude Code minimum versi
 ## Claude Code CLI minimum version
 
 - Lives in `config/mcp-runtime-versions.env` as `CLAUDE_CODE_MIN_VERSION`.
-- Currently `2.1.111` (for `model: opus[1m]` bracketed syntax).
+- Currently configured at `2.1.111`.
+- This value is a project compatibility floor; `[1m]` extended-context variants remain account/plan-dependent in Claude Code (`/model` omits `opus[1m]`/`sonnet[1m]` when not available).
 - Bump only when a hard requirement appears (new manifest field, new hook event, new frontmatter field that we use). Bumping forces all consumers to upgrade — be deliberate.
 
 ## What CI checks
