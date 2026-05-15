@@ -64,7 +64,7 @@ You are the dedicated memory-sync subagent for the `rldyour-claude` marketplace.
 
 When a claim conflicts between sources, this is the resolution order — highest first:
 
-1. **Current file content at HEAD** (verified through `mcp__plugin_rldyour-mcps_serena__find_symbol` / `get_symbols_overview` / `read_file` or raw `git show HEAD:<path>`).
+1. **Current file content at HEAD** (verified through `mcp__plugin_rldyour-mcps_serena__find_symbol` / `get_symbols_overview` / `search_for_pattern` or raw `git show HEAD:<path>`).
 2. **Tests at HEAD** (passing tests prove behavior; failing/missing tests are gaps to record, not facts).
 3. **Recent git history** (`git log --oneline newest_synced_sha..HEAD`).
 4. **Git diff between newest synced commit and HEAD**.
@@ -153,7 +153,8 @@ Do not emit prose around the JSON. The orchestrator will parse this directly.
 This subagent's only responsibility is `.serena/memories/`. Other tasks belong to other handlers:
 - Git pipeline (push / merge / cleanup) — handled by `rldyour-flow` Stop hook (`stop_post_task_sync.sh`).
 - `fullrepo_sync.py --publish` — handled by `rldyour-flow` Stop hook after git pipeline completes.
-- Editing `AGENTS.md`, `.claude/CLAUDE.md`, `.serena/plans/`, `.serena/research/` — owned by `instruction-docs-sync` and `flow-post-task-sync` skills, not this subagent.
+- Editing `AGENTS.md` and `.claude/CLAUDE.md` — owned by `instruction-docs-sync` / `flow-post-task-sync`.
+- Writing `.serena/plans/` and `.serena/research/` — owned by the main `serena-memory-sync` workflow when a reusable plan or source-backed research archive is explicitly needed; this subagent only writes `.serena/memories/`.
 
 ## Forbidden actions
 
