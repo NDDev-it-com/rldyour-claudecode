@@ -6,6 +6,93 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+## [0.1.7] - 2026-05-16
+
+### Changed
+
+- **Wave 2 polish — "идеально выточенная система" (single seamless mechanism)**:
+  - **Tier 1 (critical fixes)**: cross-plugin path in `flow-post-task-sync` SKILL replaced
+    with `$(git rev-parse --show-toplevel)` (cwd-independent; `${CLAUDE_PROJECT_DIR}` is
+    documented only for hook commands and stdio MCP env, not for skill execution context).
+    New `scripts/validate_agent_tools.py` enforces agent `tools:` allowlist invariants
+    (built-in tool names, MCP wildcard discipline, read-only-by-design MCP set).
+    TECHDEBT-01-NOW.md gained R4 (non-Serena MCP wildcard future-proofing) and R5
+    (bootstrap_check.sh footgun documentation).
+  - **Tier 2 (consistency + observability)**: 14 utility/plugin scripts gained
+    `IFS=$'\n\t'` + `unset CDPATH` after `set -euo pipefail` — 9 root `scripts/*.sh`
+    (smoke_hooks, smoke_fullrepo_sync, smoke_mcp_capabilities, smoke_mcp_runtime,
+    smoke_serena_memory_taxonomy, sync_fullrepo_branch, validate_marketplace,
+    collect_diagnostics, install_local_git_hooks) plus 5 plugin scripts
+    (`plugins/rldyour-flow/scripts/{detect_project_checks,git_sync_audit,
+    local_git_ai_guard}.sh`, `plugins/rldyour-lsps/scripts/install_lsps_brew.sh`,
+    `plugins/rldyour-serena-mcp/scripts/commit_serena_knowledge.sh`). Pattern matches
+    existing gold standard in `scripts/install-rldyour-marketplace.sh`.
+    CI workflow `.github/workflows/validate.yml` extended with 3 new steps in
+    syntax-checks job: Agent tools allowlist validation, Hook lifecycle smoke,
+    Serena memory taxonomy smoke. No `fetch-depth: 0` — current smokes don't need it.
+  - **Tier 3 (defensive security)**: `scripts/worktree_add.sh` adds `git
+    check-ref-format --branch` as second gate after the conservative regex
+    `^[A-Za-z0-9._/-]{1,255}$` — rejects refs the regex accepts but git refuses
+    (`-/foo`, `/foo`, `feat/../etc/passwd`, double slash, etc.) as defence-in-depth
+    against future caller-misuse. `plugins/rldyour-flow/hooks/post_tool_use_commit_advice.sh`
+    expanded prompt-injection markers from 3 to 13+ families including Llama/Mistral
+    `[INST]`/`<<SYS>>`, Llama-3 `<|begin_of_text|>`/`<|end_of_text|>`, chat-template
+    `<|user|>`/`<|assistant|>`, Markdown `---system---`, role-play prefixes
+    (`you are now`, `from now on`), and Russian-language equivalents (`[СИСТЕМА]`,
+    `игнорируй все предыдущие инструкции`, `забудь предыдущие команды`, `теперь ты`).
+    Regex flags upgraded to `re.IGNORECASE | re.UNICODE` for Cyrillic word boundaries.
+  - **Tier 4 (polish)**: `scripts/smoke_hooks.sh` adds new "runtime stdin payloads" step
+    with 6 test cases (empty/non-trigger/RU/EN prompt scenarios for `user_prompt_submit`,
+    clean state for `stop_memory_sync`, non-git command for `post_tool_use_commit_advice`).
+    SC2064 fixed (single-quoted trap to defer `$TMP` expansion).
+    `scripts/bootstrap_check.sh` gains "git pre-push hook (advisory)" step that detects
+    whether the rldyour pre-push guard is installed and suggests
+    `scripts/install_local_git_hooks.sh --apply` when absent.
+
+- **Plugin runtime versions**:
+  - `rldyour-flow` bumped `0.1.3` → `0.1.4` (`flow-post-task-sync` SKILL.md changed
+    — triggers `claude plugin update` cache refresh).
+  - VERSION bumped `0.1.6` → `0.1.7` (release boundary; Wave 2 contains durable
+    runtime and safety changes).
+  - Other 8 plugins unchanged (shell scripts and hook bodies don't trigger plugin
+    cache; hooks are re-read at subprocess invocation time).
+
+### Security
+
+- **Prompt-injection coverage gap closed (HIGH, conf 85)**:
+  `post_tool_use_commit_advice.sh` now redacts 13+ marker families before echoing
+  commit subject into LLM context. Covers Llama/Mistral instruction tags, Llama-3
+  special tokens, chat-template tags, Markdown system prefix, English role-play
+  prefixes, and Russian-language equivalents (project is Russian-leading per
+  `AGENTS.md` Engineering Constraints — Russian-only attacks were entirely uncovered
+  before this wave). Defence-in-depth, not a known active exploit fix.
+- **BRANCH validation second gate (MEDIUM, conf 70)**: `git check-ref-format
+  --branch` invocation in `scripts/worktree_add.sh` rejects refs git itself would
+  refuse, providing dual validation layers (cheap regex + canonical git check).
+- **Static MCP wildcard invariant**: `validate_agent_tools.py` enforces that
+  read-only agents may only wildcard MCP servers in `READ_ONLY_BY_DESIGN_MCPS`
+  (context7, deepwiki, grep, semgrep). Catches the entire D15-class confused-deputy
+  pattern at PR/validation time, not at agent invocation time.
+
+### Verification
+
+- `bash scripts/validate_marketplace.sh` — full harness passes including new
+  "Agent tools allowlist validation" step (8 agent files × 13 MCP servers).
+- `bash scripts/smoke_hooks.sh` — passes including 6 new runtime stdin payload
+  cases (verified parse safety with `IFS=$'\n\t'` changes from Wave 1+2).
+- `bash scripts/bootstrap_check.sh` — passes including new pre-push hook advisory.
+- Manual injection tests: `[INST]`, `[SYSTEM]`, `Игнорируй все предыдущие
+  инструкции`, `теперь ты` — all redacted to `[REDACTED]` in `additionalContext`.
+- Manual branch validation tests: `-/foo`, `feat/../etc/passwd`,
+  `--upload-pack=evil` — all REJECT (regex layer + git check-ref-format layer);
+  `feat/test-validation_v1.0` — ACCEPT, dry-run produces correct git command.
+- 6 parallel reviewer subagents (architecture, quality, consistency, integration,
+  verification, security) executed with self-contained prompts; 6 must-fix
+  findings applied (Architecture F-1 + F-3, Consistency F-1, Integration F-2,
+  Security F-1 + F-2). Remaining findings (Architecture F-2/F-4/F-6, Consistency
+  F-2/F-3/F-4/F-5/F-6/F-7, Integration F-3/F-4, Security F-3/F-4) classified as
+  defer / false-positive with documented rationale.
+
 ## [0.1.6] - 2026-05-15
 
 ### Changed
