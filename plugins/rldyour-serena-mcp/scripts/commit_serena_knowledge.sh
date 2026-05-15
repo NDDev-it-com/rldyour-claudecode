@@ -13,9 +13,9 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 STATE_SCRIPT="$SCRIPT_DIR/serena_memory_state.py"
 
 KNOWLEDGE_PATTERN='^.. \.serena/(memories|plans|research)(/|$)'
-RUNTIME_PATTERN='^.. \.serena/(\.sync_marker|\.serena_sync_state\.json|\.auto_sync_head|\.active_workflow_intent\.json|\.dirty_stop_ack)$'
+RUNTIME_PATTERN='^.. \.serena/(\.sync_marker|\.serena_sync_state\.json|\.auto_sync_head|\.active_workflow_intent\.json|\.dirty_stop_ack|\.flow_sync_marker|\.flow_post_task_state\.json)$'
 
-STATUS=$(git status --porcelain 2>/dev/null | grep -vE "$RUNTIME_PATTERN" || true)
+STATUS=$(git status --porcelain -uall 2>/dev/null | grep -vE "$RUNTIME_PATTERN" || true)
 if [ -z "$STATUS" ]; then
   if [ ! -f "$STATE_SCRIPT" ]; then
     echo "No tracked Serena knowledge changes to commit"
@@ -31,6 +31,11 @@ if [ -z "$STATUS" ]; then
     rm -f .serena/.sync_marker .serena/.serena_sync_state.json .serena/.auto_sync_head
     echo "Serena knowledge is current; removed runtime sync markers"
     exit 0
+  fi
+  MEMORY_COUNT=$(printf "%s" "$STATE_JSON" | python3 -c 'import json,sys; print(json.load(sys.stdin).get("memory_count", 0))' 2>/dev/null || echo "0")
+  if [ "$MEMORY_COUNT" != "0" ]; then
+    echo "Refusing to acknowledge Serena knowledge because memories do not match HEAD" >&2
+    exit 1
   fi
   echo "No tracked Serena knowledge changes to commit"
   exit 0

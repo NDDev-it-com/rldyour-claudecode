@@ -1,0 +1,55 @@
+<!-- Memory Metadata
+Last updated: 2026-05-15
+Last commit: 70c8d91 fix(serena-mcp): harden memory taxonomy gates
+Scope: AGENTS.md, .claude/CLAUDE.md, plugins/rldyour-rules/skills/project-instructions-policy/SKILL.md, plugins/rldyour-flow/scripts/instruction_docs_state.py, scripts/validate_instruction_docs.py, plugins/rldyour-serena-mcp/scripts/analyze_sync_scope.py
+Area: DOCS
+-->
+
+# DOCS-01-INSTRUCTIONS
+
+## Purpose
+
+Durable instruction-file policy for the repository: what belongs in `AGENTS.md`, what belongs in `.claude/CLAUDE.md`, and how those files stay synchronized with code and memories.
+
+## Source Of Truth
+
+- `AGENTS.md`: concise cross-tool project instructions.
+- `.claude/CLAUDE.md`: Claude Code-native deep memory for hook canon, subagents, budgets, diagnostics, and Don't/Done rules.
+- `plugins/rldyour-rules/skills/project-instructions-policy/SKILL.md`: instruction docs policy skill.
+- `plugins/rldyour-rules/references/project-instructions-and-adrs.md`: AGENTS/CLAUDE/REVIEW/ADR policy reference.
+- `plugins/rldyour-flow/scripts/instruction_docs_state.py`: detects when durable project facts changed and instruction docs need review.
+- `scripts/validate_instruction_docs.py`: line-budget and presence validation.
+- `plugins/rldyour-serena-mcp/scripts/analyze_sync_scope.py`: treats agent-instruction changes as memory-sync relevant and targets this memory.
+
+## Current Behavior
+
+- User-facing conversation with the owner is Russian unless explicitly requested otherwise.
+- Repository artifacts are English: code, docs, comments, commits, AGENTS.md, CLAUDE.md, REVIEW.md, ADRs, Serena memories, plans, and research archives.
+- `AGENTS.md` is the cross-tool concise instruction layer and is kept under the project line budget.
+- `.claude/CLAUDE.md` is first-class Claude Code memory and must not be reduced to only an `@AGENTS.md` import.
+- Both `AGENTS.md` and `.claude/CLAUDE.md` are agent-only in this fullrepo-managed repository and are excluded from `main` through `.git/info/exclude`.
+- Current docs include the numbered Serena memory contract: `CORE-01-INDEX.md` is the memory map; topic files use `AREA-01-SLUG.md`.
+- `AGENTS.md` routes memory writes through `flow-memory-sync` when Stop/post-task sync requires it and through `serena-memory-sync` as a manual/fallback workflow.
+- Instruction-only commits are sync-relevant. They are not treated as knowledge-only no-ops by `mark_sync_required.sh` or `serena_memory_state.py`.
+
+## Contracts And Data
+
+- `AGENTS.md` should contain cross-tool facts: source-of-truth paths, plugin boundaries, validation/setup commands, SDLC routing, fullrepo policy, MCP transport summary, engineering constraints, and done criteria.
+- `.claude/CLAUDE.md` should contain Claude Code-specific facts: subagent matrix, hook lifecycle/canon, skill-listing budget, changelog adoption, diagnostics, and Claude-specific Don't/Done rules.
+- Do not put secrets, chat transcripts, raw tokens, private cookies, or local credentials into instruction docs.
+- Do not store generic advice when a source path or command is more useful.
+- Memory taxonomy changes require updates to `AGENTS.md`, `.claude/CLAUDE.md`, `serena-memory-sync` skill, `flow-memory-sync` agent, and `CORE-01-INDEX.md`.
+
+## Change Rules
+
+- Update `AGENTS.md` when durable cross-tool setup, architecture, validation, memory, fullrepo, or workflow rules change.
+- Update `.claude/CLAUDE.md` when Claude Code-specific behavior changes: hooks, plugin frontmatter, skill listing, subagents, `/mcp`, `/hooks`, `/memory`, `/context`, `/doctor`, or Claude CLI facts.
+- Run instruction-doc checks after any durable project behavior or workflow change.
+- Keep both files concise. If a fact is too detailed for startup context, put it in a numbered Serena memory and link only the source-of-truth path or summary in docs.
+
+## Verification
+
+- `python3 scripts/validate_instruction_docs.py --require-agent-docs`: validates instruction docs presence and line budgets.
+- `python3 plugins/rldyour-flow/scripts/instruction_docs_state.py --json | python3 -m json.tool`: explains whether docs need review and why.
+- `bash scripts/smoke_serena_memory_taxonomy.sh`: asserts `AGENTS.md` changes require memory sync and target this memory.
+- `git status --short`: should not show agent-only docs on `main` because they are fullrepo-managed.

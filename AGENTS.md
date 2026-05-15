@@ -15,6 +15,7 @@ This `AGENTS.md` is the concise root project-instruction file for any AI agent w
 - `./plugins/rldyour-flow/hooks/hooks.json` and `./plugins/rldyour-serena-mcp/hooks/hooks.json` — only two plugins ever own hooks.
 - `./plugins/rldyour-flow/references/*.md` — durable contracts for `ry-init`, `ry-start`, `ry-newp`, `ry-review`, `ry-deploy`, post-task sync, reviewer protocol, and source citations.
 - `./plugins/rldyour-rules/references/*.md` — engineering rules: architecture, dependency, quality gates, project instructions and ADRs.
+- `./.serena/memories/CORE-01-INDEX.md` — numbered Serena memory map for future GPT/Claude/Codex sessions.
 
 ## Repository Layout
 
@@ -142,7 +143,7 @@ Current dependency graph:
 ## Tool Routing
 
 - Code understanding: prefer Serena MCP tools (`get_symbols_overview`, `find_symbol`, `find_referencing_symbols`, `search_for_pattern`) over raw text reads. See `plugins/rldyour-serena-mcp/skills/serena-code-workflow/SKILL.md`.
-- Memory writes: only via `serena-memory-sync` skill (fact-only, no chat history).
+- Memory writes: use `flow-memory-sync` subagent when Stop/post-task sync requires it; use the `serena-memory-sync` skill as the manual/fallback workflow. Memories are fact-only, use `CORE-01-INDEX.md` as the map, new topics use `AREA-01-SLUG.md`, and broad files must be split instead of expanded indefinitely.
 - LSP / diagnostics / refactoring: route through `plugins/rldyour-lsps/skills/lsp-routing/SKILL.md`.
 - Browser validation, debugging, performance: `plugins/rldyour-browser/skills/*`.
 - Figma → code: `plugins/rldyour-design/skills/figma-to-code/SKILL.md`.

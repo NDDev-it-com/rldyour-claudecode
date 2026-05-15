@@ -111,6 +111,7 @@ if not analysis and isinstance(analysis_by_payload, dict):
 areas_summary = analysis.get("areas_summary", {}) or {}
 risk_profile = analysis.get("risk_profile", {}) or {}
 memory_targets = analysis.get("memory_targets", []) or []
+memory_taxonomy = analysis.get("memory_taxonomy", {}) or {}
 reason = (sync_state.get("reason") or "").strip() or "non-knowledge project changes detected"
 high_impact = areas_summary.get("high_impact", [])
 candidates = sorted({item.get("path") for item in memory_targets if isinstance(item, dict) and item.get("path")})
@@ -118,6 +119,8 @@ focus = risk_profile.get("sync_focus", "medium")
 analysis_file_count = analysis.get("file_count", 0)
 areas = analysis.get("areas") or []
 has_analysis = bool(analysis_file_count or areas)
+filename_pattern = memory_taxonomy.get("filename_pattern") or "AREA-01-SLUG.md"
+index_memory = memory_taxonomy.get("index_memory") or "CORE-01-INDEX.md"
 
 lines = [
     "Change impact (sync analysis):",
@@ -126,6 +129,7 @@ lines = [
     f"- Changed files total: {analysis_file_count if isinstance(analysis_file_count, int) else 0}",
     f"- Analysis reason: {reason}",
     f"- Analysis available: {has_analysis}",
+    f"- Memory taxonomy: {filename_pattern}; index={index_memory}",
 ]
 if candidates:
     lines.append("- Memory targets: " + ", ".join(candidates))
@@ -153,14 +157,14 @@ Preferred path — invoke the flow-memory-sync subagent:
   Agent({
     description: 'Sync Serena memories against HEAD ${HEAD_SHA}',
     subagent_type: 'rldyour-serena-mcp:flow-memory-sync',
-    prompt: 'Synchronize .serena/memories against HEAD ${HEAD_SHA}. Newest synced commit: ${NEWEST_SHA:-none}. Changed non-knowledge files: ${NON_KNOWLEDGE_FILES:-unknown}. Follow the agent definition strictly: source-of-truth hierarchy = code > tests > git diff > existing memories; never speculate; cite or omit; emit final JSON report.'
+    prompt: 'Synchronize numbered .serena/memories against HEAD ${HEAD_SHA}. Newest synced commit: ${NEWEST_SHA:-none}. Changed non-knowledge files: ${NON_KNOWLEDGE_FILES:-unknown}. Use CORE-01-INDEX.md as the memory map when present and keep names in AREA-01-SLUG.md form. Follow the agent definition strictly: source-of-truth hierarchy = code > tests > git diff > existing memories; never speculate; cite or omit; emit final JSON report.'
   })
 
 The flow-memory-sync subagent has narrow tool access (Serena memory tools + Read/Grep/Glob/Bash; Edit/Write/NotebookEdit are disallowed in its frontmatter). It enforces fact-only updates with anti-hallucination guards and runs ${COMMIT_SCRIPT} at the end.
 
 Fallback path (if the subagent is not available — e.g. plugin not yet reloaded):
 1. Use Serena MCP for code inspection: check_onboarding_performed -> list_memories -> read_memory(relevant) -> get_symbols_overview -> find_symbol(include_body=false) -> find_symbol(include_body=true only where needed) -> find_referencing_symbols -> search_for_pattern.
-2. Update .serena/memories with high-signal fact-only English content. Code, git diff, and tests are the source of truth.
+2. Update .serena/memories with high-signal fact-only English content. Use numbered topic files (AREA-01-SLUG.md) and update CORE-01-INDEX.md when adding, renaming, or splitting memories. Code, git diff, and tests are the source of truth.
 3. Each touched memory must contain a 'Last commit: ${HEAD_SHA}' line so the state script recognises sync via direct-head-reference.
 4. Run ${COMMIT_SCRIPT} to acknowledge sync state and clear runtime markers.
 5. Stop again after the sync or report the exact blocker."

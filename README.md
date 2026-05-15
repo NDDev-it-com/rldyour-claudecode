@@ -19,7 +19,7 @@ Main principle: nothing is treated as enabled or correct unless the owner explic
 The active marketplace currently contains nine first-party plugins; per-plugin versions are:
 
 - `rldyour-mcps` — `0.1.3`
-- `rldyour-serena-mcp` — `0.1.4`
+- `rldyour-serena-mcp` — `0.1.5`
 - `rldyour-explore` — `0.1.2`
 - `rldyour-security` — `0.1.2`
 - `rldyour-browser` — `0.1.2`
@@ -31,7 +31,7 @@ The active marketplace currently contains nine first-party plugins; per-plugin v
 Briefly:
 
 - **`rldyour-mcps`** — single-owner MCP transport (13 pinned servers: Serena, Sequential Thinking, Playwright, Chrome DevTools, Context7, DeepWiki, Grep, Semgrep, shadcn, Dart/Flutter, Figma, OpenAI Docs, GitHub).
-- **`rldyour-serena-mcp`** — Serena-first semantic code workflow, fact-only `.serena` memory sync via `flow-memory-sync` subagent, lifecycle hooks (UserPromptSubmit, PreToolUse:Bash, PostToolUse:Bash, Stop).
+- **`rldyour-serena-mcp`** — Serena-first semantic code workflow, numbered fact-only `.serena` memory sync via `flow-memory-sync` subagent, lifecycle hooks (UserPromptSubmit, PreToolUse:Bash, PostToolUse:Bash, Stop).
 - **`rldyour-flow`** — autonomous SDLC orchestration with five slash commands (`ry-init`, `ry-start`, `ry-newp`, `ry-review`, `ry-deploy`), six reviewer subagents (architecture/quality/consistency/integration/verification/security tracks), advisory SessionStart and Stop hooks, scoped context packs, instruction docs sync, and post-task synchronization.
 - **`rldyour-explore`** — deep multi-source research via `ry-explore` subagent (`model: opus[1m]`, `effort: max`) and tech/web research skills routing through Context7, DeepWiki, Grep, and authoritative web sources.
 - **`rldyour-security`** — non-blocking OWASP Top 10 2025 secure-implementation guidance plus the `ry-sec-review` defensive review skill.
@@ -96,6 +96,7 @@ scripts/smoke_mcp_capabilities.sh            # JSON-RPC initialize + tools/list 
 scripts/smoke_mcp_capabilities.sh --server <name>   # narrow to one server
 scripts/smoke_mcp_capabilities.sh --skip-uvx        # skip slow uvx cold-starts
 scripts/smoke_hooks.sh                       # Serena + flow hook scripts dry-run
+scripts/smoke_serena_memory_taxonomy.sh      # analyzer schema/targets + memory freshness edge cases
 scripts/smoke_fullrepo_sync.sh               # fullrepo branch lifecycle state machine
 ```
 

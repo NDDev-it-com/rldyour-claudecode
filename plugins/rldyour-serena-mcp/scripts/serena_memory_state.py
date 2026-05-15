@@ -12,37 +12,13 @@ from typing import Any
 MEMORY_DIR = Path(".serena/memories")
 SYNC_STATE = Path(".serena/.serena_sync_state.json")
 ANALYZE_SCRIPT = Path(__file__).resolve().parent / "analyze_sync_scope.py"
-KNOWLEDGE_PREFIXES = (
-    ".agents/commands/",
-    ".agents/hooks/",
-    ".agents/skills/",
-    ".claude/",
-    ".cursor/rules/",
-    ".gemini/",
-    ".roo/",
-    ".windsurf/",
-    ".openhands/",
-    ".github/instructions/",
-    ".github/prompts/",
+SERENA_KNOWLEDGE_PREFIXES = (
     ".serena/memories/",
     ".serena/plans/",
     ".serena/research/",
     ".serena/newproj/",
     ".serena/deploy/",
 )
-KNOWLEDGE_FILES = {
-    ".cursorrules",
-    ".windsurfrules",
-    ".aider",
-    ".aider.conf.yml",
-    "AGENTS.md",
-    "CLAUDE.md",
-    "GEMINI.md",
-    "QWEN.md",
-    "REVIEW.md",
-    ".github/copilot-instructions.md",
-    ".serena/project.yml",
-}
 RUNTIME_IGNORED = {
     ".serena/.sync_marker",
     ".serena/.serena_sync_state.json",
@@ -155,7 +131,7 @@ def _analysis_from_changed_files(paths: list[str], state: dict[str, Any]) -> tup
 
 
 def _is_knowledge_path(path: str) -> bool:
-    return path in KNOWLEDGE_FILES or path.startswith(".aider") or any(path.startswith(prefix) for prefix in KNOWLEDGE_PREFIXES)
+    return any(path.startswith(prefix) for prefix in SERENA_KNOWLEDGE_PREFIXES)
 
 
 def _non_knowledge_paths(paths: list[str]) -> list[str]:
@@ -176,7 +152,7 @@ def _memory_candidates(head_short: str) -> tuple[int, bool, list[tuple[str, str]
     if not MEMORY_DIR.is_dir():
         return 0, False, []
 
-    memory_files = sorted(MEMORY_DIR.glob("*.md"))
+    memory_files = sorted(MEMORY_DIR.rglob("*.md"))
     memory_matches_head = False
     candidates: list[tuple[str, str]] = []
 
