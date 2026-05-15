@@ -13,6 +13,8 @@
 # Exit codes: 0 on success, non-zero on first failure.
 
 set -euo pipefail
+IFS=$'\n\t'
+unset CDPATH
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
@@ -111,6 +113,9 @@ if [ -f scripts/validate_skill_routing.py ]; then
 else
   echo "SKIP scripts/validate_skill_routing.py not yet present"
 fi
+
+step "Agent tools allowlist validation"
+python3 scripts/validate_agent_tools.py
 
 step "MCP runtime version drift"
 if [ -f scripts/check_mcp_runtime_versions.py ]; then
