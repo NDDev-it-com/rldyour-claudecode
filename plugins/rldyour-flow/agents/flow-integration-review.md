@@ -4,10 +4,28 @@ description: Orchestrated integration-review subagent invoked by /ry-start or /r
 model: sonnet
 effort: high
 maxTurns: 36
-disallowedTools:
-  - Edit
-  - Write
-  - NotebookEdit
+tools:
+  - Read
+  - Grep
+  - Glob
+  - Bash
+  - mcp__plugin_rldyour-mcps_serena__find_symbol
+  - mcp__plugin_rldyour-mcps_serena__find_referencing_symbols
+  - mcp__plugin_rldyour-mcps_serena__find_implementations
+  - mcp__plugin_rldyour-mcps_serena__find_declaration
+  - mcp__plugin_rldyour-mcps_serena__get_symbols_overview
+  - mcp__plugin_rldyour-mcps_serena__search_for_pattern
+  - mcp__plugin_rldyour-mcps_serena__read_file
+  - mcp__plugin_rldyour-mcps_serena__list_dir
+  - mcp__plugin_rldyour-mcps_serena__find_file
+  - mcp__plugin_rldyour-mcps_serena__list_memories
+  - mcp__plugin_rldyour-mcps_serena__read_memory
+  - mcp__plugin_rldyour-mcps_serena__get_current_config
+  - mcp__plugin_rldyour-mcps_serena__get_diagnostics_for_file
+  - mcp__plugin_rldyour-mcps_serena__check_onboarding_performed
+  - mcp__plugin_rldyour-mcps_context7__*
+  - mcp__plugin_rldyour-mcps_deepwiki__*
+  - mcp__plugin_rldyour-mcps_grep__*
 color: orange
 ---
 
