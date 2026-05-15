@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-15
-Last commit: bf54d02 chore(release): cut 0.1.6 with agent + shell + docs changes
+Last updated: 2026-05-16
+Last commit: eaccf59 chore(release): cut 0.1.7 (rldyour-flow 0.1.4, Wave 2 polish)
 Scope: Serena memory sync, hook gates, fullrepo lifecycle, MCP pins, validation harness, current implementation risks
 Area: TECHDEBT
 -->
@@ -35,6 +35,22 @@ Open technical debt, implementation mistakes already fixed, and anti-regression 
 - Mitigation in place: `flow-memory-sync` contract requires verifying claims against source files, tests, git history, and diff before writing; `scripts/smoke_serena_memory_taxonomy.sh` now asserts the high-value target families.
 - Prevention: treat analyzer output as first-pass scope only; code/config/tests at HEAD remain the source of truth.
 
+### R4. Non-Serena MCP wildcards rely on read-only-by-design invariant
+
+- Symptom: agent `tools:` allowlists in 7 read-only agents (6 flow reviewers + `ry-explore`) use wildcards `mcp__plugin_rldyour-mcps_{context7,deepwiki,grep,semgrep}__*` instead of explicit tool lists.
+- Impact: wildcards accept any future tool added to these servers. If context7/deepwiki/grep/semgrep upstream adds a write/edit/create tool, read-only agents silently inherit write capability — same confused-deputy class as the closed D15 (Serena wildcard).
+- Risk class: future-proofing / supply-chain.
+- Mitigation in place: `scripts/validate_agent_tools.py` enforces a `READ_ONLY_BY_DESIGN_MCPS` set; any wildcard for a server outside that set FAILS. The validator is wired into `scripts/validate_marketplace.sh`.
+- Prevention: when bumping `context7`, `deepwiki`, `grep`, `semgrep` runtime versions in `plugins/rldyour-mcps/.mcp.json`, inspect the new `tools/list` output (via `scripts/smoke_mcp_capabilities.sh`) and ensure no write-class tool names were added (`create_*`, `write_*`, `delete_*`, `modify_*`, `edit_*`, `replace_*`, `insert_*`, `rename_*`). If a write-class tool appears, remove the wildcard for that server and switch to an explicit read-only tool subset (the same pattern applied to Serena in D15).
+
+### R5. Agent-only worktree restore can silently revert in-progress memory edits
+
+- Symptom: `scripts/bootstrap_check.sh` and `scripts/smoke_fullrepo_sync.sh` call `fullrepo_sync.py --bootstrap-init`, which restores `.serena/memories/**` from `origin/fullrepo`. If memories were edited locally but not yet published via `fullrepo_sync.py --publish`, those local edits are silently overwritten back to remote state.
+- Impact: lost-work footgun. The user discovers the revert only by re-running `serena_memory_state.py` or noticing a missing R entry.
+- Risk class: process hygiene / tooling foot-gun.
+- Mitigation in place: documented in `.claude/CLAUDE.md` "Smoke-script footgun" section; verified live during Wave 2 (2026-05-15 R4 entry was overwritten by `bootstrap_check.sh` and re-applied).
+- Prevention: order operations correctly — (a) edit memories, (b) verify, (c) publish via `fullrepo_sync.py --publish`, (d) only then run bootstrap/smoke. Or run bootstrap/smoke first, then edit. Never sandwich memory edits between bootstrap and publish.
+
 ## Closed Debt And Anti-Regressions
 
 - D1. GitHub MCP entitlement trap: Copilot HTTP endpoint produced 403 in non-Copilot account class. Fixed by stdio `github-mcp-server` transport in `plugins/rldyour-mcps/.mcp.json`; keep HTTP 403 as failure in capability smoke.
@@ -53,6 +69,7 @@ Open technical debt, implementation mistakes already fixed, and anti-regression 
 - D14. Fullrepo-managed stale memory acknowledgement: fixed in `70c8d91`; `commit_serena_knowledge.sh` refuses stale ignored memories and uses `git status --porcelain -uall` so runtime-marker filtering sees individual files instead of collapsed directories.
 - D15. Serena MCP wildcard granted write tools to read-only reviewer/research agents: fixed in `cf781aa`; `mcp__plugin_rldyour-mcps_serena__*` wildcard in 7 agent `tools:` allowlists (6 reviewer agents + `ry-explore`) previously included `create_text_file`, `replace_content`, `replace_symbol_body`, `insert_after_symbol`, `insert_before_symbol`, `rename_symbol`, `safe_delete_symbol`, `write_memory`, `edit_memory`, `delete_memory`, `rename_memory`. Replaced with explicit 14-tool read-only subset (`find_symbol`, `find_referencing_symbols`, `find_implementations`, `find_declaration`, `get_symbols_overview`, `search_for_pattern`, `read_file`, `list_dir`, `find_file`, `list_memories`, `read_memory`, `get_current_config`, `get_diagnostics_for_file`, `check_onboarding_performed`). Eliminates confused-deputy / prompt-injection risk.
 - D16. Shell strict mode inconsistency: fixed in `56c616f`; gold-standard pattern (`set -euo pipefail` + `IFS=$'\n\t'` + `unset CDPATH`) was only present in `scripts/install-rldyour-marketplace.sh`. Now applied uniformly to 8 hook scripts in `plugins/rldyour-{flow,serena-mcp}/hooks/*.sh` + 3 helper scripts (`scripts/worktree_add.sh`, `scripts/bootstrap_check.sh`, `plugins/rldyour-flow/scripts/deploy_readiness.sh`). Verified by `bash -n` + `scripts/smoke_hooks.sh`; no functional change.
+- D17. Strict mode incomplete in utility and plugin scripts: fixed in Wave 2 (commits `5586c8b`+`b4234c2`); 14 additional scripts gained `IFS=$'\n\t'` + `unset CDPATH` after `set -euo pipefail` — 9 in `scripts/` (smoke_hooks, smoke_fullrepo_sync, smoke_mcp_capabilities, smoke_mcp_runtime, smoke_serena_memory_taxonomy, sync_fullrepo_branch, validate_marketplace, collect_diagnostics, install_local_git_hooks) and 5 plugin scripts (`plugins/rldyour-flow/scripts/{detect_project_checks,git_sync_audit,local_git_ai_guard}.sh`, `plugins/rldyour-lsps/scripts/install_lsps_brew.sh`, `plugins/rldyour-serena-mcp/scripts/commit_serena_knowledge.sh`). No functional change to any script.
 
 ## Error Patterns To Avoid
 

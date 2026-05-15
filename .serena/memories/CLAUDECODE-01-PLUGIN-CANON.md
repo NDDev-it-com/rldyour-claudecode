@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-15
-Last commit: bf54d02 chore(release): cut 0.1.6 with agent + shell + docs changes
+Last updated: 2026-05-16
+Last commit: eaccf59 chore(release): cut 0.1.7 (rldyour-flow 0.1.4, Wave 2 polish)
 Scope: .claude/CLAUDE.md, AGENTS.md, plugins/*/.claude-plugin/plugin.json, plugins/rldyour-mcps/.mcp.json, plugins/*/skills/*/SKILL.md, plugins/*/agents/*.md, plugins/*/hooks/hooks.json, plugins/rldyour-serena-mcp/scripts/analyze_sync_scope.py
 Area: CLAUDECODE
 -->
@@ -24,6 +24,7 @@ Current Claude Code plugin/runtime facts that this marketplace relies on. These 
 ## Current Behavior
 
 - `claude plugin validate` is the canonical manifest validator and is run through `scripts/validate_marketplace.sh`.
+- Agent `tools:` allowlist invariants are enforced by `scripts/validate_agent_tools.py` (added Wave 2, commit `b4234c2`), wired unconditionally into `scripts/validate_marketplace.sh` at line 117. The script enforces: (1) built-in tool names in `KNOWN_BUILTIN_TOOLS`; (2) MCP pattern `mcp__plugin_<plugin>_<server>__<tool>` references real plugins and servers; (3) wildcards (`__*`) for non-Serena MCP servers must be in `READ_ONLY_BY_DESIGN_MCPS` (`context7`, `deepwiki`, `grep`, `semgrep`); (4) `SERVERS_WITH_WRITE_TOOLS` (`serena`) must use explicit tool lists, not wildcards, in read-only agent frontmatter. This is the canonical deterministic enforcement point for the TECHDEBT-01-NOW R4 invariant.
 - Plugin manifests use SchemaStore `$schema` URLs, but Claude Code validates actual fields through its own plugin validator.
 - `dependencies` in `plugin.json` are plugin names. The repo enforces marketplace/manifest version alignment through `scripts/validate_plugin_versions.py`.
 - Skills are the primary routing surface; descriptions are Russian-leading with English triggers appended.

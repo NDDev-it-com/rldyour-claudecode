@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-15
-Last commit: bf54d02 chore(release): cut 0.1.6 with agent + shell + docs changes
+Last updated: 2026-05-16
+Last commit: eaccf59 chore(release): cut 0.1.7 (rldyour-flow 0.1.4, Wave 2 polish)
 Scope: plugins/rldyour-flow/**, scripts/worktree_add.sh, AGENTS.md, .claude/CLAUDE.md, plugins/rldyour-flow/scripts/fullrepo_sync.py
 Area: FLOW
 -->
@@ -25,7 +25,7 @@ rldyour-flow orchestration contracts for init/start/review/deploy workflows, rev
 
 - `ry-init` is read-only for memories by default. It may report memory candidates but must not write `.serena` unless explicitly requested or a stale-memory gate requires it.
 - `ry-start` lifecycle: init/context, research, plan, implement, verify, reviewer phase when applicable, and post-task sync.
-- `flow-post-task-sync` finalizes by refreshing memories/docs, running checks, committing/pushing normal branch changes, publishing `fullrepo`, and cleaning safe merged branches/worktrees.
+- `flow-post-task-sync` finalizes by refreshing memories/docs, running checks, committing/pushing normal branch changes, publishing `fullrepo`, and cleaning safe merged branches/worktrees. Step 1 (Serena memory freshness check) uses `python3 "$(git rev-parse --show-toplevel)"/plugins/rldyour-serena-mcp/scripts/serena_memory_state.py` — cwd-independent path required because the skill lives in `rldyour-flow` but the script is in `rldyour-serena-mcp`; `${CLAUDE_PLUGIN_ROOT}` is the wrong root here and `${CLAUDE_PROJECT_DIR}` is documented only for hook commands and stdio MCP env. Verified at `plugins/rldyour-flow/skills/flow-post-task-sync/SKILL.md` line 19 at HEAD.
 - Reviewer agents live in `plugins/rldyour-flow/agents/flow-*-review.md`; they are read-only and use an explicit `tools:` allowlist containing built-in read tools (`Read`, `Grep`, `Glob`, `Bash`) plus an explicit 14-tool read-only Serena subset and MCP wildcards for context7/deepwiki/grep. `flow-security-review` additionally allows `WebFetch`, `WebSearch`, and `mcp__plugin_rldyour-mcps_semgrep__*`. The previous `disallowedTools: [Edit, Write, NotebookEdit]` denylist is removed from reviewer agents; `flow-memory-sync` is the only agent retaining it as defence-in-depth (verified at `plugins/rldyour-flow/agents/flow-architecture-review.md` HEAD).
 - Fullrepo-managed repositories keep agent-only files out of `main` and publish them to `origin/fullrepo`.
 
@@ -39,7 +39,7 @@ rldyour-flow orchestration contracts for init/start/review/deploy workflows, rev
 
 ## Worktree Contract
 
-- `scripts/worktree_add.sh <branch> [path]` creates a worktree and then runs `fullrepo_sync.py --restore` in that worktree.
+- `scripts/worktree_add.sh <branch> [path]` creates a worktree and then runs `fullrepo_sync.py --restore` in that worktree. Branch name validation uses two gates: conservative regex `^[A-Za-z0-9._/-]{1,255}$` first, then `git check-ref-format --branch "${BRANCH}"` as a second gate to reject refs the regex accepts but git refuses (e.g., `-/foo`, double slash, path traversal). Verified at `scripts/worktree_add.sh` lines 75-80 at HEAD.
 - `RLDYOUR_WORKTREE_BASE_REF=HEAD` starts from local HEAD; default behavior follows origin/main freshness.
 - New worktrees must not symlink `.serena/` or `.claude/`; each worktree gets its own agent-only context copy.
 - SessionStart bootstrap restores from `origin/fullrepo` when canonical markers are missing.

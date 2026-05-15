@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-15
-Last commit: bf54d02 chore(release): cut 0.1.6 with agent + shell + docs changes
+Last updated: 2026-05-16
+Last commit: eaccf59 chore(release): cut 0.1.7 (rldyour-flow 0.1.4, Wave 2 polish)
 Scope: AGENTS.md, .claude/CLAUDE.md, plugins/rldyour-rules/skills/project-instructions-policy/SKILL.md, plugins/rldyour-flow/scripts/instruction_docs_state.py, scripts/validate_instruction_docs.py, plugins/rldyour-serena-mcp/scripts/analyze_sync_scope.py
 Area: DOCS
 -->

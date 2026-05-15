@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-15
-Last commit: bf54d02 chore(release): cut 0.1.6 with agent + shell + docs changes
+Last updated: 2026-05-16
+Last commit: eaccf59 chore(release): cut 0.1.7 (rldyour-flow 0.1.4, Wave 2 polish)
 Scope: .claude-plugin/marketplace.json, plugins/*/.claude-plugin/plugin.json, README.md, AGENTS.md
 Area: CORE
 -->
@@ -21,7 +21,7 @@ Current business logic and architecture of the `rldyour-claude` marketplace. The
 ## Current Behavior
 
 - The active catalog has nine plugins, verified from `.claude-plugin/marketplace.json` at HEAD: `rldyour-mcps`, `rldyour-explore`, `rldyour-serena-mcp`, `rldyour-security`, `rldyour-browser`, `rldyour-design`, `rldyour-lsps`, `rldyour-flow`, `rldyour-rules`.
-- Current per-plugin versions at HEAD: `rldyour-mcps` `0.1.3`; `rldyour-serena-mcp` `0.1.5`; `rldyour-flow` `0.1.3`; `rldyour-explore` `0.1.3`; `rldyour-security`, `rldyour-browser`, `rldyour-design`, `rldyour-lsps`, `rldyour-rules` all `0.1.2`. Overall VERSION `0.1.6`.
+- Current per-plugin versions at HEAD: `rldyour-mcps` `0.1.3`; `rldyour-serena-mcp` `0.1.5`; `rldyour-flow` `0.1.4`; `rldyour-explore` `0.1.3`; `rldyour-security`, `rldyour-browser`, `rldyour-design`, `rldyour-lsps`, `rldyour-rules` all `0.1.2`. Overall VERSION `0.1.7`. Verified from `.claude-plugin/marketplace.json` and `VERSION` at HEAD.
 - Component counts verified at HEAD: 32 skills, 9 slash commands, 8 subagents, and 2 plugin hook manifests.
 - The owner decides what is enabled. Repository docs state that nothing is treated as enabled or correct unless explicitly decided by the owner.
 

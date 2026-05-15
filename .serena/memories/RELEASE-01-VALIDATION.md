@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-15
-Last commit: bf54d02 chore(release): cut 0.1.6 with agent + shell + docs changes
+Last updated: 2026-05-16
+Last commit: eaccf59 chore(release): cut 0.1.7 (rldyour-flow 0.1.4, Wave 2 polish)
 Scope: VERSION, CHANGELOG.md, README.md, .claude-plugin/marketplace.json, plugins/*/.claude-plugin/plugin.json, scripts/validate_marketplace.sh, scripts/validate_plugin_versions.py, scripts/smoke_serena_memory_taxonomy.sh, docs/release-process.md
 Area: RELEASE
 -->
@@ -25,10 +25,10 @@ Versioning, changelog, validation, tagging, and release evidence contracts for t
 
 ## Current Behavior
 
-- Current release boundary at HEAD: `VERSION` is `0.1.6` (verified at `/VERSION`).
-- `rldyour-serena-mcp` is `0.1.5`; `rldyour-mcps` is `0.1.3`; `rldyour-flow` is `0.1.3`; `rldyour-explore` is `0.1.3`; `rldyour-security`, `rldyour-browser`, `rldyour-design`, `rldyour-lsps`, `rldyour-rules` are `0.1.2`. All verified from `.claude-plugin/marketplace.json` at HEAD.
-- `CHANGELOG.md` `[0.1.6] - 2026-05-15` documents: (1) 7 reviewer + ry-explore agents migrated from `disallowedTools` denylist to explicit `tools:` allowlist with 14-tool read-only Serena subset (security fix for confused-deputy risk); `rldyour-flow` + `rldyour-explore` bumped to `0.1.3`; (2) shell strict-mode harmonization (`IFS=$'\n\t'` + `unset CDPATH`) across 11 scripts; (3) instruction docs expansion (AGENTS.md new sections, CLAUDE.md skillListingBudgetFraction 0.03→0.04, agent frontmatter spec update); (4) hook count correction 3→4 for `rldyour-flow`; GitHub MCP rationale rephrased; CHANGELOG [0.1.1] typo `WORKTREE_BASE_REF` → `RLDYOUR_WORKTREE_BASE_REF` fixed.
-- `scripts/validate_marketplace.sh` is the broad local gate and includes `claude plugin validate`, JSON parse, Python AST, shell syntax, frontmatter checks, version consistency, instruction docs, routing policy, MCP runtime drift checks, and `scripts/smoke_serena_memory_taxonomy.sh`.
+- Current release boundary at HEAD: `VERSION` is `0.1.7` (verified at `/VERSION`).
+- `rldyour-serena-mcp` is `0.1.5`; `rldyour-mcps` is `0.1.3`; `rldyour-flow` is `0.1.4`; `rldyour-explore` is `0.1.3`; `rldyour-security`, `rldyour-browser`, `rldyour-design`, `rldyour-lsps`, `rldyour-rules` are `0.1.2`. All verified from `.claude-plugin/marketplace.json` at HEAD.
+- `CHANGELOG.md` `[0.1.7] - 2026-05-16` documents Wave 2 polish: (1) Tier 1 — `flow-post-task-sync` SKILL.md step 1 path replaced with `$(git rev-parse --show-toplevel)` (cwd-independent); new `scripts/validate_agent_tools.py` enforces agent `tools:` allowlist invariants (built-in names, MCP wildcard discipline, `READ_ONLY_BY_DESIGN_MCPS` set); TECHDEBT R4 and R5 added; (2) Tier 2 — 14 utility/plugin scripts gained `IFS=$'\n\t'` + `unset CDPATH`; `.github/workflows/validate.yml` extended with 3 new CI steps (Agent tools allowlist validation, Hook lifecycle smoke, Serena memory taxonomy smoke), no `fetch-depth: 0`; (3) Tier 3 — `scripts/worktree_add.sh` adds `git check-ref-format --branch` as second gate; `post_tool_use_commit_advice.sh` expands injection markers to 13+ families including Russian-language patterns, flags upgraded to `re.IGNORECASE | re.UNICODE`; (4) Tier 4 — `scripts/smoke_hooks.sh` new "runtime stdin payloads" step with 6 test cases; `scripts/bootstrap_check.sh` new "git pre-push hook (advisory)" step. Security: prompt-injection coverage gap closed (HIGH, conf 85); branch validation second gate (MEDIUM, conf 70). `rldyour-flow` bumped `0.1.3` → `0.1.4`; VERSION `0.1.6` → `0.1.7`.
+- `scripts/validate_marketplace.sh` is the broad local gate and includes `claude plugin validate`, JSON parse, Python AST, shell syntax, frontmatter checks, version consistency, instruction docs, routing policy, MCP runtime drift checks, "Agent tools allowlist validation" (via `scripts/validate_agent_tools.py`, unconditional), and `scripts/smoke_serena_memory_taxonomy.sh`. Verified at `scripts/validate_marketplace.sh` line 117 at HEAD.
 
 ## Contracts And Data
 
