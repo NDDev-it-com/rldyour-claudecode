@@ -40,9 +40,9 @@ jobs:
           done
 
   syntax-checks:
-    name: Python + shell + JSON syntax
+    name: Python + shell + JSON syntax + smoke
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 8
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -125,3 +125,12 @@ jobs:
 
       - name: Skill routing policy
         run: python3 scripts/validate_skill_routing.py
+
+      - name: Agent tools allowlist validation
+        run: python3 scripts/validate_agent_tools.py
+
+      - name: Hook lifecycle smoke
+        run: bash scripts/smoke_hooks.sh
+
+      - name: Serena memory taxonomy smoke
+        run: bash scripts/smoke_serena_memory_taxonomy.sh
