@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-15
-Last commit: aaaa0dd feat(serena-mcp): standardize memory taxonomy
+Last commit: bf54d02 chore(release): cut 0.1.6 with agent + shell + docs changes
 Scope: plugins/rldyour-mcps/.mcp.json, config/mcp-runtime-versions.env, scripts/check_mcp_runtime_versions.py, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.sh, AGENTS.md
 Area: MCP
 -->
@@ -39,7 +39,7 @@ MCP transport contracts for the marketplace. `rldyour-mcps` is the only plugin a
 ## Contracts And Data
 
 - All MCP server versions are pinned. Do not use `@latest` or unpinned `uvx --from` package specs.
-- GitHub MCP uses local stdio `github-mcp-server`, not the Copilot-gated HTTP endpoint. This was adopted after live HTTP 403 entitlement failure for the owner account class.
+- GitHub MCP uses local stdio `github-mcp-server` to keep the marketplace self-contained without dependence on the `api.githubcopilot.com/mcp/` HTTP endpoint. A standard GitHub PAT with `repo` + `read:org` scopes is sufficient; no Copilot subscription is required. Source: `plugins/rldyour-mcps/README.md` line 28 at HEAD.
 - `serena` uses `alwaysLoad: true` and `--context=agent`; it is eagerly loaded because Serena drives project understanding and UserPromptSubmit guidance.
 - Per-server `startup_timeout_sec` and `tool_timeout_sec` are not documented Claude Code `.mcp.json` keys and must not be added.
 - Runtime timeout control belongs to Claude Code env vars such as `MCP_TIMEOUT` and `MCP_TOOL_TIMEOUT`.

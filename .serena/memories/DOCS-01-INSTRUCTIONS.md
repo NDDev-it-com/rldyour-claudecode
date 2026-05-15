@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-15
-Last commit: 70c8d91 fix(serena-mcp): harden memory taxonomy gates
+Last commit: bf54d02 chore(release): cut 0.1.6 with agent + shell + docs changes
 Scope: AGENTS.md, .claude/CLAUDE.md, plugins/rldyour-rules/skills/project-instructions-policy/SKILL.md, plugins/rldyour-flow/scripts/instruction_docs_state.py, scripts/validate_instruction_docs.py, plugins/rldyour-serena-mcp/scripts/analyze_sync_scope.py
 Area: DOCS
 -->
@@ -36,6 +36,7 @@ Durable instruction-file policy for the repository: what belongs in `AGENTS.md`,
 
 - `AGENTS.md` should contain cross-tool facts: source-of-truth paths, plugin boundaries, validation/setup commands, SDLC routing, fullrepo policy, MCP transport summary, engineering constraints, and done criteria.
 - `.claude/CLAUDE.md` should contain Claude Code-specific facts: subagent matrix, hook lifecycle/canon, skill-listing budget, changelog adoption, diagnostics, and Claude-specific Don't/Done rules.
+- Current line counts at HEAD: `AGENTS.md` 184 lines; `.claude/CLAUDE.md` 180 lines (verified by `wc -l` at `bf54d02`). Both files declare a 200-line cap in HTML maintainer comments (stripped from Claude's context per CC v2.1.72).
 - Do not put secrets, chat transcripts, raw tokens, private cookies, or local credentials into instruction docs.
 - Do not store generic advice when a source path or command is more useful.
 - Memory taxonomy changes require updates to `AGENTS.md`, `.claude/CLAUDE.md`, `serena-memory-sync` skill, `flow-memory-sync` agent, and `CORE-01-INDEX.md`.

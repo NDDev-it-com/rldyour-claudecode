@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-15
-Last commit: 70c8d91 fix(serena-mcp): harden memory taxonomy gates
+Last commit: bf54d02 chore(release): cut 0.1.6 with agent + shell + docs changes
 Scope: VERSION, CHANGELOG.md, README.md, .claude-plugin/marketplace.json, plugins/*/.claude-plugin/plugin.json, scripts/validate_marketplace.sh, scripts/validate_plugin_versions.py, scripts/smoke_serena_memory_taxonomy.sh, docs/release-process.md
 Area: RELEASE
 -->
@@ -25,10 +25,9 @@ Versioning, changelog, validation, tagging, and release evidence contracts for t
 
 ## Current Behavior
 
-- Current release boundary at HEAD: `VERSION` is `0.1.5`.
-- `rldyour-serena-mcp` is `0.1.5` in both its `plugin.json` and marketplace entry.
-- `rldyour-mcps` remains `0.1.3`; other plugins remain `0.1.2`.
-- `CHANGELOG.md` contains `[0.1.5] - 2026-05-15` documenting the numbered Serena memory taxonomy, analyzer schema v2, Stop-hook guidance, recursive memory scan, runtime-marker filtering, fullrepo-managed stale refusal, instruction-only sync relevance, CLAUDECODE target mapping, and memory migration.
+- Current release boundary at HEAD: `VERSION` is `0.1.6` (verified at `/VERSION`).
+- `rldyour-serena-mcp` is `0.1.5`; `rldyour-mcps` is `0.1.3`; `rldyour-flow` is `0.1.3`; `rldyour-explore` is `0.1.3`; `rldyour-security`, `rldyour-browser`, `rldyour-design`, `rldyour-lsps`, `rldyour-rules` are `0.1.2`. All verified from `.claude-plugin/marketplace.json` at HEAD.
+- `CHANGELOG.md` `[0.1.6] - 2026-05-15` documents: (1) 7 reviewer + ry-explore agents migrated from `disallowedTools` denylist to explicit `tools:` allowlist with 14-tool read-only Serena subset (security fix for confused-deputy risk); `rldyour-flow` + `rldyour-explore` bumped to `0.1.3`; (2) shell strict-mode harmonization (`IFS=$'\n\t'` + `unset CDPATH`) across 11 scripts; (3) instruction docs expansion (AGENTS.md new sections, CLAUDE.md skillListingBudgetFraction 0.03→0.04, agent frontmatter spec update); (4) hook count correction 3→4 for `rldyour-flow`; GitHub MCP rationale rephrased; CHANGELOG [0.1.1] typo `WORKTREE_BASE_REF` → `RLDYOUR_WORKTREE_BASE_REF` fixed.
 - `scripts/validate_marketplace.sh` is the broad local gate and includes `claude plugin validate`, JSON parse, Python AST, shell syntax, frontmatter checks, version consistency, instruction docs, routing policy, MCP runtime drift checks, and `scripts/smoke_serena_memory_taxonomy.sh`.
 
 ## Contracts And Data

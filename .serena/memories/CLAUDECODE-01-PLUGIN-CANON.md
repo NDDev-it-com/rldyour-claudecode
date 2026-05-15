@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-15
-Last commit: 70c8d91 fix(serena-mcp): harden memory taxonomy gates
+Last commit: bf54d02 chore(release): cut 0.1.6 with agent + shell + docs changes
 Scope: .claude/CLAUDE.md, AGENTS.md, plugins/*/.claude-plugin/plugin.json, plugins/rldyour-mcps/.mcp.json, plugins/*/skills/*/SKILL.md, plugins/*/agents/*.md, plugins/*/hooks/hooks.json, plugins/rldyour-serena-mcp/scripts/analyze_sync_scope.py
 Area: CLAUDECODE
 -->
@@ -27,7 +27,7 @@ Current Claude Code plugin/runtime facts that this marketplace relies on. These 
 - Plugin manifests use SchemaStore `$schema` URLs, but Claude Code validates actual fields through its own plugin validator.
 - `dependencies` in `plugin.json` are plugin names. The repo enforces marketplace/manifest version alignment through `scripts/validate_plugin_versions.py`.
 - Skills are the primary routing surface; descriptions are Russian-leading with English triggers appended.
-- Plugin-shipped subagents use frontmatter for `model`, `effort`, `maxTurns`, `tools`, `disallowedTools`, and `color`.
+- Plugin-shipped subagents use frontmatter for `model`, `effort`, `maxTurns`, `tools`, `disallowedTools`, and `color`. The canonical pattern (per `anthropics/claude-plugins-official/plugins/pr-review-toolkit/agents/code-reviewer`) is an explicit `tools:` allowlist; `disallowedTools:` remains as defence-in-depth legacy (used by `flow-memory-sync` only). Verified at `plugins/rldyour-flow/agents/flow-architecture-review.md` and `plugins/rldyour-serena-mcp/agents/flow-memory-sync.md` at HEAD.
 - Hook exit code `2` is the blocking advisory path. Stop hooks in this repo use `exit 2` to force orchestrator action while avoiding direct high-blast-radius operations.
 - `analyze_sync_scope.py` targets `CLAUDECODE-01-PLUGIN-CANON.md` for plugin manifest, hook, skill, command, agent, marketplace-support, and agent-instruction changes.
 
@@ -36,10 +36,10 @@ Current Claude Code plugin/runtime facts that this marketplace relies on. These 
 - Minimum Claude Code compatibility floor is `v2.1.111+` for the `opus[1m]` extended-context syntax used by `ry-explore`; `[1m]` availability remains account/plan dependent.
 - Local verified Claude Code range in project instructions is `v2.1.111-v2.1.142`.
 - Claude Code hook canon recorded in `.claude/CLAUDE.md`: 29 events, five handler types (`command`, `http`, `mcp_tool`, `prompt`, `agent`), and hook hierarchy precedence.
-- Skill listing mitigation recorded in `.claude/CLAUDE.md`: `skillListingBudgetFraction: 0.03` and `skillListingMaxDescChars: 1536` in user settings.
+- Skill listing mitigation recorded in `.claude/CLAUDE.md`: `skillListingBudgetFraction: 0.04` and `skillListingMaxDescChars: 1536` in user settings. `0.04` (4%) is chosen over the Anthropic/claudekit-cli baseline `0.03` to accommodate bilingual Russian-leading + English-triggers descriptions averaging ~400 chars per entry across 32 skills (verified in `.claude/CLAUDE.md` line 82 at HEAD).
 - `claude plugin tag --push` uses `<plugin-name>--v<version>` tag convention and refuses dirty worktrees or pre-existing tags.
 - `claude plugin details <name>` is available from v2.1.139+; v2.1.142 adds LSP visibility.
-- Official Claude Code MCP docs still show the GitHub remote MCP endpoint as an example; this repository uses stdio `github-mcp-server` as a local policy because live verification found Copilot entitlement 403 for the owner account class.
+- Official Claude Code MCP docs still show the GitHub remote MCP endpoint as an example; this repository uses local stdio `github-mcp-server` to keep the marketplace self-contained without dependence on `api.githubcopilot.com/mcp/`. A standard GitHub PAT with `repo` + `read:org` scopes is sufficient; no Copilot subscription is required. Rationale source: `plugins/rldyour-mcps/README.md` line 28 at HEAD.
 
 ## Invariants
 

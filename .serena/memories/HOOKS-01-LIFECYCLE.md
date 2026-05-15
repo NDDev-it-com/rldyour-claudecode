@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-15
-Last commit: 70c8d91 fix(serena-mcp): harden memory taxonomy gates
+Last commit: bf54d02 chore(release): cut 0.1.6 with agent + shell + docs changes
 Scope: plugins/rldyour-serena-mcp/hooks/hooks.json, plugins/rldyour-serena-mcp/hooks/*.sh, plugins/rldyour-flow/hooks/hooks.json, plugins/rldyour-flow/hooks/*.sh, scripts/smoke_hooks.sh, scripts/smoke_serena_memory_taxonomy.sh, .claude/CLAUDE.md, AGENTS.md
 Area: HOOKS
 -->
@@ -42,6 +42,7 @@ Claude Code hook lifecycle and coordination contract between Serena freshness ga
 - `session_start_worktree_bootstrap.sh` is the only bounded mutating hook; it runs `fullrepo_sync.py --restore`, never `--publish` and never touches origin.
 - `mark_sync_required.sh` treats agent-instruction paths as sync-relevant and writes `.serena/.serena_sync_state.json` with `required=true` when those paths changed.
 - `stop_memory_sync.sh` includes taxonomy guidance without shell backticks in the Bash string, avoiding command-substitution side effects in advisory messages.
+- All 8 hook scripts (`plugins/rldyour-{flow,serena-mcp}/hooks/*.sh`) and 3 helper scripts (`scripts/worktree_add.sh`, `scripts/bootstrap_check.sh`, `plugins/rldyour-flow/scripts/deploy_readiness.sh`) use full strict mode: `set -euo pipefail` + `IFS=$'\n\t'` + `unset CDPATH`. Pattern matches gold-standard in `scripts/install-rldyour-marketplace.sh`. Verified by `bash -n` + `scripts/smoke_hooks.sh` at HEAD (commit `56c616f`).
 
 ## Coordination Sequence
 

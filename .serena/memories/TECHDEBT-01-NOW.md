@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-15
-Last commit: 70c8d91 fix(serena-mcp): harden memory taxonomy gates
+Last commit: bf54d02 chore(release): cut 0.1.6 with agent + shell + docs changes
 Scope: Serena memory sync, hook gates, fullrepo lifecycle, MCP pins, validation harness, current implementation risks
 Area: TECHDEBT
 -->
@@ -51,6 +51,8 @@ Open technical debt, implementation mistakes already fixed, and anti-regression 
 - D12. Docs-only Serena contract drift: fixed in `70c8d91`; `rldyour-serena-mcp` docs/references target `SERENA-01-MEMORY-SYNC.md`, `HOOKS-01-LIFECYCLE.md`, and `CORE-02-MARKETPLACE.md`.
 - D13. Untested taxonomy edge cases: fixed in `70c8d91` with `scripts/smoke_serena_memory_taxonomy.sh`, wired into `scripts/validate_marketplace.sh`.
 - D14. Fullrepo-managed stale memory acknowledgement: fixed in `70c8d91`; `commit_serena_knowledge.sh` refuses stale ignored memories and uses `git status --porcelain -uall` so runtime-marker filtering sees individual files instead of collapsed directories.
+- D15. Serena MCP wildcard granted write tools to read-only reviewer/research agents: fixed in `cf781aa`; `mcp__plugin_rldyour-mcps_serena__*` wildcard in 7 agent `tools:` allowlists (6 reviewer agents + `ry-explore`) previously included `create_text_file`, `replace_content`, `replace_symbol_body`, `insert_after_symbol`, `insert_before_symbol`, `rename_symbol`, `safe_delete_symbol`, `write_memory`, `edit_memory`, `delete_memory`, `rename_memory`. Replaced with explicit 14-tool read-only subset (`find_symbol`, `find_referencing_symbols`, `find_implementations`, `find_declaration`, `get_symbols_overview`, `search_for_pattern`, `read_file`, `list_dir`, `find_file`, `list_memories`, `read_memory`, `get_current_config`, `get_diagnostics_for_file`, `check_onboarding_performed`). Eliminates confused-deputy / prompt-injection risk.
+- D16. Shell strict mode inconsistency: fixed in `56c616f`; gold-standard pattern (`set -euo pipefail` + `IFS=$'\n\t'` + `unset CDPATH`) was only present in `scripts/install-rldyour-marketplace.sh`. Now applied uniformly to 8 hook scripts in `plugins/rldyour-{flow,serena-mcp}/hooks/*.sh` + 3 helper scripts (`scripts/worktree_add.sh`, `scripts/bootstrap_check.sh`, `plugins/rldyour-flow/scripts/deploy_readiness.sh`). Verified by `bash -n` + `scripts/smoke_hooks.sh`; no functional change.
 
 ## Error Patterns To Avoid
 

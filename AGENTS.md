@@ -4,7 +4,7 @@ Personal Claude Code plugin marketplace by `rldyourmnd`. The repository ships ni
 
 This `AGENTS.md` is the concise root project-instruction file for any AI agent working in this repository — cross-tool standard governed by the Linux Foundation Agentic AI Foundation (AAIF) since 2025-12-09 (see https://agents.md/). The deep Claude Code-native memory lives in `./.claude/CLAUDE.md` and contains subagent matrix, hook canon, skill-listing budget, frontmatter conventions, and Don't/Done rules that other AI tools don't need.
 
-<!-- Maintainer note (HTML comments are not parsed by most AI tools): Anthropic's claude-plugins-official ships only a 53-line README.md — no CLAUDE.md, no AGENTS.md. Our two-file split is justified by cross-tool ambition (AGENTS.md is read by 25+ tools as of May 2026) plus Claude Code-deep specifics. Keep this file under 180 lines (was 150 before the worktree workflow section landed in 2026-05-12). -->
+<!-- Maintainer note (HTML comments are not parsed by most AI tools): Anthropic's claude-plugins-official marketplace ships `.claude-plugin/marketplace.json` + 8+ first-party plugins (pr-review-toolkit, feature-dev, hookify, ralph-loop, security-guidance, plugin-dev, etc.) but no root AGENTS.md or CLAUDE.md (verified 2026-05-15). Our two-file split is justified by cross-tool ambition (AGENTS.md is read by 30+ tools / 60k+ repos per agents.md spec, May 2026) plus Claude Code-deep specifics. Both files dual-purpose: full information for each agent class, no `@import` redirection. Keep this file under 200 lines. -->
 
 
 ## Source Of Truth
@@ -24,7 +24,7 @@ This `AGENTS.md` is the concise root project-instruction file for any AI agent w
 plugins/
   rldyour-mcps/        # transport — 13 pinned MCP servers (.mcp.json)
   rldyour-serena-mcp/  # Serena workflow + memory sync + 4 lifecycle hooks
-  rldyour-flow/        # ry-init/start/newp/review/deploy + 6 reviewer agents + 3 hooks + 7 scripts
+  rldyour-flow/        # ry-init/start/newp/review/deploy + 6 reviewer agents + 4 hooks + 7 scripts
   rldyour-explore/     # ry-explore agent (opus[1m], max effort) + tech/web research skills
   rldyour-security/    # owasp-top-10-implementation + ry-sec-review
   rldyour-browser/     # browser-validation/debug/tool-routing (skills-only)
@@ -41,6 +41,10 @@ plugins/
 - Only `rldyour-flow` and `rldyour-serena-mcp` declare `hooks.json`. No other plugin attaches Claude Code lifecycle hooks.
 - One domain per plugin. No catch-all plugins. Cross-plugin overlap is forbidden.
 - `rldyour-design` and `rldyour-browser` are skills-only and use Figma/shadcn/Playwright/Chrome DevTools transport from `rldyour-mcps`; `rldyour-design` also depends on `rldyour-browser` for validation routing.
+
+## Codex CLI Compatibility
+
+OpenAI Codex CLI reads this `AGENTS.md` before starting work. Codex layers configuration: global `~/.codex/AGENTS.md` plus repository-level files concatenated from root down — files closer to the active directory override earlier guidance. Codex is trained to run any test/quality commands explicitly listed in `AGENTS.md` before finishing a task; the **Validation And Setup** section below is the deterministic command set Codex (and Claude Code, and any other AI agent) should run to verify a change. This repo has no nested `AGENTS.md` files. Spec source: `https://agents.md/` — Linux Foundation Agentic AI Foundation since 2025-12-09. Codex-specific source: `https://developers.openai.com/codex/guides/agents-md`.
 
 ## Validation And Setup
 
@@ -64,7 +68,7 @@ Five orchestrated lifecycle skills live in `rldyour-flow`. Each has a Russian-le
 - `/rldyour-flow:ry-review` — report-only deep review with reviewer tracks (architecture/quality/consistency/integration/verification/security).
 - `/rldyour-flow:ry-deploy` — deploy with local↔GitHub↔server sync, log checks, fix-forward, docs/git finalization.
 
-Reviewer subagents live in `plugins/rldyour-flow/agents/flow-*-review.md`. All run on `model: sonnet`, `effort: high`, `maxTurns: 36` (security: `42`), with `disallowedTools: [Edit, Write, NotebookEdit]` and distinct colors (architecture: blue, quality: green, consistency: purple, integration: orange, verification: pink, security: red). They are read-only and self-contained. Generous `maxTurns` is intentional — MCP-heavy toolsets consume turns on tool plumbing.
+Reviewer subagents live in `plugins/rldyour-flow/agents/flow-*-review.md`. All run on `model: sonnet`, `effort: high`, `maxTurns: 36` (security: `42`), with explicit `tools` allowlist (`Read`, `Grep`, `Glob`, `Bash` + Serena/Context7/DeepWiki/Grep MCP wildcards; `flow-security-review` adds `WebFetch`, `WebSearch`, Semgrep MCP for CVE lookups and SAST) and distinct colors (architecture: blue, quality: green, consistency: purple, integration: orange, verification: pink, security: red). They are read-only and self-contained — explicit allowlist isolates them from any future edit-like tool Claude Code might add. Generous `maxTurns` is intentional — MCP-heavy toolsets consume turns on tool plumbing.
 
 ## Hooks Lifecycle
 
@@ -153,7 +157,8 @@ Current dependency graph:
 
 ## Engineering Constraints
 
-- Russian user-facing language; English repository artifacts (skill descriptions are Russian-leading).
+- Russian user-facing language; English repository artifacts (skill descriptions are Russian-leading with `EN triggers:` appended for cross-language LLM routing).
+- Bilingual skill description pattern is a personal-marketplace UX innovation, not Anthropic canon (verified unique in production via 2026-05-15 audit). Token cost is ~1.5-2× pure-English; budget set via `skillListingBudgetFraction: 0.04` recommendation in `./.claude/CLAUDE.md`.
 - Quality-first: no hacks, no fake checks, no swallowed errors. See `plugins/rldyour-rules/skills/quality-first-engineering/SKILL.md`.
 - Plugin boundary discipline: see `plugins/rldyour-rules/skills/architecture-boundaries/SKILL.md`.
 - Dependency policy: latest-compatible, source-backed, SLSA Level 2, SBOM and lockfile discipline. See `plugins/rldyour-rules/references/dependency-policy.md`.
@@ -169,5 +174,11 @@ Current dependency graph:
 - `fullrepo` is republished after any agent-only change.
 - Conventional commits for source/docs/Serena knowledge are kept separate when it improves history clarity.
 - Pre-existing reviewer subagents and skills referenced by new components actually exist on disk.
+
+## Cross-Tool Support
+
+`AGENTS.md` is the cross-tool agent-instruction standard (Linux Foundation AAIF, 60k+ adopting repos, 30+ supported tools per `https://agents.md/` as of May 2026): Claude Code, OpenAI Codex CLI, GitHub Copilot, Cursor, Aider, Devin, VS Code agents, JetBrains AI, Continue, Windsurf, Roo, OpenHands, Gemini Code Assist, Qwen Code, and others. This file contains every cross-tool fact needed to work on this marketplace: source-of-truth manifests, plugin boundaries, validation commands, SDLC workflow, hook lifecycle, worktree contract, fullrepo policy, MCP transport, cross-plugin dependencies, tool routing, engineering constraints, and done criteria.
+
+Claude Code-specific deep memory (subagent matrix, hook canon details, skill-listing budget tuning, Claude Code changelog adoption, `/mcp`/`/hooks`/`/memory`/`/doctor` diagnostics, Claude-specific Don't/Done rules) lives in `./.claude/CLAUDE.md`. Both files are intentionally dual-source — no `@import` redirection — so each agent class loads only the relevant context without indirection. The split is verified consistent on every meaningful change wave through `python3 plugins/rldyour-flow/scripts/instruction_docs_state.py --json` and the `instruction-docs-sync` skill.
 
 <!-- Living-doc note: when discovering a non-obvious project fact during work that another AI tool would also need (cross-tool concern), propose an AGENTS.md edit in the same change. Don't auto-generate. Claude Code-specific facts (skill listing, hook canon, subagent matrix) belong in ./.claude/CLAUDE.md instead. -->

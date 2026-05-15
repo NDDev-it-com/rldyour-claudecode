@@ -9,7 +9,7 @@ Personal Claude Code plugin marketplace by `rldyourmnd`. Cross-tool overview, so
 ```
 rldyour-mcps         transport     0 skills • 0 cmds • 0 agents • 0 hooks  • .mcp.json (13 pinned servers)
 rldyour-serena-mcp   semantic      2 skills • 0 cmds • 1 agent  • 4 hooks
-rldyour-flow         SDLC          7 skills • 5 cmds • 6 agents • 3 hooks  • 7 scripts • 7 references
+rldyour-flow         SDLC          7 skills • 5 cmds • 6 agents • 4 hooks  • 7 scripts • 7 references
 rldyour-explore      research      2 skills • 1 cmd  • 1 agent  • 0 hooks
 rldyour-security     security      2 skills • 1 cmd  • 0 agents • 0 hooks
 rldyour-browser      browser       3 skills • 0 cmds • 0 agents • 0 hooks
@@ -34,7 +34,7 @@ Required fields for plugin-shipped subagents: `name`, `description`. Plugin-ship
 | flow-security-review | sonnet | high | 42 | red | defensive auth/authz/secrets/injection |
 | ry-explore | opus[1m] | max | 90 | cyan | deep multi-source research, `context: fork` |
 
-All reviewer agents declare `disallowedTools: [Edit, Write, NotebookEdit]` (read-only). Generous `maxTurns` (×3 of naive limit) compensates MCP-rich toolsets that consume turns on tool plumbing — Serena + Context7 + DeepWiki + Grep eat 5-8 turns before useful work begins.
+All reviewer agents declare explicit `tools:` allowlist (`Read`, `Grep`, `Glob`, `Bash`, plus `mcp__plugin_rldyour-mcps_serena__*`, `mcp__plugin_rldyour-mcps_context7__*`, `mcp__plugin_rldyour-mcps_deepwiki__*`, `mcp__plugin_rldyour-mcps_grep__*`) for future-proof read-only enforcement. `flow-security-review` additionally allows `WebFetch`, `WebSearch`, `mcp__plugin_rldyour-mcps_semgrep__*` for CVE lookups and SAST. `ry-explore` uses the same allowlist pattern. Pattern follows canonical `anthropics/claude-plugins-official/plugins/pr-review-toolkit/agents/code-reviewer` (explicit allowlist), not the older `disallowedTools` denylist — explicit positive intent isolates reviewers from future tool additions. Generous `maxTurns` (×3 of naive limit) compensates MCP-rich toolsets that consume turns on tool plumbing — Serena + Context7 + DeepWiki + Grep eat 5-8 turns before useful work begins.
 
 | flow-memory-sync (rldyour-serena-mcp) | sonnet | high | 36 | yellow | fact-only Serena memory sync, invoked by orchestrator when Stop hook advisory triggers |
 
@@ -74,12 +74,12 @@ User-side fix in `~/.claude/settings.json`:
 
 ```json
 {
-  "skillListingBudgetFraction": 0.03,
+  "skillListingBudgetFraction": 0.04,
   "skillListingMaxDescChars": 1536
 }
 ```
 
-Both keys added in CC v2.1.129+. `skillListingBudgetFraction` is a decimal fraction in `(0, 1]`. Runtime override: `SLASH_COMMAND_TOOL_CHAR_BUDGET` env var (raw chars). `skillOverrides` map (`"on" | "name-only" | "user-invocable-only" | "off"`) does **not** affect plugin-shipped skills — manage those through `/plugin`.
+Both keys added in CC v2.1.129+. `skillListingBudgetFraction` is a decimal fraction in `(0, 1]`. Runtime override: `SLASH_COMMAND_TOOL_CHAR_BUDGET` env var (raw chars). `skillOverrides` map (`"on" | "name-only" | "user-invocable-only" | "off"`) does **not** affect plugin-shipped skills — manage those through `/plugin`. The `0.04` (4%) value is bumped above the claudekit-cli baseline `0.03` (verified 2026-05-15) because our bilingual Russian-leading + English-triggers description format averages ~400 chars per entry vs ~250 for pure-English plugins; at 32 skills our total skill-listing token cost is ~12.8K chars and `0.03` of 200K-token Sonnet sessions truncates tail-end auto-trigger descriptions. `opus[1m]` 1M-token sessions have room at 0.03 too, but 0.04 covers both cases.
 
 Plugin-side levers used in this repo:
 - `disable-model-invocation: true` on `skills/ry-deploy/SKILL.md` and `skills/ry-newp/SKILL.md` — slash-only, freeing budget for auto-triggered skills.
@@ -93,13 +93,25 @@ Hierarchy precedence (highest → lowest): managed policy → plugin hooks (forc
 
 Per Anthropic guidance: put guardrails in hooks, not in CLAUDE.md prose. CLAUDE.md is delivered as a user message after the system prompt — it is context, not enforced configuration.
 
+## Anthropic Precedent Confirmations
+
+Patterns verified against `anthropics/claude-plugins-official` snapshot `1a2f18b05cf5652fd25403e8d229fc884fb84103` and `code.claude.com/docs` v2.1.142 (audit 2026-05-15):
+
+- **Parallel reviewer subagents** — direct precedent in `pr-review-toolkit/agents/` (6 specialized review agents: `code-reviewer`, `code-simplifier`, `comment-analyzer`, `pr-test-analyzer`, `silent-failure-hunter`, `type-design-analyzer`). README explicitly endorses parallel dispatch: *"Parallel (faster): 'Run pr-test-analyzer and comment-analyzer in parallel'"*. Our 6-track + security matrix (7 reviewers total) is on the deep end of this pattern.
+- **`tools:` explicit allowlist for read-only agents** — canonical in `pr-review-toolkit/code-reviewer.md` (`tools: Glob, Grep, LS, Read, NotebookRead, WebFetch, TodoWrite, WebSearch, KillShell, BashOutput`) and all 4 examples in `plugin-dev/skills/agent-development/examples/complete-agent-examples.md`. Migration `disallowedTools` → `tools` allowlist isolates from future Claude Code additions.
+- **Stop hook `stop_hook_active` loop guard** — dictated verbatim by `code.claude.com/docs/en/hooks-guide`. Our `stop_post_task_sync.sh` and `stop_memory_sync.sh` implement it + add fingerprint marker for sub-fingerprint precision.
+- **Bare shell-form `bash ${CLAUDE_PLUGIN_ROOT}/...`** — none of Anthropic's own 4+ plugin `hooks.json` files migrated to v2.1.139 `args: string[]` exec-form. Shell-form remains canonical for shell scripts.
+- **Stop hook advisory-gate pattern** — production-grade pattern in `bitwarden/server`, `MemPalace/mempalace`, `mem0ai/mem0`, `iamfakeguru/agent-md`, `yohey-w/multi-agent-shogun`. Our `flow_post_task_state.py` + structured fingerprint is the cleaner variant.
+- **`alwaysLoad: true` for critical-path MCP servers** — community pattern in `tractorjuice/arc-kit`, `OMARVII/claude-alloy`, `darkroomengineering/cc-settings`. Our restraint (only `serena`) is appropriate scoping.
+- **Tag convention `<plugin-name>--v<version>`** — Anthropic-canonical via `claude plugin tag --push` (docs `code.claude.com/docs/en/plugin-dependencies`). Anthropic's own plugins-official marketplace doesn't apply tags yet, but the documented convention is the canonical one.
+
 ## Changelog Adoption (v2.1.133 → v2.1.142)
 
 Verified against `code.claude.com/docs/en/changelog` for v2.1.133-v2.1.142 on 2026-05-15. Current local CC: **v2.1.142** (`$(which claude) --version`).
 
 Adopted:
 - v2.1.128 — per-entry skill description cap `1,536` chars, used by all 32 skills.
-- v2.1.129 — `skillListingBudgetFraction: 0.03` in user settings; `experimental.{themes,monitors}` wrapper available (we declare neither).
+- v2.1.129 — `skillListingBudgetFraction` added in user settings (Anthropic + claudekit-cli baseline is `0.03`; this repo recommends `0.04` — see Skill Listing Budget section above for the bilingual-description rationale); `experimental.{themes,monitors}` wrapper available (we declare neither).
 - v2.1.121 — `alwaysLoad: true` on `serena` MCP server.
 - v2.1.119 — `claude plugin tag --push` for release tagging (canonical, `<plugin>--v<version>`).
 - v2.1.x — `SessionStart` + `WorktreeRemove`/`WorktreeCreate` worktree workflow (added 2026-05-12): `hooks/session_start_worktree_bootstrap.sh` auto-restores agent-only files into a fresh worktree via `fullrepo_sync.py --restore`. `WorktreeCreate` is intentionally NOT used because the worktree path does not yet exist on disk when that event fires — `SessionStart` in the new worktree session is the correct injection point. `scripts/worktree_add.sh` covers the manual `git worktree add` flow with bootstrap baked in.
@@ -110,7 +122,7 @@ Available, not adopted:
 - v2.1.142 added `claude agents` flags (`--add-dir`, `--settings`, `--mcp-config`, `--plugin-dir`, `--permission-mode`, `--model`, `--effort`, `--dangerously-skip-permissions`) and made fast mode default to Opus 4.7.
 - v2.1.142 fixed `MCP_TOOL_TIMEOUT` behavior for HTTP/SSE servers so per-request timeout applies to all MCP calls.
 - v2.1.141 `claude agents --cwd <path>` and `terminalSequence` hook field were added; hook and daemon regressions were fixed.
-- v2.1.139 hook `args: string[]` exec-form (spawns without shell) — all 8 hooks consistently use bare `command: bash ${CLAUDE_PLUGIN_ROOT}/...` form; migrating only one would diverge style without fixing any quoting bug.
+- v2.1.139 hook `args: string[]` exec-form (spawns without shell) — all 8 hooks consistently use bare `command: bash ${CLAUDE_PLUGIN_ROOT}/...` form; verified 2026-05-15 that none of Anthropic's own plugin `hooks.json` migrated to exec-form either (Hookify, Ralph Loop, Security Guidance all use shell-form). Anthropic docs recommend exec-form only when paths contain spaces/special chars — irrelevant for `${CLAUDE_PLUGIN_ROOT}` expansion.
 - v2.1.139 `PostToolUse` `continueOnBlock: true` — our PostToolUse hooks are advisory-only (`exit 0` always), nothing to "block on".
 - v2.1.139 stdio MCP env receives `${CLAUDE_PROJECT_DIR}` — no current server needs project-root context.
 - v2.1.139 `claude plugin details <name>` — diagnostic only (see AGENTS.md Validation And Setup).
@@ -127,7 +139,7 @@ Capability smoke (added 2026-05-12): `scripts/smoke_mcp_capabilities.sh` perform
 
 - Russian user-facing communication; English repository artifacts. Skill `description` fields are Russian-leading (English keywords appended).
 - Skill frontmatter: `name`, `description` (recommended). Optional: `when_to_use`, `argument-hint`, `allowed-tools`, `disable-model-invocation`, `user-invocable`, `model`, `effort`, `paths`, `context: fork`, `agent`.
-- Agent frontmatter: `name`, `description`, `model`, `effort`, `maxTurns`, `disallowedTools`, `color`. Optional: `tools`, `skills`, `memory`, `background`, `isolation`, `initialPrompt`.
+- Agent frontmatter: `name`, `description`, `model`, `effort`, `maxTurns`, `color`. Tool access: prefer explicit `tools:` allowlist (canonical Anthropic pattern, used by all 6 flow reviewer agents + ry-explore for future-proof read-only enforcement); `disallowedTools:` denylist is legacy and still works (used by `flow-memory-sync` which has narrow Serena memory MCP needs). Optional: `skills`, `memory`, `background`, `isolation`, `initialPrompt`.
 - `model: opus[1m]` is the canonical bracketed form for Opus 4.7 1M context (used by `ry-explore`); requires CC **v2.1.111+**.
 - `model: sonnet` is the canonical short form for reviewer subagents.
 - Slash command frontmatter: `description`, `argument-hint`, optional `context: fork` and `agent: <name>`. Bare `model:` on a slash command is silently ignored without `context: fork` — pair them or delegate via `agent:`.

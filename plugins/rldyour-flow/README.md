@@ -6,7 +6,7 @@ SDLC orchestrator. The biggest plugin in the marketplace — owns slash commands
 
 - `7` skills: `ry-init`, `ry-start`, `ry-newp`, `ry-review`, `ry-deploy`, `flow-post-task-sync`, `instruction-docs-sync`.
 - `5` slash commands: `/rldyour-flow:ry-init`, `/rldyour-flow:ry-start`, `/rldyour-flow:ry-newp`, `/rldyour-flow:ry-review`, `/rldyour-flow:ry-deploy`.
-- `6` reviewer subagents (all `model: sonnet`, `effort: high`, `disallowedTools: [Edit, Write, NotebookEdit]`):
+- `6` reviewer subagents (all `model: sonnet`, `effort: high`, explicit `tools:` allowlist with only read-only Serena tools + Read/Grep/Glob/Bash + Context7/DeepWiki/Grep MCPs — no Edit/Write/NotebookEdit, no Serena write tools):
 
   | Agent | maxTurns | color | track |
   |---|---|---|---|
@@ -17,7 +17,7 @@ SDLC orchestrator. The biggest plugin in the marketplace — owns slash commands
   | `flow-verification-review` | 36 | pink | tests, LSP, browser/server evidence |
   | `flow-security-review` | 42 | red | defensive auth/authz/secrets/injection (+6 turns for variant-hunt) |
 
-- `3` hooks: `SessionStart` (state advisory), `PostToolUse:Bash` (commit advice — Conventional Commits, sensitive paths, agent-only paths), `Stop` (post-task-sync gate).
+- `4` hooks: `SessionStart` (worktree bootstrap + state advisory — two registered scripts), `PostToolUse:Bash` (commit advice — Conventional Commits, sensitive paths, agent-only paths), `Stop` (post-task-sync gate).
 - `7` scripts: `fullrepo_sync.py`, `flow_post_task_state.py`, `instruction_docs_state.py`, `git_sync_audit.sh`, `detect_project_checks.sh`, `deploy_readiness.sh`, `local_git_ai_guard.sh`.
 - `7` references: `flow-lifecycle.md`, `init-context-pack.md`, `context-sufficiency-gate.md`, `reviewer-protocol.md`, `post-task-sync.md`, `deploy-contract.md`, `sources.md`.
 

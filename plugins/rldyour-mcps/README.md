@@ -25,7 +25,7 @@ stdio servers pinned with `==X.Y.Z` (uvx) or `@X.Y.Z` (bunx). HTTP servers pinne
 
 - `serena` server has `alwaysLoad: true` (CC v2.1.121+) — eager startup because Serena drives every UserPromptSubmit hook. Other servers are deferred until first tool call.
 - Per-server `startup_timeout_sec` / `tool_timeout_sec` keys are NOT in the documented Claude Code `.mcp.json` schema — silently ignored. Use env vars `MCP_TIMEOUT`, `MCP_TOOL_TIMEOUT`, `MCP_CONNECTION_NONBLOCKING` instead.
-- `github` server uses local stdio transport (`github-mcp-server stdio --toolsets=repos,issues,pull_requests,users,context`) with `GITHUB_PERSONAL_ACCESS_TOKEN` in env. This avoids Copilot entitlement checks required by the legacy HTTP endpoint and works with a standard GitHub PAT.
+- `github` server uses local stdio transport (`github-mcp-server stdio --toolsets=repos,issues,pull_requests,users,context`) with `GITHUB_PERSONAL_ACCESS_TOKEN` in env. This keeps the marketplace self-contained without dependence on the `api.githubcopilot.com/mcp/` HTTP endpoint and works with a standard GitHub PAT (`repo` + `read:org` scopes are sufficient; no Copilot subscription required).
 - Since CC v2.1.142, stdio MCP servers receive `${CLAUDE_PROJECT_DIR}` in their environment. No server in this manifest currently consumes it; reference it in `env` or `args` only when a future server genuinely needs the active project root.
 
 ## Dependencies
