@@ -27,7 +27,7 @@
       "name": "rldyour-explore",
       "source": "./plugins/rldyour-explore",
       "description": "Скиллы технического и веб-исследования + ry-explore субагент глубокого анализа (Opus 4.7 1M, max effort) через Context7/DeepWiki/Grep MCP. /ry-explore slash command included.",
-      "version": "0.1.2",
+      "version": "0.1.3",
       "author": {
         "name": "rldyourmnd"
       },
@@ -99,7 +99,7 @@
       "name": "rldyour-flow",
       "source": "./plugins/rldyour-flow",
       "description": "Автономный SDLC-воркфлоу: ry-init/start/newp/review/deploy + 6 reviewer subagents + post-task-sync + instruction-docs-sync. Хуки SessionStart/PreToolUse/Stop. Fullrepo branch.",
-      "version": "0.1.2",
+      "version": "0.1.3",
       "author": {
         "name": "rldyourmnd"
       },
