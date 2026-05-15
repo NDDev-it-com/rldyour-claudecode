@@ -16,7 +16,7 @@ Deep multi-source research workflows.
 
 ## Min Claude Code version
 
-`v2.1.111+` for `model: opus[1m]` bracketed extended-context syntax. Earlier versions silently ignore the `[1m]` suffix.
+`v2.1.111+` for this repository's `CLAUDE_CODE_MIN_VERSION` compatibility floor. Availability of `[1m]` variants remains account/plan-dependent: `opus[1m]`/`sonnet[1m]` are shown only when your account is provisioned for extended context.
 
 ## Dependencies
 

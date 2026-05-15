@@ -78,18 +78,26 @@ You MUST follow these steps in order. Skipping a step is forbidden.
    - `git rev-parse HEAD` → `HEAD_FULL`
    - `git rev-parse --short=7 HEAD` → `HEAD_SHA`
    - `python3 plugins/rldyour-serena-mcp/scripts/serena_memory_state.py` → state JSON
+   - If `.serena/.serena_sync_state.json` exists, also load it and treat
+     `analysis.areas`, `analysis.memory_targets`, and `analysis.areas_summary` as a first-pass impact map.
+     If `analysis.schema_version` is absent, treat the analysis as best-effort and verify from changed files.
 2. Read state JSON:
    - `is_current` — if `true`, exit immediately with `{"status":"already_current","head_sha":"<sha>"}` and STOP. Do not run any memory writes.
    - `newest_synced_sha` — used for diff range
-   - `changed_files_since_sync` and `non_knowledge_changed_files_since_sync` — your scope of inquiry
+   - `sync_state.changed_files` / `sync_state.non_knowledge_changed_files` — your primary scope.
+   - fallback scope: `changed_files_since_sync` and `non_knowledge_changed_files_since_sync` from state JSON if marker data is absent.
 3. Run `mcp__plugin_rldyour-mcps_serena__list_memories` → memory index.
 
 ### Step 2 — Diff and impact map
 
-For every memory in the index, build a list of claims that could be impacted by `changed_files_since_sync`. Use `mcp__plugin_rldyour-mcps_serena__read_memory` to load each memory body. Record claim → file mapping in your scratch (do not write yet).
+For every memory in the index, build a list of claims that could be impacted by:
+   - `sync_state.analysis.memory_targets` (primary),
+   - `sync_state.analysis.areas` (secondary),
+   - fallback: `changed_files_since_sync`.
+Use `mcp__plugin_rldyour-mcps_serena__read_memory` to load each memory body. Record claim → file mapping in your scratch (do not write yet).
 
 For changed files **not yet referenced in any memory**, decide if a new memory is justified:
-- A new memory is justified ONLY if the change introduces a durable fact that future Claude Code sessions need (e.g., a new plugin, new hook, new convention, new diagnostic command).
+- A new memory is justified ONLY if the change introduces a durable fact that future Claude Code, Codex, or other GPT-based coding sessions need (e.g., a new plugin, new hook, new convention, new diagnostic command).
 - A new memory is NOT justified for: bug fixes that don't change architecture, rephrased docs, dependency version bumps with no behavior change, single-line typo fixes.
 
 ### Step 3 — Verify each impacted claim against HEAD
@@ -166,5 +174,9 @@ This is a Claude Code plugin marketplace (`rldyour-claude`). Specifics that affe
 
 - Memory location: `.serena/memories/` (project-level, agent-only on `fullrepo` branch).
 - Memory files are in the `.git/info/exclude` block, so `git status` shows them clean — `commit_serena_knowledge.sh` handles the no-tracked-changes case correctly.
-- Two active project memories normally exist: `project_marketplace_state.md` (current state) and `claude_code_plugin_canon_2026-05.md` (verified Claude Code canon). New memories require a strong durability case.
+- Four active project memories are the durable defaults in this repo:
+  `project_marketplace_state.md` (current architecture/ops state),
+  `serena_memory_sync_protocol_2026-05.md` (Serena freshness/hook protocol),
+  `claude_code_plugin_canon_2026-05.md` (verified Claude Code canon),
+  `technical_debt_register_2026-05.md` (failure patterns, debt, and anti-regression rules).
 - After your work, the `rldyour-flow` Stop hook (`stop_post_task_sync.sh`) takes over and runs the git pipeline + fullrepo publish automatically.

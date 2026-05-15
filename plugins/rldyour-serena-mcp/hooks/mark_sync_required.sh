@@ -25,14 +25,19 @@ fi
 
 ROOT=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
 cd "$ROOT"
+PLUGIN_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 MARKER=".serena/.auto_sync_head"
 if [ ! -f "$MARKER" ]; then
   exit 0
 fi
 
+ANALYSIS_FILE=""
 cleanup() {
   rm -f "$MARKER"
+  if [ -n "$ANALYSIS_FILE" ]; then
+    rm -f "$ANALYSIS_FILE"
+  fi
 }
 trap cleanup EXIT
 
@@ -65,34 +70,126 @@ if [ -z "$PRE_HEAD" ] || [ -z "$CUR_HEAD" ] || [ "$PRE_HEAD" = "$CUR_HEAD" ]; th
   exit 0
 fi
 
-HEAD_NON_KNOWLEDGE=$(git show --name-only --pretty= HEAD 2>/dev/null \
-  | grep -vE '^$|^\.serena/(memories|plans|research)/|^\.serena/(\.sync_marker|\.serena_sync_state\.json|\.auto_sync_head|\.active_workflow_intent\.json|\.dirty_stop_ack)$' || true)
-if [ -z "$HEAD_NON_KNOWLEDGE" ]; then
-  exit 0
+ANALYSIS_FILE="$(mktemp)"
+if ! python3 "$PLUGIN_DIR/scripts/analyze_sync_scope.py" --from-ref "$PRE_HEAD" --to-ref "$CUR_HEAD" >"$ANALYSIS_FILE" 2>/dev/null; then
+  printf '{}\n' >"$ANALYSIS_FILE"
 fi
 
 mkdir -p .serena
-python3 - "$PRE_HEAD" "$CUR_HEAD" "$CUR_HEAD_SHORT" "$HEAD_NON_KNOWLEDGE" <<'PY'
+python3 - "$PRE_HEAD" "$CUR_HEAD" "$CUR_HEAD_SHORT" "$ANALYSIS_FILE" <<'PY'
 import json
+import subprocess
 import sys
 import time
 from pathlib import Path
 
-previous, head, short, files = sys.argv[1:5]
+previous, head, short, analysis_file = sys.argv[1:5]
+try:
+    analysis_text = Path(analysis_file).read_text(encoding="utf-8")
+    analysis = json.loads(analysis_text) if analysis_text.strip() else {}
+except (OSError, json.JSONDecodeError):
+    analysis = {}
+
+KNOWLEDGE_PREFIXES = (
+    ".agents/commands/",
+    ".agents/hooks/",
+    ".agents/skills/",
+    ".claude/",
+    ".cursor/rules/",
+    ".gemini/",
+    ".roo/",
+    ".windsurf/",
+    ".openhands/",
+    ".github/instructions/",
+    ".github/prompts/",
+    ".serena/memories/",
+    ".serena/plans/",
+    ".serena/research/",
+    ".serena/newproj/",
+    ".serena/deploy/",
+)
+
+KNOWLEDGE_FILES = {
+    ".cursorrules",
+    ".windsurfrules",
+    ".aider",
+    ".aider.conf.yml",
+    "AGENTS.md",
+    "CLAUDE.md",
+    "GEMINI.md",
+    "QWEN.md",
+    "REVIEW.md",
+    ".github/copilot-instructions.md",
+    ".serena/project.yml",
+}
+
+RUNTIME_IGNORED = {
+    ".serena/.sync_marker",
+    ".serena/.serena_sync_state.json",
+    ".serena/.auto_sync_head",
+    ".serena/.active_workflow_intent.json",
+    ".serena/.dirty_stop_ack",
+    ".serena/.flow_sync_marker",
+    ".serena/.flow_post_task_state.json",
+}
+
+
+def is_knowledge_path(path: str) -> bool:
+    return path in KNOWLEDGE_FILES or path.startswith(".aider") or any(path.startswith(prefix) for prefix in KNOWLEDGE_PREFIXES)
+
+changed_files = analysis.get("changed_files") or []
+if not isinstance(changed_files, list):
+    changed_files = []
+if not changed_files:
+    proc = subprocess.run(
+        ["git", "diff", "--name-only", f"{previous}..{head}"],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    if proc.returncode == 0:
+        changed_files = [line.strip() for line in proc.stdout.splitlines() if line.strip()]
+
+non_knowledge_files = [
+    path
+    for path in changed_files
+    if isinstance(path, str)
+    and path.strip()
+    and path not in RUNTIME_IGNORED
+    and not is_knowledge_path(path)
+]
+
 payload = {
     "version": 1,
-    "required": True,
+    "required": bool(non_knowledge_files),
     "reason": "git change touched non-Serena-knowledge files",
     "created_at": int(time.time()),
     "previous_head_full": previous,
     "head_full": head,
     "head_sha": short,
-    "changed_files": [line for line in files.splitlines() if line],
+    "changed_files": changed_files,
+    "non_knowledge_changed_files": non_knowledge_files,
+    "analysis": analysis,
 }
 Path(".serena/.serena_sync_state.json").write_text(
     json.dumps(payload, indent=2, sort_keys=True) + "\n",
     encoding="utf-8",
 )
 PY
+
+HEAD_NON_KNOWLEDGE=$(python3 - <<'PY'
+import json
+try:
+    payload = json.loads(open(".serena/.serena_sync_state.json", "r", encoding="utf-8").read())
+except Exception:
+    payload = {}
+for path in payload.get("non_knowledge_changed_files", []):
+    if isinstance(path, str):
+        print(path)
+PY
+)
+if [ -z "$HEAD_NON_KNOWLEDGE" ]; then
+  exit 0
+fi
 
 emit_additional_context "[RLDYOUR-SERENA] Commit ${CUR_HEAD_SHORT} changed project code/config/docs. The Stop hook will require serena-memory-sync before final stop."

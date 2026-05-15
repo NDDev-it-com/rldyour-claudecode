@@ -16,7 +16,19 @@ Main principle: nothing is treated as enabled or correct unless the owner explic
 
 ## Active Catalog
 
-The active marketplace currently contains nine first-party plugins, all at `version: 0.1.0`:
+The active marketplace currently contains nine first-party plugins; per-plugin versions are:
+
+- `rldyour-mcps` — `0.1.3`
+- `rldyour-serena-mcp` — `0.1.4`
+- `rldyour-explore` — `0.1.2`
+- `rldyour-security` — `0.1.2`
+- `rldyour-browser` — `0.1.2`
+- `rldyour-design` — `0.1.2`
+- `rldyour-lsps` — `0.1.2`
+- `rldyour-flow` — `0.1.2`
+- `rldyour-rules` — `0.1.2`
+
+Briefly:
 
 - **`rldyour-mcps`** — single-owner MCP transport (13 pinned servers: Serena, Sequential Thinking, Playwright, Chrome DevTools, Context7, DeepWiki, Grep, Semgrep, shadcn, Dart/Flutter, Figma, OpenAI Docs, GitHub).
 - **`rldyour-serena-mcp`** — Serena-first semantic code workflow, fact-only `.serena` memory sync via `flow-memory-sync` subagent, lifecycle hooks (UserPromptSubmit, PreToolUse:Bash, PostToolUse:Bash, Stop).
