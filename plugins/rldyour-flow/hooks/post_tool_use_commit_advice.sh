@@ -49,6 +49,45 @@ import re
 import sys
 
 head_sha, subject, raw_files = sys.argv[1:4]
+
+# Sanitize commit subject before echoing back into LLM context. The hook's
+# warnings text travels via `additionalContext` to the model, so an
+# attacker-controlled subject (e.g., auto-merged PR from a fork, or a
+# branch-rename attack on a shared repo) could theoretically inject prompts.
+# Defence-in-depth — not a complete mitigation, but reduces the vector:
+#   1. Truncate to 200 chars. Conventional Commits subjects are ≤72 by policy,
+#      so this only fires for abnormal subjects.
+#   2. Collapse control chars and newlines to spaces — subjects are single-line.
+#   3. Strip known prompt-injection markers (system tags, instruction overrides,
+#      turn-boundary tokens). Replace with `[REDACTED]` so the audit trail shows
+#      the subject was modified rather than silently dropping content.
+MAX_SUBJECT_LEN = 200
+# Prompt-injection markers — defence-in-depth, not exhaustive. Covers known LLM
+# system-tag patterns (Anthropic/OpenAI/Llama/Gemini families) and English/Russian
+# instruction-override phrases. Add patterns conservatively when new attack
+# vectors emerge in commit messages.
+INJECTION_MARKERS = re.compile(
+    r"\[(?:SYSTEM|ASSISTANT|USER|INST|СИСТЕМА|АССИСТЕНТ|ПОЛЬЗОВАТЕЛЬ)\]"
+    r"|</?(?:INST|SYS|role|turn|system(?:-reminder)?)>"
+    r"|<<SYS>>"
+    r"|<\|?(?:im_start|im_end|begin_of_text|end_of_text|bos|eos)\|?>"
+    r"|<\|?/?(?:user|assistant|system)\|?>"
+    r"|---system---"
+    r"|(?:BEGIN|END) PROMPT"
+    r"|ignore (?:all |any )?(?:previous|prior|above|preceding) (?:instructions|prompts|messages)"
+    r"|you are now\b"
+    r"|from now on(?: you will)?\b"
+    r"|игнорируй (?:все )?(?:предыдущие |ранее )?(?:инструкции|команды|указания|сообщения)"
+    r"|забудь (?:все )?(?:предыдущие |ранее )?(?:инструкции|команды|сообщения)"
+    r"|теперь ты\b",
+    re.IGNORECASE | re.UNICODE,
+)
+sanitized_subject = re.sub(r"[\x00-\x1f\x7f]+", " ", subject)
+sanitized_subject = INJECTION_MARKERS.sub("[REDACTED]", sanitized_subject)
+if len(sanitized_subject) > MAX_SUBJECT_LEN:
+    sanitized_subject = sanitized_subject[:MAX_SUBJECT_LEN] + "...[truncated]"
+subject = sanitized_subject
+
 files = [line for line in raw_files.splitlines() if line]
 warnings: list[str] = []
 
