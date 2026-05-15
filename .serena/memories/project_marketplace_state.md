@@ -1,6 +1,6 @@
 # rldyour-claude marketplace state
 
-Last commit: d50e94c (release: 0.1.2 — github MCP transport hotfix + smoke hardening).
+Last commit: 57aeea7 (feat(scripts): install-rldyour-marketplace.sh universal installer).
 Multiple May-2026 waves applied (all merged to main):
 - optimize/may-2026-best-practices: 6 commits 3fe9005..2e22652 (merged to main)
 - docs/canonical-may2026: 1 commit ca13470 (merged to main)
@@ -548,6 +548,26 @@ Release 0.1.1 (d0dcf64..ef18bd9, branch release/0.1.1, merged 2026-05-12):
   rldyour-explore--v0.1.1, rldyour-lsps--v0.1.1, rldyour-rules--v0.1.1.
   (Source: .claude-plugin/marketplace.json, plugins/*/\.claude-plugin/plugin.json,
   VERSION, CHANGELOG.md, and git tag listing at HEAD ef18bd9.)
+
+Universal installer (57aeea7, post-0.1.2, on main 2026-05-15):
+
+- 57aeea7 feat(scripts): install-rldyour-marketplace.sh universal installer.
+  NEW scripts/install-rldyour-marketplace.sh (538 lines, mode 755). Universal
+  one-shot installer for any Claude Code install. 8 stages (0-7): self-replacement
+  guard (mandatory --i-exited-claude flag + pgrep + CLAUDE_CODE_SESSION_ID + sessions
+  mtime probe), pre-flight backup to ~/.claude/backups/rldyour-install-<UTC-ts>/,
+  detect + remove legacy marketplaces (LEGACY_MARKETPLACES=["rldyour-claudecode"]) with
+  disable + uninstall of their plugins, jq-scrub of settings.json
+  extraKnownMarketplaces + enabledPlugins, filesystem cleanup of
+  ~/.claude/plugins/cache/<legacy>/ + known leftover symlinks
+  (LEGACY_CACHE_SYMLINKS=["rldyourcc"]), marketplace add
+  github:rldyourmnd/rldyour-claude (no local clone required), install 9 plugins in
+  dep-order (rldyour-mcps rldyour-serena-mcp rldyour-browser rldyour-explore
+  rldyour-lsps rldyour-rules rldyour-security rldyour-design rldyour-flow), verify
+  + write migration-report.md. Runtime flags: --dry-run, --i-exited-claude,
+  --continue-from <N>. Quality verified: bash -n + shellcheck -x clean.
+  (Source: scripts/install-rldyour-marketplace.sh lines 28-66, 194-537 at HEAD 57aeea7;
+  commit message body.)
 
 Advisory enforcement gates restored (refactor/restore-advisory-hooks):
 - Stop hooks are advisory enforcement gates, not executors. Hooks compute
