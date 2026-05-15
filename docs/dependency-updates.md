@@ -39,7 +39,14 @@ Policy and procedure for updating MCP runtime pins and Claude Code minimum versi
    scripts/smoke_mcp_capabilities.sh --skip-uvx                # fast subset (skips serena, semgrep)
    ```
 
-   The harness performs JSON-RPC `initialize` + `tools/list` against each server (stdio spawn or HTTP POST), verifies a non-empty tool set, and reports `OK <n> tools` per server. HTTP servers behind OAuth (figma, github) accept 401/403 as a passing handshake. Restart Claude Code after the bump to invoke at least one read-only tool live (e.g. `mcp__plugin_rldyour-mcps_context7__resolve-library-id`) before merging.
+   The harness performs JSON-RPC `initialize` + `tools/list` against each server (stdio
+   spawn or HTTP POST), verifies a non-empty tool set, and reports `OK <n> tools` per
+   server.  HTTP auth handling is strict: 401 with no auth token is `SKIP`, 401 with
+   auth is `FAIL`, and 403 is `FAIL`. `figma` is the only explicit auth-gated HTTP
+   exception and is accepted as reachable if `initialize` returns a valid HTTP response
+   without `result.serverInfo`. Restart Claude Code after the bump to invoke at least one
+   read-only tool live (e.g. `mcp__plugin_rldyour-mcps_context7__resolve-library-id`)
+   before merging.
 
 5. **Update CHANGELOG** under `[Unreleased] / Changed` — list each updated server and the new pin.
 

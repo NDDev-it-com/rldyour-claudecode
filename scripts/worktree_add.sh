@@ -2,7 +2,7 @@
 # worktree_add.sh — one-step git worktree creation for the rldyour-claude
 # marketplace.
 #
-# Wraps `git worktree add` + `fullrepo_sync.py --bootstrap-init` so a fresh
+# Wraps `git worktree add` + `fullrepo_sync.py --restore` so a fresh
 # worktree comes up with the full agent-only context (AGENTS.md,
 # .claude/CLAUDE.md, .serena/project.yml, .serena/memories/**) already in
 # place. Designed for the parallel-sessions workflow: each worktree gets its
@@ -14,7 +14,7 @@
 #
 # Examples:
 #   scripts/worktree_add.sh feat/foo
-#       Creates a worktree at ../rldyour-claudecode-feat-foo on branch
+#       Creates a worktree at ../rldyour-claude-feat-foo on branch
 #       feat/foo. If the branch doesn't exist, it is created off
 #       origin/main (configurable via WORKTREE_BASE_REF).
 #
@@ -51,7 +51,7 @@ if [[ -z "${BRANCH}" ]]; then
   cat >&2 <<EOF
 usage: scripts/worktree_add.sh <branch> [path]
 
-Creates a git worktree and runs fullrepo_sync.py --bootstrap-init so the
+Creates a git worktree and runs fullrepo_sync.py --restore so the
 worktree is immediately usable for a parallel Claude Code session.
 
 See file header for environment variables and examples.
