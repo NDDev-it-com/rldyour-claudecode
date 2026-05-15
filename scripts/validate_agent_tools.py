@@ -1,0 +1,218 @@
+#!/usr/bin/env python3
+"""validate_agent_tools.py — static validation of agent `tools:` allowlists.
+
+Parses every `plugins/*/agents/*.md` frontmatter and verifies that each entry
+in the `tools:` list is syntactically valid and references a real MCP server
+when an `mcp__plugin_*` pattern is used. Also enforces the read-only-by-design
+invariant for non-Serena MCP wildcards (TECHDEBT R4).
+
+Validation rules:
+  1. Built-in tool names must be in `KNOWN_BUILTIN_TOOLS`.
+  2. MCP pattern `mcp__plugin_<plugin>_<server>__<tool_or_star>` must:
+     - Reference a real plugin from `.claude-plugin/marketplace.json`.
+     - Reference a real server name from `plugins/rldyour-mcps/.mcp.json`
+       (or a known external pattern when plugin owns its own .mcp.json).
+  3. Wildcards (`__*`) for non-Serena MCP servers must be listed in
+     `READ_ONLY_BY_DESIGN_MCPS` — these servers are documented invariant as
+     read-only-by-contract. Adding a wildcard for a server that exposes write
+     tools (currently only Serena) is a FAIL.
+
+Exit codes: 0 success, 1 on any validation error.
+
+Companion: TECHDEBT-01-NOW.md R4 documents the read-only-by-design invariant
+for context7, deepwiki, grep, semgrep MCP servers. This script is the
+deterministic check that enforces it.
+"""
+
+from __future__ import annotations
+
+import json
+import re
+import sys
+from pathlib import Path
+
+# Built-in tool names supported by Claude Code (verified against v2.1.142 docs).
+# Source: code.claude.com/docs/en/sub-agents + plugin-shipped agents canonical examples.
+KNOWN_BUILTIN_TOOLS: frozenset[str] = frozenset(
+    {
+        "Read",
+        "Edit",
+        "Write",
+        "Bash",
+        "BashOutput",
+        "Grep",
+        "Glob",
+        "Task",
+        "WebFetch",
+        "WebSearch",
+        "NotebookEdit",
+        "NotebookRead",
+        "KillShell",
+        "TodoWrite",
+        "ExitPlanMode",
+        "MultiEdit",
+        "SlashCommand",
+        "Skill",
+    }
+)
+
+# MCP servers whose tool surface is read-only-by-design (verified 2026-05-15 via
+# scripts/smoke_mcp_capabilities.sh tools/list inspection):
+#   - context7: only resolve-library-id and get-library-docs (read).
+#   - deepwiki: only ask_question and read_wiki_* tools (read).
+#   - grep: only searchGitHub (read).
+#   - semgrep: only scan/analyze tools (read).
+# Adding a new server to this set means asserting it has no write/edit/create/
+# delete/modify/insert/replace tools at runtime. Re-verify via
+# scripts/smoke_mcp_capabilities.sh when MCP servers bump versions.
+READ_ONLY_BY_DESIGN_MCPS: frozenset[str] = frozenset(
+    {
+        "context7",
+        "deepwiki",
+        "grep",
+        "semgrep",
+    }
+)
+
+# Servers that have known write/mutating tools and therefore MUST use explicit
+# tool name allowlists (not wildcards) in read-only agent frontmatters.
+SERVERS_WITH_WRITE_TOOLS: frozenset[str] = frozenset(
+    {
+        "serena",
+    }
+)
+
+FRONTMATTER_RE = re.compile(r"^---\s*\n(.*?)\n---\s*\n", re.DOTALL)
+TOOLS_BLOCK_RE = re.compile(r"^tools:\s*\n((?:  -\s*.+\n)+)", re.MULTILINE)
+TOOL_ITEM_RE = re.compile(r"^  -\s*(.+?)\s*$", re.MULTILINE)
+MCP_PATTERN_RE = re.compile(r"^mcp__plugin_(?P<plugin>[A-Za-z0-9_-]+)__(?P<tool>.+)$")
+
+
+def load_marketplace_plugins(repo_root: Path) -> set[str]:
+    """Return the set of plugin names declared in marketplace.json."""
+    manifest = repo_root / ".claude-plugin" / "marketplace.json"
+    data = json.loads(manifest.read_text(encoding="utf-8"))
+    return {p["name"].replace("-", "_") for p in data.get("plugins", [])}
+
+
+def load_mcp_servers(repo_root: Path) -> set[str]:
+    """Return the set of MCP server names declared in rldyour-mcps/.mcp.json."""
+    manifest = repo_root / "plugins" / "rldyour-mcps" / ".mcp.json"
+    data = json.loads(manifest.read_text(encoding="utf-8"))
+    return set(data.get("mcpServers", {}).keys())
+
+
+def extract_tools_list(frontmatter_text: str) -> list[str] | None:
+    """Extract the `tools:` list items, returns None when no `tools:` block."""
+    block_match = TOOLS_BLOCK_RE.search(frontmatter_text)
+    if not block_match:
+        return None
+    block = block_match.group(1)
+    return [m.group(1) for m in TOOL_ITEM_RE.finditer(block)]
+
+
+def parse_mcp_tool(raw: str) -> tuple[str, str] | None:
+    """Parse mcp__plugin_<plugin>__<tool>; returns (server_name, tool_or_star)."""
+    match = MCP_PATTERN_RE.match(raw)
+    if not match:
+        return None
+    plugin_and_server = match.group("plugin")
+    tool = match.group("tool")
+    # plugin_and_server format: rldyour-mcps_serena where last segment is the
+    # server name. We split on the last underscore-separated segment after the
+    # plugin name prefix `rldyour-mcps_`.
+    # NOTE: plugin names use hyphens in marketplace.json but Claude Code
+    # normalizes to underscores in MCP namespace.
+    parts = plugin_and_server.rsplit("_", 1)
+    if len(parts) != 2:
+        return None
+    plugin_normalized, server = parts
+    # Sanity check the plugin prefix is what we expect (this validator is
+    # scoped to rldyour-mcps for now; extend READ_ONLY_BY_DESIGN_MCPS and the
+    # plugin loader if other plugins ship .mcp.json in the future).
+    expected_plugin = "rldyour-mcps"
+    if plugin_normalized.replace("_", "-") != expected_plugin:
+        return None
+    return server, tool
+
+
+def validate_agent_file(
+    path: Path,
+    valid_servers: set[str],
+    failures: list[str],
+) -> None:
+    """Validate one agent's frontmatter `tools:` block."""
+    text = path.read_text(encoding="utf-8")
+    fm_match = FRONTMATTER_RE.match(text)
+    if not fm_match:
+        failures.append(f"{path}: missing or malformed frontmatter")
+        return
+    tools = extract_tools_list(fm_match.group(1))
+    if tools is None:
+        # No tools: block means agent inherits default toolset; nothing to
+        # validate here. flow-memory-sync uses this pattern intentionally.
+        return
+    for raw in tools:
+        if raw in KNOWN_BUILTIN_TOOLS:
+            continue
+        parsed = parse_mcp_tool(raw)
+        if parsed is None:
+            failures.append(f"{path}: unrecognised tool entry `{raw}` "
+                            "(not a built-in tool and not an mcp__plugin_* pattern)")
+            continue
+        server, tool = parsed
+        if server not in valid_servers:
+            failures.append(
+                f"{path}: tool `{raw}` references MCP server `{server}` "
+                f"which is not declared in plugins/rldyour-mcps/.mcp.json"
+            )
+            continue
+        if tool == "*":
+            if server in SERVERS_WITH_WRITE_TOOLS:
+                failures.append(
+                    f"{path}: wildcard `mcp__plugin_rldyour-mcps_{server}__*` is "
+                    f"forbidden for read-only agents because `{server}` exposes "
+                    "write tools. Use an explicit read-only tool list instead."
+                )
+                continue
+            if server not in READ_ONLY_BY_DESIGN_MCPS:
+                failures.append(
+                    f"{path}: wildcard `mcp__plugin_rldyour-mcps_{server}__*` "
+                    f"uses MCP server `{server}` that is not in "
+                    "READ_ONLY_BY_DESIGN_MCPS. Either confirm the server has no "
+                    "write tools and add it to that set, or replace the wildcard "
+                    "with explicit read-only tool names."
+                )
+
+
+def main() -> int:
+    repo_root = Path(__file__).resolve().parent.parent
+    valid_servers = load_mcp_servers(repo_root)
+    # marketplace plugins not currently used in the validation path but kept for
+    # future cross-plugin checks (e.g., if multiple plugins ship .mcp.json).
+    _ = load_marketplace_plugins(repo_root)
+
+    agent_files = sorted((repo_root / "plugins").glob("*/agents/*.md"))
+    if not agent_files:
+        print("FAIL no plugin agent files found", file=sys.stderr)
+        return 1
+
+    failures: list[str] = []
+    for agent_path in agent_files:
+        validate_agent_file(agent_path, valid_servers, failures)
+
+    if failures:
+        print("validate_agent_tools.py: validation FAILED", file=sys.stderr)
+        for failure in failures:
+            print(f"  {failure}", file=sys.stderr)
+        return 1
+
+    print(
+        f"OK {len(agent_files)} agent file(s) validated, "
+        f"{len(valid_servers)} MCP servers known"
+    )
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
