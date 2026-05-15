@@ -42,7 +42,7 @@ All reviewer agents declare `disallowedTools: [Edit, Write, NotebookEdit]` (read
 
 ## Hooks Lifecycle
 
-Two plugins coordinate hooks. `flow.stop_post_task_sync.sh` waits for `serena_current=true` from the Serena Stop hook before running. Loop guard: `.serena/.flow_sync_marker` writes a fingerprint of (HEAD, dirty files, ahead/behind, branch, Serena freshness). If `stop_hook_active=true` and the fingerprint matches, the hook allows stop.
+Two plugins coordinate hooks. `flow.stop_post_task_sync.sh` derives `serena_current` by calling `plugins/rldyour-serena-mcp/scripts/serena_memory_state.py` before running its own gate. Loop guard: `.serena/.flow_sync_marker` writes a fingerprint of (HEAD, dirty files, ahead/behind, branch, Serena freshness). If `stop_hook_active=true` and the fingerprint matches, the hook allows stop.
 
 | Event | Owner | Script | Timeout |
 |---|---|---|---|
@@ -59,7 +59,7 @@ Stop hooks are **advisory enforcement gates**, not executors. Pattern: hooks com
 
 Sequence:
 1. **Serena Stop hook** (`stop_memory_sync.sh`) checks `serena_memory_state.py`. If memories are stale for current HEAD, blocks Stop with an advisory pointing at the `flow-memory-sync` subagent (preferred) or the equivalent Serena workflow (fallback).
-2. **Flow Stop hook** (`stop_post_task_sync.sh`) waits for `serena_current=true`, then checks `flow_post_task_state.py`. If git/docs/fullrepo/cleanup state is dirty (uncommitted, ahead of upstream, fullrepo stale, instruction docs need review, merged branches/worktrees not cleaned), blocks Stop with an advisory pointing at the `flow-post-task-sync` skill.
+2. **Flow Stop hook** (`stop_post_task_sync.sh`) reads `serena_current` from `serena_memory_state.py`, then checks `flow_post_task_state.py`. If git/docs/fullrepo/cleanup state is dirty (uncommitted, ahead of upstream, fullrepo stale, instruction docs need review, merged branches/worktrees not cleaned), blocks Stop with an advisory pointing at the `flow-post-task-sync` skill.
 3. Loop guard: `.serena/.sync_marker` and `.serena/.flow_sync_marker` carry fingerprints. If `stop_hook_active=true` and the fingerprint matches, the chain allows Stop without re-running — prevents infinite loops while still forcing real progress between Stops.
 
 The orchestrator (skill / model in main session) does the actual work: invoke `flow-memory-sync` subagent for memories, then run the `flow-post-task-sync` skill which handles checks → atomic commits → push → ff-merge into default branch → push default → fullrepo publish (`--force-with-lease`, only on `fullrepo`) → cleanup merged branches and worktrees.
@@ -87,7 +87,7 @@ Plugin-side levers used in this repo:
 
 ## Hook Events Canon
 
-Claude Code v2.1.x publishes **30 canonical hook events** (per `code.claude.com/docs/en/hooks`). Five handler types: `command`, `http`, `mcp_tool` (v2.1.118+), `prompt`, `agent`. Prompt/agent handlers spawn LLM evaluation or full subagent verification — used for runtime validation when shell hooks aren't expressive enough. `InstructionsLoaded` event (CC v2.1.69+) fires when CLAUDE.md or `.claude/rules/*.md` files are loaded into context.
+Claude Code v2.1.x publishes **29 canonical hook events** (per `code.claude.com/docs/en/hooks`). Five handler types: `command`, `http`, `mcp_tool` (v2.1.118+), `prompt`, `agent`. Prompt/agent handlers spawn LLM evaluation or full subagent verification — used for runtime validation when shell hooks aren't expressive enough. `InstructionsLoaded` event (CC v2.1.69+) fires when CLAUDE.md or `.claude/rules/*.md` files are loaded into context.
 
 Hierarchy precedence (highest → lowest): managed policy → plugin hooks (force-enabled exempt from `allowManagedHooksOnly`) → `.claude/settings.json` → `.claude/settings.local.json` → `~/.claude/settings.json` → skill/agent frontmatter.
 

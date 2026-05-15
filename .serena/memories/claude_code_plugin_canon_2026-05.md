@@ -4,7 +4,7 @@ Source-backed facts cross-validated against `code.claude.com/docs/en/plugins-ref
 `code.claude.com/docs/en/mcp`, `code.claude.com/docs/en/changelog`, and Anthropic's own
 `claude-plugins-official` repo. Last refresh 2026-05-15 via ry-explore deep research.
 
-Last commit: b2681b6 (chore(marketplace): bump chrome-devtools and semgrep pins). Verification range: v2.1.111-v2.1.142.
+Last commit: f4510fb (feat(serena-mcp): add scoped memory sync analysis). Verification range: v2.1.111-v2.1.142.
 
 ## plugin.json schema
 
@@ -39,11 +39,13 @@ stdio: `command` (required), `args[]`, `env{}`, `cwd`, optional `type: "stdio"`.
 HTTP: `type: "http"`, `url`, `headers{}`, `oauth{}`.
 SSE: `type: "sse"`, `url`, `headers{}`. Documented as deprecated; prefer HTTP.
 
-Anti-pattern (verified 2026-05-13): `https://api.githubcopilot.com/mcp/` (shipped by
-`anthropics/claude-plugins-official`) is Copilot-entitlement-gated — HTTP 403 for non-allowlist
-accounts. Use local stdio instead: `github-mcp-server stdio --toolsets=repos,issues,pull_requests,users,context`
-with `GITHUB_PERSONAL_ACCESS_TOKEN` env. Homebrew bottle v1.0.4; 39 tools; PAT scopes `repo`+`read:org`.
-(Source: plugins/rldyour-mcps/.mcp.json github entry at HEAD d50e94c; CHANGELOG.md [0.1.2].)
+GitHub MCP transport boundary (verified 2026-05-15): the official Claude Code MCP docs still
+show `https://api.githubcopilot.com/mcp/` as a remote GitHub MCP example. In this repository,
+that endpoint is treated as unsuitable for the owner account class because live verification returned
+Copilot-entitlement `403`; the local policy is stdio:
+`github-mcp-server stdio --toolsets=repos,issues,pull_requests,users,context` with
+`GITHUB_PERSONAL_ACCESS_TOKEN` env. Homebrew bottle v1.0.4; 39 tools; PAT scopes `repo`+`read:org`.
+(Source: `plugins/rldyour-mcps/.mcp.json` github entry at HEAD f4510fb; `CHANGELOG.md` [0.1.2].)
 
 `startup_timeout_sec` and `tool_timeout_sec` are NOT in the documented Claude Code
 .mcp.json schema. Silently ignored; do not add them. Verified by:
@@ -53,11 +55,14 @@ with `GITHUB_PERSONAL_ACCESS_TOKEN` env. Homebrew bottle v1.0.4; 39 tools; PAT s
 - DeepWiki on `anthropics/claude-code` (confirms not honored)
 
 Canonical timeout/output env vars:
-- `MCP_TIMEOUT` — server startup timeout (e.g. `MCP_TIMEOUT=10000 claude`).
-- `MCP_TOOL_TIMEOUT` — per-tool-call timeout.
-- `MAX_MCP_OUTPUT_TOKENS` — raises 10k-token tool-output warning.
+- `MCP_TIMEOUT` — server startup timeout, default `30000` ms.
+- `MCP_TOOL_TIMEOUT` — per-tool-call timeout, default `100000000` ms.
+- `MAX_MCP_OUTPUT_TOKENS` — raises the 10k-token warning threshold; default maximum is 25,000 tokens.
+- `MCP_CONNECT_TIMEOUT_MS` — first-query MCP connection batch wait, default `5000` ms.
+- `MCP_SERVER_CONNECTION_BATCH_SIZE` — local stdio connection batch size, default `3`.
+- `MCP_REMOTE_SERVER_CONNECTION_BATCH_SIZE` — remote HTTP/SSE connection batch size, default `20`.
 - `MCP_CONNECTION_NONBLOCKING=1` — non-blocking startup; per-server `alwaysLoad: true`
-  (v2.1.121+) opts back into blocking with a 5s connect cap.
+  (v2.1.121+) opts back into blocking with the standard 5s connect cap.
 
 Reconnection: 5 attempts exponential backoff (1s start, doubling) for HTTP/SSE.
 Initial connection: 3 retries on transient errors (5xx / connection refused / timeout)
@@ -128,7 +133,7 @@ in slash command frontmatter only takes effect when paired with `context: fork`.
 A bare `model: opus[1m]` without `context: fork` is silently ignored. Either
 pair them or use `agent: <name>` and let the named agent's `model:` win.
 
-## Hooks events (May 2026 canonical, 30 events)
+## Hooks events (May 2026 canonical, 29 events)
 
 Session: `SessionStart`, `Setup`, `SessionEnd`.
 Per-turn: `UserPromptSubmit`, `UserPromptExpansion`, `Stop`, `StopFailure`.
@@ -144,7 +149,8 @@ Notifications: `Notification`.
 
 Hook handler types: `command`, `http`, `mcp_tool` (v2.1.118+), `prompt`, `agent`.
 Universal fields: `type`, `command|url|server+tool|prompt`, `if` (only on tool
-events), `timeout` (defaults: command 600s, prompt 30s, agent 60s), `statusMessage`,
+events), `timeout` (defaults: command/http/mcp_tool 600s except `UserPromptSubmit`
+uses 30s for those types; prompt 30s; agent 60s), `statusMessage`,
 `once`. Command hooks add `async`, `asyncRewake`, `shell`. Prompt/agent handlers
 spawn LLM evaluation or full subagent verification.
 
@@ -203,12 +209,13 @@ Range-conflict reporting (4 error types): `dependency-unsatisfied`, `range-confl
   `continueOnBlock: true` (allow Stop even when PostToolUse hook blocks); stdio MCP
   env receives `${CLAUDE_PROJECT_DIR}`; `claude plugin details <name>` shows component
   inventory and per-session token cost.
-- v2.1.140 — `Agent` matching now tolerates case/separator variants; plugin details now show LSP servers; `/web-setup` warns before replacing an existing GitHub App connection.
+- v2.1.140 — `Agent` matching now tolerates case/separator variants; `/web-setup` warns before replacing an existing GitHub App connection.
 - v2.1.141 — `terminalSequence` hook output added; `CLAUDE_CODE_PLUGIN_PREFER_HTTPS`, `ANTHROPIC_WORKSPACE_ID`; plus `claude agents --cwd <path>`.
 - v2.1.142 — fast mode now defaults to Opus 4.7; `claude agents` added eight flags
   (`--add-dir`, `--settings`, `--mcp-config`, `--plugin-dir`, `--permission-mode`,
-  `--model`, `--effort`, `--dangerously-skip-permissions`); `MCP_TOOL_TIMEOUT`
-  now applies per request for HTTP/SSE servers (and several agent/plugin regressions fixed).
+  `--model`, `--effort`, `--dangerously-skip-permissions`); `/plugin` details and
+  `claude plugin details` now show LSP servers; `MCP_TOOL_TIMEOUT` now applies per
+  request for HTTP/SSE servers (and several agent/plugin regressions fixed).
   (Source: CLAUDE.md `## Changelog Adoption (v2.1.133 → v2.1.142)` section, verified
   against code.claude.com/docs/en/changelog on 2026-05-15.)
 

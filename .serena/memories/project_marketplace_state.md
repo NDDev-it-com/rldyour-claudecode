@@ -1,6 +1,6 @@
 # rldyour-claude marketplace state
 
-Last commit: b2681b6 (chore(marketplace): bump chrome-devtools and semgrep pins).
+Last commit: f4510fb feat(serena-mcp): add scoped memory sync analysis
 Multiple May-2026 waves applied (all merged to main):
 - optimize/may-2026-best-practices: 6 commits 3fe9005..2e22652 (merged to main)
 - docs/canonical-may2026: 1 commit ca13470 (merged to main)
@@ -11,6 +11,7 @@ Multiple May-2026 waves applied (all merged to main):
 - release/0.1.1: 1 commit ef18bd9 (merged to main; branch cleaned up post-merge)
 - fix(mcps)+fix(ops): 3 commits 5bb9393..d50e94c (merged to main; github stdio hotfix + smoke hardening + 0.1.2 release)
 - release/0.1.3: 1 commit b2681b6 (chore(marketplace): bump chrome-devtools and semgrep pins).
+- release/0.1.4: 1 commit f4510fb (rldyour-serena-mcp scoped memory-sync analysis; tag `rldyour-serena-mcp--v0.1.4` pushed)
 Prior merged branches deleted after fast-forward merge.
 Marketplace name: `rldyour-claude`. Repo: github.com/rldyourmnd/rldyour-claude (private).
 
@@ -20,7 +21,7 @@ Marketplace name: `rldyour-claude`. Repo: github.com/rldyourmnd/rldyour-claude (
 2. Semantic code — `rldyour-serena-mcp` (depends on `rldyour-mcps`).
 3. SDLC orchestrator — `rldyour-flow` (depends on `rldyour-mcps`, `rldyour-serena-mcp`).
 4. Domain — `rldyour-explore`, `rldyour-security`, `rldyour-browser`, `rldyour-design`,
-   `rldyour-lsps` (each depends on `rldyour-mcps`).
+   `rldyour-lsps` (each depends on `rldyour-mcps`; `rldyour-design` also depends on `rldyour-browser`).
 5. Engineering rules — `rldyour-rules` (depends on `rldyour-mcps`).
 
 Cross-plugin `dependencies` declared in plugin.json `dependencies: [...]` array.
@@ -46,10 +47,21 @@ Cross-plugin `dependencies` declared in plugin.json `dependencies: [...]` array.
 | Stop | rldyour-serena-mcp | hooks/stop_memory_sync.sh | 10s |
 | Stop | rldyour-flow | hooks/stop_post_task_sync.sh | 10s |
 
-`flow.stop_post_task_sync.sh` waits for `serena_current=true` from the Serena Stop hook
-before running. Loop guard: `.serena/.flow_sync_marker` fingerprint of (HEAD, dirty,
+`flow.stop_post_task_sync.sh` derives `serena_current` by calling
+`plugins/rldyour-serena-mcp/scripts/serena_memory_state.py` before running its own gate.
+It does not consume output from the Serena Stop hook. Loop guard:
+`.serena/.flow_sync_marker` fingerprint of (HEAD, dirty,
 ahead/behind, branch, Serena freshness). If `stop_hook_active=true` and same fingerprint,
 hook allows stop.
+
+- `rldyour-serena-mcp` emits analyzer payloads (`analysis.schema_version = 1`) in
+  `.serena/.serena_sync_state.json` and exposes them through `serena_memory_state.py`
+  via `analysis` + `analysis_source`, so memory sync can prioritize durable contracts
+  instead of reprocessing full diffs.
+- `plugins/rldyour-serena-mcp/scripts/analyze_sync_scope.py` classifies changed paths into
+  stable areas including agent instructions, plugin manifests/hooks/skills/commands/agents/scripts,
+  MCP transport, MCP runtime config, release/version files, repo scripts, CI workflows, and docs.
+  Empty commit ranges produce empty memory targets, so no-op state checks do not create sync noise.
 
 `session_start_worktree_bootstrap.sh` (timeout 30s, registered before session_start_context.sh
 in hooks.json): detects missing canonical markers (.serena/project.yml, AGENTS.md,
@@ -66,9 +78,12 @@ back to Claude Code; SessionStart in the new worktree session is the correct inj
 point. Covers both manual `git worktree add` and CC's `--worktree` / `EnterWorktree` /
 `isolation: "worktree"` paths. (Source: AGENTS.md Worktree Workflow section.)
 
-All Stop hooks advisory: emit `hookSpecificOutput.additionalContext`, exit 0 on errors.
-Skip flags: `RLDYOUR_SKIP_FLOW_SESSION_CONTEXT`, `RLDYOUR_SKIP_STOP_GATES`,
-`RLDYOUR_SKIP_FLOW_SYNC`, `RLDYOUR_SKIP_SERENA_SYNC`, `RLDYOUR_SKIP_WORKTREE_BOOTSTRAP`.
+Stop hooks are advisory enforcement gates: they write blocking guidance to stderr and exit `2`
+when memory or post-task sync is required; they do not emit `hookSpecificOutput.additionalContext`
+JSON. SessionStart and PostToolUse advisory hooks are the JSON additionalContext emitters.
+Skip flags: `RLDYOUR_SKIP_FLOW_SESSION_CONTEXT`, `RLDYOUR_SKIP_FLOW_COMMIT_ADVICE`,
+`RLDYOUR_SKIP_STOP_GATES`, `RLDYOUR_SKIP_FLOW_SYNC`, `RLDYOUR_SKIP_SERENA_SYNC`,
+`RLDYOUR_SKIP_WORKTREE_BOOTSTRAP`.
 (Source: scripts/smoke_hooks.sh SKIP_TESTS array, line 85-87.)
 
 ## Subagent matrix (8 total)
@@ -465,7 +480,8 @@ Capability smoke + serena bump wave (36fb0fc..9c941f7, branch polish/serena-and-
   New `expand_headers()` helper tracks empty ${VAR} substitutions → SKIP when no auth sent.
   New `parse_mcp_response_body()` handles both `application/json` and `text/event-stream` (SSE).
   HTTP failure classification: 401 + no auth → SKIP; 401 + auth → FAIL (token rejected);
-  403 → FAIL with "switch to stdio github-mcp-server" hint; 200 + no `result.serverInfo` → FAIL.
+  403 → FAIL with "switch to stdio github-mcp-server" hint; 200 + no `result.serverInfo`
+  → FAIL except the explicit `figma` HTTP_AUTH_GATED pre-session exception.
   Sends `MCP-Protocol-Version: 2024-11-05` header. Added `import re`. github removed from HTTP_AUTH_GATED.
   Verified live: 10 OK / 3 SKIP / 0 FAIL with `--skip-uvx`.
   (Source: scripts/smoke_mcp_capabilities.sh lines 91, 307-330, 374-443 at HEAD.)
@@ -492,7 +508,7 @@ Worktree workflow wave (c39f220..d0dcf64, branch feat/worktree-workflow):
   canonical marker (.serena/project.yml / AGENTS.md / .claude/CLAUDE.md) → verifies
   origin/fullrepo exists via --status-json → runs fullrepo_sync.py --restore
   (never --publish). Emits advisory bounded to first 12 lines of restore output.
-  NEW scripts/worktree_add.sh — one-step `git worktree add` + `--bootstrap-init`.
+  NEW scripts/worktree_add.sh — one-step `git worktree add` + `--restore`.
   scripts/smoke_hooks.sh SKIP_TESTS array extended with RLDYOUR_SKIP_WORKTREE_BOOTSTRAP entry.
   AGENTS.md (fullrepo-only): new Worktree Workflow section, Hooks Lifecycle table row
   added, skip-flag list updated, soft line cap raised 150 → 180.

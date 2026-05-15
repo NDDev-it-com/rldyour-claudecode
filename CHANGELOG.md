@@ -6,6 +6,25 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+## [0.1.4] - 2026-05-15
+
+### Changed
+
+- `plugins/rldyour-serena-mcp`:
+  - Added `scripts/analyze_sync_scope.py` impact analysis and persisted analysis payload in
+    `.serena/.serena_sync_state.json` for deterministic, low-noise memory-sync targeting.
+  - Updated hook pipeline so `mark_sync_required.sh` stores `non_knowledge_changed_files`,
+    `analysis.areas`, and `analysis.memory_targets`; `stop_memory_sync.sh` prints analysis context
+    (risk profile/high-priority areas/memory targets) when stale.
+  - Expanded analyzer coverage for agent-only instruction paths, plugin commands, MCP transport,
+    MCP runtime config, release/version files, and repository docs.
+  - Ensured empty commit ranges produce empty memory targets to avoid no-op sync noise.
+  - Bumped plugin version to `0.1.4` in plugin manifest and marketplace entry.
+- Refined `.serena/memories/serena_memory_sync_protocol_2026-05.md` as a durable protocol memory for
+  Serena lifecycle, marker payload contracts, and memory-sync execution rules.
+- Synchronized `AGENTS.md` and `.claude/CLAUDE.md` with current hook/flow dependency contracts and
+  Claude Code v2.1.142 documentation facts.
+
 ## [0.1.3] - 2026-05-15
 
 ### Changed

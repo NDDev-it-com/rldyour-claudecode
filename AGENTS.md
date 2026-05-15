@@ -10,7 +10,7 @@ This `AGENTS.md` is the concise root project-instruction file for any AI agent w
 ## Source Of Truth
 
 - `./.claude-plugin/marketplace.json` — marketplace manifest, `pluginRoot: ./plugins`, source form `./plugins/<name>`.
-- `./plugins/<name>/.claude-plugin/plugin.json` — per-plugin manifest. Required: `$schema`, `name`, `version` (`0.1.0` everywhere), `description`, `author`, `license`, `homepage`, `repository`, `keywords`.
+- `./plugins/<name>/.claude-plugin/plugin.json` — per-plugin manifest. Required: `$schema`, `name`, `version` (per-plugin values can differ), `description`, `author`, `license`, `homepage`, `repository`, `keywords`.
 - `./plugins/rldyour-mcps/.mcp.json` — single-owner MCP transport for the whole marketplace.
 - `./plugins/rldyour-flow/hooks/hooks.json` and `./plugins/rldyour-serena-mcp/hooks/hooks.json` — only two plugins ever own hooks.
 - `./plugins/rldyour-flow/references/*.md` — durable contracts for `ry-init`, `ry-start`, `ry-newp`, `ry-review`, `ry-deploy`, post-task sync, reviewer protocol, and source citations.
@@ -39,15 +39,15 @@ plugins/
 - `rldyour-mcps` is the single owner of any `.mcp.json`. Other plugins consume MCP transport from it; they never declare MCP servers themselves.
 - Only `rldyour-flow` and `rldyour-serena-mcp` declare `hooks.json`. No other plugin attaches Claude Code lifecycle hooks.
 - One domain per plugin. No catch-all plugins. Cross-plugin overlap is forbidden.
-- `rldyour-design` and `rldyour-browser` are skills-only and use Figma/shadcn/Playwright/Chrome DevTools transport from `rldyour-mcps`.
+- `rldyour-design` and `rldyour-browser` are skills-only and use Figma/shadcn/Playwright/Chrome DevTools transport from `rldyour-mcps`; `rldyour-design` also depends on `rldyour-browser` for validation routing.
 
 ## Validation And Setup
 
 - Validate manifests: `claude plugin validate <path>` from repo root after editing any `marketplace.json` or `plugin.json`. CI runs this on every PR via `.github/workflows/validate.yml`.
 - Tag releases: `claude plugin tag --push` (v2.1.119+) validates that `plugin.json` and marketplace entry agree on version, refuses dirty worktrees and pre-existing tags. Tag convention: `<plugin-name>--v<version>`.
 - Prune orphaned dependencies: `claude plugin prune` (v2.1.121+); `claude plugin uninstall <plugin> --prune` cascades.
-- Inspect a plugin's component inventory and projected per-session token cost: `claude plugin details <name>` (v2.1.142+).
-- Minimum Claude Code version: **v2.1.111+** for `model: opus[1m]` bracketed extended-context model syntax used by the `ry-explore` agent. Earlier versions silently ignore the bracket suffix. Current local: **v2.1.142** (verification range v2.1.111-v2.1.142, May 2026).
+- Inspect a plugin's component inventory and projected per-session token cost: `claude plugin details <name>` (v2.1.139+; v2.1.142 added LSP server visibility to details output).
+- Minimum Claude Code version: **v2.1.111+** as this repository's compatibility floor for bracketed extended-context model syntax used by the `ry-explore` agent. `[1m]` model availability remains account/plan-dependent. Current local: **v2.1.142** (verification range v2.1.111-v2.1.142, May 2026).
 - Bootstrap a fresh checkout: `python3 plugins/rldyour-flow/scripts/fullrepo_sync.py --bootstrap-init` — installs `.git/info/exclude` block for agent-only files and restores or publishes `fullrepo`.
 - Audit git/branch/worktree state: `bash plugins/rldyour-flow/scripts/git_sync_audit.sh`.
 - Quality checks for product repositories that consume this marketplace: `bash plugins/rldyour-flow/scripts/detect_project_checks.sh`. This repository has no runtime test suite by design.
@@ -67,7 +67,7 @@ Reviewer subagents live in `plugins/rldyour-flow/agents/flow-*-review.md`. All r
 
 ## Hooks Lifecycle
 
-Two plugins coordinate hooks. The `flow.stop_post_task_sync.sh` hook waits for `serena_current=true` from the Serena Stop hook before running.
+Two plugins coordinate hooks. `flow.stop_post_task_sync.sh` derives `serena_current` by calling `plugins/rldyour-serena-mcp/scripts/serena_memory_state.py`; it does not consume output from the Serena Stop hook.
 
 | Event | Owner | Script |
 |---|---|---|
@@ -80,7 +80,7 @@ Two plugins coordinate hooks. The `flow.stop_post_task_sync.sh` hook waits for `
 | Stop | rldyour-serena-mcp | `hooks/stop_memory_sync.sh` |
 | Stop | rldyour-flow | `hooks/stop_post_task_sync.sh` |
 
-All hooks are advisory (informational `additionalContext`) and exit `0` on errors. The single hook that performs a bounded mutation is `session_start_worktree_bootstrap.sh` — it runs `fullrepo_sync.py --restore` (never `--publish`, never touches origin) only when an agent-only marker is missing in the active worktree. Skip flags: `RLDYOUR_SKIP_FLOW_SESSION_CONTEXT`, `RLDYOUR_SKIP_FLOW_COMMIT_ADVICE`, `RLDYOUR_SKIP_STOP_GATES`, `RLDYOUR_SKIP_FLOW_SYNC`, `RLDYOUR_SKIP_SERENA_SYNC`, `RLDYOUR_SKIP_WORKTREE_BOOTSTRAP`.
+Most hooks are advisory and exit `0`; Stop hooks are advisory enforcement gates that write guidance to stderr and block with `exit 2` when memory or post-task sync is required. The single hook that performs a bounded worktree mutation is `session_start_worktree_bootstrap.sh` — it runs `fullrepo_sync.py --restore` (never `--publish`, never touches origin) only when an agent-only marker is missing in the active worktree. Skip flags: `RLDYOUR_SKIP_FLOW_SESSION_CONTEXT`, `RLDYOUR_SKIP_FLOW_COMMIT_ADVICE`, `RLDYOUR_SKIP_STOP_GATES`, `RLDYOUR_SKIP_FLOW_SYNC`, `RLDYOUR_SKIP_SERENA_SYNC`, `RLDYOUR_SKIP_WORKTREE_BOOTSTRAP`.
 
 ## Worktree Workflow
 
@@ -119,7 +119,7 @@ Subcommands:
 
 13 pinned servers: `serena-agent==1.3.0` (with `--context=agent` for generic CLI agents like Claude Code, **`alwaysLoad: true`** since v2.1.121+ — eager startup because Serena drives every UserPromptSubmit hook; 1.3.0 mode-selection refactor scopes the tool surface to 28 tools under `agent` context, all workflow tools we use present), `@modelcontextprotocol/server-sequential-thinking@2025.12.18`, `@playwright/mcp@0.0.75`, `chrome-devtools-mcp@0.26.0`, `@upstash/context7-mcp@2.2.5`, `deepwiki` (HTTP `mcp.deepwiki.com`), `grep` (HTTP `mcp.grep.app`), `semgrep==1.163.0`, `shadcn@4.7.0`, `dart mcp-server`, `figma` (HTTP `mcp.figma.com`), `openai-docs` (HTTP), `github` (local stdio `github-mcp-server stdio` — Homebrew bottle v1.0.4 pinned in `config/mcp-runtime-versions.env`; defaults to toolset `repos,issues,pull_requests,users,context`; **not** the Copilot-gated `api.githubcopilot.com/mcp/` HTTP endpoint). Required env: `CONTEXT7_API_KEY`, `GITHUB_PERSONAL_ACCESS_TOKEN`. Required host binaries: `github-mcp-server` (via `brew install github-mcp-server`), `dart`.
 
-MCP timeouts are controlled by Claude Code env vars (per official docs at `code.claude.com/docs/en/mcp`): `MCP_TIMEOUT` (server startup, default depends on Claude Code version) and `MCP_TOOL_TIMEOUT` (per-tool-call). Per-server `startup_timeout_sec`/`tool_timeout_sec` keys in `.mcp.json` are NOT documented and silently ignored — do not add them.
+MCP timeouts are controlled by Claude Code env vars: `MCP_TIMEOUT` for server startup (documented in MCP/env-var docs) and `MCP_TOOL_TIMEOUT` for per-tool-call timeout (confirmed in the v2.1.142 changelog for HTTP/SSE MCP requests). Per-server `startup_timeout_sec`/`tool_timeout_sec` keys in `.mcp.json` are NOT documented and silently ignored — do not add them.
 
 ## Cross-Plugin Dependencies
 
@@ -135,7 +135,7 @@ Current dependency graph:
 | rldyour-explore | rldyour-mcps |
 | rldyour-security | rldyour-mcps |
 | rldyour-browser | rldyour-mcps |
-| rldyour-design | rldyour-mcps |
+| rldyour-design | rldyour-mcps, rldyour-browser |
 | rldyour-lsps | rldyour-mcps |
 | rldyour-rules | rldyour-mcps |
 
@@ -170,4 +170,3 @@ Current dependency graph:
 - Pre-existing reviewer subagents and skills referenced by new components actually exist on disk.
 
 <!-- Living-doc note: when discovering a non-obvious project fact during work that another AI tool would also need (cross-tool concern), propose an AGENTS.md edit in the same change. Don't auto-generate. Claude Code-specific facts (skill listing, hook canon, subagent matrix) belong in ./.claude/CLAUDE.md instead. -->
-
