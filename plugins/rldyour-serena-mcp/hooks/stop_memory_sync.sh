@@ -44,6 +44,7 @@ fi
 IS_CURRENT=$(printf "%s" "$STATE_JSON" | python3 -c 'import json,sys; print("true" if json.load(sys.stdin).get("is_current") else "false")' 2>/dev/null || echo "false")
 HEAD_SHA=$(printf "%s" "$STATE_JSON" | python3 -c 'import json,sys; print(json.load(sys.stdin).get("head_sha", ""))' 2>/dev/null || true)
 NEWEST_SHA=$(printf "%s" "$STATE_JSON" | python3 -c 'import json,sys; print(json.load(sys.stdin).get("newest_synced_sha", ""))' 2>/dev/null || true)
+ANALYSIS_SOURCE=$(printf "%s" "$STATE_JSON" | python3 -c 'import json,sys; print(json.load(sys.stdin).get("analysis_source", "none"))' 2>/dev/null || echo "none")
 
 if [ "$IS_CURRENT" = "true" ]; then
   rm -f "$SYNC_MARKER" .serena/.serena_sync_state.json
@@ -83,9 +84,55 @@ import json
 import sys
 
 payload = json.load(sys.stdin)
-files = payload.get("non_knowledge_changed_files_since_sync") or payload.get("sync_state", {}).get("changed_files", [])
+files = payload.get("non_knowledge_changed_files_since_sync")
+if not files:
+    files = payload.get("sync_state", {}).get("non_knowledge_changed_files")
+if not files:
+    files = payload.get("sync_state", {}).get("changed_files", []) or payload.get("changed_files_since_sync", [])
 print("\n".join(str(item) for item in files))
 ' 2>/dev/null || true)
+
+SYNC_CONTEXT=$(printf "%s" "$STATE_JSON" | python3 -c '
+import json
+import sys
+
+head_sha = sys.argv[1]
+newest_sha = sys.argv[2]
+analysis_source = sys.argv[3] if len(sys.argv) > 3 else "none"
+try:
+    payload = json.load(sys.stdin)
+except Exception:
+    payload = {}
+sync_state = payload.get("sync_state", {}) or {}
+analysis = payload.get("analysis") or {}
+analysis_by_payload = sync_state.get("analysis") or {}
+if not analysis and isinstance(analysis_by_payload, dict):
+    analysis = analysis_by_payload
+areas_summary = analysis.get("areas_summary", {}) or {}
+risk_profile = analysis.get("risk_profile", {}) or {}
+memory_targets = analysis.get("memory_targets", []) or []
+reason = (sync_state.get("reason") or "").strip() or "non-knowledge project changes detected"
+high_impact = areas_summary.get("high_impact", [])
+candidates = sorted({item.get("path") for item in memory_targets if isinstance(item, dict) and item.get("path")})
+focus = risk_profile.get("sync_focus", "medium")
+analysis_file_count = analysis.get("file_count", 0)
+areas = analysis.get("areas") or []
+has_analysis = bool(analysis_file_count or areas)
+
+lines = [
+    "Change impact (sync analysis):",
+    f"- Risk profile: {focus}",
+    f"- Analysis source: {analysis_source}",
+    f"- Changed files total: {analysis_file_count if isinstance(analysis_file_count, int) else 0}",
+    f"- Analysis reason: {reason}",
+    f"- Analysis available: {has_analysis}",
+]
+if candidates:
+    lines.append("- Memory targets: " + ", ".join(candidates))
+if high_impact:
+    lines.append("- High-priority areas: " + ", ".join(sorted(high_impact)))
+print("\n".join(lines))
+' "$HEAD_SHA" "$NEWEST_SHA" "$ANALYSIS_SOURCE")
 
 MESSAGE="[RLDYOUR-SERENA SYNC REQUIRED] Project knowledge is stale for HEAD ${HEAD_SHA}.
 
@@ -93,6 +140,8 @@ Last synced memory commit: ${NEWEST_SHA:-none}
 
 Relevant commits:
 ${COMMITS}
+
+${SYNC_CONTEXT}
 
 Changed non-Serena-knowledge files:
 ${NON_KNOWLEDGE_FILES:-unknown}
