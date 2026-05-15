@@ -6,6 +6,33 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+## [0.1.5] - 2026-05-15
+
+### Changed
+
+- `plugins/rldyour-serena-mcp`:
+  - Standardized Serena memory taxonomy on numbered topic files (`AREA-01-SLUG.md`)
+    with `CORE-01-INDEX.md` as the required navigation map.
+  - Bumped analyzer payload to `analysis.schema_version = 2` and added
+    `analysis.memory_taxonomy` so hooks, skills, and the `flow-memory-sync`
+    subagent share one memory naming and split contract.
+  - Updated `analyze_sync_scope.py` memory targets from broad legacy memory names
+    to canonical topic files such as `SERENA-01-MEMORY-SYNC.md`,
+    `HOOKS-01-LIFECYCLE.md`, `FLOW-01-SDLC.md`, `MCP-01-TRANSPORT.md`,
+    `DOCS-01-INSTRUCTIONS.md`, `RELEASE-01-VALIDATION.md`, and
+    `TECHDEBT-01-NOW.md`.
+  - Updated Stop-hook guidance and memory-sync instructions so sync runs maintain
+    the index, split broad files, and keep stable numbering instead of appending
+    unrelated facts to catch-all memories.
+  - Made `serena_memory_state.py` scan `.serena/memories/**/*.md` so future nested
+    topic layouts remain freshness-aware.
+  - Aligned `commit_serena_knowledge.sh` runtime-marker filtering with flow sync
+    markers (`.serena/.flow_sync_marker`, `.serena/.flow_post_task_state.json`).
+  - Bumped plugin version to `0.1.5` in plugin manifest and marketplace entry.
+- Migrated project Serena memories from broad dated filenames to the numbered
+  topic taxonomy and synchronized agent-only `AGENTS.md` / `.claude/CLAUDE.md`
+  with the new memory-brain contract.
+
 ## [0.1.4] - 2026-05-15
 
 ### Changed

@@ -176,7 +176,7 @@ def _memory_candidates(head_short: str) -> tuple[int, bool, list[tuple[str, str]
     if not MEMORY_DIR.is_dir():
         return 0, False, []
 
-    memory_files = sorted(MEMORY_DIR.glob("*.md"))
+    memory_files = sorted(MEMORY_DIR.rglob("*.md"))
     memory_matches_head = False
     candidates: list[tuple[str, str]] = []
 
