@@ -6,6 +6,40 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+## [0.1.6] - 2026-05-15
+
+### Changed
+
+- **Agent tools migration (`disallowedTools` → explicit `tools:` allowlist)**:
+  - All 6 `rldyour-flow` reviewer agents (`flow-architecture-review`, `flow-quality-review`, `flow-consistency-review`, `flow-integration-review`, `flow-verification-review`, `flow-security-review`) migrated to explicit positive allowlist.
+  - `rldyour-explore/ry-explore` agent migrated to the same pattern.
+  - Pattern follows canonical `anthropics/claude-plugins-official/plugins/pr-review-toolkit/agents/code-reviewer` — explicit allowlist for future-proof read-only enforcement (isolates these agents from any future edit-like tool that Claude Code might add).
+  - Replaced broad `mcp__plugin_rldyour-mcps_serena__*` wildcard with an explicit 14-tool read-only Serena subset (`find_symbol`, `find_referencing_symbols`, `find_implementations`, `find_declaration`, `get_symbols_overview`, `search_for_pattern`, `read_file`, `list_dir`, `find_file`, `list_memories`, `read_memory`, `get_current_config`, `get_diagnostics_for_file`, `check_onboarding_performed`). The wildcard previously included Serena write tools (`create_text_file`, `replace_content`, `replace_symbol_body`, `insert_after_symbol`, `insert_before_symbol`, `rename_symbol`, `safe_delete_symbol`, `write_memory`, `edit_memory`, `delete_memory`, `rename_memory`) — the new explicit list eliminates that confused-deputy / prompt-injection risk for read-only reviewer and research agents.
+  - `flow-security-review` additionally allows `WebFetch`, `WebSearch`, `mcp__plugin_rldyour-mcps_semgrep__*` for CVE lookups and SAST. Semgrep MCP wildcard kept (server exposes only scan/analysis tools).
+  - `flow-memory-sync` intentionally retains `disallowedTools: [Edit, Write, NotebookEdit]` denylist (its `tools:` allowlist already grants Serena memory write tools needed for its canonical writer role; the denylist is defence-in-depth against project-file mutation).
+  - Plugin version bumps: `rldyour-flow` `0.1.2` → `0.1.3` and `rldyour-explore` `0.1.2` → `0.1.3` (agent frontmatter affects runtime; bump triggers `claude plugin update` cache refresh).
+
+- **Shell strict mode harmonization (defence-in-depth, no functional change)**:
+  - 8 hook scripts in `plugins/rldyour-{flow,serena-mcp}/hooks/*.sh` and 3 root/plugin scripts (`scripts/worktree_add.sh`, `scripts/bootstrap_check.sh`, `plugins/rldyour-flow/scripts/deploy_readiness.sh`) gained `IFS=$'\n\t'` + `unset CDPATH` after `set -euo pipefail`.
+  - Pattern matches existing gold-standard in `scripts/install-rldyour-marketplace.sh`.
+  - `IFS=$'\n\t'` removes default space-word-splitting surprises in any unquoted expansion; `unset CDPATH` removes attacker-controlled-environment `cd` redirection risk.
+  - Verified by `bash -n` + `scripts/smoke_hooks.sh` + manual stdin smoke: no regression.
+
+- **Instruction docs expansion (cross-tool best practices, no `@import` redirection)**:
+  - `AGENTS.md`: new `## Codex CLI Compatibility` section (OpenAI Codex CLI reads AGENTS.md, layered `~/.codex/AGENTS.md` + repository concatenation, Codex runs test commands listed in AGENTS.md before finishing); new `## Cross-Tool Support` section (Linux Foundation AAIF since `2025-12-09`, 30+ supported tools, 60k+ adopting repos per `https://agents.md/` as of May 2026); bilingual descriptions rationale in Engineering Constraints; HTML maintainer comment line cap raised `180` → `200`.
+  - `.claude/CLAUDE.md`: new `## Anthropic Precedent Confirmations` section (7 verified canonical patterns with citations to `anthropics/claude-plugins-official` SHA `1a2f18b05cf5652fd25403e8d229fc884fb84103` + community precedents); `skillListingBudgetFraction` recommendation `0.03` → `0.04` (Sonnet 200K context truncates tail-end auto-trigger descriptions for bilingual entries averaging ~373-400 chars at 0.03 — 0.04 fits both 200K and 1M context); agent frontmatter spec updated (`tools:` allowlist primary, `disallowedTools:` legacy); v2.1.139 `args: string[]` exec-form decline expanded with verification evidence (none of Anthropic's own plugin hooks.json use exec-form either).
+
+### Fixed
+
+- Hook count drift across documentation: `AGENTS.md` Repository Layout, `.claude/CLAUDE.md` Plugins And Components, `plugins/rldyour-flow/README.md` What's inside, `README.md` Active Catalog corrected from `3 hooks` to `4 hooks` for `rldyour-flow` (4 registered hook scripts in `hooks.json`: 2× SessionStart + PostToolUse:Bash + Stop). The historical `3 hooks` count in `CHANGELOG.md [0.1.0]` is intentionally preserved as accurate-for-that-release.
+- `CHANGELOG.md [0.1.1]`: env var name typo `WORKTREE_BASE_REF=HEAD` → `RLDYOUR_WORKTREE_BASE_REF=HEAD` to match actual code in `scripts/worktree_add.sh` and FLOW-01-SDLC Serena memory.
+- `plugins/rldyour-mcps/README.md`: GitHub MCP rationale rephrased to avoid unsubstantiated "Copilot entitlement 403" framing; now describes the local stdio choice as "self-contained without dependence on `api.githubcopilot.com/mcp/`" with documented PAT scopes (`repo` + `read:org` are sufficient, no Copilot subscription required).
+- `plugins/rldyour-flow/agents/flow-architecture-review.md` anti-pattern text now references `tools:` allowlist mechanism instead of stale `disallowedTools` description (aligns with own frontmatter and the other 5 reviewer agent bodies).
+- `plugins/rldyour-flow/README.md` and `plugins/rldyour-explore/README.md` subagent listings updated to reflect new `tools:` allowlist (was still describing `disallowedTools` denylist).
+- `plugins/rldyour-serena-mcp/README.md` `flow-memory-sync` description updated to mention both the explicit `tools:` allowlist (Serena memory write tools + read-only inspection tools) and the `disallowedTools` defence-in-depth layer.
+- `AGENTS.md` Codex CLI Compatibility section: removed unverified `~/.codex/AGENTS.override.md` claim (not documented in official Codex docs or agents.md spec).
+- `.claude/CLAUDE.md` Changelog Adoption section: `skillListingBudgetFraction` line hedged with explicit "Anthropic + claudekit-cli baseline `0.03`; this repo recommends `0.04`" so the changelog note doesn't contradict the Skill Listing Budget section above it.
+
 ## [0.1.5] - 2026-05-15
 
 ### Changed
@@ -148,7 +182,7 @@ Release boundary cut after the 2026-05-08..2026-05-12 wave of best-practice, MCP
     `git worktree add` flow: detects whether the branch is local /
     remote / new, runs `git worktree add` with the right ref, then
     bootstraps agent-only context. Supports `RLDYOUR_DRY_RUN=1` and
-    `WORKTREE_BASE_REF=HEAD` to mirror Claude Code's
+    `RLDYOUR_WORKTREE_BASE_REF=HEAD` to mirror Claude Code's
     `worktree.baseRef: "head"` setting.
   - AGENTS.md "Worktree Workflow" section documenting the manual + auto
     flow, the Claude Code v2.1.139 `worktree.{baseRef,symlinkDirectories,
