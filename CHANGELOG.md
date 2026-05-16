@@ -6,6 +6,67 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+## [0.1.9] - 2026-05-16
+
+### Changed
+
+- **Wave 5 — CI hardening + org transfer** (repository moves from
+  `rldyourmnd/rldyour-claude` to `nddev-it-com/rldyour-claudecode`,
+  private visibility preserved).
+  - **SHA-pinned actions** per OWASP A03:2025 supply-chain hardening.
+    `actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd` (v6.0.2),
+    `actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e` (v6.4.0),
+    `actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405` (v6.2.0),
+    `step-security/harden-runner@ab7a9404c0f3da075243ca237b5fac12c98deaa5`
+    (v2.19.3), `github/codeql-action@f411752efdf656cb71aa17b755b22c890960da1d`
+    (v3.35.5). Tag-to-SHA refresh procedure documented in workflow file headers.
+    Closes Wave 4 security F-3 (LOW 90).
+  - **Top-level `permissions: {}`** deny-all default + per-job read-only grants
+    per OWASP A01:2025 least-privilege.
+  - **Concurrency group** cancels redundant runs on the same ref across all four
+    workflows.
+  - **harden-runner egress audit** at the start of every job — surfaces
+    unexpected outbound network calls in the GitHub Security tab.
+  - **Claude Code CLI pinned**: `npm install -g @anthropic-ai/claude-code@2.1.143`
+    (was unpinned). Closes Wave 4 security F-5 (INFO 35).
+  - **New `.github/workflows/codeql.yml`** — SAST via GitHub CodeQL with
+    `security-extended,security-and-quality` queries. Matrix on `python` and
+    `actions` languages. Findings appear in the Security tab.
+  - **New `.github/workflows/actionlint.yml`** — workflow YAML linter using
+    `rhysd/actionlint` v1.7.12 binary, SHA256-verified against upstream
+    `checksums.txt` (`8aca8db96f1b94770f1b0d72b6dddcb1ebb8123cb3712530b08cc387b349a3d8`).
+  - **New `.github/dependabot.yml`** — monthly `github-actions` ecosystem
+    updates, grouped minor+patch bumps, max 5 open PRs.
+  - **Python AST + JSON parse checks** in `validate.yml` now use `fail=1` +
+    `sys.exit(fail)` instead of fail-first behavior, surfacing all failures
+    in a single CI run.
+  - **Repo URL updates**: 9 plugin manifests (`homepage` + `repository`),
+    `install-rldyour-marketplace.sh` (`NEW_MARKETPLACE_SOURCE`),
+    `docs/rollback-restore.md` clone URL all point to
+    `nddev-it-com/rldyour-claudecode`.
+  - **Marketplace slug rename**: `.claude-plugin/marketplace.json` `name` field
+    `rldyour-claude` → `rldyour-claudecode`. README install commands updated
+    (`@rldyour-claudecode` suffix). Plugin install one-liners updated.
+  - **Title updates**: `README.md`, `AGENTS.md`, `.claude/CLAUDE.md`,
+    `docs/release-process.md`, plugin README descriptions.
+  - **GitHub redirect**: old `github.com/rldyourmnd/rldyour-claude` URL
+    auto-redirects to the new location for ~12 months. No external consumer
+    notification required (personal marketplace per `.claude/CLAUDE.md`).
+
+### Notes
+
+- No plugin runtime files changed. No plugin `plugin.json` version bumps needed.
+  `VERSION` 0.1.8 → 0.1.9 reflects marketplace-level changes (CI hardening +
+  org transfer + slug rename).
+- Local directory will be renamed `rldyour-claude` → `rldyour-claudecode`
+  after the transfer completes; local origin remote updated to
+  `git@github.com:nddev-it-com/rldyour-claudecode.git`.
+- `bash scripts/validate_marketplace.sh` passes all gates including the new
+  hardened workflows verified by `yaml.safe_load` parse.
+- `~/.claude/plugins/cache/rldyour-claudecode/...` is the new cache path.
+  Existing users (only the owner) re-run `claude /plugin marketplace add
+  nddev-it-com/rldyour-claudecode` to migrate.
+
 ## [0.1.8] - 2026-05-16
 
 ### Changed
