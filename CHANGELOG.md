@@ -6,6 +6,85 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-05-16
+
+### Changed
+
+- **Marketplace + all 9 plugins synchronised to `0.2.0`** — first
+  MINOR-line boundary that consolidates the Wave 1-5 series into a
+  single release tag set. No plugin runtime files added or modified
+  relative to 0.1.9; the bump invalidates the per-plugin runtime cache at
+  `~/.claude/plugins/cache/rldyour-claudecode/<plugin>/<version>/` so the
+  operator picks up all marketplace-level hardening that accumulated
+  through Waves 4-5. Plugin version transitions:
+  `rldyour-mcps` 0.1.3 → 0.2.0,
+  `rldyour-explore` 0.1.3 → 0.2.0,
+  `rldyour-serena-mcp` 0.1.5 → 0.2.0,
+  `rldyour-flow` 0.1.4 → 0.2.0,
+  `rldyour-security` / `rldyour-browser` / `rldyour-design` /
+  `rldyour-lsps` / `rldyour-rules` all 0.1.2 → 0.2.0. Marketplace
+  `VERSION` 0.1.9 → 0.2.0. `.claude-plugin/marketplace.json` plugin
+  entries aligned. Tags created via `claude plugin tag --push` per
+  plugin plus `marketplace--v0.2.0` for the marketplace boundary.
+
+- **Wave 1-2 consolidation** — Conventional Commits discipline, strict-mode propagation
+  to 14 utility/plugin scripts, prompt-injection markers expanded to 13+
+  families with `re.IGNORECASE | re.UNICODE`, branch-name two-gate
+  validation, agent `tools:` allowlist invariant via
+  `scripts/validate_agent_tools.py`.
+- **Wave 3 consolidation** — Serena memory base extended into the project brain: 8 new
+  topic memories (`PHILOSOPHY-01-QUALITY-FIRST`, `PATTERNS-01-CANONICAL`,
+  `BROWSER-01-WORKFLOW`, `DESIGN-01-WORKFLOW`, `EXPLORE-01-RESEARCH`,
+  `LSPS-01-LANGUAGE-SERVERS`, `RULES-01-POLICY`, `SECURITY-01-OWASP`).
+- **Wave 4 consolidation** — `bootstrap_check.sh` agent-only divergence guard (R5
+  closure as `D19`), `.aider*` glob expansion at runtime, `WARN` to
+  stderr for `RLDYOUR_FORCE_BOOTSTRAP=1` bypass and `git fetch`
+  failures, `scripts/smoke_bootstrap_check.sh` with 7 assertions plus
+  `AGENT_ONLY_PATHS` bash↔python drift detector, 18 memories
+  cross-linked into a bidirectional `[[wikilinks]]` graph (≤2 hops from
+  `CORE-01-INDEX`), OWASP Top 10:2025 (Final 2025-11-06) + ASVS 5.0.0
+  precision, `TECHDEBT-01-NOW` Source Of Truth (11 anchors), D19-D23
+  closures.
+- **Wave 5 consolidation** — repository transferred from `rldyourmnd/rldyour-claude`
+  to `NDDev-it-com/rldyour-claudecode` (private). Marketplace slug
+  renamed to `rldyour-claudecode`. CI hardening per OWASP A01:2025 +
+  A03:2025: SHA-pinned `actions/checkout@v6.0.2`,
+  `actions/setup-{node,python}@v6.x`,
+  `step-security/harden-runner@v2.19.3`, top-level `permissions: {}` +
+  per-job read-only, concurrency cancel-in-progress, harden-runner
+  egress audit, Claude Code CLI pinned to `@anthropic-ai/claude-code@2.1.143`.
+  New workflows `actionlint.yml` (SHA256-verified
+  `rhysd/actionlint@v1.7.12`), `semgrep.yml` (`semgrep/semgrep:1.163.0`
+  Docker image with OSS packs `p/python, p/github-actions,
+  p/security-audit, p/secrets, p/owasp-top-ten, p/ci`),
+  `dependabot.yml` (monthly grouped github-actions updates).
+
+### Notes
+
+- **No plugin runtime files added or modified in this release.** All hooks,
+  skills, agents, slash commands, references, and scripts retain their
+  Wave 5 state byte-for-byte. The bump is purely a cache-invalidation +
+  tag boundary — same pattern Anthropic uses for minor-version bumps that
+  consolidate doc and CI improvements without behavior change.
+- **Done criteria for 0.2.0** (operator-verifiable):
+  - `bash scripts/validate_marketplace.sh` passes (incl.
+    `smoke_bootstrap_check.sh`, `smoke_hooks.sh`,
+    `smoke_serena_memory_taxonomy.sh`).
+  - `python3 scripts/validate_plugin_versions.py` reports 9 plugins at
+    0.2.0 aligned with `.claude-plugin/marketplace.json`.
+  - `git tag --list 'rldyour-*--v0.2.0'` returns 9 plugin tags;
+    `git tag --list 'marketplace--v0.2.0'` returns the marketplace tag.
+  - CI workflows on the release commit: `validate`, `semgrep`,
+    `dependency-check` green. `actionlint` is skipped by its
+    path-filter on pure version-bump commits (no
+    `.github/workflows/**` changes) — the last green `actionlint` run
+    is on `334fe09` where workflow YAML was last touched. This is
+    intentional and documented; not a regression.
+  - Fullrepo branch republished with `tracked_agent_paths: []` and
+    R5 guard reporting `OK agent-only files match origin/fullrepo`.
+  - Serena memories `RELEASE-01-VALIDATION` + `TECHDEBT-01-NOW` updated
+    via `flow-memory-sync` subagent against the new HEAD SHA.
+
 ## [0.1.9] - 2026-05-16
 
 ### Changed
@@ -492,3 +571,16 @@ Release boundary cut after the 2026-05-08..2026-05-12 wave of best-practice, MCP
   marketplace and per-plugin manifests, JSON manifest parse, Python AST and
   shell syntax checks, frontmatter presence verification on all skills,
   agents, and commands.
+
+[Unreleased]: https://github.com/NDDev-it-com/rldyour-claudecode/compare/marketplace--v0.2.0...HEAD
+[0.2.0]: https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/marketplace--v0.2.0
+[0.1.9]: https://github.com/NDDev-it-com/rldyour-claudecode/commit/99f9809
+[0.1.8]: https://github.com/NDDev-it-com/rldyour-claudecode/commit/9bf3c70
+[0.1.7]: https://github.com/NDDev-it-com/rldyour-claudecode/commit/eaccf59
+[0.1.6]: https://github.com/NDDev-it-com/rldyour-claudecode/commit/bf54d02
+[0.1.5]: https://github.com/NDDev-it-com/rldyour-claudecode/commit/bf54d02
+[0.1.4]: https://github.com/NDDev-it-com/rldyour-claudecode/commit/eaccf59
+[0.1.3]: https://github.com/NDDev-it-com/rldyour-claudecode/commits/main
+[0.1.2]: https://github.com/NDDev-it-com/rldyour-claudecode/commit/d50e94c
+[0.1.1]: https://github.com/NDDev-it-com/rldyour-claudecode/commit/ef18bd9
+[0.1.0]: https://github.com/NDDev-it-com/rldyour-claudecode/commit/ef18bd9

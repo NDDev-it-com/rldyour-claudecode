@@ -267,6 +267,12 @@ Filename: `AREA-NN-SLUG.md` (e.g., `FLOW-01-SDLC.md`). Memory name in Serena: `A
 
 `CORE-01-INDEX.md` is the map and must be updated when a memory is added, deleted, renamed, or split. Numbering is stable — add the next number in an area; do not renumber existing memories unless the task is an explicit taxonomy migration.
 
+## Tag Conventions
+
+- **Plugin tag format**: `<plugin-name>--v<version>` (e.g., `rldyour-flow--v0.2.0`). Created via `claude plugin tag --push` per plugin. `claude plugin tag --push` refuses dirty worktrees or pre-existing tags.
+- **Marketplace boundary tag format**: `marketplace--v<version>` (e.g., `marketplace--v0.2.0`). Introduced in 0.2.0 release; pushed manually (not via `claude plugin tag --push`). Marks the aggregate release boundary in `CHANGELOG.md` reference-links block as `[0.2.0]: https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/marketplace--v0.2.0`. Verified at `CHANGELOG.md` line 576 at HEAD `ebeb062`.
+- Tags should be created only after tracked files are clean and `bash scripts/validate_marketplace.sh` passes.
+
 ## Commit Message Pattern (Conventional Commits v1.0.0)
 
 ```

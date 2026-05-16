@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-16
-Last commit: eaccf59 chore(release): cut 0.1.7 (rldyour-flow 0.1.4, Wave 2 polish)
+Last commit: ebeb062 docs(changelog): polish 0.2.0 entry per reviewer findings
 Scope: .claude-plugin/marketplace.json, plugins/*/.claude-plugin/plugin.json, README.md, AGENTS.md
 Area: CORE
 -->
@@ -19,20 +19,20 @@ Current business logic and architecture of the `rldyour-claude` marketplace. The
 - `README.md`: owner-facing catalog, control model, install/check commands, active per-plugin versions.
 - `AGENTS.md`: concise cross-tool project rules and boundaries.
 
-## Current State (HEAD `eaccf59`)
+## Current State (HEAD `ebeb062`)
 
-- **VERSION**: `0.1.7` (release boundary).
+- **VERSION**: `0.2.0` (release boundary).
 - **9 plugins** verified at HEAD from `.claude-plugin/marketplace.json`: `rldyour-mcps`, `rldyour-explore`, `rldyour-serena-mcp`, `rldyour-security`, `rldyour-browser`, `rldyour-design`, `rldyour-lsps`, `rldyour-flow`, `rldyour-rules`.
-- **Per-plugin versions**:
-  - `rldyour-mcps`: `0.1.3`
-  - `rldyour-serena-mcp`: `0.1.5`
-  - `rldyour-flow`: `0.1.4`
-  - `rldyour-explore`: `0.1.3`
-  - `rldyour-browser`: `0.1.2`
-  - `rldyour-design`: `0.1.2`
-  - `rldyour-lsps`: `0.1.2`
-  - `rldyour-rules`: `0.1.2`
-  - `rldyour-security`: `0.1.2`
+- **Per-plugin versions** (all `0.2.0`, synchronized in Wave 6 commits `26dbd54` + `ebeb062`):
+  - `rldyour-mcps`: `0.2.0`
+  - `rldyour-serena-mcp`: `0.2.0`
+  - `rldyour-flow`: `0.2.0`
+  - `rldyour-explore`: `0.2.0`
+  - `rldyour-browser`: `0.2.0`
+  - `rldyour-design`: `0.2.0`
+  - `rldyour-lsps`: `0.2.0`
+  - `rldyour-rules`: `0.2.0`
+  - `rldyour-security`: `0.2.0`
 - **Component totals**: 32 skills, 9 slash commands, 8 subagents, 8 hook scripts in 2 hook manifests, 12 plugin-owned scripts, 16 references.
 - The owner decides what is enabled. Repository docs state nothing is treated as enabled or correct unless explicitly decided by the owner.
 
