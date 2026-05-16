@@ -175,3 +175,13 @@ jobs:
 
       - name: Bootstrap R5 divergence guard smoke
         run: bash scripts/smoke_bootstrap_check.sh
+
+      - name: Reviewer output transport contract drift
+        run: bash scripts/validate_reviewer_contracts.sh
+
+      - name: MCP runtime smoke (pinning + HTTP preflight)
+        run: bash scripts/smoke_mcp_runtime.sh
+        # smoke_mcp_capabilities.sh is intentionally local-only: it performs
+        # session-based JSON-RPC initialize + tools/list and figma requires
+        # interactive auth that is unavailable in CI. Run it manually after
+        # any .mcp.json pin bump per MCP-01-TRANSPORT.
