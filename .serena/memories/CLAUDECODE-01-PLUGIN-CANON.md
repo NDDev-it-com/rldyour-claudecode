@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-16
-Last commit: 9bf3c70 chore(release): cut 0.1.8 (Wave 4 R5 hardening + smoke + memory graph)
+Last commit: 334fe09 fix(ci): Semgrep drop nonexistent p/bash + p/yaml packs (HTTP 404)
 Scope: .claude/CLAUDE.md, AGENTS.md, plugins/*/.claude-plugin/plugin.json, plugins/rldyour-mcps/.mcp.json, plugins/*/skills/*/SKILL.md, plugins/*/agents/*.md, plugins/*/hooks/hooks.json, plugins/rldyour-serena-mcp/scripts/analyze_sync_scope.py
 Area: CLAUDECODE
 -->
@@ -41,6 +41,7 @@ Current Claude Code plugin/runtime facts that this marketplace relies on. These 
 - `claude plugin tag --push` uses `<plugin-name>--v<version>` tag convention and refuses dirty worktrees or pre-existing tags.
 - `claude plugin details <name>` is available from v2.1.139+; v2.1.142 adds LSP visibility.
 - Official Claude Code MCP docs still show the GitHub remote MCP endpoint as an example; this repository uses local stdio `github-mcp-server` to keep the marketplace self-contained without dependence on `api.githubcopilot.com/mcp/`. A standard GitHub PAT with `repo` + `read:org` scopes is sufficient; no Copilot subscription is required. Rationale source: `plugins/rldyour-mcps/README.md` line 28 at HEAD.
+- Repository transferred from `rldyourmnd/rldyour-claude` to `NDDev-it-com/rldyour-claudecode` (private) in Wave 5. Marketplace slug renamed from `rldyour-claude` to `rldyour-claudecode` in `.claude-plugin/marketplace.json`. All 9 plugin `plugin.json` files updated with new `homepage` and `repository` URLs pointing to `github.com/nddev-it-com/rldyour-claudecode`. Local origin remote is now `git@github.com:NDDev-it-com/rldyour-claudecode.git`. Verified at `.claude-plugin/marketplace.json` and `plugins/rldyour-mcps/.claude-plugin/plugin.json` at HEAD `334fe09`.
 
 ## Invariants
 

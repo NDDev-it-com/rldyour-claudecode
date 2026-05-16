@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-16
-Last commit: 9bf3c70 chore(release): cut 0.1.8 (Wave 4 R5 hardening + smoke + memory graph)
+Last commit: 334fe09 fix(ci): Semgrep drop nonexistent p/bash + p/yaml packs (HTTP 404)
 Scope: plugins/rldyour-security/skills/owasp-top-10-implementation/SKILL.md, plugins/rldyour-security/skills/ry-sec-review/SKILL.md, plugins/rldyour-security/commands/ry-sec-review.md, plugins/rldyour-flow/agents/flow-security-review.md, plugins/rldyour-mcps/.mcp.json (semgrep entry)
 Area: SECURITY
 -->

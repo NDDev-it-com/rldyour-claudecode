@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-16
-Last commit: 9bf3c70 chore(release): cut 0.1.8 (Wave 4 R5 hardening + smoke + memory graph)
+Last commit: 334fe09 fix(ci): Semgrep drop nonexistent p/bash + p/yaml packs (HTTP 404)
 Scope: plugins/rldyour-mcps/.mcp.json, config/mcp-runtime-versions.env, scripts/check_mcp_runtime_versions.py, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.sh, AGENTS.md
 Area: MCP
 -->
@@ -28,7 +28,7 @@ MCP transport contracts for the marketplace. `rldyour-mcps` is the only plugin a
   - `playwright`: `bunx @playwright/mcp@0.0.75 --headless --caps=network,storage,testing,devtools`.
   - `chrome-devtools`: `bunx chrome-devtools-mcp@0.26.0 --headless --isolated --no-usage-statistics --no-performance-crux`.
   - `context7`: `bunx @upstash/context7-mcp@2.2.5`.
-  - `semgrep`: `uvx --from semgrep==1.163.0 semgrep mcp`.
+  - `semgrep`: `uvx --from semgrep==1.163.0 semgrep mcp`. Note: `.github/workflows/semgrep.yml` CI SAST uses Docker image `semgrep/semgrep:1.163.0` — intentionally matched to this MCP pin (verified at `.github/workflows/semgrep.yml` at HEAD `334fe09`).
   - `shadcn`: `bunx shadcn@4.7.0 mcp`.
   - `dart-flutter`: `dart mcp-server --force-roots-fallback`.
   - `github`: `github-mcp-server stdio --toolsets=repos,issues,pull_requests,users,context`.

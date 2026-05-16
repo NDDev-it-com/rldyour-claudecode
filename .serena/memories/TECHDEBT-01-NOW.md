@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-16
-Last commit: 9bf3c70 chore(release): cut 0.1.8 (Wave 4 R5 hardening + smoke + memory graph)
+Last commit: 334fe09 fix(ci): Semgrep drop nonexistent p/bash + p/yaml packs (HTTP 404)
 Scope: Serena memory sync, hook gates, fullrepo lifecycle, MCP pins, validation harness, current implementation risks
 Area: TECHDEBT
 -->
@@ -90,6 +90,11 @@ Open technical debt, implementation mistakes already fixed, and anti-regression 
 - D21. Source Of Truth sections standardized: `## Source Of Truth` subsections added to memories that lacked them, providing a canonical anchor for where to verify facts. Pattern now documented in [[PATTERNS-01-CANONICAL]] Memory File Pattern section. Behavior asserted by memory files at HEAD; no automated test.
 - D22. OWASP Top 10 precision: OWASP Top 10 2025 release status confirmed as final (released 2025-11-06), ASVS 5.0.0 reference added. A03 renamed to "Software Supply Chain Failures" (was "Injection" in OWASP Top 10 2021; renaming and repositioning to #3 reflects supply-chain concern escalation). A10 renamed to "Mishandling of Exceptional Conditions". Verified at `plugins/rldyour-security/skills/owasp-top-10-implementation/SKILL.md` and [[SECURITY-01-OWASP]].
 - D23. SC2044 NUL-delimited find loops: fixed in Wave 4 commit `b2ebbde`; `scripts/validate_marketplace.sh` and `.github/workflows/validate.yml` replaced `for f in $(find ...)` patterns with `while IFS= read -r -d '' file; do ... done < <(find ... -print0)` NUL-delimited loops. Verified by `grep -c "while IFS= read -r -d ''" scripts/validate_marketplace.sh .github/workflows/validate.yml` returning 2+2=4 hits at HEAD `9bf3c70`. Closes shellcheck SC2044 (word-splitting and globbing on find output).
+- D24. GitHub Actions unpinned tags (Wave 4 security F-3, LOW 90): fixed in Wave 5 commit `9c20c75`; all four `.github/workflows/*.yml` files switched from mutable semantic tags to SHA-pinned references per OWASP A03:2025. Pinned SHAs: `actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd` (v6.0.2), `actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e` (v6.4.0), `actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405` (v6.2.0), `step-security/harden-runner@ab7a9404c0f3da075243ca237b5fac12c98deaa5` (v2.19.3). Verified at `.github/workflows/validate.yml` lines 31-32 at HEAD `334fe09`.
+- D25. Claude Code CLI unpinned in CI (Wave 4 security F-5, INFO 35): fixed in Wave 5 commit `9c20c75`; `validate.yml` now installs `npm install -g '@anthropic-ai/claude-code@2.1.143'` (was unpinned `@latest`). Verified at `.github/workflows/validate.yml` line 46 at HEAD `334fe09`.
+- D26. No SAST coverage (CodeQL not viable without GHAS): fixed in Wave 5 commits `81126bc`+`334fe09`; CodeQL requires GitHub Advanced Security (paid, not available for this private repo — PATCH security_and_analysis returned HTTP 422). Replaced by `.github/workflows/semgrep.yml` using Semgrep OSS Docker image `semgrep/semgrep:1.163.0` (matches MCP server pin). Rule packs: `p/python`, `p/github-actions`, `p/security-audit`, `p/secrets`, `p/owasp-top-ten`, `p/ci` (`p/bash` and `p/yaml` returned HTTP 404; bash rules are bundled in `p/security-audit`). `--error` flag fails CI on WARNING/ERROR findings. No SARIF/GHAS upload needed. Verified at `.github/workflows/semgrep.yml` at HEAD `334fe09`.
+- D27. Smoke awk extractor dumped entire file for one-line step() definitions: fixed in Wave 5 commit `92eb8dd`; `scripts/smoke_bootstrap_check.sh` runtime path-a harness used awk with `in_step`/`in_fail` flag logic to extract `step()`/`fail()` bodies. One-line `step() { ...; }` form caused `^}` to never match as a separate line — flag was never reset — so the awk appended the entire remainder of `bootstrap_check.sh` into `TMP_GUARD`. Fixed by inlining minimal helpers via a `PRELUDE` heredoc and extracting only the divergence-guard block via awk range. Verified at `scripts/smoke_bootstrap_check.sh` lines 89-114 at HEAD `334fe09`.
+
 
 ## Error Patterns To Avoid
 
@@ -128,6 +133,7 @@ Open technical debt, implementation mistakes already fixed, and anti-regression 
 - OWASP coverage (D22): [[SECURITY-01-OWASP]] OWASP Top 10 2025 + ASVS 5.0.0.
 - Hook lifecycle and skip flags: [[HOOKS-01-LIFECYCLE]].
 - Release record (D19 + D23 wave): [[RELEASE-01-VALIDATION]] `[0.1.8] - 2026-05-16`.
+- Release record (D24-D27 wave): [[RELEASE-01-VALIDATION]] `[0.1.9] - 2026-05-16`.
 - Memory taxonomy and cross-reference graph: [[CORE-01-INDEX]] (map of all 18 memories).
 - SDLC post-task sync flow: [[FLOW-01-SDLC]].
 - Instruction docs policy: [[DOCS-01-INSTRUCTIONS]].
