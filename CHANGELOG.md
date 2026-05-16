@@ -29,9 +29,13 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
     unexpected outbound network calls in the GitHub Security tab.
   - **Claude Code CLI pinned**: `npm install -g @anthropic-ai/claude-code@2.1.143`
     (was unpinned). Closes Wave 4 security F-5 (INFO 35).
-  - **New `.github/workflows/codeql.yml`** — SAST via GitHub CodeQL with
-    `security-extended,security-and-quality` queries. Matrix on `python` and
-    `actions` languages. Findings appear in the Security tab.
+  - **New `.github/workflows/semgrep.yml`** — SAST via Semgrep OSS rules
+    (Docker image `semgrep/semgrep:1.163.0`, matches the MCP server pin).
+    Runs `semgrep scan --config=auto --error --metrics=off` on push, PR,
+    and weekly schedule. Replaces an initial CodeQL workflow that required
+    GitHub Advanced Security (paid add-on, not available for this repo's
+    plan); Semgrep runs as a CLI without GHAS and fails CI on
+    WARNING/ERROR-severity findings.
   - **New `.github/workflows/actionlint.yml`** — workflow YAML linter using
     `rhysd/actionlint` v1.7.12 binary, SHA256-verified against upstream
     `checksums.txt` (`8aca8db96f1b94770f1b0d72b6dddcb1ebb8123cb3712530b08cc387b349a3d8`).
