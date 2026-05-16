@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-16
-Last commit: 0ff613d chore(release): cut 0.2.2 (wave-2 reviewer transport hardening)
+Last commit: e5a7694 docs(flow): align reviewer-protocol terminology and flow-lifecycle
 Scope: plugins/rldyour-lsps/.lsp.json, plugins/rldyour-lsps/skills/lsp-routing/SKILL.md, plugins/rldyour-lsps/skills/lsp-health-check/SKILL.md, plugins/rldyour-lsps/skills/lsp-setup/SKILL.md, plugins/rldyour-lsps/skills/serena-lsp-integration/SKILL.md, plugins/rldyour-lsps/references/lsp-server-matrix.md, plugins/rldyour-lsps/references/install-profiles.md, plugins/rldyour-lsps/references/serena-lsp-integration.md, plugins/rldyour-lsps/scripts/check_lsps.sh, plugins/rldyour-lsps/scripts/install_lsps_brew.sh
 Area: LSPS
 -->

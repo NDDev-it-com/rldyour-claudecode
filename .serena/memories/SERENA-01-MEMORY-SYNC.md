@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-16
-Last commit: 0ff613d chore(release): cut 0.2.2 (wave-2 reviewer transport hardening)
+Last commit: e5a7694 docs(flow): align reviewer-protocol terminology and flow-lifecycle
 Scope: plugins/rldyour-serena-mcp/scripts/analyze_sync_scope.py, plugins/rldyour-serena-mcp/scripts/serena_memory_state.py, plugins/rldyour-serena-mcp/scripts/commit_serena_knowledge.sh, plugins/rldyour-serena-mcp/hooks/*.sh, plugins/rldyour-serena-mcp/skills/serena-memory-sync/SKILL.md, plugins/rldyour-serena-mcp/agents/flow-memory-sync.md, scripts/smoke_serena_memory_taxonomy.sh
 Area: SERENA
 -->

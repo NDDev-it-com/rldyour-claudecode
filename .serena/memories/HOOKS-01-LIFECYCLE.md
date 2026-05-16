@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-16
-Last commit: 0ff613d chore(release): cut 0.2.2 (wave-2 reviewer transport hardening)
+Last commit: e5a7694 docs(flow): align reviewer-protocol terminology and flow-lifecycle
 Scope: plugins/rldyour-serena-mcp/hooks/hooks.json, plugins/rldyour-serena-mcp/hooks/*.sh, plugins/rldyour-flow/hooks/hooks.json, plugins/rldyour-flow/hooks/*.sh, scripts/smoke_hooks.sh, scripts/smoke_serena_memory_taxonomy.sh, .claude/CLAUDE.md, AGENTS.md
 Area: HOOKS
 -->

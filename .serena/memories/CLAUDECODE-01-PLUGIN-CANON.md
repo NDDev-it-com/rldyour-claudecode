@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-16
-Last commit: 0ff613d chore(release): cut 0.2.2 (wave-2 reviewer transport hardening)
+Last commit: e5a7694 docs(flow): align reviewer-protocol terminology and flow-lifecycle
 Scope: .claude/CLAUDE.md, AGENTS.md, plugins/*/.claude-plugin/plugin.json, plugins/rldyour-mcps/.mcp.json, plugins/*/skills/*/SKILL.md, plugins/*/agents/*.md, plugins/*/hooks/hooks.json, plugins/rldyour-serena-mcp/scripts/analyze_sync_scope.py
 Area: CLAUDECODE
 -->

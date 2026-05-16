@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-16
-Last commit: 0ff613d chore(release): cut 0.2.2 (wave-2 reviewer transport hardening)
+Last commit: e5a7694 docs(flow): align reviewer-protocol terminology and flow-lifecycle
 Scope: plugins/rldyour-explore/skills/tech-research/SKILL.md, plugins/rldyour-explore/skills/web-research/SKILL.md, plugins/rldyour-explore/agents/ry-explore.md, plugins/rldyour-explore/commands/ry-explore.md, plugins/rldyour-mcps/.mcp.json (context7 + deepwiki + grep entries)
 Area: EXPLORE
 -->

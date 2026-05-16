@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-16
-Last commit: 0ff613d chore(release): cut 0.2.2 (wave-2 reviewer transport hardening)
+Last commit: e5a7694 docs(flow): align reviewer-protocol terminology and flow-lifecycle
 Scope: plugins/rldyour-mcps/.mcp.json, config/mcp-runtime-versions.env, scripts/check_mcp_runtime_versions.py, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.sh, AGENTS.md
 Area: MCP
 -->

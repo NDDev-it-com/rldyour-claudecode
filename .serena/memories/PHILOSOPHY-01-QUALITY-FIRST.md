@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-16
-Last commit: 0ff613d chore(release): cut 0.2.2 (wave-2 reviewer transport hardening)
+Last commit: e5a7694 docs(flow): align reviewer-protocol terminology and flow-lifecycle
 Scope: plugins/rldyour-rules/skills/quality-first-engineering/SKILL.md, plugins/rldyour-rules/skills/architecture-boundaries/SKILL.md, plugins/rldyour-rules/skills/dependency-compatibility-policy/SKILL.md, plugins/rldyour-rules/skills/implementation-discipline/SKILL.md, plugins/rldyour-rules/skills/verification-quality-gates/SKILL.md, plugins/rldyour-rules/references/rules-policy.md, plugins/rldyour-rules/references/quality-gates.md
 Area: PHILOSOPHY
 -->
