@@ -71,26 +71,28 @@ PY
 
 step "Shell syntax"
 fail=0
-for f in $(find plugins scripts -type f -name '*.sh' 2>/dev/null); do
+# Use NUL-delimited find + read pair (shellcheck SC2044) so paths with spaces,
+# newlines, or shell metacharacters are handled safely.
+while IFS= read -r -d '' f; do
   if bash -n "$f"; then
     echo "OK $f"
   else
     echo "FAIL $f" >&2
     fail=1
   fi
-done
+done < <(find plugins scripts -type f -name '*.sh' -print0 2>/dev/null)
 test "$fail" -eq 0
 
 step "Frontmatter on SKILL.md / agents / commands"
 fail=0
-for f in $(find plugins -type f \( -name 'SKILL.md' -o -path '*/agents/*.md' -o -path '*/commands/*.md' \)); do
+while IFS= read -r -d '' f; do
   if head -1 "$f" | grep -q '^---$'; then
     echo "OK $f"
   else
     echo "MISSING-FRONTMATTER $f" >&2
     fail=1
   fi
-done
+done < <(find plugins -type f \( -name 'SKILL.md' -o -path '*/agents/*.md' -o -path '*/commands/*.md' \) -print0)
 test "$fail" -eq 0
 
 step "Plugin version consistency (plugin.json vs marketplace entry)"
