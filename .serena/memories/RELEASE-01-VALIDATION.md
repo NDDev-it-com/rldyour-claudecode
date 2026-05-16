@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-16
-Last commit: 61b913d feat(scripts): add validate_reviewer_contracts for heredoc drift detection
+Last updated: 2026-05-17
+Last commit: 557bc00 docs(changelog): wave-3 audit closures D31-D35
 Scope: VERSION, CHANGELOG.md, README.md, .claude-plugin/marketplace.json, plugins/*/.claude-plugin/plugin.json, .github/workflows/validate.yml, .github/workflows/dependency-check.yml, .github/workflows/semgrep.yml, .github/workflows/actionlint.yml, .github/dependabot.yml, scripts/validate_marketplace.sh, scripts/validate_plugin_versions.py, scripts/smoke_serena_memory_taxonomy.sh, docs/release-process.md
 Area: RELEASE
 -->
@@ -41,6 +41,7 @@ Versioning, changelog, validation, tagging, and release evidence contracts for t
 - **0.2.2 release** (`0ff613d`): `rldyour-flow` bumped to `0.2.2` for wave-2 reviewer transport hardening after self-bootstrap review wave `2026-05-16T1433Z-e3d146b`. Changes: `RLDYOUR_REPORT_EOF` heredoc EOF marker replacing short tokens (`MD`, `EOF`) that could cause early termination; explicit Bash write boundary `<report_dir>/<reviewer-name>.md`; mandatory orchestrator `Read` of each `critical`/`high` report file before disposition; `run_id` canonicalized to `<UTC-ISO-compact>-<git-short-sha>`; `info` severity added to enum in `reviewer-protocol.md` line 24; `.serena/diagnostics/**` and `.serena/reviews/**` added to `RUNTIME_EXCLUDE_PATTERNS` in `fullrepo_sync.py` lines 50-53. Tags pushed: `marketplace--v0.2.2`, `rldyour-flow--v0.2.2`. Verified via `git tag --list "*--v0.2.2"` at HEAD `0ff613d`.
 - **HEAD `61b913d` (no version bump)**: `scripts/validate_reviewer_contracts.sh` added (173 lines); wired into `scripts/validate_marketplace.sh`. This is a repo-level script addition only — no plugin runtime files changed, no `rldyour-flow` version bump, no new release tag. Wave-3 audit (`2026-05-16T1538Z-0ff613d`) F-3 verification info finding (confidence 85: "no automatic check for heredoc marker drift") closed via this script. All per-plugin versions remain at 0.2.0 / `rldyour-flow` at 0.2.2.
 - **All 4 new tags in this wave** (verified via `git tag --list "*--v0.2.1" "*--v0.2.2"`): `rldyour-flow--v0.2.1`, `marketplace--v0.2.1` (backfilled at `e3d146b`), `rldyour-flow--v0.2.2`, `marketplace--v0.2.2` (at `0ff613d`).
+- **HEAD `557bc00` (no version bump)**: 4 commits close 5 audit findings D31-D35 from review wave `2026-05-16T1859Z-61b913d`. Changes: loop guard fingerprint field parity in `flow_post_task_state.py` (D31, `23901c6`); compound `.sync_marker` in `stop_memory_sync.sh` (D32, `23901c6`); non-dict payload stderr surface in `serena_memory_state.py` (D33, `d563ea5`); CI steps `validate_reviewer_contracts.sh` + `smoke_mcp_runtime.sh` added to `.github/workflows/validate.yml` (D34, `dcbc7cc`); semgrep container digest-pinned in `.github/workflows/semgrep.yml` (D35, `dcbc7cc`); `CHANGELOG.md` `[Unreleased]` section updated (`557bc00`). No `plugins/*/plugin.json` version bumps — all changes are script body / hook script / CI workflow files. VERSION remains `0.2.2`.
 - `CHANGELOG.md` `[0.2.2] - 2026-05-16` follows Keep-a-Changelog 1.1.0 with `### Changed` and `### Notes` subsections. `[Unreleased]` compare base updated to `marketplace--v0.2.2...HEAD`. `[0.2.2]` reference-link points to `https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/marketplace--v0.2.2`. Verified at `CHANGELOG.md` lines 742-743 at HEAD `0ff613d`.
 - `CHANGELOG.md` `[0.2.1] - 2026-05-16` preserved: D29 reviewer output transport contract, file-first output, `.serena/reviews/` runtime artifact policy, `marketplace--v0.2.1` release boundary. Verified at HEAD `0ff613d`.
 - `scripts/validate_marketplace.sh` is the broad local gate. CI workflows: `validate.yml` (SHA-pinned actions, harden-runner, `claude-code@2.1.143`, top-level `permissions: {}`), `dependency-check.yml` (same hardening), `semgrep.yml` (Semgrep OSS SAST), `actionlint.yml` (workflow YAML linter). Verified at HEAD `0ff613d`.
@@ -64,7 +65,7 @@ Versioning, changelog, validation, tagging, and release evidence contracts for t
 
 ## Cross-References
 
-- Open and closed debt record: [[TECHDEBT-01-NOW]] (D28 0.2.0 boundary, D24-D27 Wave 5 closures, D19 R5 closure, D29 reviewer output transport 0.2.1/0.2.2).
+- Open and closed debt record: [[TECHDEBT-01-NOW]] (D28 0.2.0 boundary, D24-D27 Wave 5 closures, D19 R5 closure, D29 reviewer output transport 0.2.1/0.2.2, D31-D35 wave-3 audit closures).
 - Validation harness patterns: [[PATTERNS-01-CANONICAL]] (commit message, memory file pattern, tag conventions).
 - Plugin manifest and Claude Code version facts: [[CLAUDECODE-01-PLUGIN-CANON]].
 - Marketplace architecture and plugin version map: [[CORE-02-MARKETPLACE]].

@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-16
-Last commit: 61b913d feat(scripts): add validate_reviewer_contracts for heredoc drift detection
+Last updated: 2026-05-17
+Last commit: 557bc00 docs(changelog): wave-3 audit closures D31-D35
 Scope: plugins/rldyour-serena-mcp/hooks/hooks.json, plugins/rldyour-serena-mcp/hooks/*.sh, plugins/rldyour-flow/hooks/hooks.json, plugins/rldyour-flow/hooks/*.sh, scripts/smoke_hooks.sh, scripts/smoke_serena_memory_taxonomy.sh, .claude/CLAUDE.md, AGENTS.md
 Area: HOOKS
 -->
@@ -51,7 +51,7 @@ Claude Code hook lifecycle and coordination contract between Serena freshness ga
 2. If memories are stale, Serena Stop blocks with instructions to run `flow-memory-sync` or the equivalent Serena memory workflow.
 3. After memories are current, flow Stop derives `serena_current` by calling `plugins/rldyour-serena-mcp/scripts/serena_memory_state.py` directly.
 4. Flow Stop then checks git/docs/fullrepo/cleanup state through `flow_post_task_state.py` and points to `flow-post-task-sync` when needed.
-5. Loop guard markers `.serena/.sync_marker` and `.serena/.flow_sync_marker` allow repeated Stop attempts for the same fingerprint without infinite loops.
+5. Loop guard markers `.serena/.sync_marker` and `.serena/.flow_sync_marker` allow repeated Stop attempts for the same fingerprint without infinite loops. `.serena/.sync_marker` contains compound fingerprint `${HEAD_SHA}:${NEWEST_SHA:-none}` (D32, commit `23901c6`); `.serena/.flow_sync_marker` contains SHA-256 content-hash fingerprint of 10-field `fingerprint_payload` (D31, commit `23901c6`).
 
 ## Contracts And Data
 

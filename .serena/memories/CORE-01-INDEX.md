@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-16
-Last commit: 61b913d feat(scripts): add validate_reviewer_contracts for heredoc drift detection
+Last updated: 2026-05-17
+Last commit: 557bc00 docs(changelog): wave-3 audit closures D31-D35
 Scope: .serena/memories/**, plugins/rldyour-serena-mcp/scripts/analyze_sync_scope.py, plugins/rldyour-serena-mcp/skills/serena-memory-sync/SKILL.md, plugins/rldyour-serena-mcp/agents/flow-memory-sync.md, scripts/smoke_serena_memory_taxonomy.sh, AGENTS.md, .claude/CLAUDE.md
 Area: CORE
 -->
@@ -52,7 +52,7 @@ Memories are the **source of durable knowledge**: vision, philosophy, patterns, 
 
 - [[DOCS-01-INSTRUCTIONS]] (`DOCS-01-INSTRUCTIONS.md`): AGENTS.md and .claude/CLAUDE.md policy, line budgets, sync rules, agent-only fullrepo lifecycle.
 - [[RELEASE-01-VALIDATION]] (`RELEASE-01-VALIDATION.md`): versioning, changelog, validation harness, plugin tagging.
-- [[TECHDEBT-01-NOW]] (`TECHDEBT-01-NOW.md`): open risks (R1-R4; R5 closed as D19), closed debt patterns (D1-D30), anti-regression guidance.
+- [[TECHDEBT-01-NOW]] (`TECHDEBT-01-NOW.md`): open risks (R1-R4; R5 closed as D19), closed debt patterns (D1-D35), anti-regression guidance.
 
 ## Memory Map by Reading Intent
 
@@ -105,7 +105,7 @@ All 18 active memories are catalogued in the Active Memory Map above. This index
 
 - `python3 plugins/rldyour-serena-mcp/scripts/analyze_sync_scope.py --from-ref HEAD --to-ref HEAD`: proves empty diffs produce no memory targets while still exposing the taxonomy.
 - `bash scripts/smoke_serena_memory_taxonomy.sh`: proves analyzer schema/targets, agent-instruction sync relevance, nested memory freshness, Stop advisory taxonomy, fullrepo-managed acknowledgement.
-- `python3 plugins/rldyour-serena-mcp/scripts/serena_memory_state.py`: proves freshness state and recursive memory scanning. Should report `memory_count: 18`, `is_current: True`, `memory_match_reason: direct-head-reference` at HEAD `61b913d`.
+- `python3 plugins/rldyour-serena-mcp/scripts/serena_memory_state.py`: proves freshness state and recursive memory scanning. Should report `memory_count: 18`, `is_current: True`, `memory_match_reason: direct-head-reference` at HEAD `557bc00`.
 - `python3 scripts/validate_instruction_docs.py --require-agent-docs`: proves AGENTS.md and `.claude/CLAUDE.md` are present and within policy.
 - `python3 scripts/validate_agent_tools.py`: proves agent `tools:` allowlist invariants ([[TECHDEBT-01-NOW]] R4 mitigation).
 - `bash scripts/validate_marketplace.sh`: full harness covering all of the above plus frontmatter/JSON/Python/shell syntax checks and MCP runtime drift.

@@ -99,9 +99,13 @@ def _analysis_from_changed_files(paths: list[str], state: dict[str, Any]) -> tup
         if isinstance(analysis, dict) and analysis:
             return analysis, f"sync_marker_ref_range:{marker_previous[:7]}..{marker_head[:7]}"
 
-    if state.get("analysis") is not None and not isinstance(state.get("analysis"), dict):
-        # defensive: ignore non-dict payloads instead of surfacing malformed JSON to callers
-        pass
+    malformed_analysis = state.get("analysis")
+    if malformed_analysis is not None and not isinstance(malformed_analysis, dict):
+        print(
+            f"serena_memory_state: discarding non-dict analysis payload "
+            f"(type={type(malformed_analysis).__name__}); falling back to ref-range",
+            file=sys.stderr,
+        )
 
     newest_synced = state.get("newest_synced_full")
     if isinstance(newest_synced, str) and newest_synced:

@@ -69,12 +69,14 @@ except Exception:
 print("true" if payload.get("stop_hook_active") is True else "false")
 ' 2>/dev/null || echo "false")
 
-if [ "$STOP_HOOK_ACTIVE" = "true" ] && [ -f "$SYNC_MARKER" ] && [ "$(cat "$SYNC_MARKER" 2>/dev/null || true)" = "$HEAD_SHA" ]; then
+MARKER_FINGERPRINT="${HEAD_SHA}:${NEWEST_SHA:-none}"
+
+if [ "$STOP_HOOK_ACTIVE" = "true" ] && [ -f "$SYNC_MARKER" ] && [ "$(cat "$SYNC_MARKER" 2>/dev/null || true)" = "$MARKER_FINGERPRINT" ]; then
   exit 0
 fi
 
 mkdir -p .serena
-printf "%s\n" "$HEAD_SHA" > "$SYNC_MARKER"
+printf "%s\n" "$MARKER_FINGERPRINT" > "$SYNC_MARKER"
 
 COMMITS="(no prior synced memory commit metadata)"
 if [ -n "$NEWEST_SHA" ]; then
