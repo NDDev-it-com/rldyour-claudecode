@@ -59,13 +59,18 @@ jobs:
           # accidentally landing in commits/docs.
           # `--error` makes CI fail on any WARNING/ERROR finding.
           # `--exclude` keeps templates/cache out of scope.
+          # Verified-existing rule packs (semgrep.dev/r/ catalog as of 2026-05-16).
+          # `p/bash` and `p/yaml` were attempted but returned HTTP 404 — bash
+          # security rules are bundled inside `p/security-audit`, YAML lint
+          # is covered by `p/github-actions` for workflow YAML and by
+          # `p/security-audit` for generic secrets/config patterns.
           semgrep scan \
             --config=p/python \
-            --config=p/bash \
-            --config=p/yaml \
             --config=p/github-actions \
             --config=p/security-audit \
             --config=p/secrets \
+            --config=p/owasp-top-ten \
+            --config=p/ci \
             --error \
             --metrics=off \
             --exclude='.serena/**' \
