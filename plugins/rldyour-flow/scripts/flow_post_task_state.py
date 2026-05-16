@@ -272,6 +272,11 @@ def state() -> dict[str, Any]:
         "behind": behind,
         "branch_cleanup": branch_cleanup_state,
         "serena_current": serena_current,
+        "doc_files_changed": doc_files_changed,
+        "fullrepo_needs_attention": fullrepo_needs_attention,
+        "instruction_docs_needs_review": bool(
+            instruction_docs_state.get("needs_instruction_docs_review")
+        ),
     }
     fingerprint = hashlib.sha256(json.dumps(fingerprint_payload, sort_keys=True).encode()).hexdigest()[:16]
 
