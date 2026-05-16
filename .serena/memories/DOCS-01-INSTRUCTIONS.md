@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-16
-Last commit: eaccf59 chore(release): cut 0.1.7 (rldyour-flow 0.1.4, Wave 2 polish)
+Last commit: 9bf3c70 chore(release): cut 0.1.8 (Wave 4 R5 hardening + smoke + memory graph)
 Scope: AGENTS.md, .claude/CLAUDE.md, plugins/rldyour-rules/skills/project-instructions-policy/SKILL.md, plugins/rldyour-flow/scripts/instruction_docs_state.py, scripts/validate_instruction_docs.py, plugins/rldyour-serena-mcp/scripts/analyze_sync_scope.py
 Area: DOCS
 -->
@@ -47,6 +47,17 @@ Durable instruction-file policy for the repository: what belongs in `AGENTS.md`,
 - Update `.claude/CLAUDE.md` when Claude Code-specific behavior changes: hooks, plugin frontmatter, skill listing, subagents, `/mcp`, `/hooks`, `/memory`, `/context`, `/doctor`, or Claude CLI facts.
 - Run instruction-doc checks after any durable project behavior or workflow change.
 - Keep both files concise. If a fact is too detailed for startup context, put it in a numbered Serena memory and link only the source-of-truth path or summary in docs.
+
+## Cross-References
+
+- Memory taxonomy (Serena memory naming, sync relevance): [[CORE-01-INDEX]] + [[SERENA-01-MEMORY-SYNC]].
+- Claude Code-specific rules and frontmatter: [[CLAUDECODE-01-PLUGIN-CANON]].
+- Hook lifecycle (instruction-only sync triggers stop gate): [[HOOKS-01-LIFECYCLE]].
+- Patterns (file naming, commit messages): [[PATTERNS-01-CANONICAL]].
+- Post-task sync workflow (docs state check): [[FLOW-01-SDLC]].
+- Fullrepo branch policy: [[CORE-02-MARKETPLACE]].
+- Quality philosophy (language, artifact rules): [[PHILOSOPHY-01-QUALITY-FIRST]].
+- Release gate (validate_instruction_docs.py): [[RELEASE-01-VALIDATION]].
 
 ## Verification
 

@@ -93,28 +93,30 @@ jobs:
         run: |
           set -euo pipefail
           fail=0
-          for f in $(find plugins scripts -type f -name '*.sh' 2>/dev/null); do
+          # NUL-delimited find + read pair (shellcheck SC2044) is safe for paths
+          # with spaces, newlines, and shell metacharacters.
+          while IFS= read -r -d '' f; do
             if bash -n "$f"; then
               echo "OK $f"
             else
               echo "FAIL $f"
               fail=1
             fi
-          done
+          done < <(find plugins scripts -type f -name '*.sh' -print0 2>/dev/null)
           test "$fail" -eq 0
 
       - name: Markdown frontmatter present in skills/agents/commands
         run: |
           set -euo pipefail
           fail=0
-          for f in $(find plugins -type f \( -name 'SKILL.md' -o -path '*/agents/*.md' -o -path '*/commands/*.md' \)); do
+          while IFS= read -r -d '' f; do
             if head -1 "$f" | grep -q '^---$'; then
               echo "OK $f"
             else
               echo "MISSING-FRONTMATTER $f"
               fail=1
             fi
-          done
+          done < <(find plugins -type f \( -name 'SKILL.md' -o -path '*/agents/*.md' -o -path '*/commands/*.md' \) -print0)
           test "$fail" -eq 0
 
       - name: Plugin version consistency
@@ -134,3 +136,6 @@ jobs:
 
       - name: Serena memory taxonomy smoke
         run: bash scripts/smoke_serena_memory_taxonomy.sh
+
+      - name: Bootstrap R5 divergence guard smoke
+        run: bash scripts/smoke_bootstrap_check.sh

@@ -71,26 +71,28 @@ PY
 
 step "Shell syntax"
 fail=0
-for f in $(find plugins scripts -type f -name '*.sh' 2>/dev/null); do
+# Use NUL-delimited find + read pair (shellcheck SC2044) so paths with spaces,
+# newlines, or shell metacharacters are handled safely.
+while IFS= read -r -d '' f; do
   if bash -n "$f"; then
     echo "OK $f"
   else
     echo "FAIL $f" >&2
     fail=1
   fi
-done
+done < <(find plugins scripts -type f -name '*.sh' -print0 2>/dev/null)
 test "$fail" -eq 0
 
 step "Frontmatter on SKILL.md / agents / commands"
 fail=0
-for f in $(find plugins -type f \( -name 'SKILL.md' -o -path '*/agents/*.md' -o -path '*/commands/*.md' \)); do
+while IFS= read -r -d '' f; do
   if head -1 "$f" | grep -q '^---$'; then
     echo "OK $f"
   else
     echo "MISSING-FRONTMATTER $f" >&2
     fail=1
   fi
-done
+done < <(find plugins -type f \( -name 'SKILL.md' -o -path '*/agents/*.md' -o -path '*/commands/*.md' \) -print0)
 test "$fail" -eq 0
 
 step "Plugin version consistency (plugin.json vs marketplace entry)"
@@ -124,11 +126,25 @@ else
   echo "SKIP scripts/check_mcp_runtime_versions.py not yet present"
 fi
 
+step "Hook lifecycle smoke"
+if [ -f scripts/smoke_hooks.sh ]; then
+  bash scripts/smoke_hooks.sh
+else
+  echo "SKIP scripts/smoke_hooks.sh not yet present"
+fi
+
 step "Serena memory taxonomy smoke"
 if [ -f scripts/smoke_serena_memory_taxonomy.sh ]; then
   bash scripts/smoke_serena_memory_taxonomy.sh
 else
   echo "SKIP scripts/smoke_serena_memory_taxonomy.sh not yet present"
+fi
+
+step "Bootstrap R5 divergence guard smoke"
+if [ -f scripts/smoke_bootstrap_check.sh ]; then
+  bash scripts/smoke_bootstrap_check.sh
+else
+  echo "SKIP scripts/smoke_bootstrap_check.sh not yet present"
 fi
 
 printf '\n\033[1;32m✔ marketplace validation passed\033[0m\n'

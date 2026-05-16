@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-16
-Last commit: eaccf59 chore(release): cut 0.1.7 (rldyour-flow 0.1.4, Wave 2 polish)
+Last commit: 9bf3c70 chore(release): cut 0.1.8 (Wave 4 R5 hardening + smoke + memory graph)
 Scope: .claude/CLAUDE.md, AGENTS.md, plugins/*/.claude-plugin/plugin.json, plugins/rldyour-mcps/.mcp.json, plugins/*/skills/*/SKILL.md, plugins/*/agents/*.md, plugins/*/hooks/hooks.json, plugins/rldyour-serena-mcp/scripts/analyze_sync_scope.py
 Area: CLAUDECODE
 -->
@@ -48,6 +48,17 @@ Current Claude Code plugin/runtime facts that this marketplace relies on. These 
 - Do not reduce `.claude/CLAUDE.md` to only `@AGENTS.md`; both are first-class and optimized for different CLIs.
 - Do not add undocumented `.mcp.json` keys such as `startup_timeout_sec` or `tool_timeout_sec`; use documented env vars where needed.
 - When current Claude Code behavior changes, update `.claude/CLAUDE.md`, relevant plugin docs, and this memory from verified docs or runtime evidence.
+
+## Cross-References
+
+- Marketplace plugin boundaries and dependency graph: [[CORE-02-MARKETPLACE]].
+- MCP server registry (13 pinned servers): [[MCP-01-TRANSPORT]].
+- Hook lifecycle canon: [[HOOKS-01-LIFECYCLE]].
+- Memory sync agent (flow-memory-sync frontmatter): [[SERENA-01-MEMORY-SYNC]].
+- Instruction docs policy: [[DOCS-01-INSTRUCTIONS]].
+- Agent tools patterns (explicit allowlist): [[PATTERNS-01-CANONICAL]] Agent Frontmatter.
+- Open risks (R4 wildcard, R5 divergence): [[TECHDEBT-01-NOW]].
+- Release validation (validate_marketplace.sh): [[RELEASE-01-VALIDATION]].
 
 ## Verification
 

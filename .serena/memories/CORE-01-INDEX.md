@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-16
-Last commit: eaccf59 chore(release): cut 0.1.7 (rldyour-flow 0.1.4, Wave 2 polish)
+Last commit: 9bf3c70 chore(release): cut 0.1.8 (Wave 4 R5 hardening + smoke + memory graph)
 Scope: .serena/memories/**, plugins/rldyour-serena-mcp/scripts/analyze_sync_scope.py, plugins/rldyour-serena-mcp/skills/serena-memory-sync/SKILL.md, plugins/rldyour-serena-mcp/agents/flow-memory-sync.md, scripts/smoke_serena_memory_taxonomy.sh, AGENTS.md, .claude/CLAUDE.md
 Area: CORE
 -->
@@ -52,7 +52,7 @@ Memories are the **source of durable knowledge**: vision, philosophy, patterns, 
 
 - [[DOCS-01-INSTRUCTIONS]] (`DOCS-01-INSTRUCTIONS.md`): AGENTS.md and .claude/CLAUDE.md policy, line budgets, sync rules, agent-only fullrepo lifecycle.
 - [[RELEASE-01-VALIDATION]] (`RELEASE-01-VALIDATION.md`): versioning, changelog, validation harness, plugin tagging.
-- [[TECHDEBT-01-NOW]] (`TECHDEBT-01-NOW.md`): open risks (R1-R5), closed debt patterns (D1-D18), anti-regression guidance.
+- [[TECHDEBT-01-NOW]] (`TECHDEBT-01-NOW.md`): open risks (R1-R4; R5 closed as D19), closed debt patterns (D1-D23), anti-regression guidance.
 
 ## Memory Map by Reading Intent
 
@@ -92,11 +92,20 @@ Memories are the **source of durable knowledge**: vision, philosophy, patterns, 
 - Long source-backed research belongs in `.serena/research/`; active implementation facts distilled from research belong in the relevant numbered memory.
 - Areas (CORE, CLAUDECODE, MCP, SERENA, HOOKS, FLOW, DOCS, RELEASE, TECHDEBT, PHILOSOPHY, PATTERNS, BROWSER, DESIGN, EXPLORE, LSPS, RULES, SECURITY) are stable. Add new areas only when a genuinely new scope emerges that doesn't fit existing taxonomy.
 
+## Cross-References
+
+All 18 active memories are catalogued in the Active Memory Map above. This index IS the cross-reference graph entry point; each `[[AREA-NN-SLUG]]` link in the Active Memory Map resolves to an individual topic memory.
+
+- Memory sync contract: [[SERENA-01-MEMORY-SYNC]].
+- Implementation patterns: [[PATTERNS-01-CANONICAL]].
+- Technical debt and risk register: [[TECHDEBT-01-NOW]].
+- Release and versioning: [[RELEASE-01-VALIDATION]].
+
 ## Verification
 
 - `python3 plugins/rldyour-serena-mcp/scripts/analyze_sync_scope.py --from-ref HEAD --to-ref HEAD`: proves empty diffs produce no memory targets while still exposing the taxonomy.
 - `bash scripts/smoke_serena_memory_taxonomy.sh`: proves analyzer schema/targets, agent-instruction sync relevance, nested memory freshness, Stop advisory taxonomy, fullrepo-managed acknowledgement.
-- `python3 plugins/rldyour-serena-mcp/scripts/serena_memory_state.py`: proves freshness state and recursive memory scanning. Should report `memory_count: 18`, `is_current: True`, `memory_match_reason: direct-head-reference` at HEAD `eaccf59`.
+- `python3 plugins/rldyour-serena-mcp/scripts/serena_memory_state.py`: proves freshness state and recursive memory scanning. Should report `memory_count: 18`, `is_current: True`, `memory_match_reason: direct-head-reference` at HEAD `9bf3c70`.
 - `python3 scripts/validate_instruction_docs.py --require-agent-docs`: proves AGENTS.md and `.claude/CLAUDE.md` are present and within policy.
 - `python3 scripts/validate_agent_tools.py`: proves agent `tools:` allowlist invariants ([[TECHDEBT-01-NOW]] R4 mitigation).
 - `bash scripts/validate_marketplace.sh`: full harness covering all of the above plus frontmatter/JSON/Python/shell syntax checks and MCP runtime drift.

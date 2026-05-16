@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-16
-Last commit: eaccf59 chore(release): cut 0.1.7 (rldyour-flow 0.1.4, Wave 2 polish)
+Last commit: 9bf3c70 chore(release): cut 0.1.8 (Wave 4 R5 hardening + smoke + memory graph)
 Scope: plugins/rldyour-serena-mcp/scripts/analyze_sync_scope.py, plugins/rldyour-serena-mcp/scripts/serena_memory_state.py, plugins/rldyour-serena-mcp/scripts/commit_serena_knowledge.sh, plugins/rldyour-serena-mcp/hooks/*.sh, plugins/rldyour-serena-mcp/skills/serena-memory-sync/SKILL.md, plugins/rldyour-serena-mcp/agents/flow-memory-sync.md, scripts/smoke_serena_memory_taxonomy.sh
 Area: SERENA
 -->
@@ -72,3 +72,14 @@ Durable contract for Serena memory freshness, impact analysis, scoped sync, and 
 
 - Analyzer area/risk classification is heuristic and must remain advisory. The memory writer must verify exact facts from source files before writing.
 - Hooks intentionally do not write memories; skipping the `flow-memory-sync` pass can still leave memories stale until Stop is handled.
+
+## Cross-References
+
+- Memory taxonomy map: [[CORE-01-INDEX]] (18 memories, area definitions, file naming contract).
+- Hook coordination: [[HOOKS-01-LIFECYCLE]] (Stop gate, loop guard, skip flags).
+- R5 divergence guard (bootstrap footgun): [[TECHDEBT-01-NOW]] R5 / D19.
+- R2 (explicit sync pass requirement): [[TECHDEBT-01-NOW]] R2.
+- Memory file pattern and metadata template: [[PATTERNS-01-CANONICAL]] Memory File Pattern.
+- Agent tools allowlist (flow-memory-sync): [[CLAUDECODE-01-PLUGIN-CANON]] Subagent Matrix.
+- Post-task sync workflow: [[FLOW-01-SDLC]].
+- MCP transport (serena server): [[MCP-01-TRANSPORT]].

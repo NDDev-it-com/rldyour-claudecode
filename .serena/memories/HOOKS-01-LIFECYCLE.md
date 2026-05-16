@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-16
-Last commit: eaccf59 chore(release): cut 0.1.7 (rldyour-flow 0.1.4, Wave 2 polish)
+Last commit: 9bf3c70 chore(release): cut 0.1.8 (Wave 4 R5 hardening + smoke + memory graph)
 Scope: plugins/rldyour-serena-mcp/hooks/hooks.json, plugins/rldyour-serena-mcp/hooks/*.sh, plugins/rldyour-flow/hooks/hooks.json, plugins/rldyour-flow/hooks/*.sh, scripts/smoke_hooks.sh, scripts/smoke_serena_memory_taxonomy.sh, .claude/CLAUDE.md, AGENTS.md
 Area: HOOKS
 -->
@@ -67,6 +67,17 @@ Claude Code hook lifecycle and coordination contract between Serena freshness ga
 - Worktree bootstrap must restore agent-only files from `origin/fullrepo` and must never publish from a new worktree.
 - Hook changes must keep `scripts/smoke_hooks.sh` aligned with skip flags and expected behavior.
 - Memory Stop advisory behavior must keep `scripts/smoke_serena_memory_taxonomy.sh` passing.
+
+## Cross-References
+
+- Memory freshness contract: [[SERENA-01-MEMORY-SYNC]] (analyzer, sync markers, writer flow).
+- Post-task SDLC workflow: [[FLOW-01-SDLC]] (flow-post-task-sync, fullrepo publish, cleanup).
+- Hook implementation patterns: [[PATTERNS-01-CANONICAL]] Hook Script section.
+- Injection-marker sanitization (D18): [[TECHDEBT-01-NOW]] D18.
+- Closed debt D16 (strict mode), D17 (utility scripts): [[TECHDEBT-01-NOW]].
+- Skip flags: documented here; RLDYOUR_SKIP_STOP_GATES disables both Stop gates.
+- Agent tools allowlist (reviewer agents): [[CLAUDECODE-01-PLUGIN-CANON]] Subagent Matrix.
+- Release validation gate: [[RELEASE-01-VALIDATION]].
 
 ## Verification
 

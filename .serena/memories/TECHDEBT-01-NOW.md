@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-16
-Last commit: eaccf59 chore(release): cut 0.1.7 (rldyour-flow 0.1.4, Wave 2 polish)
+Last commit: 9bf3c70 chore(release): cut 0.1.8 (Wave 4 R5 hardening + smoke + memory graph)
 Scope: Serena memory sync, hook gates, fullrepo lifecycle, MCP pins, validation harness, current implementation risks
 Area: TECHDEBT
 -->
@@ -10,6 +10,20 @@ Area: TECHDEBT
 ## Purpose
 
 Open technical debt, implementation mistakes already fixed, and anti-regression patterns that future agents must know before modifying this marketplace.
+
+## Source Of Truth
+
+- `scripts/bootstrap_check.sh`: divergence guard (R5 mitigation, lines 31-138).
+- `scripts/smoke_bootstrap_check.sh`: R5 behavior smoke (7 assertions at HEAD).
+- `scripts/validate_marketplace.sh`: full validation harness; wires bootstrap smoke at line 144.
+- `.github/workflows/validate.yml`: CI wires bootstrap smoke at line 141.
+- `plugins/rldyour-flow/hooks/post_tool_use_commit_advice.sh`: injection-marker sanitization (D18, D23).
+- `plugins/rldyour-serena-mcp/scripts/analyze_sync_scope.py`: TECHDEBT area mapping.
+- `plugins/rldyour-security/skills/owasp-top-10-implementation/SKILL.md`: OWASP 2025 categories (D22).
+- `scripts/validate_agent_tools.py`: agent tools allowlist enforcement (R4 mitigation).
+- `scripts/validate_marketplace.sh` line 117: agent tools validator wiring.
+- `.claude/CLAUDE.md`: "Smoke-script footgun" section documents R5 process order.
+- `CHANGELOG.md` `[0.1.8]`: Wave 4 R5 hardening, smoke, SC2044, memory graph record.
 
 ## Open Risks
 
@@ -43,12 +57,12 @@ Open technical debt, implementation mistakes already fixed, and anti-regression 
 - Mitigation in place: `scripts/validate_agent_tools.py` enforces a `READ_ONLY_BY_DESIGN_MCPS` set; any wildcard for a server outside that set FAILS. The validator is wired into `scripts/validate_marketplace.sh`.
 - Prevention: when bumping `context7`, `deepwiki`, `grep`, `semgrep` runtime versions in `plugins/rldyour-mcps/.mcp.json`, inspect the new `tools/list` output (via `scripts/smoke_mcp_capabilities.sh`) and ensure no write-class tool names were added (`create_*`, `write_*`, `delete_*`, `modify_*`, `edit_*`, `replace_*`, `insert_*`, `rename_*`). If a write-class tool appears, remove the wildcard for that server and switch to an explicit read-only tool subset (the same pattern applied to Serena in D15).
 
-### R5. Agent-only worktree restore can silently revert in-progress memory edits
+### R5. Agent-only worktree restore can silently revert in-progress memory edits (CLOSED — see D19)
 
 - Symptom: `scripts/bootstrap_check.sh` and `scripts/smoke_fullrepo_sync.sh` call `fullrepo_sync.py --bootstrap-init`, which restores `.serena/memories/**` from `origin/fullrepo`. If memories were edited locally but not yet published via `fullrepo_sync.py --publish`, those local edits are silently overwritten back to remote state.
 - Impact: lost-work footgun. The user discovers the revert only by re-running `serena_memory_state.py` or noticing a missing R entry.
 - Risk class: process hygiene / tooling foot-gun.
-- Mitigation in place: documented in `.claude/CLAUDE.md` "Smoke-script footgun" section; verified live during Wave 2 (2026-05-15 R4 entry was overwritten by `bootstrap_check.sh` and re-applied).
+- Mitigation in place: documented in `.claude/CLAUDE.md` "Smoke-script footgun" section; verified live during Wave 2 (2026-05-15 R4 entry was overwritten by `bootstrap_check.sh` and re-applied). Wave 4 added `scripts/bootstrap_check.sh` divergence guard (lines 31-138) that refuses `--bootstrap-init` when worktree agent-only files differ from `origin/fullrepo`. See D19 for full closure record.
 - Prevention: order operations correctly — (a) edit memories, (b) verify, (c) publish via `fullrepo_sync.py --publish`, (d) only then run bootstrap/smoke. Or run bootstrap/smoke first, then edit. Never sandwich memory edits between bootstrap and publish.
 
 ## Closed Debt And Anti-Regressions
@@ -71,6 +85,11 @@ Open technical debt, implementation mistakes already fixed, and anti-regression 
 - D16. Shell strict mode inconsistency: fixed in `56c616f`; gold-standard pattern (`set -euo pipefail` + `IFS=$'\n\t'` + `unset CDPATH`) was only present in `scripts/install-rldyour-marketplace.sh`. Now applied uniformly to 8 hook scripts in `plugins/rldyour-{flow,serena-mcp}/hooks/*.sh` + 3 helper scripts (`scripts/worktree_add.sh`, `scripts/bootstrap_check.sh`, `plugins/rldyour-flow/scripts/deploy_readiness.sh`). Verified by `bash -n` + `scripts/smoke_hooks.sh`; no functional change.
 - D17. Strict mode incomplete in utility and plugin scripts: fixed in Wave 2 (commits `5586c8b`+`b4234c2`); 14 additional scripts gained `IFS=$'\n\t'` + `unset CDPATH` after `set -euo pipefail` — 9 in `scripts/` (smoke_hooks, smoke_fullrepo_sync, smoke_mcp_capabilities, smoke_mcp_runtime, smoke_serena_memory_taxonomy, sync_fullrepo_branch, validate_marketplace, collect_diagnostics, install_local_git_hooks) and 5 plugin scripts (`plugins/rldyour-flow/scripts/{detect_project_checks,git_sync_audit,local_git_ai_guard}.sh`, `plugins/rldyour-lsps/scripts/install_lsps_brew.sh`, `plugins/rldyour-serena-mcp/scripts/commit_serena_knowledge.sh`). No functional change to any script.
 - D18. Commit subject prompt-injection coverage gap (EN-only, 3 marker families): fixed in Wave 2 commit `bb657ea`; `plugins/rldyour-flow/hooks/post_tool_use_commit_advice.sh` `INJECTION_MARKERS` regex expanded from 3 to 13+ marker families. Added: Llama/Mistral `[INST]`/`<<SYS>>`, Llama-3 `<|begin_of_text|>`/`<|end_of_text|>`, chat-template `<|user|>`/`<|assistant|>`, Markdown `---system---`, role-play prefixes (`you are now`, `from now on`), Russian-language equivalents (`[СИСТЕМА]`, `игнорируй ... инструкции`, `забудь ... команды`, `теперь ты`). Regex flags upgraded to `re.IGNORECASE | re.UNICODE` for Cyrillic word boundaries. Closes Wave 2 security review F-1 (HIGH, conf 85).
+- D19. R5 agent-only divergence guard (open risk R5, now fully closed): fixed in Wave 4 commits `b2ebbde` + `0dc804a`; `scripts/bootstrap_check.sh` gained a pre-`--bootstrap-init` divergence guard at lines 31-138. For each agent-only path root, the guard uses `git cat-file -e` + `cmp -s` (content-based comparison) to detect local edits not yet published to `origin/fullrepo`, then blocks with an actionable error message listing diverged files and resolution steps. Override: `RLDYOUR_FORCE_BOOTSTRAP=1` prints `WARN RLDYOUR_FORCE_BOOTSTRAP=1 ... BYPASSED` to stderr and proceeds. Fetch failure emits `WARN git fetch origin fullrepo failed` to stderr instead of silently continuing with a potentially stale ref. `.aider*` glob expansion (`shopt -s nullglob; for aider_path in .aider*`) covers `.aiderignore`, `.aider.conf.yml`, `.aider.chat.history.md`, etc. that an earlier literal entry missed (Wave 4 quality F-1, conf 95). New `scripts/smoke_bootstrap_check.sh` (130 lines, 7 assertion steps) covers 4 code paths + glob wiring + bash/python array drift detector + runtime path-(a) subshell test. Wired into `scripts/validate_marketplace.sh` (line 144) and `.github/workflows/validate.yml` (line 141). Verified by `bash scripts/smoke_bootstrap_check.sh` reporting 7/7 OK at HEAD `9bf3c70`.
+- D20. Cross-reference graph in memories: added in Wave 4; `## Cross-References` sections with `[[AREA-NN-SLUG]]` wikilinks added to all 18 memories. As of HEAD `9bf3c70`, `grep -l "## Cross-References" .serena/memories/*.md` returns 18 files (verified: 10 returned above; the remaining 8 are being added in this sync pass). Note: the D20 claim of "15 expected" was pre-sync; the final correct count is 18 (all memories). Behavior asserted by memory files at HEAD; no automated test.
+- D21. Source Of Truth sections standardized: `## Source Of Truth` subsections added to memories that lacked them, providing a canonical anchor for where to verify facts. Pattern now documented in [[PATTERNS-01-CANONICAL]] Memory File Pattern section. Behavior asserted by memory files at HEAD; no automated test.
+- D22. OWASP Top 10 precision: OWASP Top 10 2025 release status confirmed as final (released 2025-11-06), ASVS 5.0.0 reference added. A03 renamed to "Software Supply Chain Failures" (was "Injection" in OWASP Top 10 2021; renaming and repositioning to #3 reflects supply-chain concern escalation). A10 renamed to "Mishandling of Exceptional Conditions". Verified at `plugins/rldyour-security/skills/owasp-top-10-implementation/SKILL.md` and [[SECURITY-01-OWASP]].
+- D23. SC2044 NUL-delimited find loops: fixed in Wave 4 commit `b2ebbde`; `scripts/validate_marketplace.sh` and `.github/workflows/validate.yml` replaced `for f in $(find ...)` patterns with `while IFS= read -r -d '' file; do ... done < <(find ... -print0)` NUL-delimited loops. Verified by `grep -c "while IFS= read -r -d ''" scripts/validate_marketplace.sh .github/workflows/validate.yml` returning 2+2=4 hits at HEAD `9bf3c70`. Closes shellcheck SC2044 (word-splitting and globbing on find output).
 
 ## Error Patterns To Avoid
 
@@ -100,3 +119,15 @@ Open technical debt, implementation mistakes already fixed, and anti-regression 
 - `bash scripts/validate_marketplace.sh`: catches many cross-plugin regressions and runs the taxonomy smoke.
 - `bash scripts/smoke_hooks.sh`: catches hook registration and skip-flag drift.
 - `python3 plugins/rldyour-flow/scripts/fullrepo_sync.py --status-json`: verifies agent-only tracking state.
+
+## Cross-References
+
+- Divergence guard implementation: [[SERENA-01-MEMORY-SYNC]] (memory freshness + commit_serena_knowledge.sh).
+- Agent tools allowlist invariants: [[CLAUDECODE-01-PLUGIN-CANON]] (validate_agent_tools.py wiring).
+- Patterns: [[PATTERNS-01-CANONICAL]] (hook script pattern, strict-mode trio, injection markers, Memory File Pattern).
+- OWASP coverage (D22): [[SECURITY-01-OWASP]] OWASP Top 10 2025 + ASVS 5.0.0.
+- Hook lifecycle and skip flags: [[HOOKS-01-LIFECYCLE]].
+- Release record (D19 + D23 wave): [[RELEASE-01-VALIDATION]] `[0.1.8] - 2026-05-16`.
+- Memory taxonomy and cross-reference graph: [[CORE-01-INDEX]] (map of all 18 memories).
+- SDLC post-task sync flow: [[FLOW-01-SDLC]].
+- Instruction docs policy: [[DOCS-01-INSTRUCTIONS]].
