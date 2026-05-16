@@ -61,6 +61,10 @@ KNOWN_BUILTIN_TOOLS: frozenset[str] = frozenset(
 #   - context7: only resolve-library-id and get-library-docs (read).
 #   - deepwiki: only ask_question and read_wiki_* tools (read).
 #   - grep: only searchGitHub (read).
+#   - openai-docs: fetch/get/list/search OpenAI docs and OpenAPI specs (read).
+#     Added 2026-05-17 closing security F-8 from review wave
+#     `2026-05-16T1859Z-61b913d`; no agent currently uses the wildcard but
+#     the set is now complete for all four read-only HTTP MCP servers.
 #   - semgrep: only scan/analyze tools (read).
 # Adding a new server to this set means asserting it has no write/edit/create/
 # delete/modify/insert/replace tools at runtime. Re-verify via
@@ -70,6 +74,7 @@ READ_ONLY_BY_DESIGN_MCPS: frozenset[str] = frozenset(
         "context7",
         "deepwiki",
         "grep",
+        "openai-docs",
         "semgrep",
     }
 )
@@ -192,6 +197,22 @@ def main() -> int:
     # future cross-plugin checks (e.g., if multiple plugins ship .mcp.json).
     _ = load_marketplace_plugins(repo_root)
 
+    # Scope: this validator targets `plugins/*/agents/*.md` ONLY.
+    # SKILL.md and slash command files are intentionally excluded for these
+    # reasons (closure of architecture F-6, info 95, from review wave
+    # `2026-05-16T1859Z-61b913d`):
+    #   1. Skills carry `allowed-tools` (UX hint that suppresses permission
+    #      prompts during work); agents carry `tools` (hard runtime allowlist
+    #      enforced by Claude Code). Different semantics, different invariants.
+    #   2. The confused-deputy class this validator prevents (D15 closure,
+    #      R4 mitigation) is about subagent runtime capabilities, not about
+    #      main-session skill UX. A skill misusing a wildcard does not
+    #      escalate privilege; an agent doing so does.
+    #   3. Skills are routinely re-invoked from the main session under the
+    #      orchestrator's tool-use approval; agents run autonomously in
+    #      forked context for review/research workflows.
+    # If/when skills gain agent-equivalent runtime semantics, extend this
+    # validator to cover them.
     agent_files = sorted((repo_root / "plugins").glob("*/agents/*.md"))
     if not agent_files:
         print("FAIL no plugin agent files found", file=sys.stderr)
