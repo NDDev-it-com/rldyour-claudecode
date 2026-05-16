@@ -1,0 +1,68 @@
+# REVIEW.md
+
+Project-specific review rules. Auto-discovered by reviewer subagents (`flow-architecture-review`, `flow-quality-review`, `flow-consistency-review`, `flow-integration-review`, `flow-verification-review`, `flow-security-review`) and by `/rldyour-rules:ry-rules-review` and `/rldyour-security:ry-sec-review` slash commands.
+
+Copy this template to the **project root** as `REVIEW.md` and customize for the project. The file is auto-loaded by reviewers; keep it concise (under ~150 lines), durable, project-specific.
+
+## Always Check
+
+What every reviewer MUST verify on every diff (project-specific quality bar):
+
+- Example: every public API exported from `src/lib/` has a corresponding test in `tests/lib/`.
+- Example: no `console.log` in production code paths.
+- Example: every database migration has a rollback section.
+
+## Architecture
+
+Project-specific architecture constraints that override or refine global FSD/VSA/Hexagonal defaults:
+
+- Example: `src/features/<feature>/` is a strict vertical slice; cross-feature imports forbidden.
+- Example: `src/shared/db/` is the only module allowed to import the ORM client.
+- Example: all HTTP handlers go through `src/middleware/auth.ts` for authorization.
+
+## Quality
+
+Project-specific quality bans/expectations beyond global hard bans:
+
+- Example: no `// @ts-ignore` without a linked issue.
+- Example: no `as any` in TypeScript; use `unknown` + narrowing.
+- Example: no `time.Sleep` in Go production code; use channels or context timeout.
+
+## Consistency
+
+Project-specific naming, style, and structural conventions:
+
+- Example: React components are PascalCase files, hooks are `use*.ts`, utilities are kebab-case.
+- Example: Python tests use pytest fixtures from `conftest.py`, not module-level setUp.
+- Example: every Rust public function has a `# Examples` doc section.
+
+## Tests
+
+Project-specific testing standards:
+
+- Example: integration tests live in `tests/integration/` and use real (Dockerized) services, not mocks.
+- Example: every bug fix needs a regression test that fails on the parent commit.
+- Example: coverage gate: 80% on `src/lib/`, no minimum on `src/scripts/`.
+
+## Security
+
+Project-specific security checks beyond global OWASP Top 10:
+
+- Example: every endpoint in `src/api/admin/` must check `req.user.role === 'admin'` before any side effect.
+- Example: all uploads are scanned via `clamav` before storage.
+- Example: secrets are loaded from AWS Secrets Manager, never from `.env*`.
+
+## Skip
+
+Areas explicitly excluded from review (with rationale):
+
+- Example: `vendor/` — third-party code, not subject to project review.
+- Example: `migrations/0001_initial.sql` — historical baseline, frozen by policy.
+- Example: `docs/legacy/` — pre-redesign documentation kept for reference; do not propose changes.
+
+## Notes
+
+- Sections may be omitted if the project has no specific rules in that category. Empty sections add noise.
+- This file is durable project context. Update it via PR when project conventions change; do not treat it as a TODO list.
+- Reviewer agents read `REVIEW.md` together with `AGENTS.md` and `.claude/CLAUDE.md` when establishing project context. Conflicting rules: `REVIEW.md` (project-specific) > `.claude/CLAUDE.md` (Claude-Code-deep) > `AGENTS.md` (cross-tool) > global rldyour-rules defaults.
+- Reference: `plugins/rldyour-rules/references/project-instructions-and-adrs.md` for the full instruction-doc policy.
