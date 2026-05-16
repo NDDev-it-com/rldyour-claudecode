@@ -16,17 +16,17 @@ Main principle: nothing is treated as enabled or correct unless the owner explic
 
 ## Active Catalog
 
-The active marketplace currently contains nine first-party plugins; per-plugin versions are:
+The active marketplace currently contains nine first-party plugins. Marketplace boundary `VERSION` is `0.2.3`; per-plugin versions are:
 
-- `rldyour-mcps` - `0.2.0`
-- `rldyour-serena-mcp` - `0.2.0`
-- `rldyour-explore` - `0.2.0`
-- `rldyour-security` - `0.2.0`
-- `rldyour-browser` - `0.2.0`
-- `rldyour-design` - `0.2.0`
-- `rldyour-lsps` - `0.2.0`
-- `rldyour-flow` - `0.2.2`
-- `rldyour-rules` - `0.2.0`
+- `rldyour-mcps` - `0.2.1`
+- `rldyour-serena-mcp` - `0.2.1`
+- `rldyour-explore` - `0.2.1`
+- `rldyour-security` - `0.2.1`
+- `rldyour-browser` - `0.2.1`
+- `rldyour-design` - `0.2.1`
+- `rldyour-lsps` - `0.2.1`
+- `rldyour-flow` - `0.2.3`
+- `rldyour-rules` - `0.2.1`
 
 Briefly:
 
@@ -158,3 +158,11 @@ Reference documents:
 ## Minimum Claude Code Version
 
 **v2.1.111+** for `model: opus[1m]` bracketed extended-context syntax used by `ry-explore`. Earlier versions silently ignore the bracket suffix.
+
+## Support And Feedback
+
+- **Issues**: [github.com/NDDev-it-com/rldyour-claudecode/issues](https://github.com/NDDev-it-com/rldyour-claudecode/issues) - bug reports, regression evidence, missing-component requests.
+- **Discussions**: [github.com/NDDev-it-com/rldyour-claudecode/discussions](https://github.com/NDDev-it-com/rldyour-claudecode/discussions) - general questions, workflow advice, plugin behaviour clarifications, sharing usage patterns.
+- **Releases**: [github.com/NDDev-it-com/rldyour-claudecode/releases](https://github.com/NDDev-it-com/rldyour-claudecode/releases) - marketplace boundary tags (`marketplace--vX.Y.Z`) and per-plugin tags (`<plugin>--vX.Y.Z`) with release notes from CHANGELOG.
+
+This is a personal marketplace - response time is best-effort, no SLA. Feel free to fork and tailor to your own workflow.
