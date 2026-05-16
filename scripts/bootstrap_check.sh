@@ -41,6 +41,17 @@ step "agent-only divergence guard (TECHDEBT-01 R5)"
 # index), so we use `git cat-file -e` + `cmp -s` against `git show` content.
 if [ "${RLDYOUR_FORCE_BOOTSTRAP:-0}" = "1" ]; then
   echo "WARN RLDYOUR_FORCE_BOOTSTRAP=1 set - divergence guard BYPASSED (operator accepted overwrite risk; see TECHDEBT-01 R5)" >&2
+  # File audit trail (closure of security F-7 from review wave 2026-05-16T1859Z-61b913d):
+  # every bypass appends to .serena/.bootstrap_overrides.log so post-hoc
+  # investigation of "who overwrote memory edits" has a durable record.
+  # File is gitignored by .serena/ rule; stays on disk per worktree.
+  if [ -d .serena ] || mkdir -p .serena 2>/dev/null; then
+    ts=$(date -u +'%Y-%m-%dT%H:%M:%SZ')
+    head_sha=$(git rev-parse --short HEAD 2>/dev/null || echo 'unknown')
+    user_id="${USER:-${LOGNAME:-${HOSTNAME:-unknown}}}"
+    printf '%s\tHEAD=%s\tuser=%s\tcwd=%s\n' "$ts" "$head_sha" "$user_id" "$PWD" \
+      >> .serena/.bootstrap_overrides.log 2>/dev/null || true
+  fi
 elif ! git ls-remote --exit-code origin fullrepo >/dev/null 2>&1; then
   echo "INFO origin/fullrepo does not exist yet - no divergence possible (initial-publish flow)"
 else
