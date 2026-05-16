@@ -99,7 +99,7 @@
       "name": "rldyour-flow",
       "source": "./plugins/rldyour-flow",
       "description": "Автономный SDLC-воркфлоу: ry-init/start/newp/review/deploy + 6 reviewer subagents + post-task-sync + instruction-docs-sync. Хуки SessionStart/PreToolUse/Stop. Fullrepo branch.",
-      "version": "0.2.0",
+      "version": "0.2.1",
       "author": {
         "name": "rldyourmnd"
       },
