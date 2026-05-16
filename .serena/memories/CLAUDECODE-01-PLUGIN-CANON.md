@@ -35,7 +35,7 @@ Current Claude Code plugin/runtime facts that this marketplace relies on. These 
 ## Contracts And Data
 
 - Minimum Claude Code compatibility floor is `v2.1.111+` for the `opus[1m]` extended-context syntax used by `ry-explore`; `[1m]` availability remains account/plan dependent.
-- Local verified Claude Code range in project instructions is `v2.1.111-v2.1.142`.
+- Local verified Claude Code range in project instructions is `v2.1.111-v2.1.143`.
 - Claude Code hook canon recorded in `.claude/CLAUDE.md`: 29 events, five handler types (`command`, `http`, `mcp_tool`, `prompt`, `agent`), and hook hierarchy precedence.
 - Skill listing mitigation recorded in `.claude/CLAUDE.md`: `skillListingBudgetFraction: 0.04` and `skillListingMaxDescChars: 1536` in user settings. `0.04` (4%) is chosen over the Anthropic/claudekit-cli baseline `0.03` to accommodate bilingual Russian-leading + English-triggers descriptions averaging ~400 chars per entry across 32 skills (verified in `.claude/CLAUDE.md` line 82 at HEAD).
 - `claude plugin tag --push` uses `<plugin-name>--v<version>` tag convention and refuses dirty worktrees or pre-existing tags.

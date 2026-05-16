@@ -107,7 +107,7 @@ Patterns verified against `anthropics/claude-plugins-official` snapshot `1a2f18b
 
 ## Changelog Adoption (v2.1.133 → v2.1.142)
 
-Verified against `code.claude.com/docs/en/changelog` for v2.1.133-v2.1.142 on 2026-05-15. Current local CC: **v2.1.142** (`$(which claude) --version`).
+Verified against `code.claude.com/docs/en/changelog` for v2.1.133-v2.1.142 on 2026-05-15. Current local CC: **v2.1.143** (`$(which claude) --version`).
 
 Adopted:
 - v2.1.128 — per-entry skill description cap `1,536` chars, used by all 32 skills.

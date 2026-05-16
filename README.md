@@ -18,15 +18,15 @@ Main principle: nothing is treated as enabled or correct unless the owner explic
 
 The active marketplace currently contains nine first-party plugins; per-plugin versions are:
 
-- `rldyour-mcps` — `0.1.3`
-- `rldyour-serena-mcp` — `0.1.5`
-- `rldyour-explore` — `0.1.2`
-- `rldyour-security` — `0.1.2`
-- `rldyour-browser` — `0.1.2`
-- `rldyour-design` — `0.1.2`
-- `rldyour-lsps` — `0.1.2`
-- `rldyour-flow` — `0.1.2`
-- `rldyour-rules` — `0.1.2`
+- `rldyour-mcps` — `0.2.0`
+- `rldyour-serena-mcp` — `0.2.0`
+- `rldyour-explore` — `0.2.0`
+- `rldyour-security` — `0.2.0`
+- `rldyour-browser` — `0.2.0`
+- `rldyour-design` — `0.2.0`
+- `rldyour-lsps` — `0.2.0`
+- `rldyour-flow` — `0.2.0`
+- `rldyour-rules` — `0.2.0`
 
 Briefly:
 

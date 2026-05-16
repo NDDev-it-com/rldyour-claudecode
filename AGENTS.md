@@ -52,7 +52,7 @@ OpenAI Codex CLI reads this `AGENTS.md` before starting work. Codex layers confi
 - Tag releases: `claude plugin tag --push` (v2.1.119+) validates that `plugin.json` and marketplace entry agree on version, refuses dirty worktrees and pre-existing tags. Tag convention: `<plugin-name>--v<version>`.
 - Prune orphaned dependencies: `claude plugin prune` (v2.1.121+); `claude plugin uninstall <plugin> --prune` cascades.
 - Inspect a plugin's component inventory and projected per-session token cost: `claude plugin details <name>` (v2.1.139+; v2.1.142 added LSP server visibility to details output).
-- Minimum Claude Code version: **v2.1.111+** as this repository's compatibility floor for bracketed extended-context model syntax used by the `ry-explore` agent. `[1m]` model availability remains account/plan-dependent. Current local: **v2.1.142** (verification range v2.1.111-v2.1.142, May 2026).
+- Minimum Claude Code version: **v2.1.111+** as this repository's compatibility floor for bracketed extended-context model syntax used by the `ry-explore` agent. `[1m]` model availability remains account/plan-dependent. Current local: **v2.1.143** (verification range v2.1.111-v2.1.143, May 2026).
 - Bootstrap a fresh checkout: `python3 plugins/rldyour-flow/scripts/fullrepo_sync.py --bootstrap-init` — installs `.git/info/exclude` block for agent-only files and restores or publishes `fullrepo`.
 - Audit git/branch/worktree state: `bash plugins/rldyour-flow/scripts/git_sync_audit.sh`.
 - Quality checks for product repositories that consume this marketplace: `bash plugins/rldyour-flow/scripts/detect_project_checks.sh`. This repository has no runtime test suite by design.

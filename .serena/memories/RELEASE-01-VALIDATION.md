@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-16
-Last commit: ebeb062 docs(changelog): polish 0.2.0 entry per reviewer findings
+Last commit: 91cc276 docs: sync marketplace plugin versions to 0.2.0
 Scope: VERSION, CHANGELOG.md, README.md, .claude-plugin/marketplace.json, plugins/*/.claude-plugin/plugin.json, .github/workflows/validate.yml, .github/workflows/dependency-check.yml, .github/workflows/semgrep.yml, .github/workflows/actionlint.yml, .github/dependabot.yml, scripts/validate_marketplace.sh, scripts/validate_plugin_versions.py, scripts/smoke_serena_memory_taxonomy.sh, docs/release-process.md
 Area: RELEASE
 -->
@@ -25,7 +25,7 @@ Versioning, changelog, validation, tagging, and release evidence contracts for t
 
 ## Current Behavior
 
-- Current release boundary at HEAD: `VERSION` is `0.2.0` (verified at `VERSION` file, HEAD `ebeb062`).
+- Current release boundary at HEAD: `VERSION` is `0.2.0` (verified at `VERSION` file, HEAD `91cc276`).
 - All 9 plugins at `0.2.0` (verified from `.claude-plugin/marketplace.json` at HEAD `ebeb062`):
   - `rldyour-mcps`: `0.2.0` (was `0.1.3`)
   - `rldyour-serena-mcp`: `0.2.0` (was `0.1.5`)
