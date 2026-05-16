@@ -49,7 +49,7 @@ Core order:
 8. Create or select branch/worktree and implement through atomic commits.
 9. Run progress checkpoints after meaningful milestones or every 2-3 plan groups: compare implementation against the plan, context pack, existing patterns, and touched integration path.
 10. Run quality gates and fix all issues in touched scope plus integration path.
-11. Run reviewer workflow. Use parallel subagents (`flow-*-review` agents) when the `ry-start` workflow calls for parallel review.
+11. Run reviewer workflow. Use parallel subagents (`flow-*-review` agents) when the `ry-start` workflow calls for parallel review. Apply the file-first **Output Transport** contract documented in `${CLAUDE_PLUGIN_ROOT}/references/reviewer-protocol.md` section "Output Transport": generate one `run_id = <UTC-ISO-compact>-<git-short-sha>` per wave, compute `report_dir = .serena/reviews/<run_id>/`, inject both into every reviewer prompt, read per-reviewer report files for every critical and high finding, write a consolidated `<report_dir>/_summary.md` when any track reported findings.
 12. Run browser/security/design/LSP workflows when triggered by the change type.
 13. Synchronize Serena memories, agent-only files, AGENTS.md/CLAUDE.md when present, git, GitHub, `fullrepo`, and worktree cleanup through `flow-post-task-sync`.
 
@@ -123,6 +123,8 @@ Reviewer tracks:
 - Integration synchronization
 - Verification and manual tests
 - Security when sensitive or explicitly requested
+
+Reviewer subagents follow the file-first **Output Transport** contract in `${CLAUDE_PLUGIN_ROOT}/references/reviewer-protocol.md` section "Output Transport". The orchestrator (`ry-review` skill body) generates one `run_id = <UTC-ISO-compact>-<git-short-sha>` per wave, computes `report_dir = .serena/reviews/<run_id>/` (gitignored runtime artefact), injects both into every reviewer prompt, must `Read` per-reviewer report files for every critical and high finding before disposition, and writes `<report_dir>/_summary.md` whenever any track reported one or more findings. Each reviewer writes its long-form report to `<report_dir>/<reviewer-name>.md` via `Bash` heredoc with marker `RLDYOUR_REPORT_EOF` and returns only a compact summary ≤ 4 KB. Rationale: works around Claude Code 2.0.77+ `task.output` regression (Anthropic [`#16789`](https://github.com/anthropics/claude-code/issues/16789), [`#20531`](https://github.com/anthropics/claude-code/issues/20531), [`#23463`](https://github.com/anthropics/claude-code/issues/23463), all closed as "not planned"); 6 tracks × ≤ 4 KB = ≤ 24 KB injected into parent context, structurally preventing the overflow class.
 
 ## ry-deploy
 
