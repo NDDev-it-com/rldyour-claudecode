@@ -119,6 +119,13 @@ fi
 step "Agent tools allowlist validation"
 python3 scripts/validate_agent_tools.py
 
+step "Reviewer output transport contract drift"
+if [ -f scripts/validate_reviewer_contracts.sh ]; then
+  bash scripts/validate_reviewer_contracts.sh
+else
+  echo "SKIP scripts/validate_reviewer_contracts.sh not yet present"
+fi
+
 step "MCP runtime version drift"
 if [ -f scripts/check_mcp_runtime_versions.py ]; then
   python3 scripts/check_mcp_runtime_versions.py
