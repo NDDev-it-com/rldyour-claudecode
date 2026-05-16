@@ -28,6 +28,10 @@ jobs:
     permissions:
       contents: read
       security-events: write
+      # `actions: read` is required for CodeQL on private repos to inspect
+      # workflow run metadata. Without it the analyze step fails with
+      # "Resource not accessible by integration".
+      actions: read
     strategy:
       fail-fast: false
       matrix:
