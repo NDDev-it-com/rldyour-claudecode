@@ -25,7 +25,7 @@ The active marketplace currently contains nine first-party plugins; per-plugin v
 - `rldyour-browser` — `0.2.0`
 - `rldyour-design` — `0.2.0`
 - `rldyour-lsps` — `0.2.0`
-- `rldyour-flow` — `0.2.1`
+- `rldyour-flow` — `0.2.2`
 - `rldyour-rules` — `0.2.0`
 
 Briefly:
