@@ -1,6 +1,6 @@
 # Release Process
 
-Lifecycle for cutting a versioned release of the `rldyour-claude` marketplace.
+Lifecycle for cutting a versioned release of the `rldyour-claudecode` marketplace.
 
 ## Versioning model
 

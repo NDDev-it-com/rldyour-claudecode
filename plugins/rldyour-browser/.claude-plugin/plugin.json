@@ -8,8 +8,8 @@
     "url": "https://github.com/rldyourmnd"
   },
   "license": "MIT",
-  "homepage": "https://github.com/rldyourmnd/rldyour-claude/tree/main/plugins/rldyour-browser",
-  "repository": "https://github.com/rldyourmnd/rldyour-claude",
+  "homepage": "https://github.com/nddev-it-com/rldyour-claudecode/tree/main/plugins/rldyour-browser",
+  "repository": "https://github.com/nddev-it-com/rldyour-claudecode",
   "keywords": ["browser", "playwright", "chrome-devtools", "mcp", "ui-validation", "pixel-perfect", "responsive", "screenshots", "browser-debug", "browser-validation", "rldyour"],
   "dependencies": ["rldyour-mcps"]
 }

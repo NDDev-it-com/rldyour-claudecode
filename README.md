@@ -1,6 +1,6 @@
-# rldyour-claude
+# rldyour-claudecode
 
-`rldyour-claude` is a personal Claude Code plugin marketplace. It is not a generic preset, not an automatic configuration takeover, and not a bundle of unrelated third-party opinions. It is a controlled catalog for the owner's own plugins, MCP servers, skills, subagents, slash commands, hooks, rules, and workflows.
+`rldyour-claudecode` is a personal Claude Code plugin marketplace. It is not a generic preset, not an automatic configuration takeover, and not a bundle of unrelated third-party opinions. It is a controlled catalog for the owner's own plugins, MCP servers, skills, subagents, slash commands, hooks, rules, and workflows.
 
 Main principle: nothing is treated as enabled or correct unless the owner explicitly decides it.
 
@@ -68,9 +68,9 @@ Only then create `plugins/<name>/` with the canonical layout (`.claude-plugin/pl
 
 ```bash
 claude plugin marketplace add /path/to/rldyour-claudecode
-claude plugin install rldyour-mcps@rldyour-claude
-claude plugin install rldyour-serena-mcp@rldyour-claude
-claude plugin install rldyour-flow@rldyour-claude
+claude plugin install rldyour-mcps@rldyour-claudecode
+claude plugin install rldyour-serena-mcp@rldyour-claudecode
+claude plugin install rldyour-flow@rldyour-claudecode
 # ...etc for each enabled plugin
 ```
 
