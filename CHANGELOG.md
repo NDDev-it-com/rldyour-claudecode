@@ -6,6 +6,92 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+## [0.2.2] - 2026-05-16
+
+### Fixed
+
+- **Reviewer output transport — wave-2 hardening (D29 follow-up)** —
+  applied the medium-priority findings from the
+  `2026-05-16T1433Z-e3d146b` self-bootstrap review wave. The
+  `0.2.1` contract worked end-to-end (5 of 6 reviewers returned
+  compact summaries through the parent context without truncation;
+  `flow-verification-review` paused on a memories-not-yet-synced
+  rumour, then resumed cleanly after the memory wave), but five
+  documentation/contract gaps surfaced that could bite in adverse
+  conditions.
+
+### Changed
+
+- **Heredoc EOF marker** (security medium 72, quality low 78):
+  `plugins/rldyour-flow/references/reviewer-protocol.md` and all six
+  reviewer agent bodies replaced the 2-character marker `MD` with the
+  unique `RLDYOUR_REPORT_EOF`. Reports that legitimately contain
+  short tokens (`MD hash`, `MD format`) can no longer close the
+  heredoc early. Indented closing markers in the documentation
+  examples were removed so the bash snippet is syntactically correct
+  as written.
+- **Explicit Bash write boundary** (security low 85): the contract in
+  `reviewer-protocol.md` and every reviewer agent now states that the
+  reviewer `Bash` write must target only
+  `<report_dir>/<reviewer-name>.md`. `Edit`, `Write`, `NotebookEdit`
+  remain absent from every reviewer `tools:` allowlist; `Bash`
+  remains the only write-capable mechanism and is bounded by contract
+  to the single report path.
+- **Mandatory critical/high `Read` step** (security medium 65):
+  `reviewer-protocol.md`, `plugins/rldyour-flow/skills/ry-start/SKILL.md`,
+  and `plugins/rldyour-flow/skills/ry-review/SKILL.md` switched from
+  "typically read critical/high" to "must read each report file for
+  every critical and high finding before disposition".
+  `flow-security-review` `Category` (OWASP/ASVS), `Attack path`,
+  and `Verification` fields exist only in the report file, so the
+  orchestrator now mandates the read.
+- **Finding format severity enum** (integration F-2): `info` added to
+  the documented severity list in `reviewer-protocol.md` so the
+  summary `Counts:` field (`info=N`) maps to a documented severity
+  class rather than an implicit one.
+- **Terminology and citation alignment** (consistency medium 92,
+  integration low 92/96): all six reviewer agents now quote Anthropic
+  issue numbers as backticked inline-code matching
+  `reviewer-protocol.md`, skills, `AGENTS.md`, `.claude/CLAUDE.md`,
+  `CHANGELOG.md`. `run_id` label normalised to
+  `<UTC-ISO-compact>-<git-short-sha>` (was a mix of three variants).
+  One-liner cap wording normalised to `cap 30 entries`. `_summary.md`
+  downgraded from "optionally writes" to "writes whenever any track
+  reported one or more findings".
+- **`RUNTIME_EXCLUDE_PATTERNS` alignment** (integration low 80):
+  `plugins/rldyour-flow/scripts/fullrepo_sync.py` adds
+  `.serena/diagnostics/**` and `.serena/reviews/**` so the runtime
+  exclude list matches the `.gitignore` runtime-artefact block.
+  `is_agent_path()` already returned `False` for these paths (they
+  are not in `AGENT_ONLY_PATTERNS`); the addition is defensive
+  consistency for future refactors.
+- **Plugin version cache invalidation**: `rldyour-flow` plugin
+  bumped `0.2.1 → 0.2.2`. Cache namespace becomes
+  `~/.claude/plugins/cache/rldyour-claudecode/rldyour-flow/0.2.2/`.
+  Marketplace `VERSION` and `.claude-plugin/marketplace.json`
+  `rldyour-flow` entry bumped in lockstep. All other plugins stay at
+  `0.2.0`.
+- **Anthropic issue references upgraded to clickable markdown links**
+  in `reviewer-protocol.md`, `ry-start`, `ry-review`, `AGENTS.md`,
+  `.claude/CLAUDE.md` for easier human inspection of the regression
+  context.
+
+### Notes
+
+- Read-only invariant for reviewer subagents unchanged. `Edit`,
+  `Write`, `NotebookEdit` remain absent from every reviewer allowlist.
+  `scripts/validate_agent_tools.py` continues to pass with all 8
+  agent files validated.
+- Wave-1 (`0.2.1`) tags `rldyour-flow--v0.2.1` and
+  `marketplace--v0.2.1` are backfilled at commit `e3d146b` for
+  `CHANGELOG.md` link integrity.
+- Done criteria: `claude plugin validate plugins/rldyour-flow`
+  passes; `validate_plugin_versions.py` reports `rldyour-flow 0.2.2`
+  and all other plugins `0.2.0`; instruction docs remain under
+  200-line cap; `bash scripts/validate_marketplace.sh` runs cleanly
+  end-to-end; `marketplace--v0.2.1` and `marketplace--v0.2.2` tags
+  pushed; `fullrepo` resynced.
+
 ## [0.2.1] - 2026-05-16
 
 ### Fixed
@@ -653,7 +739,8 @@ Release boundary cut after the 2026-05-08..2026-05-12 wave of best-practice, MCP
   shell syntax checks, frontmatter presence verification on all skills,
   agents, and commands.
 
-[Unreleased]: https://github.com/NDDev-it-com/rldyour-claudecode/compare/marketplace--v0.2.1...HEAD
+[Unreleased]: https://github.com/NDDev-it-com/rldyour-claudecode/compare/marketplace--v0.2.2...HEAD
+[0.2.2]: https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/marketplace--v0.2.2
 [0.2.1]: https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/marketplace--v0.2.1
 [0.2.0]: https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/marketplace--v0.2.0
 [0.1.9]: https://github.com/NDDev-it-com/rldyour-claudecode/commit/99f9809
