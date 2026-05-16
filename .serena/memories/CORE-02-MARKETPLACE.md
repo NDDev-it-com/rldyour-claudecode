@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-16
-Last commit: e5a7694 docs(flow): align reviewer-protocol terminology and flow-lifecycle
+Last commit: 61b913d feat(scripts): add validate_reviewer_contracts for heredoc drift detection
 Scope: .claude-plugin/marketplace.json, plugins/*/.claude-plugin/plugin.json, README.md, AGENTS.md
 Area: CORE
 -->

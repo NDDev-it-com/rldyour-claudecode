@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-16
-Last commit: e5a7694 docs(flow): align reviewer-protocol terminology and flow-lifecycle
+Last commit: 61b913d feat(scripts): add validate_reviewer_contracts for heredoc drift detection
 Scope: Serena memory sync, hook gates, fullrepo lifecycle, MCP pins, validation harness, current implementation risks
 Area: TECHDEBT
 -->
@@ -25,6 +25,7 @@ Open technical debt, implementation mistakes already fixed, and anti-regression 
 - `.claude/CLAUDE.md`: "Smoke-script footgun" section documents R5 process order.
 - `CHANGELOG.md` `[0.1.8]`: Wave 4 R5 hardening, smoke, SC2044, memory graph record.
 - `plugins/rldyour-flow/references/reviewer-protocol.md`, `plugins/rldyour-flow/skills/ry-start/SKILL.md`, `plugins/rldyour-flow/skills/ry-review/SKILL.md`: reviewer transport hardening and read-contract.
+- `scripts/validate_reviewer_contracts.sh`: reviewer output transport contract drift detector (D30).
 
 ## Open Risks
 
@@ -99,6 +100,8 @@ Open technical debt, implementation mistakes already fixed, and anti-regression 
 - D29. Reviewer output transport regression hardening: 0.2.1 contract (`d42866b`-`e3d146b`) introduced file-first reviewer output — full reports written to `<report_dir>/<reviewer-name>.md`, `.serena/reviews/<run_id>/` runtime dir, parent summaries capped at 4 KB, `run_id` coordination via `ry-start`/`ry-review`. 0.2.2 wave-2 hardening (`c190ee1`, released `0ff613d`) after self-bootstrap review wave `2026-05-16T1433Z-e3d146b`: `RLDYOUR_REPORT_EOF` heredoc marker in all 6 reviewer agents + `reviewer-protocol.md` (replaces short tokens like `MD`/`EOF` that caused early heredoc termination, per Anthropic regression issues #16789/#20531/#23463 closed "not planned"); explicit Bash write boundary `<report_dir>/<reviewer-name>.md` only; mandatory orchestrator `Read` of each `critical`/`high` report file before disposition; `info` severity added to enum (`reviewer-protocol.md` line 24); `.serena/diagnostics/**` and `.serena/reviews/**` added to `RUNTIME_EXCLUDE_PATTERNS` in `fullrepo_sync.py` lines 50-53 to prevent runtime review artifacts from entering fullrepo publish. 5 of 6 reviewers validated via self-bootstrap; `flow-verification-review` paused on a pre-sync ambiguity now resolved. Closed at HEAD `0ff613d`.
 
 
+- D30. Reviewer contract drift detection gap (F-3 from review wave `2026-05-16T1538Z-0ff613d`, verification info, confidence 85): added `scripts/validate_reviewer_contracts.sh` (173 lines) at HEAD `61b913d`. The script asserts 9 invariant types: 5 per-agent (heredoc marker `RLDYOUR_REPORT_EOF` appears exactly 2× open+close; `cap 30 entries` present; `info=N` in Counts template; Anthropic regression issues `` `#16789` ``, `` `#20531` ``, `` `#23463` `` all cited with backticks; each agent writes to `${report_dir}/<agent-name>.md` matching its frontmatter `name:`) across all 6 reviewer agents; 4 protocol-level (`reviewer-protocol.md` uses `<UTC-ISO-compact>` run_id label; severity enum lists `` `critical`, `high`, `medium`, `low`, or `info` ``; Bash write boundary phrase "no other paths" present; `RLDYOUR_REPORT_EOF` appears ≥ 3× in protocol). Script exits 0 on all PASS, 1 on any FAIL. Wired into `scripts/validate_marketplace.sh` as step "Reviewer output transport contract drift" immediately after the "Agent tools allowlist validation" step (lines 122-127 at HEAD). Script is plugin-version-agnostic — no `rldyour-flow` version bump required because runtime behavior (agent bodies, skill bodies) was not touched. End-to-end result: 41 PASS / 0 FAIL at HEAD `61b913d` (full bootstrap smoke + `bash scripts/validate_marketplace.sh` run). Behavior asserted by `scripts/validate_reviewer_contracts.sh` at HEAD; this is the automated test that closes F-3.
+
 ## Error Patterns To Avoid
 
 - Pattern: updating hook/skill/agent memory contracts without updating analyzer targets.
@@ -140,6 +143,7 @@ Open technical debt, implementation mistakes already fixed, and anti-regression 
 - Release record (D28 0.2.0 boundary): [[RELEASE-01-VALIDATION]] `[0.2.0] - 2026-05-16`.
 - Release record (D29 0.2.1 transport contract): [[RELEASE-01-VALIDATION]] `[0.2.1] - 2026-05-16`.
 - Release record (D29 0.2.2 transport hardening): [[RELEASE-01-VALIDATION]] `[0.2.2] - 2026-05-16`.
+- Reviewer contract drift detection (D30): [[RELEASE-01-VALIDATION]] (validator wired into `scripts/validate_marketplace.sh`).
 - Memory taxonomy and cross-reference graph: [[CORE-01-INDEX]] (map of all 18 memories).
 - SDLC post-task sync flow: [[FLOW-01-SDLC]].
 - Instruction docs policy: [[DOCS-01-INSTRUCTIONS]].

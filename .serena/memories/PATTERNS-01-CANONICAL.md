@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-16
-Last commit: e5a7694 docs(flow): align reviewer-protocol terminology and flow-lifecycle
+Last commit: 61b913d feat(scripts): add validate_reviewer_contracts for heredoc drift detection
 Scope: .claude/CLAUDE.md (Engineering Conventions), AGENTS.md (Engineering Constraints), plugins/rldyour-flow/agents/flow-*-review.md, plugins/rldyour-explore/agents/ry-explore.md, plugins/rldyour-serena-mcp/agents/flow-memory-sync.md, plugins/*/skills/*/SKILL.md, plugins/*/hooks/*.sh, plugins/*/hooks/hooks.json, scripts/validate_agent_tools.py, scripts/worktree_add.sh, scripts/install-rldyour-marketplace.sh
 Area: PATTERNS
 -->
@@ -198,7 +198,7 @@ cat > "${report_dir}/<reviewer-name>.md" <<'RLDYOUR_REPORT_EOF'
 RLDYOUR_REPORT_EOF
 ```
 
-Rationale: short generic tokens (`MD`, `EOF`, `END`) can appear legitimately inside a reviewer's markdown report body and cause premature heredoc termination — an Anthropic-acknowledged regression in reviewer `task.output` handling (issues #16789, #20531, #23463, all closed "not planned"). `RLDYOUR_REPORT_EOF` is sufficiently unique to avoid collision. Closing marker must be at column 0 (bash heredoc rule). Canonical example: `plugins/rldyour-flow/references/reviewer-protocol.md` lines 62-67 at HEAD `e5a7694`. Applied to all 6 reviewer agents (`flow-architecture-review.md`, `flow-quality-review.md`, `flow-consistency-review.md`, `flow-integration-review.md`, `flow-verification-review.md`, `flow-security-review.md`) in `plugins/rldyour-flow/agents/`. Behavior asserted by code; no automated test.
+Rationale: short generic tokens (`MD`, `EOF`, `END`) can appear legitimately inside a reviewer's markdown report body and cause premature heredoc termination — an Anthropic-acknowledged regression in reviewer `task.output` handling (issues #16789, #20531, #23463, all closed "not planned"). `RLDYOUR_REPORT_EOF` is sufficiently unique to avoid collision. Closing marker must be at column 0 (bash heredoc rule). Canonical example: `plugins/rldyour-flow/references/reviewer-protocol.md` lines 62-67 at HEAD `e5a7694`. Applied to all 6 reviewer agents (`flow-architecture-review.md`, `flow-quality-review.md`, `flow-consistency-review.md`, `flow-integration-review.md`, `flow-verification-review.md`, `flow-security-review.md`) in `plugins/rldyour-flow/agents/`. Drift detection: `scripts/validate_reviewer_contracts.sh` asserts the marker + 4 sibling invariants across all 6 reviewer agents and the protocol; wired into `scripts/validate_marketplace.sh` after the "Agent tools allowlist validation" step (lines 122-127 at HEAD `61b913d`). Behavior now asserted by automated test at `scripts/validate_reviewer_contracts.sh`.
 
 ## Cross-Plugin Path Patterns
 

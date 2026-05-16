@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-16
-Last commit: e5a7694 docs(flow): align reviewer-protocol terminology and flow-lifecycle
+Last commit: 61b913d feat(scripts): add validate_reviewer_contracts for heredoc drift detection
 Scope: plugins/rldyour-rules/skills/quality-first-engineering/SKILL.md, plugins/rldyour-rules/skills/architecture-boundaries/SKILL.md, plugins/rldyour-rules/skills/dependency-compatibility-policy/SKILL.md, plugins/rldyour-rules/skills/implementation-discipline/SKILL.md, plugins/rldyour-rules/skills/verification-quality-gates/SKILL.md, plugins/rldyour-rules/skills/project-instructions-policy/SKILL.md, plugins/rldyour-rules/skills/ry-rules-review/SKILL.md, plugins/rldyour-rules/references/{rules-policy,quality-gates,architecture-policy,dependency-policy,project-instructions-and-adrs,sources}.md, plugins/rldyour-rules/commands/ry-rules-review.md
 Area: RULES
 -->

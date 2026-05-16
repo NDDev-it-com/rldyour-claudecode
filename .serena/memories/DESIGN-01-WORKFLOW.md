@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-16
-Last commit: e5a7694 docs(flow): align reviewer-protocol terminology and flow-lifecycle
+Last commit: 61b913d feat(scripts): add validate_reviewer_contracts for heredoc drift detection
 Scope: plugins/rldyour-design/skills/ry-design/SKILL.md, plugins/rldyour-design/skills/figma-to-code/SKILL.md, plugins/rldyour-design/skills/design-system-implementation/SKILL.md, plugins/rldyour-design/skills/fsd-frontend-architecture/SKILL.md, plugins/rldyour-design/skills/design-validation/SKILL.md, plugins/rldyour-design/commands/ry-design.md, plugins/rldyour-mcps/.mcp.json (figma + shadcn entries)
 Area: DESIGN
 -->
