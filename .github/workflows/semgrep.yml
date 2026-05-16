@@ -1,0 +1,68 @@
+name: semgrep
+
+# Static analysis via Semgrep (OSS rules). Replaces CodeQL because the
+# repository does not have GitHub Advanced Security enabled (GHAS is a
+# paid add-on for private repos and the org/repo plan does not include it).
+# Semgrep runs as a CLI without requiring SARIF upload to the Security tab
+# (which itself requires GHAS for private repos), so findings show up in
+# the job log + summary and CI fails on any non-INFO finding.
+#
+# Semgrep version pinned to 1.163.0 (matches plugins/rldyour-mcps/.mcp.json
+# Semgrep MCP server pin and config/mcp-runtime-versions.env). Bumping the
+# CLI version here should track the MCP pin.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    # Weekly drift sweep at the same time as dependency-check.
+    - cron: '13 6 * * 1'
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  semgrep:
+    name: Semgrep OSS scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    container:
+      # SHA-pinned semgrep/semgrep:1.163.0 (matches local MCP server version).
+      # The tag is verified via `docker pull --platform=linux/amd64
+      # semgrep/semgrep:1.163.0 && docker inspect --format='{{index .RepoDigests 0}}' ...`
+      # Bump when the MCP pin in plugins/rldyour-mcps/.mcp.json moves.
+      image: semgrep/semgrep:1.163.0
+    steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@ab7a9404c0f3da075243ca237b5fac12c98deaa5  # v2.19.3
+        with:
+          egress-policy: audit
+
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+
+      - name: Semgrep scan
+        run: |
+          set -euo pipefail
+          # `--config auto` lets Semgrep fetch the canonical OSS rule pack
+          # for the detected languages (Python, JavaScript, YAML, Bash).
+          # `--error` makes CI fail on any non-INFO finding.
+          # `--metrics=off` opts out of telemetry (no SEMGREP_USER_AGENT_APPEND).
+          # `--exclude` keeps our own templates/examples out of scope.
+          semgrep scan \
+            --config=auto \
+            --error \
+            --metrics=off \
+            --exclude='.serena/**' \
+            --exclude='.github/workflows/**' \
+            --exclude='**/__pycache__/**' \
+            --severity=WARNING \
+            --severity=ERROR
