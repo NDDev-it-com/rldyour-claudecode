@@ -6,6 +6,82 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+## [0.1.8] - 2026-05-16
+
+### Changed
+
+- **Wave 4 polish — R5 hardening + memory graph + research precision** (continues Wave 3
+  vision: "Serena memories — мозг проекта" with quality-first / scalability-first
+  defaults). Closes 6 deferred items from Wave 3 audit plus 21 findings from 6 parallel
+  reviewer subagents (architecture, quality, consistency, integration, verification,
+  security):
+  - **R5 hardening (was open in TECHDEBT-01, now D19)**: `scripts/bootstrap_check.sh`
+    new pre-`--bootstrap-init` divergence guard. For each agent-only path root,
+    `git cat-file -e origin/fullrepo:$file` + `cmp -s $file <(git show ...)` detects
+    content drift and refuses to proceed if local edits would be silently overwritten.
+    Override via `RLDYOUR_FORCE_BOOTSTRAP=1` (now `WARN ... BYPASSED` to stderr, was
+    `INFO` to stdout — closes Wave 4 security F-2, conf 70). `.aider*` glob expansion
+    via `shopt -s nullglob` covers `.aiderignore` / `.aider.conf.yml` / etc. that the
+    earlier literal `.aider` entry missed (closes Wave 4 quality+integration F-1,
+    conf 90). `git fetch` failure emits explicit `WARN ... possibly stale local ref`
+    instead of `|| true` silent swallow (closes Wave 4 quality F-2, conf 85).
+    Sync-contract comment clarifies `fullrepo_sync.py` `AGENT_ONLY_PATTERNS` is the
+    canonical full list, not `SKILL.md` (which covers only downstream minimal subset).
+  - **R5 test coverage**: new `scripts/smoke_bootstrap_check.sh` asserts all 4 R5
+    guard code paths (static), `.aider*` glob expansion wiring, `AGENT_ONLY_PATHS`
+    bash array vs `AGENT_ONLY_PATTERNS` python tuple count drift `<=5`, and runtime
+    path-(a) bypass behavior (extracted guard block + `RLDYOUR_FORCE_BOOTSTRAP=1`
+    asserts WARN to stderr + sentinel reached). Closes Wave 4 verification F-1
+    (HIGH, conf 90) and grounds Wave 4 architecture Q2.
+  - **SC2044 portability**: `scripts/validate_marketplace.sh` and
+    `.github/workflows/validate.yml` two-loop refactor from `for f in $(find ...)`
+    to `while IFS= read -r -d '' f; do ... done < <(find ... -print0)`. Handles
+    paths with spaces, newlines, and shell metacharacters safely (shellcheck SC2044
+    compliance).
+  - **CI/local parity**: `scripts/validate_marketplace.sh` wires `smoke_hooks.sh` to
+    match CI (closes Wave 4 integration F-3 CI/local asymmetry, LOW 95) plus
+    `smoke_bootstrap_check.sh` as new gate. CI also gains the new bootstrap smoke.
+  - **Memory graph completion** (`.serena/memories`): 7 pre-existing memories
+    (CLAUDECODE-01, MCP-01, SERENA-01, HOOKS-01, DOCS-01, RELEASE-01, TECHDEBT-01)
+    gained `## Cross-References` with 8-9 anchored `[[wikilinks]]` each. Combined
+    with Wave 3's 8 new memories + back-edges added to PATTERNS-01-CANONICAL, the
+    full 18-memory graph is bidirectional with BFS reachability `<=2` hops from
+    `CORE-01-INDEX` to every memory; link count 7-53 per file (TECHDEBT-01 D20).
+  - **TECHDEBT-01 Source Of Truth**: new `## Source Of Truth` section in
+    `.serena/memories/TECHDEBT-01-NOW.md` lists 11 canonical anchors (commit SHAs,
+    analyzer scripts, hook scripts, `fullrepo_sync.py`, `.mcp.json` + config,
+    smoke scripts, validators, `INJECTION_MARKERS` regex location, bootstrap guard).
+    Every D/R entry now anchors to a verifiable code/commit/test source per
+    `PHILOSOPHY-01-QUALITY-FIRST` scientific-anchoring principle (TECHDEBT-01 D21).
+  - **OWASP Top 10:2025 precision**: `.serena/memories/SECURITY-01-OWASP.md` updated
+    from generic "OWASP Top 10 2025 revision" to authoritative "OWASP Top 10:2025
+    (Final, released 2025-11-06 at Global AppSec DC by Tanya Janca and Neil
+    Smithline)" with canonical URL `https://owasp.org/Top10/2025/` and paired ASVS
+    5.0.0 (released 2025-05-30) reference. Added trajectory detail (A03:2025 from
+    A06:2021 community vote 50% #1), A10:2025 24 CWEs replacing SSRF, and full
+    A07/A08/A09 rename history. Sourced from `ry-explore` cross-validation across
+    owasp.org, GitHub OWASP/Top10 `SUPERSEDED` README marker, TripWire 2025
+    advisories (TECHDEBT-01 D22).
+  - **R6 (new, open)**: `AGENT_ONLY_PATHS` bash array vs `AGENT_ONLY_PATTERNS`
+    python tuple manual synchronization. Mitigation: smoke drift detector with
+    tolerance `<=5`. Future hardening: generate bash array from python via
+    `--list-agent-only-patterns` CLI flag (deferred — smoke gate sufficient at
+    current scale).
+- **Deferred to Wave 5** (acknowledged, not blocking 0.1.8): GitHub Actions SHA
+  pinning (security F-3, LOW 90 — `actions/checkout@v5` and `actions/setup-{node,
+  python}@v5` use mutable tags), `npm install -g @anthropic-ai/claude-code` pinning
+  (security F-5, INFO 35), symlink handling in `cmp -s` content compare (quality
+  F-3, LOW 80), `flow-memory-sync` ↔ `session_start_*` path sanitization variant
+  (security F-1, LOW 55).
+
+### Notes
+
+- No plugin runtime files changed. No plugin `plugin.json` version bumps needed.
+  Marketplace boundary version `VERSION` 0.1.7 -> 0.1.8 reflects R5 hardening,
+  smoke coverage addition, and memory graph completion.
+- `bash scripts/validate_marketplace.sh` passes all 18 steps including new
+  bootstrap R5 smoke. `bash scripts/smoke_bootstrap_check.sh` reports 7/7 OK.
+
 ## [0.1.7] - 2026-05-16
 
 ### Changed
