@@ -1,0 +1,30 @@
+version: 2
+
+# Dependabot keeps third-party GitHub Actions and the Claude Code npm pin
+# from drifting silently. PRs require human review (auto-merge disabled).
+
+updates:
+  # Track all third-party GitHub Actions used in .github/workflows/*.yml.
+  # SHA-pinned tags surface as PRs that bump both the SHA and the trailing
+  # tag comment. Monthly cadence keeps PR noise low; security alerts are
+  # delivered separately via GitHub's security advisories.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+      day: monday
+      time: '06:00'
+      timezone: Etc/UTC
+    open-pull-requests-limit: 5
+    labels:
+      - ci
+      - dependencies
+    commit-message:
+      prefix: ci
+      include: scope
+    groups:
+      actions-minor-and-patch:
+        applies-to: version-updates
+        update-types:
+          - minor
+          - patch

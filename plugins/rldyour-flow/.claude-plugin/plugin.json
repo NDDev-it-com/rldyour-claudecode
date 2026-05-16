@@ -8,8 +8,8 @@
     "url": "https://github.com/rldyourmnd"
   },
   "license": "MIT",
-  "homepage": "https://github.com/rldyourmnd/rldyour-claude/tree/main/plugins/rldyour-flow",
-  "repository": "https://github.com/rldyourmnd/rldyour-claude",
+  "homepage": "https://github.com/nddev-it-com/rldyour-claudecode/tree/main/plugins/rldyour-flow",
+  "repository": "https://github.com/nddev-it-com/rldyour-claudecode",
   "keywords": ["sdlc", "workflow", "ry-init", "ry-start", "ry-newp", "ry-review", "ry-deploy", "reviewer", "post-task-sync", "instruction-docs", "fullrepo", "rldyour"],
   "dependencies": ["rldyour-mcps", "rldyour-serena-mcp"]
 }

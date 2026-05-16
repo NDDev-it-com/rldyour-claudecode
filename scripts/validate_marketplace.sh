@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# validate_marketplace.sh — primary validation harness for the rldyour-claude marketplace.
+# validate_marketplace.sh — primary validation harness for the rldyour-claudecode marketplace.
 #
 # Runs claude plugin validate (marketplace + every plugin), JSON parse for all
 # manifest files, Python AST and shell syntax checks, frontmatter presence on

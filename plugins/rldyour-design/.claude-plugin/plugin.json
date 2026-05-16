@@ -8,8 +8,8 @@
     "url": "https://github.com/rldyourmnd"
   },
   "license": "MIT",
-  "homepage": "https://github.com/rldyourmnd/rldyour-claude/tree/main/plugins/rldyour-design",
-  "repository": "https://github.com/rldyourmnd/rldyour-claude",
+  "homepage": "https://github.com/nddev-it-com/rldyour-claudecode/tree/main/plugins/rldyour-design",
+  "repository": "https://github.com/nddev-it-com/rldyour-claudecode",
   "keywords": ["design", "figma", "shadcn", "reactbits", "fsd", "feature-sliced-design", "design-system", "tokens", "tailwind", "ui-implementation", "pixel-perfect", "rldyour"],
   "dependencies": ["rldyour-mcps", "rldyour-browser"]
 }

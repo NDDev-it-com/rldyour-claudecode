@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
-# install-rldyour-marketplace.sh — universal installer for the rldyour-claude Claude Code marketplace.
+# install-rldyour-marketplace.sh — universal installer for the rldyour-claudecode Claude Code marketplace.
 #
 # Works on any Claude Code install:
-#   - Fresh CC (no rldyour-* present): installs rldyour-claude + 9 plugins.
+#   - Fresh CC (no rldyour-* present): installs rldyour-claudecode + 9 plugins.
 #   - CC with the legacy `rldyour-claudecode` marketplace (NDDev-Platform): cleanly removes
 #     that marketplace, its plugins, cache, and stale settings.json keys; then installs the new
 #     marketplace and plugins.
 #   - CC with any other rldyour-* setup: left untouched. Only the explicit legacy names in
 #     LEGACY_MARKETPLACES are cleaned; everything else is the user's responsibility.
 #
-# Marketplace source: github:rldyourmnd/rldyour-claude. No local clone required.
+# Marketplace source: github:nddev-it-com/rldyour-claudecode. No local clone required.
 #
 # Usage:
 #   bash scripts/install-rldyour-marketplace.sh --dry-run                 # preview
@@ -17,7 +17,7 @@
 #   bash scripts/install-rldyour-marketplace.sh --i-exited-claude --continue-from 5
 #
 # Or remote (no clone needed):
-#   curl -fsSL https://raw.githubusercontent.com/rldyourmnd/rldyour-claude/main/scripts/install-rldyour-marketplace.sh \
+#   curl -fsSL https://raw.githubusercontent.com/nddev-it-com/rldyour-claudecode/main/scripts/install-rldyour-marketplace.sh \
 #     | bash -s -- --dry-run
 #
 # Flags:
@@ -31,16 +31,16 @@
 #   2  detect + remove any LEGACY marketplace: disable+uninstall its plugins, then marketplace remove
 #   3  jq-scrub settings.json: extraKnownMarketplaces + enabledPlugins entries pointing at legacy marketplaces
 #   4  filesystem cleanup: ~/.claude/plugins/cache/<legacy>/ subtrees and known leftover symlinks
-#   5  add github:rldyourmnd/rldyour-claude as a new marketplace
-#   6  install 9 plugins from @rldyour-claude in dependency order
+#   5  add github:nddev-it-com/rldyour-claudecode as a new marketplace
+#   6  install 9 plugins from @rldyour-claudecode in dependency order
 #   7  verify final state and write migration-report.md into the backup directory
 
 set -euo pipefail
 IFS=$'\n\t'
 unset CDPATH
 
-readonly NEW_MARKETPLACE="rldyour-claude"
-readonly NEW_MARKETPLACE_SOURCE="github:rldyourmnd/rldyour-claude"
+readonly NEW_MARKETPLACE="rldyour-claudecode"
+readonly NEW_MARKETPLACE_SOURCE="github:nddev-it-com/rldyour-claudecode"
 
 # Known legacy marketplace names that this installer cleans up. Add others here only when their
 # removal is safe and intended. Anything else is left untouched.
@@ -485,7 +485,7 @@ stage_7_verify() {
 
   if [[ -n "$REPORT_PATH" ]]; then
     {
-      printf '# rldyour-claude install report\n\n'
+      printf '# rldyour-claudecode install report\n\n'
       printf '- Timestamp: %s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
       printf '- Marketplace: %s (%s)\n' "$NEW_MARKETPLACE" "$NEW_MARKETPLACE_SOURCE"
       printf '- Plugins installed: %d\n' "$new_count"

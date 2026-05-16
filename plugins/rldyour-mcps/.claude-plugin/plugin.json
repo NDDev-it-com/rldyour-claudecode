@@ -2,13 +2,13 @@
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "rldyour-mcps",
   "version": "0.1.3",
-  "description": "Транспортный слой MCP-серверов для маркетплейса rldyour-claude — все версии зафиксированы. 13 серверов: Serena, Sequential Thinking, Playwright, Chrome DevTools, Context7, DeepWiki, Grep, Semgrep, shadcn, Dart/Flutter, Figma, OpenAI Docs, GitHub.",
+  "description": "Транспортный слой MCP-серверов для маркетплейса rldyour-claudecode — все версии зафиксированы. 13 серверов: Serena, Sequential Thinking, Playwright, Chrome DevTools, Context7, DeepWiki, Grep, Semgrep, shadcn, Dart/Flutter, Figma, OpenAI Docs, GitHub.",
   "author": {
     "name": "rldyourmnd",
     "url": "https://github.com/rldyourmnd"
   },
   "license": "MIT",
-  "homepage": "https://github.com/rldyourmnd/rldyour-claude/tree/main/plugins/rldyour-mcps",
-  "repository": "https://github.com/rldyourmnd/rldyour-claude",
+  "homepage": "https://github.com/nddev-it-com/rldyour-claudecode/tree/main/plugins/rldyour-mcps",
+  "repository": "https://github.com/nddev-it-com/rldyour-claudecode",
   "keywords": ["mcp", "transport", "rldyour", "serena", "github", "playwright", "context7"]
 }

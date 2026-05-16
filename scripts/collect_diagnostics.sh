@@ -72,7 +72,7 @@ done
 
 # Short summary.
 {
-  echo "# rldyour-claude diagnostics bundle"
+  echo "# rldyour-claudecode diagnostics bundle"
   echo "Generated: $(date -u)"
   echo "Marketplace VERSION: $(cat VERSION 2>/dev/null || echo unknown)"
   echo "HEAD: $(git rev-parse HEAD 2>/dev/null || echo unknown)"

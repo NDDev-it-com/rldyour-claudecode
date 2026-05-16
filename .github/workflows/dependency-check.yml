@@ -1,5 +1,8 @@
 name: dependency-check
 
+# SHA-pinned actions per OWASP A03:2025. See .github/workflows/validate.yml
+# header for the tag→SHA refresh procedure.
+
 on:
   schedule:
     # Mondays 06:00 UTC — weekly cadence so MCP server upstreams have time to publish.
@@ -12,17 +15,30 @@ on:
       - 'scripts/check_mcp_runtime_versions.py'
       - '.github/workflows/dependency-check.yml'
 
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   mcp-runtime-drift:
     name: MCP runtime version drift
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    permissions:
+      contents: read
     steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@ab7a9404c0f3da075243ca237b5fac12c98deaa5  # v2.19.3
+        with:
+          egress-policy: audit
+
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405  # v6.2.0
         with:
           python-version: '3.13'
 
@@ -51,12 +67,21 @@ jobs:
     name: Plugin version consistency
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    permissions:
+      contents: read
     steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@ab7a9404c0f3da075243ca237b5fac12c98deaa5  # v2.19.3
+        with:
+          egress-policy: audit
+
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405  # v6.2.0
         with:
           python-version: '3.13'
+
       - name: Run validate_plugin_versions.py
         run: python3 scripts/validate_plugin_versions.py
