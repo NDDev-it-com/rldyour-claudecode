@@ -128,11 +128,12 @@ guard_fullrepo_ref() {
   scan_paths_for_definite_secrets "$local_sha" "${paths[@]}"
   warn_suspicious_wording "$local_sha" "${paths[@]}"
 
-  if git diff --no-ext-diff --unified=0 "$range" -- 2>/dev/null \
-    | LC_ALL=C grep -E '^\+[^+]' \
-    | LC_ALL=C grep -Eq "$AI_MARKER_RE"; then
-    note "[RLDYOUR-AI-GUARD] warning: AI-context markers allowed on ${remote_ref}"
-  fi
+  # AI-marker warning intentionally skipped on the `fullrepo` branch: by
+  # design fullrepo carries agent-only context (AGENTS.md, .claude/CLAUDE.md,
+  # .serena/memories/**) which legitimately contains AI markers. Firing the
+  # warning on every fullrepo push is false-positive noise (closure of
+  # security F-5, info, from review wave `2026-05-16T1859Z-61b913d`). For
+  # other branches the warning still fires via the main branch scan path.
 }
 
 main() {
