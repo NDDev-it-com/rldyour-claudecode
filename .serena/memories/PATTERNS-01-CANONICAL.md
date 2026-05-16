@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-16
-Last commit: 9bf3c70 chore(release): cut 0.1.8 (Wave 4 R5 hardening + smoke + memory graph)
+Last commit: 0ff613d chore(release): cut 0.2.2 (wave-2 reviewer transport hardening)
 Scope: .claude/CLAUDE.md (Engineering Conventions), AGENTS.md (Engineering Constraints), plugins/rldyour-flow/agents/flow-*-review.md, plugins/rldyour-explore/agents/ry-explore.md, plugins/rldyour-serena-mcp/agents/flow-memory-sync.md, plugins/*/skills/*/SKILL.md, plugins/*/hooks/*.sh, plugins/*/hooks/hooks.json, scripts/validate_agent_tools.py, scripts/worktree_add.sh, scripts/install-rldyour-marketplace.sh
 Area: PATTERNS
 -->
@@ -187,6 +187,18 @@ Rules:
 - `additionalContext` JSON emitted via second `python3 - <<'PY'` heredoc using `json.dumps`.
 - Stop hooks exit `2` to block, all other hooks exit `0` (advisory).
 - No push, no merge, no fullrepo publish, no branch deletion in hooks — high-blast-radius operations belong to orchestrator skills/subagents.
+
+## Reviewer Report Heredoc Marker
+
+Canonical EOF marker for reviewer agent report writes: `RLDYOUR_REPORT_EOF`.
+
+```bash
+cat > "${report_dir}/<reviewer-name>.md" <<'RLDYOUR_REPORT_EOF'
+<full markdown report body>
+RLDYOUR_REPORT_EOF
+```
+
+Rationale: short generic tokens (`MD`, `EOF`, `END`) can appear legitimately inside a reviewer's markdown report body and cause premature heredoc termination — an Anthropic-acknowledged regression in reviewer `task.output` handling (issues #16789, #20531, #23463, all closed "not planned"). `RLDYOUR_REPORT_EOF` is sufficiently unique to avoid collision. Closing marker must be at column 0 (bash heredoc rule). Canonical example: `plugins/rldyour-flow/references/reviewer-protocol.md` lines 62-67 at HEAD `0ff613d`. Applied to all 6 reviewer agents (`flow-architecture-review.md`, `flow-quality-review.md`, `flow-consistency-review.md`, `flow-integration-review.md`, `flow-verification-review.md`, `flow-security-review.md`) in `plugins/rldyour-flow/agents/`. Behavior asserted by code; no automated test.
 
 ## Cross-Plugin Path Patterns
 

@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-16
-Last commit: c190ee1 fix(flow): harden reviewer output transport per review-wave findings
+Last commit: 0ff613d chore(release): cut 0.2.2 (wave-2 reviewer transport hardening)
 Scope: plugins/rldyour-flow/**, scripts/worktree_add.sh, AGENTS.md, .claude/CLAUDE.md, plugins/rldyour-flow/scripts/fullrepo_sync.py
 Area: FLOW
 -->

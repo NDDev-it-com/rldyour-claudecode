@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-16
-Last commit: eaccf59 chore(release): cut 0.1.7 (rldyour-flow 0.1.4, Wave 2 polish)
+Last commit: 0ff613d chore(release): cut 0.2.2 (wave-2 reviewer transport hardening)
 Scope: plugins/rldyour-rules/skills/quality-first-engineering/SKILL.md, plugins/rldyour-rules/skills/architecture-boundaries/SKILL.md, plugins/rldyour-rules/skills/dependency-compatibility-policy/SKILL.md, plugins/rldyour-rules/skills/implementation-discipline/SKILL.md, plugins/rldyour-rules/skills/verification-quality-gates/SKILL.md, plugins/rldyour-rules/skills/project-instructions-policy/SKILL.md, plugins/rldyour-rules/skills/ry-rules-review/SKILL.md, plugins/rldyour-rules/references/{rules-policy,quality-gates,architecture-policy,dependency-policy,project-instructions-and-adrs,sources}.md, plugins/rldyour-rules/commands/ry-rules-review.md
 Area: RULES
 -->

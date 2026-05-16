@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-16
-Last commit: e3d146b chore(release): cut 0.2.1 (D29 reviewer output transport)
+Last commit: 0ff613d chore(release): cut 0.2.2 (wave-2 reviewer transport hardening)
 Scope: VERSION, CHANGELOG.md, README.md, .claude-plugin/marketplace.json, plugins/*/.claude-plugin/plugin.json, .github/workflows/validate.yml, .github/workflows/dependency-check.yml, .github/workflows/semgrep.yml, .github/workflows/actionlint.yml, .github/dependabot.yml, scripts/validate_marketplace.sh, scripts/validate_plugin_versions.py, scripts/smoke_serena_memory_taxonomy.sh, docs/release-process.md
 Area: RELEASE
 -->
@@ -25,22 +25,23 @@ Versioning, changelog, validation, tagging, and release evidence contracts for t
 
 ## Current Behavior
 
-- Current release boundary at HEAD: `VERSION` is `0.2.1` (verified at `VERSION` file, HEAD `e3d146b`).
-- All 9 plugins at `0.2.1` boundary (verified from `.claude-plugin/marketplace.json` at HEAD `e3d146b`):
-  - `rldyour-mcps`: `0.2.0` (was `0.1.3`)
-  - `rldyour-serena-mcp`: `0.2.0` (was `0.1.5`)
-  - `rldyour-flow`: `0.2.1` (was `0.1.4`)
-  - `rldyour-explore`: `0.2.0` (was `0.1.3`)
-  - `rldyour-browser`: `0.2.0` (was `0.1.2`)
-  - `rldyour-design`: `0.2.0` (was `0.1.2`)
-  - `rldyour-lsps`: `0.2.0` (was `0.1.2`)
-  - `rldyour-rules`: `0.2.0` (was `0.1.2`)
-  - `rldyour-security`: `0.2.0` (was `0.1.2`)
-- **0.2.1 tag set** (11 tags, all pushed): `marketplace--v0.2.1`, `rldyour-browser--v0.2.0`, `rldyour-design--v0.2.0`, `rldyour-explore--v0.2.0`, `rldyour-flow--v0.2.1`, `rldyour-lsps--v0.2.0`, `rldyour-mcps--v0.2.0`, `rldyour-rules--v0.2.0`, `rldyour-security--v0.2.0`, `rldyour-serena-mcp--v0.2.0`. Verified via `git tag --list "*--v0.2.1"` at HEAD `e3d146b`.
-- `CHANGELOG.md` `[0.2.1] - 2026-05-16` follows Keep-a-Changelog 1.1.0 with `### Fixed`, `### Changed`, and `### Notes` subsections documenting the reviewer output transport fix, file-first reviewer output, `.serena/reviews/` runtime artifact policy, and `marketplace--v0.2.1` release boundary. `### Notes` records: read-only subagent invariants preserved; plugin versions validate via `validate_plugin_versions.py`; `python3 scripts/validate_instruction_docs.py --require-agent-docs` remains under 200-line budget. Reference-links block now includes `[0.2.1]` pointing to `https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/marketplace--v0.2.1` and `[Unreleased]` compare base updated to `marketplace--v0.2.1...HEAD`. Verified at `CHANGELOG.md` lines 6-83 and release-links tail at HEAD `e3d146b`.
-- `CHANGELOG.md` `[0.2.0] - 2026-05-16` preserves prior boundary history documenting Wave 1-5 consolidation summary, plugin version transitions (old → 0.2.0 per plugin), and `marketplace--v0.2.0` aggregate tag. `### Notes` there also records: no plugin runtime files added or modified vs 0.1.9; cache namespace `~/.claude/plugins/cache/rldyour-claudecode/<plugin>/0.2.0/`. Verified at `CHANGELOG.md` lines 75-120 at HEAD `ebeb062`.
-- `CHANGELOG.md` `[0.1.9] - 2026-05-16` documents Wave 5 CI hardening + org transfer: SHA-pinned GitHub Actions (`actions/checkout@de0fac2e`, `actions/setup-node@48b55a01`, `actions/setup-python@a309ff8b`, `step-security/harden-runner@ab7a9404`) per OWASP A03:2025; top-level `permissions: {}` deny-all + per-job `contents: read` grants; concurrency cancel-in-progress across all four workflows; harden-runner egress audit in every job; Claude Code CLI pinned to `@2.1.143` in `validate.yml`; new `.github/workflows/semgrep.yml` (SAST, Semgrep OSS `semgrep/semgrep:1.163.0` Docker image, rule packs `p/python p/github-actions p/security-audit p/secrets p/owasp-top-ten p/ci`; replaces CodeQL which required GHAS not available on private repo); new `.github/workflows/actionlint.yml` (workflow YAML linter, `rhysd/actionlint` v1.7.12 binary, SHA256 `8aca8db96f1b94770f1b0d72b6dddcb1ebb8123cb3712530b08cc387b349a3d8`); new `.github/dependabot.yml` (monthly `github-actions` updates, grouped minor+patch, max 5 PRs); marketplace slug `rldyour-claude` → `rldyour-claudecode`; 9 plugin `plugin.json` `homepage` + `repository` URLs updated to `nddev-it-com/rldyour-claudecode`; smoke awk extractor fix. VERSION `0.1.8` → `0.1.9`.
-- `scripts/validate_marketplace.sh` is the broad local gate and includes `claude plugin validate`, JSON parse, Python AST, shell syntax, frontmatter checks, version consistency, instruction docs, routing policy, MCP runtime drift checks, "Agent tools allowlist validation" (via `scripts/validate_agent_tools.py`, unconditional), `scripts/smoke_serena_memory_taxonomy.sh`, `scripts/smoke_hooks.sh`, and `scripts/smoke_bootstrap_check.sh`. CI workflows at HEAD `ebeb062`: `validate.yml` (SHA-pinned actions, harden-runner, `claude-code@2.1.143`, top-level `permissions: {}`), `dependency-check.yml` (same hardening), `semgrep.yml` (Semgrep OSS SAST), `actionlint.yml` (workflow YAML linter). CodeQL workflow removed (GHAS required for private repo).
+- Current release boundary at HEAD: `VERSION` is `0.2.2` (verified at `VERSION` file, HEAD `0ff613d`).
+- Per-plugin versions (verified from `python3 scripts/validate_plugin_versions.py` at HEAD `0ff613d`):
+  - `rldyour-mcps`: `0.2.0`
+  - `rldyour-serena-mcp`: `0.2.0`
+  - `rldyour-flow`: `0.2.2` (scoped patch: wave-2 reviewer transport hardening)
+  - `rldyour-explore`: `0.2.0`
+  - `rldyour-browser`: `0.2.0`
+  - `rldyour-design`: `0.2.0`
+  - `rldyour-lsps`: `0.2.0`
+  - `rldyour-rules`: `0.2.0`
+  - `rldyour-security`: `0.2.0`
+- **0.2.1 release** (`e3d146b`): `rldyour-flow` bumped to `0.2.1` for the D29 reviewer output transport contract (file-first output, `.serena/reviews/` runtime dir, run_id coordination, `RLDYOUR_REPORT_EOF` precursor pattern). Tags pushed: `marketplace--v0.2.1`, `rldyour-flow--v0.2.1`. All other 8 plugins remained at `0.2.0`.
+- **0.2.2 release** (`0ff613d`): `rldyour-flow` bumped to `0.2.2` for wave-2 reviewer transport hardening after self-bootstrap review wave `2026-05-16T1433Z-e3d146b`. Changes: `RLDYOUR_REPORT_EOF` heredoc EOF marker replacing short tokens (`MD`, `EOF`) that could cause early termination; explicit Bash write boundary `<report_dir>/<reviewer-name>.md`; mandatory orchestrator `Read` of each `critical`/`high` report file before disposition; `run_id` canonicalized to `<UTC-ISO-compact>-<git-short-sha>`; `info` severity added to enum in `reviewer-protocol.md` line 24; `.serena/diagnostics/**` and `.serena/reviews/**` added to `RUNTIME_EXCLUDE_PATTERNS` in `fullrepo_sync.py` lines 50-53. Tags pushed: `marketplace--v0.2.2`, `rldyour-flow--v0.2.2`. Verified via `git tag --list "*--v0.2.2"` at HEAD `0ff613d`.
+- **All 4 new tags in this wave** (verified via `git tag --list "*--v0.2.1" "*--v0.2.2"`): `rldyour-flow--v0.2.1`, `marketplace--v0.2.1` (backfilled at `e3d146b`), `rldyour-flow--v0.2.2`, `marketplace--v0.2.2` (at `0ff613d`).
+- `CHANGELOG.md` `[0.2.2] - 2026-05-16` follows Keep-a-Changelog 1.1.0 with `### Changed` and `### Notes` subsections. `[Unreleased]` compare base updated to `marketplace--v0.2.2...HEAD`. `[0.2.2]` reference-link points to `https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/marketplace--v0.2.2`. Verified at `CHANGELOG.md` lines 742-743 at HEAD `0ff613d`.
+- `CHANGELOG.md` `[0.2.1] - 2026-05-16` preserved: D29 reviewer output transport contract, file-first output, `.serena/reviews/` runtime artifact policy, `marketplace--v0.2.1` release boundary. Verified at HEAD `0ff613d`.
+- `scripts/validate_marketplace.sh` is the broad local gate. CI workflows: `validate.yml` (SHA-pinned actions, harden-runner, `claude-code@2.1.143`, top-level `permissions: {}`), `dependency-check.yml` (same hardening), `semgrep.yml` (Semgrep OSS SAST), `actionlint.yml` (workflow YAML linter). Verified at HEAD `0ff613d`.
 
 ## Contracts And Data
 
@@ -50,7 +51,7 @@ Versioning, changelog, validation, tagging, and release evidence contracts for t
 - Tag convention for plugins: `<plugin-name>--v<version>` via `claude plugin tag --push`.
 - Tag convention for marketplace boundary: `marketplace--v<version>` (introduced in 0.2.0; pushed manually alongside plugin tags). This is NOT a plugin tag — it marks the aggregate release boundary in the CHANGELOG reference-links block.
 - Tags should be created only after the worktree is clean for tracked files and validation passes.
-- Cache namespace now includes plugin-scoped patch entries at `~/.claude/plugins/cache/rldyour-claudecode/<plugin>/<version>/`; for this wave `rldyour-flow` is `~/.claude/plugins/cache/rldyour-claudecode/rldyour-flow/0.2.1/` and all other plugins remain at `0.2.0`.
+- Cache namespace: `~/.claude/plugins/cache/rldyour-claudecode/<plugin>/<version>/`; for this wave `rldyour-flow` is `~/.claude/plugins/cache/rldyour-claudecode/rldyour-flow/0.2.2/` and all other plugins remain at `0.2.0/`.
 
 ## Change Rules
 
@@ -61,7 +62,7 @@ Versioning, changelog, validation, tagging, and release evidence contracts for t
 
 ## Cross-References
 
-- Open and closed debt record: [[TECHDEBT-01-NOW]] (D28 0.2.0 boundary, D24-D27 Wave 5 closures, D19 R5 closure).
+- Open and closed debt record: [[TECHDEBT-01-NOW]] (D28 0.2.0 boundary, D24-D27 Wave 5 closures, D19 R5 closure, D29 reviewer output transport 0.2.1/0.2.2).
 - Validation harness patterns: [[PATTERNS-01-CANONICAL]] (commit message, memory file pattern, tag conventions).
 - Plugin manifest and Claude Code version facts: [[CLAUDECODE-01-PLUGIN-CANON]].
 - Marketplace architecture and plugin version map: [[CORE-02-MARKETPLACE]].
