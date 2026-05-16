@@ -126,11 +126,25 @@ else
   echo "SKIP scripts/check_mcp_runtime_versions.py not yet present"
 fi
 
+step "Hook lifecycle smoke"
+if [ -f scripts/smoke_hooks.sh ]; then
+  bash scripts/smoke_hooks.sh
+else
+  echo "SKIP scripts/smoke_hooks.sh not yet present"
+fi
+
 step "Serena memory taxonomy smoke"
 if [ -f scripts/smoke_serena_memory_taxonomy.sh ]; then
   bash scripts/smoke_serena_memory_taxonomy.sh
 else
   echo "SKIP scripts/smoke_serena_memory_taxonomy.sh not yet present"
+fi
+
+step "Bootstrap R5 divergence guard smoke"
+if [ -f scripts/smoke_bootstrap_check.sh ]; then
+  bash scripts/smoke_bootstrap_check.sh
+else
+  echo "SKIP scripts/smoke_bootstrap_check.sh not yet present"
 fi
 
 printf '\n\033[1;32m✔ marketplace validation passed\033[0m\n'
