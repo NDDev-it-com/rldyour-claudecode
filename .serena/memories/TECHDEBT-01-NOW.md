@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-16
-Last commit: ebeb062 docs(changelog): polish 0.2.0 entry per reviewer findings
+Last commit: c190ee1 fix(flow): harden reviewer output transport per review-wave findings
 Scope: Serena memory sync, hook gates, fullrepo lifecycle, MCP pins, validation harness, current implementation risks
 Area: TECHDEBT
 -->
@@ -24,6 +24,7 @@ Open technical debt, implementation mistakes already fixed, and anti-regression 
 - `scripts/validate_marketplace.sh` line 117: agent tools validator wiring.
 - `.claude/CLAUDE.md`: "Smoke-script footgun" section documents R5 process order.
 - `CHANGELOG.md` `[0.1.8]`: Wave 4 R5 hardening, smoke, SC2044, memory graph record.
+- `plugins/rldyour-flow/references/reviewer-protocol.md`, `plugins/rldyour-flow/skills/ry-start/SKILL.md`, `plugins/rldyour-flow/skills/ry-review/SKILL.md`: reviewer transport hardening and read-contract.
 
 ## Open Risks
 
@@ -95,6 +96,7 @@ Open technical debt, implementation mistakes already fixed, and anti-regression 
 - D26. No SAST coverage (CodeQL not viable without GHAS): fixed in Wave 5 commits `81126bc`+`334fe09`; CodeQL requires GitHub Advanced Security (paid, not available for this private repo — PATCH security_and_analysis returned HTTP 422). Replaced by `.github/workflows/semgrep.yml` using Semgrep OSS Docker image `semgrep/semgrep:1.163.0` (matches MCP server pin). Rule packs: `p/python`, `p/github-actions`, `p/security-audit`, `p/secrets`, `p/owasp-top-ten`, `p/ci` (`p/bash` and `p/yaml` returned HTTP 404; bash rules are bundled in `p/security-audit`). `--error` flag fails CI on WARNING/ERROR findings. No SARIF/GHAS upload needed. Verified at `.github/workflows/semgrep.yml` at HEAD `334fe09`.
 - D27. Smoke awk extractor dumped entire file for one-line step() definitions: fixed in Wave 5 commit `92eb8dd`; `scripts/smoke_bootstrap_check.sh` runtime path-a harness used awk with `in_step`/`in_fail` flag logic to extract `step()`/`fail()` bodies. One-line `step() { ...; }` form caused `^}` to never match as a separate line — flag was never reset — so the awk appended the entire remainder of `bootstrap_check.sh` into `TMP_GUARD`. Fixed by inlining minimal helpers via a `PRELUDE` heredoc and extracting only the divergence-guard block via awk range. Verified at `scripts/smoke_bootstrap_check.sh` lines 89-114 at HEAD `334fe09`.
 - D28. 0.2.0 release boundary consolidation (Wave 6): all 9 plugins and marketplace `VERSION` synchronized to `0.2.0` in commits `26dbd54` + `ebeb062`. No plugin runtime files added or modified vs 0.1.9 (bump is cache-invalidation + tag boundary). 10 tags pushed: `marketplace--v0.2.0` (marketplace aggregate boundary, manual push) + 9 plugin tags via `claude plugin tag --push`. F-3 (GitHub Actions SHA pinning, LOW 90) closed in D24 (Wave 5). F-5 (npm pinning, INFO 35) closed in D25 (Wave 5). CHANGELOG `[0.2.0]` follows Keep-a-Changelog 1.1.0 with `### Changed` + `### Notes` subsections and reference-links block at tail. Verified via `git tag --list "*--v0.2.0"` and `cat VERSION` at HEAD `ebeb062`.
+- D29. Reviewer output transport regression hardening: fixed in `c190ee1`. Changes include `RLDYOUR_REPORT_EOF` heredoc marker in all 6 reviewer agents + `reviewer-protocol.md`, explicit Bash write path `<report_dir>/<reviewer-name>.md`, one-line `run_id` canonicalization to `<UTC-ISO-compact>-<git-short-sha>`, severity enum includes `info`, and mandatory `Read` of each `critical`/`high` reviewer report file before disposition. This closes the previous truncation/overflow and ambiguity risk when combining multi-file reviewer streams in parent context.
 
 
 ## Error Patterns To Avoid

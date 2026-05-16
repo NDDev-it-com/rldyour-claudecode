@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-16
-Last commit: eaccf59 chore(release): cut 0.1.7 (rldyour-flow 0.1.4, Wave 2 polish)
+Last commit: c190ee1 fix(flow): harden reviewer output transport per review-wave findings
 Scope: plugins/rldyour-flow/**, scripts/worktree_add.sh, AGENTS.md, .claude/CLAUDE.md, plugins/rldyour-flow/scripts/fullrepo_sync.py
 Area: FLOW
 -->
@@ -26,12 +26,15 @@ rldyour-flow orchestration contracts for init/start/review/deploy workflows, rev
 - `ry-init` is read-only for memories by default. It may report memory candidates but must not write `.serena` unless explicitly requested or a stale-memory gate requires it.
 - `ry-start` lifecycle: init/context, research, plan, implement, verify, reviewer phase when applicable, and post-task sync.
 - `flow-post-task-sync` finalizes by refreshing memories/docs, running checks, committing/pushing normal branch changes, publishing `fullrepo`, and cleaning safe merged branches/worktrees. Step 1 (Serena memory freshness check) uses `python3 "$(git rev-parse --show-toplevel)"/plugins/rldyour-serena-mcp/scripts/serena_memory_state.py` — cwd-independent path required because the skill lives in `rldyour-flow` but the script is in `rldyour-serena-mcp`; `${CLAUDE_PLUGIN_ROOT}` is the wrong root here and `${CLAUDE_PROJECT_DIR}` is documented only for hook commands and stdio MCP env. Verified at `plugins/rldyour-flow/skills/flow-post-task-sync/SKILL.md` line 19 at HEAD.
-- Reviewer agents live in `plugins/rldyour-flow/agents/flow-*-review.md`; they are read-only and use an explicit `tools:` allowlist containing built-in read tools (`Read`, `Grep`, `Glob`, `Bash`) plus an explicit 14-tool read-only Serena subset and MCP wildcards for context7/deepwiki/grep. `flow-security-review` additionally allows `WebFetch`, `WebSearch`, and `mcp__plugin_rldyour-mcps_semgrep__*`. The previous `disallowedTools: [Edit, Write, NotebookEdit]` denylist is removed from reviewer agents; `flow-memory-sync` is the only agent retaining it as defence-in-depth (verified at `plugins/rldyour-flow/agents/flow-architecture-review.md` HEAD).
+- Reviewer agents live in `plugins/rldyour-flow/agents/flow-*-review.md`; they are read-only and use an explicit `tools:` allowlist containing built-in read tools (`Read`, `Grep`, `Glob`, `Bash`) plus an explicit 14-tool read-only Serena subset and MCP wildcards for context7/deepwiki/grep. `flow-security-review` additionally allows `WebFetch`, `WebSearch`, and `mcp__plugin_rldyour-mcps_semgrep__*`. The previous `disallowedTools: [Edit, Write, NotebookEdit]` denylist is removed from reviewer agents; `flow-memory-sync` is the only agent retaining it as defence-in-depth (verified at `plugins/rldyour-flow/agents/flow-architecture-review.md` HEAD). Reviewer contracts now require `run_id = <UTC-ISO-compact>-<git-short-sha>` and `.serena/reviews/<run_id>/` report directories.
+- `reviewer-protocol.md` is the shared contract for subagent result transport: full reports are written to `<report_dir>/<reviewer-name>.md` with heredoc marker `RLDYOUR_REPORT_EOF`, and parent summaries include count + capped one-liner findings with `info` severity support; 6-track output is compacted to prevent Claude Code parent-context overflow.
+- `ry-start` and `ry-review` must read each full report file for every `critical` and `high` finding before disposition because `flow-security-review` carries `Category`, `Attack path`, and `Verification` fields only in the report body.
 - Fullrepo-managed repositories keep agent-only files out of `main` and publish them to `origin/fullrepo`.
 
 ## Fullrepo Contract
 
 - Agent-only paths include `AGENTS.md`, `.claude/**`, root `CLAUDE.md`, `REVIEW.md`, `.serena/project.yml`, `.serena/memories/**`, `.serena/plans/**`, `.serena/research/**`, `.agents/**`, `.cursor/rules/**`, `.github/instructions/**`, `.github/prompts/**`, and similar AI context files.
+- `fullrepo_sync.py` runtime exclude set includes `.serena/diagnostics/**` and `.serena/reviews/**` to prevent runtime review artifacts from affecting artifact policy for restore/publish operations.
 - `fullrepo_sync.py --bootstrap-init`: installs excludes, restores remote `fullrepo`, publishes first snapshot when missing, and migrates tracked agent-only files out of the normal branch index.
 - `fullrepo_sync.py --restore`: fetches/restores agent-only files and installs excludes; no publish.
 - `fullrepo_sync.py --publish`: regenerates `fullrepo` snapshot with `--force-with-lease`.

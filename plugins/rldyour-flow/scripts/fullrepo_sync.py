@@ -49,6 +49,8 @@ AGENT_ONLY_PATTERNS = (
 
 RUNTIME_EXCLUDE_PATTERNS = (
     ".serena/cache/**",
+    ".serena/diagnostics/**",
+    ".serena/reviews/**",
     ".serena/.gitignore",
     ".serena/project.local.yml",
     ".serena/.sync_marker",

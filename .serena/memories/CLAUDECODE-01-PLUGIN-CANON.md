@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-16
-Last commit: e3d146b chore(release): cut 0.2.1 (D29 reviewer output transport)
+Last commit: c190ee1 fix(flow): harden reviewer output transport per review-wave findings
 Scope: .claude/CLAUDE.md, AGENTS.md, plugins/*/.claude-plugin/plugin.json, plugins/rldyour-mcps/.mcp.json, plugins/*/skills/*/SKILL.md, plugins/*/agents/*.md, plugins/*/hooks/hooks.json, plugins/rldyour-serena-mcp/scripts/analyze_sync_scope.py
 Area: CLAUDECODE
 -->
@@ -31,6 +31,8 @@ Current Claude Code plugin/runtime facts that this marketplace relies on. These 
 - Plugin-shipped subagents use frontmatter for `model`, `effort`, `maxTurns`, `tools`, `disallowedTools`, and `color`. The canonical pattern (per `anthropics/claude-plugins-official/plugins/pr-review-toolkit/agents/code-reviewer`) is an explicit `tools:` allowlist; `disallowedTools:` remains as defence-in-depth legacy (used by `flow-memory-sync` only). Verified at `plugins/rldyour-flow/agents/flow-architecture-review.md` and `plugins/rldyour-serena-mcp/agents/flow-memory-sync.md` at HEAD.
 - Hook exit code `2` is the blocking advisory path. Stop hooks in this repo use `exit 2` to force orchestrator action while avoiding direct high-blast-radius operations.
 - `analyze_sync_scope.py` targets `CLAUDECODE-01-PLUGIN-CANON.md` for plugin manifest, hook, skill, command, agent, marketplace-support, and agent-instruction changes.
+- Reviewer output transport in `plugins/rldyour-flow` is file-first: every `flow-*` reviewer writes a full markdown report to `<report_dir>/<reviewer-name>.md` using heredoc marker `RLDYOUR_REPORT_EOF`, then returns a compact summary (counts + capped one-liners) to avoid Claude Code `task.output` truncation/overflow regressions documented in Anthropic issues [#16789](https://github.com/anthropics/claude-code/issues/16789), [#20531](https://github.com/anthropics/claude-code/issues/20531), [#23463](https://github.com/anthropics/claude-code/issues/23463).
+- `plugins/rldyour-flow/fullrepo_sync.py` keeps `.serena/diagnostics/**` and `.serena/reviews/**` in `RUNTIME_EXCLUDE_PATTERNS` to keep reviewer runtime artifacts from entering restore/publish workflows that use this pattern set.
 
 ## Contracts And Data
 
@@ -49,6 +51,7 @@ Current Claude Code plugin/runtime facts that this marketplace relies on. These 
 - Do not reduce `.claude/CLAUDE.md` to only `@AGENTS.md`; both are first-class and optimized for different CLIs.
 - Do not add undocumented `.mcp.json` keys such as `startup_timeout_sec` or `tool_timeout_sec`; use documented env vars where needed.
 - When current Claude Code behavior changes, update `.claude/CLAUDE.md`, relevant plugin docs, and this memory from verified docs or runtime evidence.
+- Reviewer protocol hardening is treated as a compatibility-sensitive convention: any change to marker text, report directory paths, severity enums, or required orchestrator reads must update `reviewer-protocol.md`, `flow-*` skills, and this memory atomically.
 
 ## Cross-References
 
