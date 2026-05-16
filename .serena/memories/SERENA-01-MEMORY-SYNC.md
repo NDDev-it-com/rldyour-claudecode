@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-17
-Last commit: 00d3f82 docs(config): add REVIEW.md template per global CLAUDE.md spec
+Last commit: 5bd57ae chore(security): close audit wave-3 low/info findings (D42-D46)
 Scope: plugins/rldyour-serena-mcp/scripts/analyze_sync_scope.py, plugins/rldyour-serena-mcp/scripts/serena_memory_state.py, plugins/rldyour-serena-mcp/scripts/commit_serena_knowledge.sh, plugins/rldyour-serena-mcp/hooks/*.sh, plugins/rldyour-serena-mcp/skills/serena-memory-sync/SKILL.md, plugins/rldyour-serena-mcp/agents/flow-memory-sync.md, scripts/smoke_serena_memory_taxonomy.sh
 Area: SERENA
 -->
@@ -34,8 +34,8 @@ Durable contract for Serena memory freshness, impact analysis, scoped sync, and 
 - Docs/references changes under `rldyour-serena-mcp` target `SERENA-01-MEMORY-SYNC.md`, `HOOKS-01-LIFECYCLE.md`, and `CORE-02-MARKETPLACE.md`, so docs-only contract edits do not fall back to broad baseline memories.
 - `serena_memory_state.py` scans `.serena/memories/**/*.md` so nested memories remain freshness-aware if future taxonomy uses subdirectories.
 - `commit_serena_knowledge.sh` uses `git status --porcelain -uall`, filters runtime marker files, clears markers only when memory state matches HEAD, and refuses fullrepo-managed stale memories even when the normal branch has no tracked knowledge diff.
-- `stop_memory_sync.sh` writes compound fingerprint `${HEAD_SHA}:${NEWEST_SHA:-none}` to `.serena/.sync_marker` (commit `23901c6`, D32). Previously wrote bare `HEAD_SHA`, which allowed loop guard bypass when a partial memory sync wrote memories without advancing HEAD. Verified at `plugins/rldyour-serena-mcp/hooks/stop_memory_sync.sh:72-77` at HEAD `557bc00`.
-- `serena_memory_state.py` now surfaces non-dict analysis payload discards to stderr via `print(..., file=sys.stderr)` instead of bare `pass` (commit `d563ea5`, D33). Control flow continues with ref-range fallback. Verified at `plugins/rldyour-serena-mcp/scripts/serena_memory_state.py:102-107` at HEAD `557bc00`.
+- `stop_memory_sync.sh` writes compound fingerprint `${HEAD_SHA}:${NEWEST_SHA:-none}` to `.serena/.sync_marker` (commit `23901c6`, D32). Previously wrote bare `HEAD_SHA`, which allowed loop guard bypass when a partial memory sync wrote memories without advancing HEAD. Verified at `plugins/rldyour-serena-mcp/hooks/stop_memory_sync.sh:72-77` at HEAD `5bd57ae`.
+- `serena_memory_state.py` now surfaces non-dict analysis payload discards to stderr via `print(..., file=sys.stderr)` instead of bare `pass` (commit `d563ea5`, D33). Control flow continues with ref-range fallback. Verified at `plugins/rldyour-serena-mcp/scripts/serena_memory_state.py:102-107` at HEAD `5bd57ae`.
 
 ## Contracts And Data
 

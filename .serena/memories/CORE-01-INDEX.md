@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-17
-Last commit: 00d3f82 docs(config): add REVIEW.md template per global CLAUDE.md spec
+Last commit: 5bd57ae chore(security): close audit wave-3 low/info findings (D42-D46)
 Scope: .serena/memories/**, plugins/rldyour-serena-mcp/scripts/analyze_sync_scope.py, plugins/rldyour-serena-mcp/skills/serena-memory-sync/SKILL.md, plugins/rldyour-serena-mcp/agents/flow-memory-sync.md, scripts/smoke_serena_memory_taxonomy.sh, AGENTS.md, .claude/CLAUDE.md
 Area: CORE
 -->
@@ -9,7 +9,7 @@ Area: CORE
 
 ## Purpose
 
-Navigation map for the project knowledge base — the **brain** for any Claude Code session working on this marketplace, on a downstream project consuming this marketplace, or on a new project initialized via `/rldyour-flow:ry-newp`. Future Claude Code / Codex / GPT agents start here, then read only the topic memories relevant to the task.
+Navigation map for the project knowledge base - the **brain** for any Claude Code session working on this marketplace, on a downstream project consuming this marketplace, or on a new project initialized via `/rldyour-flow:ry-newp`. Future Claude Code / Codex / GPT agents start here, then read only the topic memories relevant to the task.
 
 Memories are the **source of durable knowledge**: vision, philosophy, patterns, business logic, domain knowledge, dependencies, technologies, errors + solutions, technical debt. Code and committed configuration are the **source of truth**; memories distill the durable facts that don't live in any single file.
 
@@ -24,35 +24,35 @@ Memories are the **source of durable knowledge**: vision, philosophy, patterns, 
 
 ## Active Memory Map (18 memories)
 
-### Foundations — read first when joining the project
+### Foundations - read first when joining the project
 
 - [[CORE-01-INDEX]] (`CORE-01-INDEX.md`): this map and taxonomy contract.
 - [[CORE-02-MARKETPLACE]] (`CORE-02-MARKETPLACE.md`): marketplace business logic, plugin boundaries, dependency graph, active catalog.
-- [[PHILOSOPHY-01-QUALITY-FIRST]] (`PHILOSOPHY-01-QUALITY-FIRST.md`): distilled development vision — quality + scalability first, no hacks, no debt, May 2026 architecture + tooling defaults; **universal applicability** for any project.
-- [[PATTERNS-01-CANONICAL]] (`PATTERNS-01-CANONICAL.md`): copy-from-here implementation patterns — file naming, identifier conventions, SKILL/agent/command/hook frontmatter, cross-plugin paths, input validation, sanitization markers, memory file pattern, commit message pattern.
+- [[PHILOSOPHY-01-QUALITY-FIRST]] (`PHILOSOPHY-01-QUALITY-FIRST.md`): distilled development vision - quality + scalability first, no hacks, no debt, May 2026 architecture + tooling defaults; **universal applicability** for any project.
+- [[PATTERNS-01-CANONICAL]] (`PATTERNS-01-CANONICAL.md`): copy-from-here implementation patterns - file naming, identifier conventions, SKILL/agent/command/hook frontmatter, cross-plugin paths, input validation, sanitization markers, memory file pattern, commit message pattern.
 
-### Infrastructure — Claude Code platform integration
+### Infrastructure - Claude Code platform integration
 
 - [[CLAUDECODE-01-PLUGIN-CANON]] (`CLAUDECODE-01-PLUGIN-CANON.md`): verified Claude Code plugin, skill, agent, hook, CLI, and MCP canon used by this repo.
 - [[MCP-01-TRANSPORT]] (`MCP-01-TRANSPORT.md`): MCP transport ownership, 13 pinned servers, runtime/version smoke contracts.
 - [[SERENA-01-MEMORY-SYNC]] (`SERENA-01-MEMORY-SYNC.md`): Serena memory freshness, analyzer schema, sync markers, canonical writer flow.
 - [[HOOKS-01-LIFECYCLE]] (`HOOKS-01-LIFECYCLE.md`): Claude Code hook lifecycle, Stop gates, skip flags, coordination between Serena and flow.
 
-### Plugin Domains — one memory per consumer-facing domain
+### Plugin Domains - one memory per consumer-facing domain
 
-- [[BROWSER-01-WORKFLOW]] (`BROWSER-01-WORKFLOW.md`): `rldyour-browser` — Playwright vs Chrome DevTools routing, validation + debug workflows, artifact rules.
-- [[DESIGN-01-WORKFLOW]] (`DESIGN-01-WORKFLOW.md`): `rldyour-design` — end-to-end Figma → tokens → FSD → shadcn/ui → ReactBits → browser validation.
-- [[EXPLORE-01-RESEARCH]] (`EXPLORE-01-RESEARCH.md`): `rldyour-explore` — tech-research (Context7/DeepWiki/Grep MCP-first), web-research (dated cited sources), `ry-explore` deep research subagent (opus[1m], max effort, 90 maxTurns).
-- [[LSPS-01-LANGUAGE-SERVERS]] (`LSPS-01-LANGUAGE-SERVERS.md`): `rldyour-lsps` — 16 language areas via 15 `.lsp.json` runtime entries (Python/TS/Rust/Dart/Go/C/C++/Qt/QML/YAML/Docker/HTML/CSS/Bash/JSON/TOML/Markdown; `typescript_vts` optional, matrix-only), Serena integration policy.
-- [[RULES-01-POLICY]] (`RULES-01-POLICY.md`): `rldyour-rules` — 7 rule areas (quality-first, architecture-boundaries, dependency-compatibility, implementation-discipline, verification-quality-gates, project-instructions-policy, ry-rules-review) + 6 references.
-- [[SECURITY-01-OWASP]] (`SECURITY-01-OWASP.md`): `rldyour-security` — OWASP Top 10 2025 implementation guidance + Mythos-style defensive `ry-sec-review`.
-- [[FLOW-01-SDLC]] (`FLOW-01-SDLC.md`): `rldyour-flow` — ry-init/start/newp/review/deploy + 6 reviewer subagents + fullrepo lifecycle + worktree contract + post-task sync.
+- [[BROWSER-01-WORKFLOW]] (`BROWSER-01-WORKFLOW.md`): `rldyour-browser` - Playwright vs Chrome DevTools routing, validation + debug workflows, artifact rules.
+- [[DESIGN-01-WORKFLOW]] (`DESIGN-01-WORKFLOW.md`): `rldyour-design` - end-to-end Figma → tokens → FSD → shadcn/ui → ReactBits → browser validation.
+- [[EXPLORE-01-RESEARCH]] (`EXPLORE-01-RESEARCH.md`): `rldyour-explore` - tech-research (Context7/DeepWiki/Grep MCP-first), web-research (dated cited sources), `ry-explore` deep research subagent (opus[1m], max effort, 90 maxTurns).
+- [[LSPS-01-LANGUAGE-SERVERS]] (`LSPS-01-LANGUAGE-SERVERS.md`): `rldyour-lsps` - 16 language areas via 15 `.lsp.json` runtime entries (Python/TS/Rust/Dart/Go/C/C++/Qt/QML/YAML/Docker/HTML/CSS/Bash/JSON/TOML/Markdown; `typescript_vts` optional, matrix-only), Serena integration policy.
+- [[RULES-01-POLICY]] (`RULES-01-POLICY.md`): `rldyour-rules` - 7 rule areas (quality-first, architecture-boundaries, dependency-compatibility, implementation-discipline, verification-quality-gates, project-instructions-policy, ry-rules-review) + 6 references.
+- [[SECURITY-01-OWASP]] (`SECURITY-01-OWASP.md`): `rldyour-security` - OWASP Top 10 2025 implementation guidance + Mythos-style defensive `ry-sec-review`.
+- [[FLOW-01-SDLC]] (`FLOW-01-SDLC.md`): `rldyour-flow` - ry-init/start/newp/review/deploy + 6 reviewer subagents + fullrepo lifecycle + worktree contract + post-task sync.
 
-### Process — release, instructions, technical debt
+### Process - release, instructions, technical debt
 
 - [[DOCS-01-INSTRUCTIONS]] (`DOCS-01-INSTRUCTIONS.md`): AGENTS.md and .claude/CLAUDE.md policy, line budgets, sync rules, agent-only fullrepo lifecycle.
 - [[RELEASE-01-VALIDATION]] (`RELEASE-01-VALIDATION.md`): versioning, changelog, validation harness, plugin tagging.
-- [[TECHDEBT-01-NOW]] (`TECHDEBT-01-NOW.md`): open risks (R1-R4; R5 closed as D19), closed debt patterns (D1-D38), anti-regression guidance.
+- [[TECHDEBT-01-NOW]] (`TECHDEBT-01-NOW.md`): open risks (R1-R4; R5 closed as D19), closed debt patterns (D1-D46), anti-regression guidance.
 
 ## Memory Map by Reading Intent
 
@@ -105,7 +105,7 @@ All 18 active memories are catalogued in the Active Memory Map above. This index
 
 - `python3 plugins/rldyour-serena-mcp/scripts/analyze_sync_scope.py --from-ref HEAD --to-ref HEAD`: proves empty diffs produce no memory targets while still exposing the taxonomy.
 - `bash scripts/smoke_serena_memory_taxonomy.sh`: proves analyzer schema/targets, agent-instruction sync relevance, nested memory freshness, Stop advisory taxonomy, fullrepo-managed acknowledgement.
-- `python3 plugins/rldyour-serena-mcp/scripts/serena_memory_state.py`: proves freshness state and recursive memory scanning. Should report `memory_count: 18`, `is_current: True`, `memory_match_reason: direct-head-reference` at HEAD `00d3f82`.
+- `python3 plugins/rldyour-serena-mcp/scripts/serena_memory_state.py`: proves freshness state and recursive memory scanning. Should report `memory_count: 18`, `is_current: True`, `memory_match_reason: direct-head-reference` at HEAD `5bd57ae`.
 - `python3 scripts/validate_instruction_docs.py --require-agent-docs`: proves AGENTS.md and `.claude/CLAUDE.md` are present and within policy.
 - `python3 scripts/validate_agent_tools.py`: proves agent `tools:` allowlist invariants ([[TECHDEBT-01-NOW]] R4 mitigation).
 - `bash scripts/validate_marketplace.sh`: full harness covering all of the above plus frontmatter/JSON/Python/shell syntax checks and MCP runtime drift.

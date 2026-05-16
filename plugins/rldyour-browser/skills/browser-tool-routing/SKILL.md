@@ -93,4 +93,4 @@ When routing is the main task, answer in Russian with:
 - Запускать Playwright для console/network debug без воспроизведения user flow.
 - Использовать оба MCP когда задача чисто validation OR чисто debug.
 - Запускать на production / live site без явного разрешения.
-- Игнорировать accessibility snapshot — это часто быстрее DOM inspection.
+- Игнорировать accessibility snapshot - это часто быстрее DOM inspection.

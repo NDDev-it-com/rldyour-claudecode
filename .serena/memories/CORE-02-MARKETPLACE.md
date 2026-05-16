@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-17
-Last commit: 00d3f82 docs(config): add REVIEW.md template per global CLAUDE.md spec
+Last commit: 5bd57ae chore(security): close audit wave-3 low/info findings (D42-D46)
 Scope: .claude-plugin/marketplace.json, plugins/*/.claude-plugin/plugin.json, README.md, AGENTS.md
 Area: CORE
 -->
@@ -19,20 +19,20 @@ Current business logic and architecture of the `rldyour-claude` marketplace. The
 - `README.md`: owner-facing catalog, control model, install/check commands, active per-plugin versions.
 - `AGENTS.md`: concise cross-tool project rules and boundaries.
 
-## Current State (HEAD `557bc00`)
+## Current State (HEAD `5bd57ae`)
 
-- **VERSION**: `0.2.2` (release boundary).
+- **VERSION**: `0.2.3` (release boundary, verified at `VERSION` file at HEAD `5bd57ae`).
 - **9 plugins** verified at HEAD from `.claude-plugin/marketplace.json`: `rldyour-mcps`, `rldyour-explore`, `rldyour-serena-mcp`, `rldyour-security`, `rldyour-browser`, `rldyour-design`, `rldyour-lsps`, `rldyour-flow`, `rldyour-rules`.
-- **Per-plugin versions** (`0.2.0` baseline, with scoped `rldyour-flow` patch at `0.2.2`; verified via `python3 scripts/validate_plugin_versions.py` at HEAD `557bc00`):
-  - `rldyour-mcps`: `0.2.0`
-  - `rldyour-serena-mcp`: `0.2.0`
-  - `rldyour-flow`: `0.2.2` (wave-2 reviewer transport hardening)
-  - `rldyour-explore`: `0.2.0`
-  - `rldyour-browser`: `0.2.0`
-  - `rldyour-design`: `0.2.0`
-  - `rldyour-lsps`: `0.2.0`
-  - `rldyour-rules`: `0.2.0`
-  - `rldyour-security`: `0.2.0`
+- **Per-plugin versions** (verified via `python3 scripts/validate_plugin_versions.py` at HEAD `5bd57ae`):
+  - `rldyour-mcps`: `0.2.1`
+  - `rldyour-serena-mcp`: `0.2.1`
+  - `rldyour-flow`: `0.2.3` (wave-2 reviewer transport hardening + wave-3 em-dash normalization + security wave D39-D46)
+  - `rldyour-explore`: `0.2.1`
+  - `rldyour-browser`: `0.2.1`
+  - `rldyour-design`: `0.2.1`
+  - `rldyour-lsps`: `0.2.1`
+  - `rldyour-rules`: `0.2.1`
+  - `rldyour-security`: `0.2.1`
 - **Component totals**: 32 skills, 9 slash commands, 8 subagents, 8 hook scripts in 2 hook manifests, 12 plugin-owned scripts, 16 references.
 - The owner decides what is enabled. Repository docs state nothing is treated as enabled or correct unless explicitly decided by the owner.
 
@@ -40,7 +40,7 @@ Current business logic and architecture of the `rldyour-claude` marketplace. The
 
 | Plugin | Domain | Components | Hook owner | Domain memory |
 |---|---|---|---|---|
-| `rldyour-mcps` | Transport — 13 pinned MCP servers | 0 skills, 0 cmds, 0 agents, 0 hooks, `.mcp.json` | No | [[MCP-01-TRANSPORT]] |
+| `rldyour-mcps` | Transport - 13 pinned MCP servers | 0 skills, 0 cmds, 0 agents, 0 hooks, `.mcp.json` | No | [[MCP-01-TRANSPORT]] |
 | `rldyour-serena-mcp` | Serena-first code workflow + fact-only memory sync | 2 skills, 0 cmds, 1 agent, 4 hooks, 3 scripts | **Yes** | [[SERENA-01-MEMORY-SYNC]] + [[HOOKS-01-LIFECYCLE]] |
 | `rldyour-flow` | SDLC orchestration + 6 reviewer subagents + fullrepo/worktree | 7 skills, 5 cmds, 6 agents, 4 hooks, 7 scripts, 7 references | **Yes** | [[FLOW-01-SDLC]] + [[HOOKS-01-LIFECYCLE]] |
 | `rldyour-explore` | Deep research (tech + web + `ry-explore` opus[1m]) | 2 skills, 1 cmd, 1 agent, 0 hooks | No | [[EXPLORE-01-RESEARCH]] |
@@ -78,8 +78,8 @@ Cross-plugin dependencies declared in `plugin.json` `dependencies` array of plug
 ## Workflow Chains (Business Logic)
 
 ### `ry-init` (read-only scope discovery)
-1. `bash plugins/rldyour-flow/scripts/git_sync_audit.sh` — git/branch/worktree state.
-2. `python3 plugins/rldyour-flow/scripts/fullrepo_sync.py --bootstrap-init` — restore agent-only context from `fullrepo`.
+1. `bash plugins/rldyour-flow/scripts/git_sync_audit.sh` - git/branch/worktree state.
+2. `python3 plugins/rldyour-flow/scripts/fullrepo_sync.py --bootstrap-init` - restore agent-only context from `fullrepo`.
 3. Serena-first inspection: `check_onboarding_performed` → `list_memories` → `read_memory` → `get_symbols_overview` → `find_symbol` → `find_referencing_symbols` → `search_for_pattern`.
 4. Russian context-pack report per `plugins/rldyour-flow/references/init-context-pack.md`.
 
@@ -95,18 +95,18 @@ Cross-plugin dependencies declared in `plugin.json` `dependencies` array of plug
 9. **Finalize**: `flow-post-task-sync` synchronizes Serena memories ([[SERENA-01-MEMORY-SYNC]]) → agent-only files → AGENTS.md/CLAUDE.md → git → GitHub → fullrepo → branch/worktree cleanup → optional `claude plugin tag --push`.
 
 ### Memory sync lifecycle ([[SERENA-01-MEMORY-SYNC]] + [[HOOKS-01-LIFECYCLE]])
-1. `prepare_auto_sync.sh` (PreToolUse:Bash) — record `.serena/.auto_sync_head` before commit-like Bash.
-2. `mark_sync_required.sh` (PostToolUse:Bash) — write `.serena/.serena_sync_state.json` after commit-like commands when sync-relevant files changed.
-3. `stop_memory_sync.sh` (Stop, exit 2) — block stop if memories stale; advisory points at `flow-memory-sync` subagent (canonical writer).
-4. `flow-memory-sync` subagent — fact-only memory updates with anti-hallucination contract.
-5. `commit_serena_knowledge.sh` — clear runtime markers when memories match HEAD.
+1. `prepare_auto_sync.sh` (PreToolUse:Bash) - record `.serena/.auto_sync_head` before commit-like Bash.
+2. `mark_sync_required.sh` (PostToolUse:Bash) - write `.serena/.serena_sync_state.json` after commit-like commands when sync-relevant files changed.
+3. `stop_memory_sync.sh` (Stop, exit 2) - block stop if memories stale; advisory points at `flow-memory-sync` subagent (canonical writer).
+4. `flow-memory-sync` subagent - fact-only memory updates with anti-hallucination contract.
+5. `commit_serena_knowledge.sh` - clear runtime markers when memories match HEAD.
 
 ### Fullrepo lifecycle ([[FLOW-01-SDLC]])
-1. `fullrepo_sync.py --bootstrap-init` — install excludes, restore remote `fullrepo`, publish first snapshot when missing, migrate tracked agent-only files.
-2. `fullrepo_sync.py --restore` — fetch and restore agent-only files from `origin/fullrepo`.
-3. `fullrepo_sync.py --migrate-main` — `git rm --cached` tracked agent-only files; worktree files survive.
-4. `fullrepo_sync.py --publish` — push snapshot tree to `fullrepo` with `--force-with-lease`.
-5. `fullrepo_sync.py --status-json` — machine-readable state.
+1. `fullrepo_sync.py --bootstrap-init` - install excludes, restore remote `fullrepo`, publish first snapshot when missing, migrate tracked agent-only files.
+2. `fullrepo_sync.py --restore` - fetch and restore agent-only files from `origin/fullrepo`.
+3. `fullrepo_sync.py --migrate-main` - `git rm --cached` tracked agent-only files; worktree files survive.
+4. `fullrepo_sync.py --publish` - push snapshot tree to `fullrepo` with `--force-with-lease`.
+5. `fullrepo_sync.py --status-json` - machine-readable state.
 
 Agent-only paths (not in `main`, only in `fullrepo`): `AGENTS.md`, `CLAUDE.md`, `REVIEW.md`, `.claude/**`, `.cursor/rules/**`, `.gemini/**`, `.roo/**`, `.windsurf/**`, `.openhands/**`, `.aider*`, `.agents/skills/**`, `.agents/commands/**`, `.agents/hooks/**`, `.github/copilot-instructions.md`, `.github/instructions/**`, `.github/prompts/**`, `.serena/project.yml`, `.serena/memories/**`, `.serena/plans/**`, `.serena/research/**`, `.serena/newproj/**`, `.serena/deploy/**`.
 

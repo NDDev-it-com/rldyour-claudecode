@@ -62,7 +62,7 @@ npm install -g pyright              # alternative to pipx install pyright
 
 ## Note on Claude Code LSP plugin registration
 
-As of May 2026, Claude Code v2.1.x auto-loads `.lsp.json` from each installed plugin's root directory and registers the listed servers natively (verified empirically via `/reload-plugins` output reporting plugin LSP server count). Schema: `code.claude.com/docs/en/plugins-reference#lsp-servers`. The user must still install the LSP binaries locally (via `install_lsps_brew.sh` or equivalent) — `.lsp.json` only registers the server with Claude Code; if the binary is not on PATH, registration silently no-ops for that language. Anthropic's own `claude-plugins-official` LSP plugins try to declare `lspServers` in the central `marketplace.json`, but that propagation path is broken (Issue #15148, OPEN on v2.1.x) — per-plugin `.lsp.json` files in plugin root directly avoid that bug.
+As of May 2026, Claude Code v2.1.x auto-loads `.lsp.json` from each installed plugin's root directory and registers the listed servers natively (verified empirically via `/reload-plugins` output reporting plugin LSP server count). Schema: `code.claude.com/docs/en/plugins-reference#lsp-servers`. The user must still install the LSP binaries locally (via `install_lsps_brew.sh` or equivalent) - `.lsp.json` only registers the server with Claude Code; if the binary is not on PATH, registration silently no-ops for that language. Anthropic's own `claude-plugins-official` LSP plugins try to declare `lspServers` in the central `marketplace.json`, but that propagation path is broken (Issue #15148, OPEN on v2.1.x) - per-plugin `.lsp.json` files in plugin root directly avoid that bug.
 
 ## Known limitations
 

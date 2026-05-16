@@ -9,7 +9,7 @@ Area: LSPS
 
 ## Purpose
 
-Language-server routing contract for `rldyour-lsps`. **15 LSP runtime entries** in `plugins/rldyour-lsps/.lsp.json` covering **16 documented language areas** across the matrix (Python, TS/JS, optional TS advanced via vtsls, Rust, Dart/Flutter, Go, C/C++, Qt C++, Qt QML, YAML, Docker, HTML, CSS, Bash, JSON, TOML, Markdown — `typescript_vts` is matrix-only, not present in `.lsp.json`). Drives accurate diagnostics, semantic navigation, and low-entropy implementation. Distinguishes Serena-native semantic support (11 keys) from external-only LSP areas (QML, Docker degraded, HTML, CSS) honestly.
+Language-server routing contract for `rldyour-lsps`. **15 LSP runtime entries** in `plugins/rldyour-lsps/.lsp.json` covering **16 documented language areas** across the matrix (Python, TS/JS, optional TS advanced via vtsls, Rust, Dart/Flutter, Go, C/C++, Qt C++, Qt QML, YAML, Docker, HTML, CSS, Bash, JSON, TOML, Markdown - `typescript_vts` is matrix-only, not present in `.lsp.json`). Drives accurate diagnostics, semantic navigation, and low-entropy implementation. Distinguishes Serena-native semantic support (11 keys) from external-only LSP areas (QML, Docker degraded, HTML, CSS) honestly.
 
 `rldyour-lsps` is **skills-only** (4 skills + 3 references + 2 scripts + 1 `.lsp.json`, 0 agents, 0 hooks, 0 commands). Dependencies: `rldyour-mcps` only.
 
@@ -34,7 +34,7 @@ Language-server routing contract for `rldyour-lsps`. **15 LSP runtime entries** 
 | Python lint/format | external | `ruff` | `pyproject.toml` Ruff settings | Companion to Pyright, not replacement. `ruff server` if LSP client supports. |
 | TypeScript | `typescript` | `typescript-language-server` | `tsconfig.json`, package manager lockfile | Default stable TS/JS LSP. |
 | JavaScript | `typescript` | `typescript-language-server` | `jsconfig.json` or `allowJs` in `tsconfig.json` | JS handled via TS tooling. |
-| TypeScript advanced | `typescript_vts` (matrix-only — not in `.lsp.json`) | `vtsls` | same as TypeScript | Optional alternative; use only when explicitly requested. Add to `.lsp.json` if/when a project needs it. |
+| TypeScript advanced | `typescript_vts` (matrix-only - not in `.lsp.json`) | `vtsls` | same as TypeScript | Optional alternative; use only when explicitly requested. Add to `.lsp.json` if/when a project needs it. |
 | Rust | `rust` | `rust-analyzer` | Rust toolchain, `Cargo.toml`, `rust-src` | Prefer `rustup component add rust-src rust-analyzer`. |
 | Dart | `dart` | `dart` (SDK) | `pubspec.yaml`, `analysis_options.yaml`, `dart pub get` | Use project SDK when possible. |
 | Flutter | `dart` | `dart` / Flutter SDK | `pubspec.yaml`, `analysis_options.yaml`, `flutter pub get` | Flutter analysis is Dart-backed. |
@@ -42,9 +42,9 @@ Language-server routing contract for `rldyour-lsps`. **15 LSP runtime entries** 
 | C | `cpp` | `clangd` | `compile_commands.json` | Serena uses `cpp` for C. |
 | C++ | `cpp` | `clangd` | `compile_commands.json` | `compile_commands.json` quality determines diagnostics quality. |
 | Qt C++ | `cpp` | `clangd` | CMake build dir, Qt include paths in compile DB | Qt C++ = C++ + correct build metadata. |
-| Qt QML | external | `qmlls` | QML imports / build metadata | Serena NOT QML-native — use external LSP + browser/app validation. |
+| Qt QML | external | `qmlls` | QML imports / build metadata | Serena NOT QML-native - use external LSP + browser/app validation. |
 | YAML | `yaml` | `yaml-language-server` | Schema associations | CI/Kubernetes/GitHub Actions/Compose schema mapping matters. |
-| Dockerfile | external (degraded) | `docker-language-server` | Dockerfile/Compose/Bake files | **Degraded**: only `.dockerfile` extension routes — canonical `Dockerfile`/`Containerfile` filename does not (Claude Code #47748). |
+| Dockerfile | external (degraded) | `docker-language-server` | Dockerfile/Compose/Bake files | **Degraded**: only `.dockerfile` extension routes - canonical `Dockerfile`/`Containerfile` filename does not (Claude Code #47748). |
 | HTML | external | `vscode-html-language-server` | HTML files | Use browser validation for runtime truth ([[BROWSER-01-WORKFLOW]]). |
 | CSS | external | `vscode-css-language-server` | CSS/PostCSS/Tailwind config | Pair with [[DESIGN-01-WORKFLOW]] for visual correctness. |
 | Shell | `bash` | `bash-language-server` | Shell scripts, executable bits, shebangs | `shellcheck` required companion. |
@@ -58,7 +58,7 @@ Languages with native Serena semantic support (use `find_symbol`/`find_referenci
 
 - `python`, `typescript` (covers JS too), `rust`, `dart` (covers Flutter), `go`, `cpp` (covers C, C++, Qt C++), `yaml`, `bash`, `json`, `toml`, `markdown`.
 
-External-only LSP areas (Serena NOT native — use direct reads + external LSP checks):
+External-only LSP areas (Serena NOT native - use direct reads + external LSP checks):
 
 - `qml`, `dockerfile` (degraded), `html`, `css`.
 
@@ -72,7 +72,7 @@ External-only LSP areas (Serena NOT native — use direct reads + external LSP c
 
 ## Default Decisions
 
-- Python: Pyright (semantic) + Ruff (lint/format) — never mypy for new projects (per [[PHILOSOPHY-01-QUALITY-FIRST]] May 2026 defaults).
+- Python: Pyright (semantic) + Ruff (lint/format) - never mypy for new projects (per [[PHILOSOPHY-01-QUALITY-FIRST]] May 2026 defaults).
 - TS/JS: `typescript-language-server` by default. `vtsls` only when project evidence requires.
 - Rust: `rust-analyzer` + `rust-src`.
 - Dart/Flutter: Dart SDK analyzer + Flutter SDK awareness.
@@ -80,7 +80,7 @@ External-only LSP areas (Serena NOT native — use direct reads + external LSP c
 - C/C++/Qt: `clangd` + `compile_commands.json` (critical for diagnostics quality).
 - Qt QML: `qmlls` externally (not Serena-native).
 - YAML: `yaml-language-server` + schemas.
-- Docker: Docker Language Server externally (degraded — filename mapping gap).
+- Docker: Docker Language Server externally (degraded - filename mapping gap).
 - HTML/CSS/JSON: `vscode-langservers-extracted`.
 - Shell: `bash-language-server` + `shellcheck`.
 - TOML: Taplo.
@@ -124,8 +124,8 @@ Rules:
 
 ## Runtime Safety
 
-- **Never** start `stdio` language server manually (e.g., `pyright-langserver --stdio`, `bunx typescript-language-server --stdio`) — hangs without LSP client and corrupts protocol with stderr.
-- **Never** use first-run `bunx package` or `uvx package` as long-lived LSP runtime — install logs can corrupt protocol handshakes.
+- **Never** start `stdio` language server manually (e.g., `pyright-langserver --stdio`, `bunx typescript-language-server --stdio`) - hangs without LSP client and corrupts protocol with stderr.
+- **Never** use first-run `bunx package` or `uvx package` as long-lived LSP runtime - install logs can corrupt protocol handshakes.
 - For validation, check command presence (`command -v <executable>`), versions, and project prerequisites.
 - For C/C++/Qt, missing or stale `compile_commands.json` is **correctness blocker**, not cosmetic warning.
 

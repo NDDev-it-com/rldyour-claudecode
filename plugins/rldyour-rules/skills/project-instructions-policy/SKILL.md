@@ -30,14 +30,14 @@ In normal product repositories, instruction files (`AGENTS.md`, `.claude/CLAUDE.
 - Published to `fullrepo` branch via `flow-post-task-sync`.
 - Never committed to normal product branches (`main`, feature branches).
 
-Repositories that are themselves agent tooling (like `rldyour-claudecode` itself) may intentionally track selected instruction templates as product files — for example a `system/CLAUDE.md` template that gets installed into user projects.
+Repositories that are themselves agent tooling (like `rldyour-claudecode` itself) may intentionally track selected instruction templates as product files - for example a `system/CLAUDE.md` template that gets installed into user projects.
 
 Read `${CLAUDE_PLUGIN_ROOT}/references/project-instructions-and-adrs.md` before creating or updating durable instruction files.
 
 ## Anti-patterns
 
 - Reduce `.claude/CLAUDE.md` к thin `@AGENTS.md` import (нарушает rldyour rule).
-- Create root `CLAUDE.md` для new projects (`.claude/CLAUDE.md` — preferred path).
+- Create root `CLAUDE.md` для new projects (`.claude/CLAUDE.md` - preferred path).
 - Commit `AGENTS.md`/`CLAUDE.md`/`REVIEW.md` в нормальные продуктовые ветки (use fullrepo).
 - Store secrets / tokens / chat history в instruction docs.
 - Skip ADR для irreversible decisions (architecture, framework, DB choice).

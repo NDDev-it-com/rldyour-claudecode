@@ -99,9 +99,9 @@ Rules:
 - **Explicit `tools:` allowlist beats `disallowedTools` denylist**. Pattern from `anthropics/claude-plugins-official/plugins/pr-review-toolkit/agents/code-reviewer.md`. Provides future-proof read-only isolation if Claude Code adds new edit-like tools.
 - **`mcp__plugin_rldyour-mcps_serena__*` wildcard is FORBIDDEN** for read-only agents (D15 closure): Serena has 11 write tools. Use the explicit 14-tool read-only subset above.
 - Wildcards allowed only for `READ_ONLY_BY_DESIGN_MCPS` (context7, deepwiki, grep, semgrep) per `scripts/validate_agent_tools.py`.
-- `flow-memory-sync` is the **only exception** retaining `disallowedTools: [Edit, Write, NotebookEdit]` — its job requires Serena memory write tools, so a wider allowlist plus the denylist provides defence-in-depth against project-file mutation.
+- `flow-memory-sync` is the **only exception** retaining `disallowedTools: [Edit, Write, NotebookEdit]` - its job requires Serena memory write tools, so a wider allowlist plus the denylist provides defence-in-depth against project-file mutation.
 - Plugin-shipped subagents silently ignore `hooks`, `mcpServers`, `permissionMode`.
-- Reviewer subagent maxTurns is ×3 of naive limit (36/42 instead of 12-14) — MCP-rich toolsets consume 5-8 turns on tool plumbing before useful work begins.
+- Reviewer subagent maxTurns is ×3 of naive limit (36/42 instead of 12-14) - MCP-rich toolsets consume 5-8 turns on tool plumbing before useful work begins.
 
 ## Slash Command Frontmatter
 
@@ -130,7 +130,7 @@ Rules:
 
 ```bash
 #!/usr/bin/env bash
-# <hook-name>.sh — <one-line purpose>.
+# <hook-name>.sh - <one-line purpose>.
 #
 # <Multi-line description: what triggers it, what it does, what it does NOT do.>
 #
@@ -186,7 +186,7 @@ Rules:
 - Stdin JSON parsed via `python3 -c` heredoc, not shell awk/sed.
 - `additionalContext` JSON emitted via second `python3 - <<'PY'` heredoc using `json.dumps`.
 - Stop hooks exit `2` to block, all other hooks exit `0` (advisory).
-- No push, no merge, no fullrepo publish, no branch deletion in hooks — high-blast-radius operations belong to orchestrator skills/subagents.
+- No push, no merge, no fullrepo publish, no branch deletion in hooks - high-blast-radius operations belong to orchestrator skills/subagents.
 
 ## Reviewer Report Heredoc Marker
 
@@ -198,7 +198,7 @@ cat > "${report_dir}/<reviewer-name>.md" <<'RLDYOUR_REPORT_EOF'
 RLDYOUR_REPORT_EOF
 ```
 
-Rationale: short generic tokens (`MD`, `EOF`, `END`) can appear legitimately inside a reviewer's markdown report body and cause premature heredoc termination — an Anthropic-acknowledged regression in reviewer `task.output` handling (issues #16789, #20531, #23463, all closed "not planned"). `RLDYOUR_REPORT_EOF` is sufficiently unique to avoid collision. Closing marker must be at column 0 (bash heredoc rule). Canonical example: `plugins/rldyour-flow/references/reviewer-protocol.md` lines 62-67 at HEAD `e5a7694`. Applied to all 6 reviewer agents (`flow-architecture-review.md`, `flow-quality-review.md`, `flow-consistency-review.md`, `flow-integration-review.md`, `flow-verification-review.md`, `flow-security-review.md`) in `plugins/rldyour-flow/agents/`. Drift detection: `scripts/validate_reviewer_contracts.sh` asserts the marker + 4 sibling invariants across all 6 reviewer agents and the protocol; wired into `scripts/validate_marketplace.sh` after the "Agent tools allowlist validation" step (lines 123-126 at HEAD `00d3f82`). Script (180 lines at HEAD `00d3f82`) checks 9 invariant types: 7 PASS per agent × 6 agents = 42, plus 4 protocol-level PASS = 46 PASS total (verified by `bash scripts/validate_reviewer_contracts.sh` at HEAD `00d3f82`). Header corrected to list all 9 invariants in commit `6f0c70d`. Behavior asserted by automated test at `scripts/validate_reviewer_contracts.sh`.
+Rationale: short generic tokens (`MD`, `EOF`, `END`) can appear legitimately inside a reviewer's markdown report body and cause premature heredoc termination - an Anthropic-acknowledged regression in reviewer `task.output` handling (issues #16789, #20531, #23463, all closed "not planned"). `RLDYOUR_REPORT_EOF` is sufficiently unique to avoid collision. Closing marker must be at column 0 (bash heredoc rule). Canonical example: `plugins/rldyour-flow/references/reviewer-protocol.md` lines 62-67 at HEAD `e5a7694`. Applied to all 6 reviewer agents (`flow-architecture-review.md`, `flow-quality-review.md`, `flow-consistency-review.md`, `flow-integration-review.md`, `flow-verification-review.md`, `flow-security-review.md`) in `plugins/rldyour-flow/agents/`. Drift detection: `scripts/validate_reviewer_contracts.sh` asserts the marker + 4 sibling invariants across all 6 reviewer agents and the protocol; wired into `scripts/validate_marketplace.sh` after the "Agent tools allowlist validation" step (lines 123-126 at HEAD `00d3f82`). Script (180 lines at HEAD `00d3f82`) checks 9 invariant types: 7 PASS per agent × 6 agents = 42, plus 4 protocol-level PASS = 46 PASS total (verified by `bash scripts/validate_reviewer_contracts.sh` at HEAD `00d3f82`). Header corrected to list all 9 invariants in commit `6f0c70d`. Behavior asserted by automated test at `scripts/validate_reviewer_contracts.sh`.
 
 ## Cross-Plugin Path Patterns
 
@@ -208,7 +208,7 @@ Rationale: short generic tokens (`MD`, `EOF`, `END`) can appear legitimately ins
 | In-plugin reference in skill body | `${CLAUDE_PLUGIN_ROOT}/references/<file>.md` |
 | Cross-plugin path in skill body | `$(git rev-parse --show-toplevel)/plugins/<other-plugin>/scripts/<file>` |
 | In-hook command in `hooks.json` | `bash ${CLAUDE_PLUGIN_ROOT}/hooks/<script>.sh` (Claude Code expands before passing to shell) |
-| In-hook stdio MCP env | `${CLAUDE_PROJECT_DIR}` (v2.1.139+ — passed to subprocess env, NOT skill-body-visible) |
+| In-hook stdio MCP env | `${CLAUDE_PROJECT_DIR}` (v2.1.139+ - passed to subprocess env, NOT skill-body-visible) |
 
 **Anti-pattern**: hardcoded relative paths (`plugins/rldyour-serena-mcp/scripts/...`). They break when cwd ≠ repo root.
 
@@ -277,7 +277,7 @@ Area: <AREA>
 
 Filename: `AREA-NN-SLUG.md` (e.g., `FLOW-01-SDLC.md`). Memory name in Serena: `AREA-NN-SLUG` (without `.md`).
 
-`CORE-01-INDEX.md` is the map and must be updated when a memory is added, deleted, renamed, or split. Numbering is stable — add the next number in an area; do not renumber existing memories unless the task is an explicit taxonomy migration.
+`CORE-01-INDEX.md` is the map and must be updated when a memory is added, deleted, renamed, or split. Numbering is stable - add the next number in an area; do not renumber existing memories unless the task is an explicit taxonomy migration.
 
 ## Tag Conventions
 
@@ -288,11 +288,11 @@ Filename: `AREA-NN-SLUG.md` (e.g., `FLOW-01-SDLC.md`). Memory name in Serena: `A
 ## Commit Message Pattern (Conventional Commits v1.0.0)
 
 ```
-<type>(<scope>)[!]: <subject — imperative mood, lowercase, no period, ≤72 chars>
+<type>(<scope>)[!]: <subject - imperative mood, lowercase, no period, ≤72 chars>
 
-<body — wrap at 72 chars; explain WHY, not WHAT. Reference issues/PRs.>
+<body - wrap at 72 chars; explain WHY, not WHAT. Reference issues/PRs.>
 
-<footers — BREAKING CHANGE: ..., Refs: #N, Co-authored-by: ...>
+<footers - BREAKING CHANGE: ..., Refs: #N, Co-authored-by: ...>
 ```
 
 Canonical types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, `revert`.

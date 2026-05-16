@@ -65,9 +65,9 @@ Color space: prefer **OKLCH** when supported (perceptually consistent).
 
 ## Format Standards (May 2026)
 
-- **W3C Design Tokens Format Module 2025.10** — first stable vendor-neutral exchange format. Use for cross-tool JSON.
-- **Tailwind CSS v4** — current production standard: CSS-first via `@theme` directive, all tokens exposed as native CSS variables, theme switching at selector level without rebuild, OKLCH support.
-- **Style Dictionary** — typical pipeline if project ships tokens to multiple platforms.
+- **W3C Design Tokens Format Module 2025.10** - first stable vendor-neutral exchange format. Use for cross-tool JSON.
+- **Tailwind CSS v4** - current production standard: CSS-first via `@theme` directive, all tokens exposed as native CSS variables, theme switching at selector level without rebuild, OKLCH support.
+- **Style Dictionary** - typical pipeline if project ships tokens to multiple platforms.
 
 ## FSD Placement Defaults
 
@@ -100,7 +100,7 @@ Files import only from lower layers:
 - Good: `import { UserCard } from "@/entities/user"`.
 - Bad: `import { UserCard } from "@/entities/user/ui/UserCard"`.
 
-The deprecated `processes` layer is **forbidden** — route responsibilities into `app`/`pages`/`widgets`.
+The deprecated `processes` layer is **forbidden** - route responsibilities into `app`/`pages`/`widgets`.
 
 ## Pixel-Perfect Requirements
 
@@ -132,7 +132,7 @@ Extract real assets from Figma when available. **Never use placeholders if Figma
 - Inspect dependencies before adding (no heavy deps for minor effects).
 - Normalize styling to project tokens + FSD placement.
 - Respect reduced-motion users + performance budgets.
-- **Never** treat ReactBits as a parallel design system — it's a source component library, not project source of truth.
+- **Never** treat ReactBits as a parallel design system - it's a source component library, not project source of truth.
 
 ## Generated Code Cleanup
 
@@ -165,7 +165,7 @@ Before committing Figma/shadcn/ReactBits generated or copied code:
 
 ## Verification
 
-- `bash scripts/smoke_mcp_capabilities.sh --server figma`: proves Figma MCP responds (session-based — may SKIP if not authenticated).
+- `bash scripts/smoke_mcp_capabilities.sh --server figma`: proves Figma MCP responds (session-based - may SKIP if not authenticated).
 - `bash scripts/smoke_mcp_capabilities.sh --server shadcn`: proves shadcn MCP initializes.
 - Browser validation evidence in `browser/` (per [[BROWSER-01-WORKFLOW]] Artifact Rule).
 - Visual comparison against Figma source frame (Figma MCP `get_screenshot`).

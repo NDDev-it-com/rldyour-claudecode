@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""release_manifest.py — emit a single-snapshot release manifest as JSON.
+"""release_manifest.py - emit a single-snapshot release manifest as JSON.
 
 Combines the marketplace VERSION file, every plugin.json (`name`+`version`),
 the active MCP server pins from .mcp.json, the current `main` HEAD SHA, and the

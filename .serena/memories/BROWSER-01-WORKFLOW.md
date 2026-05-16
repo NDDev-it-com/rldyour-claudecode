@@ -9,7 +9,7 @@ Area: BROWSER
 
 ## Purpose
 
-Browser-domain workflow contract for `rldyour-browser`. Two complementary MCP servers — Playwright MCP and Chrome DevTools MCP — cover the entire browser-automation surface; this memory documents when to use which and how to produce browser evidence that is acceptable to the quality-first policy ([[PHILOSOPHY-01-QUALITY-FIRST]] "no fake green checks").
+Browser-domain workflow contract for `rldyour-browser`. Two complementary MCP servers - Playwright MCP and Chrome DevTools MCP - cover the entire browser-automation surface; this memory documents when to use which and how to produce browser evidence that is acceptable to the quality-first policy ([[PHILOSOPHY-01-QUALITY-FIRST]] "no fake green checks").
 
 `rldyour-browser` is **skills-only** (no agents, no hooks, no slash commands). MCP transport comes from `rldyour-mcps`. Plugin depends only on `rldyour-mcps`.
 
@@ -45,7 +45,7 @@ Browser-domain workflow contract for `rldyour-browser`. Two complementary MCP se
 ### Validation (Playwright)
 1. Start from clean or explicit test state (`browser_navigate` with fresh context).
 2. Navigate to changed page/flow.
-3. `browser_snapshot` — accessibility snapshot to understand page structure.
+3. `browser_snapshot` - accessibility snapshot to understand page structure.
 4. Exercise main user flow + changed edge cases (click/fill/select_option/press_key).
 5. Capture screenshots into `browser/` for key states: initial, changed, error, empty, loading, desktop, mobile, final.
 6. Use testing-capability assertions (`browser_verify_element_visible`, `browser_verify_text_visible`, `browser_verify_list_visible`, `browser_verify_value`) for explicit checks.
@@ -102,7 +102,7 @@ Compare against design reference when one exists; against existing product style
 
 - `rldyour-browser` is skills-only (3 skills, 0 agents, 0 hooks, 0 commands). Transport from `rldyour-mcps`. Plugin dependency: `rldyour-mcps` only.
 - Browser validation is **mandatory** for any meaningful frontend change ([[PHILOSOPHY-01-QUALITY-FIRST]] verification gate). Do not call UI done without browser evidence or an explicit blocker.
-- Console / network errors during validation must be treated as signal — hand off to `browser-debug`.
+- Console / network errors during validation must be treated as signal - hand off to `browser-debug`.
 - Real production interactions require explicit user confirmation.
 - All artifacts under `browser/`, never committed.
 

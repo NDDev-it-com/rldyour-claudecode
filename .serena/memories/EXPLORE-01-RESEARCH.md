@@ -9,7 +9,7 @@ Area: EXPLORE
 
 ## Purpose
 
-Research workflow contract for `rldyour-explore`. Three MCP transports — Context7 (official docs), DeepWiki (repo architecture), grep.app (production code at scale) — cover authoritative technical research; WebSearch + WebFetch cover dated, source-cited general web research; `ry-explore` agent handles deep multi-source research (opus[1m], max effort, 90 maxTurns) with cross-validation requirement.
+Research workflow contract for `rldyour-explore`. Three MCP transports - Context7 (official docs), DeepWiki (repo architecture), grep.app (production code at scale) - cover authoritative technical research; WebSearch + WebFetch cover dated, source-cited general web research; `ry-explore` agent handles deep multi-source research (opus[1m], max effort, 90 maxTurns) with cross-validation requirement.
 
 Quality-first invariant ([[PHILOSOPHY-01-QUALITY-FIRST]]): **single-source claims for critical decisions are not acceptable**. Cross-validate against at least one independent source for non-trivial conclusions.
 
@@ -20,9 +20,9 @@ Quality-first invariant ([[PHILOSOPHY-01-QUALITY-FIRST]]): **single-source claim
 - `plugins/rldyour-explore/agents/ry-explore.md`: deep-research specialist (opus[1m], max effort, 90 maxTurns, color cyan, explicit `tools:` allowlist for read-only research).
 - `plugins/rldyour-explore/commands/ry-explore.md`: slash command `/rldyour-explore:ry-explore <topic>` (uses `context: fork` + `agent: ry-explore`).
 - `plugins/rldyour-mcps/.mcp.json`:
-  - `context7`: `bunx @upstash/context7-mcp@2.2.5` — official docs / API reference. Requires `CONTEXT7_API_KEY` env.
-  - `deepwiki`: HTTP `https://mcp.deepwiki.com/mcp` — repo architecture, design rationale.
-  - `grep`: HTTP `https://mcp.grep.app` — production code patterns at scale across GitHub.
+  - `context7`: `bunx @upstash/context7-mcp@2.2.5` - official docs / API reference. Requires `CONTEXT7_API_KEY` env.
+  - `deepwiki`: HTTP `https://mcp.deepwiki.com/mcp` - repo architecture, design rationale.
+  - `grep`: HTTP `https://mcp.grep.app` - production code patterns at scale across GitHub.
 
 ## Tool Routing Decision Tree
 
@@ -57,33 +57,33 @@ Escalate to `ry-explore` agent (via `/rldyour-explore:ry-explore <topic>` slash 
 - Topic spans technical + industry + production-usage dimensions.
 - Verification depth matters more than speed.
 
-Agent runs in **forked context** (`context: fork` in slash command) — isolated context window per invocation prevents polluting main session.
+Agent runs in **forked context** (`context: fork` in slash command) - isolated context window per invocation prevents polluting main session.
 
 ## ry-explore Agent Workflow (strict order)
 
-### Phase 1 — MCP-first (Context7 → DeepWiki → Grep)
+### Phase 1 - MCP-first (Context7 → DeepWiki → Grep)
 
 1. **Context7** for official docs and API reference. `resolve-library-id` to map name → library, then `query-docs` for content. Pull exact section anchors and version numbers.
 2. **DeepWiki** for open-source repo architecture, module layout, design rationale, evolution. Use whenever question is "how does project X organize / approach Y".
 3. **Grep** (grep.app) for real-world code patterns at scale across GitHub. Use when question is "how do production codebases actually do this", or to find idiomatic vs obsolete patterns.
 
-Pull exact quotes, file paths, version numbers, section anchors. Track which source said what — every claim must cite.
+Pull exact quotes, file paths, version numbers, section anchors. Track which source said what - every claim must cite.
 
-### Phase 2 — Web validation (only if MCP gaps remain)
+### Phase 2 - Web validation (only if MCP gaps remain)
 
 WebFetch / WebSearch with dated, version-qualified queries. Prefer authoritative domains (vendor blogs, RFCs, security advisories, official changelogs, standards bodies). Cross-reference dated info between independent sources.
 
-### Phase 3 — Synthesis
+### Phase 3 - Synthesis
 
 - Tag every finding with confidence: **Confirmed** / **Strongly supported** / **Inferred**.
-- Cite exact source — `<library>@<version>`, repo path + SHA, doc section anchor, URL with publication date.
+- Cite exact source - `<library>@<version>`, repo path + SHA, doc section anchor, URL with publication date.
 - Distinguish documentation claims from real-world code observations.
 - Flag version-specific behaviour with explicit version numbers.
 - Reply in Russian when user wrote in Russian; citations stay in original language.
 
 ## Cross-Validation Rule
 
-For **critical claims** (architecture decisions, dependency choices, security implications, breaking changes), require **≥2 independent sources** confirming the claim. Surface contradictions when they appear — do not hide them.
+For **critical claims** (architecture decisions, dependency choices, security implications, breaking changes), require **≥2 independent sources** confirming the claim. Surface contradictions when they appear - do not hide them.
 
 Examples of critical claims:
 - "Library X's API changed in version Y" → confirm via Context7 + Grep production code samples.
@@ -136,10 +136,10 @@ Frontmatter uses `context: fork` + `agent: ry-explore` so each invocation gets a
 
 - Single-source claims for critical decisions (mandatory cross-validation).
 - Mixing inferences with confirmed facts without explicit labels.
-- Ignoring contradictions between docs and code — surface them, don't hide.
+- Ignoring contradictions between docs and code - surface them, don't hide.
 - Using `web-research` when an MCP server has the authoritative answer.
 - Generic "best practice" lists without dated, named sources.
-- Treating opinionated blogs as facts — cite as opinion explicitly.
+- Treating opinionated blogs as facts - cite as opinion explicitly.
 - Old information without flagging publication date if older than 6 months.
 
 ## Invariants

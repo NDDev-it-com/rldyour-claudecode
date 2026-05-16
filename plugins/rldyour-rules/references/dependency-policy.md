@@ -58,7 +58,7 @@ Use `actions/attest-build-provenance@v1` to attest builds. Verify with `gh attes
 
 Sign release artifacts with `cosign sign --keyless`. Verify upstream signatures when consuming critical dependencies.
 
-### OWASP Top 10 2025 — A03 Software Supply Chain Failures
+### OWASP Top 10 2025 - A03 Software Supply Chain Failures
 
 Top threats in May 2026:
 

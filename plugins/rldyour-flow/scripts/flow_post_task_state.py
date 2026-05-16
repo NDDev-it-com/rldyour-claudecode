@@ -152,7 +152,31 @@ def _branch_cleanup_state(current_branch: str) -> dict[str, Any]:
 
 
 def _resolve_sibling_plugin_script(plugin: str, relative: str) -> Path | None:
-    """Find a script in a sibling plugin via repo-relative or CLAUDE_PLUGIN_ROOT fallback."""
+    """Find a script in a sibling plugin via repo-relative or CLAUDE_PLUGIN_ROOT fallback.
+
+    Co-location assumption (closure of architecture F-4, info 90, from review
+    wave `2026-05-16T1859Z-61b913d`): `rldyour-flow` and the named sibling
+    plugin are expected to live inside the same marketplace `pluginRoot:
+    ./plugins`. Both lookup paths reflect this:
+
+      1. `plugins/<plugin>/<relative>` - resolves when the script runs with
+         cwd == repo root (the standard invocation pattern through
+         `bash scripts/...` or hook scripts that `cd "$(git rev-parse
+         --show-toplevel)"`).
+      2. `${CLAUDE_PLUGIN_ROOT}/../<plugin>/<relative>` - fallback when
+         Claude Code injects `CLAUDE_PLUGIN_ROOT` pointing at the calling
+         plugin's root; `..` walks back to the marketplace `pluginRoot`.
+
+    Neither path declares an explicit plugin dependency, which is intentional:
+    the marketplace ships all nine plugins together. If `rldyour-flow` is
+    ever installed without `rldyour-serena-mcp`, this returns `None` and
+    `_serena_current` falls back to `(True, {})` rather than crashing.
+    The canonical alternative path pattern is
+    `"$(git rev-parse --show-toplevel)"/plugins/<plugin>/...` per
+    PATTERNS-01-CANONICAL; that pattern is used in skill bodies but not
+    here because this is a long-lived Python script with multiple call
+    sites, not a one-shot shell expansion.
+    """
     repo_relative = Path(f"plugins/{plugin}/{relative}")
     if repo_relative.is_file():
         return repo_relative

@@ -1,6 +1,6 @@
 ---
 name: flow-security-review
-description: Orchestrated security-review subagent invoked by /ry-start or /ry-review review phase only when scope is security-sensitive or explicitly requested. Reviews authentication/authorization boundaries, input validation, output encoding, injection/XSS/SSRF/path-traversal/insecure-deserialization, secrets handling, dependency/config changes, unsafe deploy/rollback. Defensive-only. Read-only — no file edits.
+description: Orchestrated security-review subagent invoked by /ry-start or /ry-review review phase only when scope is security-sensitive or explicitly requested. Reviews authentication/authorization boundaries, input validation, output encoding, injection/XSS/SSRF/path-traversal/insecure-deserialization, secrets handling, dependency/config changes, unsafe deploy/rollback. Defensive-only. Read-only - no file edits.
 model: sonnet
 effort: high
 maxTurns: 42
@@ -54,7 +54,7 @@ Coordinate with `rldyour-security` skills (`owasp-top-10-implementation`, `ry-se
 
 ## Workflow
 
-1. Read orchestrator prompt — scope, diff, constraints, **`run_id` and `report_dir`** (if missing, derive `run_id = <UTC-ISO-compact>-<git-short-sha>` and `report_dir = .serena/reviews/<run_id>/`).
+1. Read orchestrator prompt - scope, diff, constraints, **`run_id` and `report_dir`** (if missing, derive `run_id = <UTC-ISO-compact>-<git-short-sha>` and `report_dir = .serena/reviews/<run_id>/`).
 2. Recon: entry points, trust boundaries, data flows, privileged operations.
 3. Hypothesize: generate concrete "what could go wrong" scenarios for the changed scope.
 4. Trace each high-risk hypothesis source-to-sink with code evidence.
@@ -70,7 +70,7 @@ Follow the file-first contract documented in `${CLAUDE_PLUGIN_ROOT}/references/r
 ```bash
 mkdir -p "${report_dir}"
 cat > "${report_dir}/flow-security-review.md" <<'RLDYOUR_REPORT_EOF'
-# Flow Security Review — <scope>
+# Flow Security Review - <scope>
 Run: <run_id>
 HEAD: <git-short-sha>
 
@@ -79,13 +79,13 @@ HEAD: <git-short-sha>
 ...
 RLDYOUR_REPORT_EOF
 ```
-The unique multi-character EOF marker prevents accidental early termination when the report body contains short tokens; the closing marker must be at column 0. Secret-like values: redact in the long-form report too. Only file path, variable name, and exposure class are recorded — never the raw value.
+The unique multi-character EOF marker prevents accidental early termination when the report body contains short tokens; the closing marker must be at column 0. Secret-like values: redact in the long-form report too. Only file path, variable name, and exposure class are recorded - never the raw value.
 2. Return to the parent session a **compact summary ≤ 4 KB**:
-   - `## Review Summary — flow-security-review`
+   - `## Review Summary - flow-security-review`
    - `Report: <relative path>`
    - `Counts: critical=N, high=N, medium=N, low=N, info=N, total=N`
-   - `All findings (one-liner, cap 30 entries — additional findings only in the report file):` followed by entries of the form `- F-N <severity> (<confidence>) [<Category>]: <path>:<line> — <one-sentence description ≤ 100 chars>`; if `total > 30`, append `... +M more findings in report file`.
-   - `Notes:` for any blocker or constraint (e.g. `filesystem-readonly` if the report could not be written; in that case omit the `Report:` line and inline the top findings only — still with redacted secrets).
+   - `All findings (one-liner, cap 30 entries - additional findings only in the report file):` followed by entries of the form `- F-N <severity> (<confidence>) [<Category>]: <path>:<line> - <one-sentence description ≤ 100 chars>`; if `total > 30`, append `... +M more findings in report file`.
+   - `Notes:` for any blocker or constraint (e.g. `filesystem-readonly` if the report could not be written; in that case omit the `Report:` line and inline the top findings only - still with redacted secrets).
 
 Drop confidence <30. Validate confidence 30-49 with extra evidence before reporting. Reply in Russian when user wrote in Russian.
 
@@ -95,5 +95,5 @@ Drop confidence <30. Validate confidence 30-49 with extra evidence before report
 - Reporting raw secret values verbatim instead of redacting (applies to both the summary and the report file).
 - Generic OWASP descriptions without project code evidence.
 - Severity inflation without exploitability proof.
-- Modifying project files. Read-only enforcement via explicit `tools:` allowlist — only Serena read-only tools, Semgrep, WebFetch/WebSearch, plus `Bash` for the reviewer-result file under `report_dir`; `Edit`, `Write`, and `NotebookEdit` are absent and cannot reach project source.
-- Returning the full long-form report inline instead of writing it to `report_dir` (triggers the Claude Code 2.0.77+ task.output truncation regression — Anthropic issues `#16789`, `#20531`, `#23463`).
+- Modifying project files. Read-only enforcement via explicit `tools:` allowlist - only Serena read-only tools, Semgrep, WebFetch/WebSearch, plus `Bash` for the reviewer-result file under `report_dir`; `Edit`, `Write`, and `NotebookEdit` are absent and cannot reach project source.
+- Returning the full long-form report inline instead of writing it to `report_dir` (triggers the Claude Code 2.0.77+ task.output truncation regression - Anthropic issues `#16789`, `#20531`, `#23463`).

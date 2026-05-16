@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""validate_plugin_versions.py — verify plugin.json vs marketplace.json version consistency.
+"""validate_plugin_versions.py - verify plugin.json vs marketplace.json version consistency.
 
 Per Claude Code docs (code.claude.com/docs/en/plugins-reference#metadata-fields):
 "If `version` is also set in the marketplace entry, the `plugin.json` value
 takes precedence."
 
 This script enforces the practical safer rule: if both are set, they must match.
-Any drift between marketplace.json and plugin.json forces an explicit decision —
+Any drift between marketplace.json and plugin.json forces an explicit decision -
 either drop the marketplace entry's version (rely on plugin.json) or update both.
 
 Exit codes: 0 on success, 1 on any mismatch or missing version.

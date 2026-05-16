@@ -28,7 +28,7 @@ MCP transport contracts for the marketplace. `rldyour-mcps` is the only plugin a
   - `playwright`: `bunx @playwright/mcp@0.0.75 --headless --caps=network,storage,testing,devtools`.
   - `chrome-devtools`: `bunx chrome-devtools-mcp@0.26.0 --headless --isolated --no-usage-statistics --no-performance-crux`.
   - `context7`: `bunx @upstash/context7-mcp@2.2.5`.
-  - `semgrep`: `uvx --from semgrep==1.163.0 semgrep mcp`. Note: `.github/workflows/semgrep.yml` CI SAST uses Docker image `semgrep/semgrep:1.163.0` — intentionally matched to this MCP pin (verified at `.github/workflows/semgrep.yml` at HEAD `334fe09`).
+  - `semgrep`: `uvx --from semgrep==1.163.0 semgrep mcp`. Note: `.github/workflows/semgrep.yml` CI SAST uses Docker image `semgrep/semgrep:1.163.0` - intentionally matched to this MCP pin (verified at `.github/workflows/semgrep.yml` at HEAD `334fe09`).
   - `shadcn`: `bunx shadcn@4.7.0 mcp`.
   - `dart-flutter`: `dart mcp-server --force-roots-fallback`.
   - `github`: `github-mcp-server stdio --toolsets=repos,issues,pull_requests,users,context`.

@@ -29,7 +29,7 @@ Durable instruction-file policy for the repository: what belongs in `AGENTS.md`,
 - `.claude/CLAUDE.md` is first-class Claude Code memory and must not be reduced to only an `@AGENTS.md` import.
 - Both `AGENTS.md` and `.claude/CLAUDE.md` are agent-only in this fullrepo-managed repository and are excluded from `main` through `.git/info/exclude`.
 - Current docs include the numbered Serena memory contract: `CORE-01-INDEX.md` is the memory map; topic files use `AREA-01-SLUG.md`.
-- `config/REVIEW.md.template` (68 lines) exists at HEAD `00d3f82` — template for project-level `REVIEW.md`. Sections: Always Check, Architecture, Quality, Consistency, Tests, Security, Skip, Notes. Downstream projects copy to project root as `REVIEW.md`; reviewer agents (`flow-*-review`, `ry-rules-review`, `ry-sec-review`) auto-discover it. Verified at `config/REVIEW.md.template` at HEAD `00d3f82`.
+- `config/REVIEW.md.template` (68 lines) exists at HEAD `00d3f82` - template for project-level `REVIEW.md`. Sections: Always Check, Architecture, Quality, Consistency, Tests, Security, Skip, Notes. Downstream projects copy to project root as `REVIEW.md`; reviewer agents (`flow-*-review`, `ry-rules-review`, `ry-sec-review`) auto-discover it. Verified at `config/REVIEW.md.template` at HEAD `00d3f82`.
 - `AGENTS.md` routes memory writes through `flow-memory-sync` when Stop/post-task sync requires it and through `serena-memory-sync` as a manual/fallback workflow.
 - Instruction-only commits are sync-relevant. They are not treated as knowledge-only no-ops by `mark_sync_required.sh` or `serena_memory_state.py`.
 

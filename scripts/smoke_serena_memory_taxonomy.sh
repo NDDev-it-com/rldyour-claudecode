@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# smoke_serena_memory_taxonomy.sh — focused checks for the Serena memory brain contract.
+# smoke_serena_memory_taxonomy.sh - focused checks for the Serena memory brain contract.
 #
 # Coverage:
 #   1. analyze_sync_scope.py schema v2, taxonomy, and target routing.
@@ -283,4 +283,46 @@ fi
 echo "OK fullrepo-managed acknowledgement"
 
 cd "$ROOT"
+
+# Closure of verification F-3 (info 95) from review wave 2026-05-16T1859Z-61b913d:
+# D20 (Cross-References section in every memory) and D21 (Source Of Truth
+# section in every memory) had no automated test. The assertions below scan
+# the actual repository .serena/memories/*.md (when present in current
+# worktree, e.g. on fullrepo branch or after fullrepo --restore) and fail
+# the smoke if any memory file omits the canonical sections.
+step "memory section completeness (D20 + D21 invariants)"
+MEMORY_DIR="$ROOT/.serena/memories"
+if [ -d "$MEMORY_DIR" ] && compgen -G "$MEMORY_DIR/*.md" > /dev/null 2>&1; then
+  missing_xref=()
+  missing_sot=()
+  missing_metadata=()
+  while IFS= read -r -d '' memfile; do
+    if ! grep -q '^## Cross-References' "$memfile"; then
+      missing_xref+=("$memfile")
+    fi
+    if ! grep -q '^## Source Of Truth' "$memfile"; then
+      missing_sot+=("$memfile")
+    fi
+    if ! grep -q '^Last commit:' "$memfile"; then
+      missing_metadata+=("$memfile")
+    fi
+  done < <(find "$MEMORY_DIR" -maxdepth 1 -name '*.md' -print0 2>/dev/null)
+  if [ "${#missing_xref[@]}" -gt 0 ]; then
+    printf 'FAIL memory missing ## Cross-References section: %s\n' "${missing_xref[@]}" >&2
+    fail "D20 invariant violated"
+  fi
+  if [ "${#missing_sot[@]}" -gt 0 ]; then
+    printf 'FAIL memory missing ## Source Of Truth section: %s\n' "${missing_sot[@]}" >&2
+    fail "D21 invariant violated"
+  fi
+  if [ "${#missing_metadata[@]}" -gt 0 ]; then
+    printf 'FAIL memory missing Last commit metadata: %s\n' "${missing_metadata[@]}" >&2
+    fail "memory metadata invariant violated"
+  fi
+  total=$(find "$MEMORY_DIR" -maxdepth 1 -name '*.md' | wc -l)
+  echo "OK D20+D21 invariants pass across ${total} memory files"
+else
+  echo "SKIP no .serena/memories/*.md in this worktree (expected on main without --restore)"
+fi
+
 printf '\n\033[1;32m✔ smoke_serena_memory_taxonomy passed\033[0m\n'

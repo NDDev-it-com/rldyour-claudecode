@@ -8,7 +8,7 @@ allowed-tools:
 
 # Web research
 
-Auto-invoked when the user needs current, authoritative information that does not live in static docs or in code. Returns dated, cited findings — never opinionated synthesis dressed as fact.
+Auto-invoked when the user needs current, authoritative information that does not live in static docs or in code. Returns dated, cited findings - never opinionated synthesis dressed as fact.
 
 ## When to use
 
@@ -38,7 +38,7 @@ Skip when: question can be answered by docs or code (use `tech-research`), or it
 ## Anti-patterns
 
 - Generic advice without date or source
-- Treating opinionated blogs as facts — cite them explicitly as opinion
+- Treating opinionated blogs as facts - cite them explicitly as opinion
 - Missing official announcements (always check the project repo / changelog)
 - Old information without flagging publication date if older than 6 months
 - Using `web-research` when `tech-research` (MCP) has the answer

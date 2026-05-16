@@ -9,7 +9,7 @@ Area: SECURITY
 
 ## Purpose
 
-Security domain workflow for `rldyour-security`. Two operating modes: (1) advisory secure-coding during implementation via `owasp-top-10-implementation` (non-blocking, surface high-signal comments + apply high-confidence in-scope fixes), and (2) explicit defensive audit via `ry-sec-review` (slash-only Mythos-style review producing evidence-based findings). Both follow **defensive-only** rule — no weaponized exploits.
+Security domain workflow for `rldyour-security`. Two operating modes: (1) advisory secure-coding during implementation via `owasp-top-10-implementation` (non-blocking, surface high-signal comments + apply high-confidence in-scope fixes), and (2) explicit defensive audit via `ry-sec-review` (slash-only Mythos-style review producing evidence-based findings). Both follow **defensive-only** rule - no weaponized exploits.
 
 `rldyour-security` is **skills-only** (2 skills + 1 slash command, 0 agents, 0 hooks). Dependencies: `rldyour-mcps`. Companion: `flow-security-review` subagent in `rldyour-flow` plugin (invoked from `/ry-start` or `/ry-review` review phase).
 
@@ -19,22 +19,22 @@ Security domain workflow for `rldyour-security`. Two operating modes: (1) adviso
 - `plugins/rldyour-security/skills/ry-sec-review/SKILL.md`: slash-only audit (`disable-model-invocation: true`).
 - `plugins/rldyour-security/commands/ry-sec-review.md`: slash command entry.
 - `plugins/rldyour-flow/agents/flow-security-review.md`: parallel reviewer subagent (Mythos-style, color red, maxTurns 42 with +6 turns for variant-hunt).
-- `plugins/rldyour-mcps/.mcp.json` `semgrep`: `uvx --from semgrep==1.163.0 semgrep mcp` — SAST scanner integration.
+- `plugins/rldyour-mcps/.mcp.json` `semgrep`: `uvx --from semgrep==1.163.0 semgrep mcp` - SAST scanner integration.
 
 ## OWASP Top 10 2025 Coverage
 
 This marketplace tracks the **OWASP Top 10 2025** revision (released as the current standard as of May 2026). Categories used in both skills:
 
-1. **A01:2025 Broken Access Control** — object ownership, tenant boundaries, role checks, server-side authorization (not UI-hidden), indirect object access (IDOR/BOLA), admin paths, confused deputy.
-2. **A02:2025 Security Misconfiguration** — unsafe defaults, debug flags, permissive CORS, missing security headers, public storage, over-broad cloud/IAM rules, exposed admin surfaces.
-3. **A03:2025 Software Supply Chain Failures** — dependency trust, lockfiles, install scripts, unpinned actions/images, vulnerable packages, untrusted generated code. **Top-tier concern in 2025** (jumped to #3). Includes: dependency confusion, upstream infrastructure compromise, code-signing cert theft, CI/CD exploitation, typosquatting.
-4. **A04:2025 Cryptographic Failures** — weak algorithms, incorrect key handling, plaintext secrets, insecure randomness, missing TLS, sensitive data exposure.
-5. **A05:2025 Injection** — SQL/NoSQL/LDAP/template/command injection, unsafe `eval`, shell interpolation, unsafe deserialization, missing parameterization.
-6. **A06:2025 Insecure Design** — missing abuse-case handling, unsafe business logic, race conditions, replay/double-spend, missing rate limits, trust-boundary mistakes.
-7. **A07:2025 Authentication Failures** — session fixation, weak password reset, token lifetime, MFA bypass, confused identity flow, insecure credential storage.
-8. **A08:2025 Software or Data Integrity Failures** — unsafe update paths, unsigned/unverified artifacts, mass assignment, trusted client-controlled state, insecure CI/CD assumptions.
-9. **A09:2025 Security Logging and Alerting Failures** — missing audit events, sensitive logs, weak failure visibility, no alertable signal for authz/authn/security events.
-10. **A10:2025 Mishandling of Exceptional Conditions** — unsafe error paths, leaked stack traces/secrets, fail-open behaviour, inconsistent rollback/cleanup, exception-driven bypasses.
+1. **A01:2025 Broken Access Control** - object ownership, tenant boundaries, role checks, server-side authorization (not UI-hidden), indirect object access (IDOR/BOLA), admin paths, confused deputy.
+2. **A02:2025 Security Misconfiguration** - unsafe defaults, debug flags, permissive CORS, missing security headers, public storage, over-broad cloud/IAM rules, exposed admin surfaces.
+3. **A03:2025 Software Supply Chain Failures** - dependency trust, lockfiles, install scripts, unpinned actions/images, vulnerable packages, untrusted generated code. **Top-tier concern in 2025** (jumped to #3). Includes: dependency confusion, upstream infrastructure compromise, code-signing cert theft, CI/CD exploitation, typosquatting.
+4. **A04:2025 Cryptographic Failures** - weak algorithms, incorrect key handling, plaintext secrets, insecure randomness, missing TLS, sensitive data exposure.
+5. **A05:2025 Injection** - SQL/NoSQL/LDAP/template/command injection, unsafe `eval`, shell interpolation, unsafe deserialization, missing parameterization.
+6. **A06:2025 Insecure Design** - missing abuse-case handling, unsafe business logic, race conditions, replay/double-spend, missing rate limits, trust-boundary mistakes.
+7. **A07:2025 Authentication Failures** - session fixation, weak password reset, token lifetime, MFA bypass, confused identity flow, insecure credential storage.
+8. **A08:2025 Software or Data Integrity Failures** - unsafe update paths, unsigned/unverified artifacts, mass assignment, trusted client-controlled state, insecure CI/CD assumptions.
+9. **A09:2025 Security Logging and Alerting Failures** - missing audit events, sensitive logs, weak failure visibility, no alertable signal for authz/authn/security events.
+10. **A10:2025 Mishandling of Exceptional Conditions** - unsafe error paths, leaked stack traces/secrets, fail-open behaviour, inconsistent rollback/cleanup, exception-driven bypasses.
 
 **Additional AI/LLM surfaces** (when present): prompt injection, tool injection, data exfiltration through model output, untrusted tool arguments, unsafe generated code execution, cost/resource abuse.
 
@@ -60,7 +60,7 @@ This marketplace tracks the **OWASP Top 10 2025** revision (released as the curr
 - Dependency/config changes preserve lockfiles, least privilege, pinned versions, safe defaults.
 - Tests / checks cover abuse cases when changed behaviour is security-sensitive.
 
-**Output (Russian)**: `Security comments` (high-signal only), `Applied fixes`, `Residual risks` (out-of-scope real risks), `Suggested verification` (exact tests / lint / Semgrep / manual checks). If no meaningful security notes — say so briefly. **Do not invent risks.**
+**Output (Russian)**: `Security comments` (high-signal only), `Applied fixes`, `Residual risks` (out-of-scope real risks), `Suggested verification` (exact tests / lint / Semgrep / manual checks). If no meaningful security notes - say so briefly. **Do not invent risks.**
 
 ## Mode 2: `ry-sec-review` (audit, slash-only)
 
@@ -76,7 +76,7 @@ This marketplace tracks the **OWASP Top 10 2025** revision (released as the curr
 
 **Workflow**:
 1. **Recon**: map changed files, entry points, dependencies, configuration, privileged operations, data flows. Serena-first (`get_symbols_overview`, `find_symbol`, `find_referencing_symbols`, `search_for_pattern`).
-2. **Baseline scan**: Semgrep MCP (`mcp__plugin_rldyour-mcps_semgrep__*`) + local project security scripts — but scanners are not the only evidence.
+2. **Baseline scan**: Semgrep MCP (`mcp__plugin_rldyour-mcps_semgrep__*`) + local project security scripts - but scanners are not the only evidence.
 3. **Hypothesize**: review hypotheses mapped to OWASP Top 10 2025 + ASVS 5.0.0 concepts + project-specific threat boundaries.
 4. **Trace**: prove or reject each high-risk hypothesis by following source-to-sink paths, authz checks, validation, output handling, config, error paths.
 5. **Variant hunt**: similar patterns in sibling files, repeated helpers, copied logic, shared middleware, framework-specific conventions.
@@ -126,7 +126,7 @@ Both use same OWASP coverage, same finding format, same severity guidance, same 
 - `rldyour-security` plugin: 2 skills + 1 slash command, 0 agents, 0 hooks. Dependencies: `rldyour-mcps`.
 - `owasp-top-10-implementation` is **auto-invokable** + **advisory non-blocking**.
 - `ry-sec-review` is **slash-only** (`disable-model-invocation: true`) + **report-only by default** (modify only on explicit user fix request).
-- Both modes are **defensive-only** — no weaponized exploits.
+- Both modes are **defensive-only** - no weaponized exploits.
 - Both use OWASP Top 10 2025 categories (current standard) + ASVS 5.0.0 for deeper verification.
 - Confidence <30 findings dropped. Confidence 30-49 validated against extra evidence before reporting.
 - Secrets redacted in findings (path + var name + exposure class only, not raw values).

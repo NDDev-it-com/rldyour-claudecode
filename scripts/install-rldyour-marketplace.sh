@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# install-rldyour-marketplace.sh — universal installer for the rldyour-claudecode Claude Code marketplace.
+# install-rldyour-marketplace.sh - universal installer for the rldyour-claudecode Claude Code marketplace.
 #
 # Works on any Claude Code install:
 #   - Fresh CC (no rldyour-* present): installs rldyour-claudecode + 9 plugins.
@@ -214,7 +214,7 @@ stage_0_guard() {
   fi
 
   if [[ -n "${CLAUDE_CODE_SESSION_ID:-}" ]]; then
-    die "CLAUDE_CODE_SESSION_ID is set — you are inside a CC session."
+    die "CLAUDE_CODE_SESSION_ID is set - you are inside a CC session."
   fi
 
   local recent_sessions
@@ -502,7 +502,7 @@ stage_7_verify() {
     } >>"$REPORT_PATH"
   fi
 
-  ok "all checks passed — see $REPORT_PATH"
+  ok "all checks passed - see $REPORT_PATH"
 }
 
 # ----- main -----------------------------------------------------------------

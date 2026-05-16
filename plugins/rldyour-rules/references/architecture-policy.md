@@ -27,13 +27,13 @@ Rules:
 - Use separate public APIs for `shared/ui` and `shared/lib` components when a single barrel would harm tree-shaking or clarity.
 - Use `@x` cross-imports only when an entity relationship needs it and the project accepts the pattern.
 
-Alternative for medium-scale FE projects: **Modular Monolith + VSA** — module boundaries form the outer container, vertical slices organize features within. Documented in an ADR.
+Alternative for medium-scale FE projects: **Modular Monolith + VSA** - module boundaries form the outer container, vertical slices organize features within. Documented in an ADR.
 
 ## Backend Default (May 2026): VSA + Hexagonal + Modular Monolith
 
 The 2026 consensus combines three patterns for sustainable backends:
 
-### Vertical Slice Architecture (VSA) — primary
+### Vertical Slice Architecture (VSA) - primary
 
 Use VSA for backend features when practical:
 
@@ -42,7 +42,7 @@ Use VSA for backend features when practical:
 - Pairs naturally with CQRS and the REPR pattern (Request-Endpoint-Response).
 - Minimize coupling between slices.
 
-### Hexagonal Architecture (Ports & Adapters) — for durability
+### Hexagonal Architecture (Ports & Adapters) - for durability
 
 Layer Hexagonal under VSA for framework-agnostic durability:
 
@@ -51,7 +51,7 @@ Layer Hexagonal under VSA for framework-agnostic durability:
 - Domain core never depends on infrastructure. Survives framework churn.
 - Apply when long-lived business logic justifies the ceremony.
 
-### Modular Monolith — as the organizational container
+### Modular Monolith - as the organizational container
 
 For medium-scale systems, modules form the outer boundary; vertical slices organize features within; ports/adapters protect the core. Pragmatic default for teams migrating from monoliths.
 

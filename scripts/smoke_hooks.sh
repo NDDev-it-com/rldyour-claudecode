@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# smoke_hooks.sh — verify hook lifecycle scripts exist, parse, and execute cleanly with skip flags.
+# smoke_hooks.sh - verify hook lifecycle scripts exist, parse, and execute cleanly with skip flags.
 #
 # Coverage:
 #   1. hooks.json files parse as JSON.
@@ -7,7 +7,7 @@
 #   3. Every script exits 0 when its skip flag is set (no side effects).
 #   4. Every script exits 0 outside a git work tree (defensive guard active).
 #
-# This is a static smoke — it does not exercise actual hook firing during a
+# This is a static smoke - it does not exercise actual hook firing during a
 # Claude Code session. Use `claude --debug api,hooks` for live observation.
 
 set -euo pipefail
@@ -128,7 +128,7 @@ step "runtime stdin payloads (parse safety + advisory routing)"
 # This step actually exercises each hook with realistic JSON stdin to verify
 # that the recent shell strict mode changes (IFS=$'\n\t' + unset CDPATH) didn't
 # break stdin parsing. Hooks that mutate state (mark_sync_required.sh,
-# prepare_auto_sync.sh) are intentionally not exercised here — they write to
+# prepare_auto_sync.sh) are intentionally not exercised here - they write to
 # .serena/.serena_sync_state.json and .serena/.auto_sync_head, which would
 # pollute the working tree state during a smoke run.
 
@@ -170,9 +170,9 @@ fi
 
 # Stop hooks: stop_hook_active=true should pass through without blocking when
 # current state already matches the loop-guard marker. The hook reads stdin
-# JSON via python3 — a parse error would surface as exit code 0 (silent) but
+# JSON via python3 - a parse error would surface as exit code 0 (silent) but
 # we already cover parse safety via skip-flag/outside-git tests above. Here
-# we verify behaviour on stop_hook_active=false (normal Stop) — should also
+# we verify behaviour on stop_hook_active=false (normal Stop) - should also
 # exit 0 when serena+flow state is already clean.
 clean_stop_out=$(printf '%s' '{"stop_hook_active":false}' | bash plugins/rldyour-serena-mcp/hooks/stop_memory_sync.sh 2>&1 || true)
 if [ -z "$clean_stop_out" ] || ! printf '%s' "$clean_stop_out" | grep -q "SYNC REQUIRED"; then
