@@ -8,8 +8,8 @@
     "url": "https://github.com/rldyourmnd"
   },
   "license": "MIT",
-  "homepage": "https://github.com/rldyourmnd/rldyour-claude/tree/main/plugins/rldyour-rules",
-  "repository": "https://github.com/rldyourmnd/rldyour-claude",
+  "homepage": "https://github.com/nddev-it-com/rldyour-claudecode/tree/main/plugins/rldyour-rules",
+  "repository": "https://github.com/nddev-it-com/rldyour-claudecode",
   "keywords": ["rules", "quality", "clean-architecture", "fsd", "vsa", "hexagonal", "verification", "dependency-policy", "supply-chain", "adr", "rldyour"],
   "dependencies": ["rldyour-mcps"]
 }

@@ -1,6 +1,6 @@
 # Rollback And Restore
 
-Safe rollback paths when a `rldyour-claude` change breaks consumer projects or the marketplace itself.
+Safe rollback paths when a `rldyour-claudecode` change breaks consumer projects or the marketplace itself.
 
 ## Rollback scopes
 
@@ -55,11 +55,11 @@ A consumer with the bad version installed can:
 
 ```bash
 # Pin to the previous version.
-claude plugin uninstall rldyour-flow@rldyour-claude
-claude plugin install rldyour-flow@rldyour-claude  # picks up the new (rolled-back) main
+claude plugin uninstall rldyour-flow@rldyour-claudecode
+claude plugin install rldyour-flow@rldyour-claudecode  # picks up the new (rolled-back) main
 
 # Or remove the marketplace entirely and re-add.
-claude plugin marketplace remove rldyour-claude
+claude plugin marketplace remove rldyour-claudecode
 claude plugin marketplace add /path/to/rldyour-claudecode
 
 # Verify.
@@ -73,8 +73,8 @@ Restart Claude Code so plugin agents and hooks reload.
 When pulling the repo for the first time, agent-only context lives on `fullrepo`, not `main`. Restore it locally:
 
 ```bash
-git clone https://github.com/rldyourmnd/rldyour-claude.git
-cd rldyour-claude
+git clone https://github.com/nddev-it-com/rldyour-claudecode.git
+cd rldyour-claudecode
 python3 plugins/rldyour-flow/scripts/fullrepo_sync.py --bootstrap-init
 ```
 
