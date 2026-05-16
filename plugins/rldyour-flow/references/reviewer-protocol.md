@@ -21,12 +21,12 @@ The user explicitly approved subagent usage when invoking `/ry-start` or `/ry-re
 
 Each finding must include:
 
-- Severity: `critical`, `high`, `medium`, `low`.
+- Severity: `critical`, `high`, `medium`, `low`, or `info`. `info` is reserved for hardening notes and architectural observations without a concrete fix obligation.
 - Confidence: `0-100`.
 - Location: file and line when possible.
 - Evidence: concrete code or behavior.
 - Impact: what fails or becomes harder.
-- Fix: actionable correction.
+- Fix: actionable correction (omit or write "n/a" for `info` entries).
 - Disposition: `must-fix`, `should-fix`, `defer`, or `false-positive`.
 
 `flow-security-review` findings add `Category` (OWASP/ASVS class), `Attack path` (defensive, no weaponization), and `Verification` (test or check) fields.
@@ -35,7 +35,7 @@ Do not report confidence below 30. Validate confidence 30-49 in the parent workf
 
 ## Output Transport
 
-Claude Code 2.0.77+ has a confirmed regression where `task.output` from a subagent can be returned to the parent session as a full JSONL transcript instead of the final assistant text. Anthropic issues `#16789`, `#20531`, `#23463` are closed as "not planned"; combined subagent results (7 × ~20-30 KB each) can overflow the parent context window and crash the session. Anthropic's documented sub-agents guidance also states subagents should return only a summary.
+Claude Code 2.0.77+ has a confirmed regression where `task.output` from a subagent can be returned to the parent session as a full JSONL transcript instead of the final assistant text. Anthropic issues [`#16789`](https://github.com/anthropics/claude-code/issues/16789), [`#20531`](https://github.com/anthropics/claude-code/issues/20531), [`#23463`](https://github.com/anthropics/claude-code/issues/23463) are closed as "not planned"; combined subagent results (7 × ~20-30 KB each) can overflow the parent context window and crash the session. Anthropic's documented sub-agents guidance also states subagents should return only a summary.
 
 To stay safe regardless of upstream behavior, every reviewer subagent in this marketplace uses a **file-first output contract** instead of inline-markdown-only returns.
 
@@ -57,7 +57,16 @@ report_dir = .serena/reviews/<run_id>/
 
 Each reviewer:
 
-1. Uses `Bash` (already in the allowlist) to `mkdir -p "${report_dir}"` and `cat > "${report_dir}/<reviewer-name>.md" <<'MD' ... MD` the full markdown report with every finding in long form (Severity / Confidence / Location / Evidence / Impact / Fix / Disposition, plus security extras when applicable).
+1. Uses `Bash` (already in the allowlist) to write the full markdown report. **The Bash write must target only `<report_dir>/<reviewer-name>.md`; no other paths.** Reviewers have read-only access to project source via the absence of `Edit`, `Write`, and `NotebookEdit` from the allowlist, but `Bash` is technically arbitrary — the contract bounds it to the single report path. Canonical pattern:
+   ```bash
+   mkdir -p "${report_dir}"
+   cat > "${report_dir}/<reviewer-name>.md" <<'RLDYOUR_REPORT_EOF'
+   # <Reviewer Title> — <scope>
+   ...full long-form findings (Severity / Confidence / Location / Evidence / Impact / Fix / Disposition,
+   plus security extras when applicable)...
+   RLDYOUR_REPORT_EOF
+   ```
+   The unique multi-character marker `RLDYOUR_REPORT_EOF` prevents accidental early termination when the report body legitimately contains short tokens like `MD`, `EOF`, or `END`. The closing marker must be at column 0 (no leading whitespace) per bash heredoc rules.
 2. Returns to the parent session a **compact summary ≤ 4 KB** with this exact structure:
 
 ```
@@ -66,10 +75,10 @@ Report: <relative path to report file from repo root>
 
 Counts: critical=N, high=N, medium=N, low=N, info=N, total=N
 
-All findings (one-liner, max 30 entries — additional findings only in the report file):
+All findings (one-liner, cap 30 entries — additional findings only in the report file):
 - F-1 <severity> (<confidence>): <relative path>:<line> — <one-sentence description, ≤ 100 chars>
 - F-2 ...
-- ... (cap at 30 entries; append "+M more findings in report file" when total > 30)
+- ... (cap at 30 entries; append "... +M more findings in report file" when total > 30)
 
 Notes: any blocker, error, or constraint encountered while writing the report.
 ```
@@ -77,7 +86,7 @@ Notes: any blocker, error, or constraint encountered while writing the report.
 3. If the runtime cannot write to `report_dir` (read-only filesystem, missing permissions, sandbox), the reviewer:
    - Falls back to inline summary-only output without a `Report:` line.
    - Adds `Notes: filesystem-readonly` (or the specific error) so the orchestrator records the limitation.
-   - Still respects the 4 KB compact-summary cap.
+   - Still respects the 4 KB compact-summary cap and the cap-30 one-liner rule.
 
 ### Orchestrator read contract
 
@@ -85,9 +94,9 @@ The orchestrator (`ry-start` or `ry-review` skill body) after subagent completio
 
 1. Reads each reviewer summary from the agent result.
 2. Aggregates counts across all reviewers.
-3. Reads each full report file (`Read` tool) only for the findings it needs to consolidate the plan — typically critical/high entries first.
+3. **Must read each full report file (`Read` tool) for every `critical` and `high` finding** before deciding disposition (`flow-security-review` carries OWASP `Category`, `Attack path`, and `Verification` fields that exist only in the report file). Medium and low findings may be read on demand when the consolidation requires deeper evidence.
 4. Resolves contradictions across reviewer tracks against code evidence.
-5. Optionally writes `<report_dir>/_summary.md` (consolidated cross-track findings + plan disposition) as durable wave artifact.
+5. Writes `<report_dir>/_summary.md` (consolidated cross-track findings + plan disposition) as durable wave artefact whenever any track reported one or more findings.
 6. Reports back to the user in Russian. Lists report-file paths so the user can inspect full findings on disk.
 
 ### Why this works
