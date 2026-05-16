@@ -8,8 +8,8 @@
     "url": "https://github.com/rldyourmnd"
   },
   "license": "MIT",
-  "homepage": "https://github.com/rldyourmnd/rldyour-claude/tree/main/plugins/rldyour-lsps",
-  "repository": "https://github.com/rldyourmnd/rldyour-claude",
+  "homepage": "https://github.com/nddev-it-com/rldyour-claudecode/tree/main/plugins/rldyour-lsps",
+  "repository": "https://github.com/nddev-it-com/rldyour-claudecode",
   "keywords": ["lsp", "language-server", "serena", "pyright", "typescript-language-server", "rust-analyzer", "gopls", "clangd", "qmlls", "yaml-language-server", "bash-language-server", "rldyour"],
   "dependencies": ["rldyour-mcps"]
 }

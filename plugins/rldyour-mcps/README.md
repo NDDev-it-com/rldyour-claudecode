@@ -1,6 +1,6 @@
 # rldyour-mcps
 
-MCP transport layer for the `rldyour-claude` marketplace. Single-owner of `.mcp.json` — no other plugin declares MCP servers.
+MCP transport layer for the `rldyour-claudecode` marketplace. Single-owner of `.mcp.json` — no other plugin declares MCP servers.
 
 ## What's inside
 

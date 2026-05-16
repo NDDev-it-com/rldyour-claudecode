@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# worktree_add.sh — one-step git worktree creation for the rldyour-claude
+# worktree_add.sh — one-step git worktree creation for the rldyour-claudecode
 # marketplace.
 #
 # Wraps `git worktree add` + `fullrepo_sync.py --restore` so a fresh
@@ -14,7 +14,7 @@
 #
 # Examples:
 #   scripts/worktree_add.sh feat/foo
-#       Creates a worktree at ../rldyour-claude-feat-foo on branch
+#       Creates a worktree at ../rldyour-claudecode-feat-foo on branch
 #       feat/foo. If the branch doesn't exist, it is created off
 #       origin/main (configurable via RLDYOUR_WORKTREE_BASE_REF).
 #
@@ -113,7 +113,7 @@ else
   GIT_ARGS=(worktree add -b "${BRANCH}" -- "${WT_PATH}" "${BASE_REF}")
 fi
 
-echo "==> rldyour-claude worktree_add"
+echo "==> rldyour-claudecode worktree_add"
 echo "    branch     : ${BRANCH} (${BRANCH_MODE})"
 echo "    path       : ${WT_PATH}"
 echo "    base ref   : ${BASE_REF}"
