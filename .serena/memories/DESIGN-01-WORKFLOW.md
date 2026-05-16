@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-17
-Last commit: 00d3f82 docs(config): add REVIEW.md template per global CLAUDE.md spec
+Last commit: bf19b44 docs(readme): update versions to 0.2.3 + add Support/Feedback section
 Scope: plugins/rldyour-design/skills/ry-design/SKILL.md, plugins/rldyour-design/skills/figma-to-code/SKILL.md, plugins/rldyour-design/skills/design-system-implementation/SKILL.md, plugins/rldyour-design/skills/fsd-frontend-architecture/SKILL.md, plugins/rldyour-design/skills/design-validation/SKILL.md, plugins/rldyour-design/commands/ry-design.md, plugins/rldyour-mcps/.mcp.json (figma + shadcn entries)
 Area: DESIGN
 -->

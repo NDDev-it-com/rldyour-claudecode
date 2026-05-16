@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-17
-Last commit: 00d3f82 docs(config): add REVIEW.md template per global CLAUDE.md spec
+Last commit: bf19b44 docs(readme): update versions to 0.2.3 + add Support/Feedback section
 Scope: plugins/rldyour-browser/skills/browser-tool-routing/SKILL.md, plugins/rldyour-browser/skills/browser-validation/SKILL.md, plugins/rldyour-browser/skills/browser-debug/SKILL.md, plugins/rldyour-mcps/.mcp.json (playwright + chrome-devtools entries)
 Area: BROWSER
 -->

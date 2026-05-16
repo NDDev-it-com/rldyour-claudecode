@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-17
-Last commit: 00d3f82 docs(config): add REVIEW.md template per global CLAUDE.md spec
+Last commit: bf19b44 docs(readme): update versions to 0.2.3 + add Support/Feedback section
 Scope: plugins/rldyour-lsps/.lsp.json, plugins/rldyour-lsps/skills/lsp-routing/SKILL.md, plugins/rldyour-lsps/skills/lsp-health-check/SKILL.md, plugins/rldyour-lsps/skills/lsp-setup/SKILL.md, plugins/rldyour-lsps/skills/serena-lsp-integration/SKILL.md, plugins/rldyour-lsps/references/lsp-server-matrix.md, plugins/rldyour-lsps/references/install-profiles.md, plugins/rldyour-lsps/references/serena-lsp-integration.md, plugins/rldyour-lsps/scripts/check_lsps.sh, plugins/rldyour-lsps/scripts/install_lsps_brew.sh
 Area: LSPS
 -->
