@@ -15,108 +15,184 @@
       "name": "rldyour-mcps",
       "source": "./plugins/rldyour-mcps",
       "description": "Транспортный слой MCP — 13 серверов с зафиксированными версиями: Serena, Sequential Thinking, Playwright, Chrome DevTools, Context7, DeepWiki, Grep, Semgrep, shadcn, Dart/Flutter, Figma, OpenAI Docs, GitHub.",
-      "version": "0.2.0",
+      "version": "0.2.1",
       "author": {
         "name": "rldyourmnd"
       },
       "category": "infrastructure",
-      "tags": ["mcp", "transport", "rldyour"],
+      "tags": [
+        "mcp",
+        "transport",
+        "rldyour"
+      ],
       "license": "MIT"
     },
     {
       "name": "rldyour-explore",
       "source": "./plugins/rldyour-explore",
       "description": "Скиллы технического и веб-исследования + ry-explore субагент глубокого анализа (Opus 4.7 1M, max effort) через Context7/DeepWiki/Grep MCP. /ry-explore slash command included.",
-      "version": "0.2.0",
+      "version": "0.2.1",
       "author": {
         "name": "rldyourmnd"
       },
       "category": "research",
-      "tags": ["research", "explore", "mcp", "context7", "deepwiki", "grep", "rldyour"],
+      "tags": [
+        "research",
+        "explore",
+        "mcp",
+        "context7",
+        "deepwiki",
+        "grep",
+        "rldyour"
+      ],
       "license": "MIT"
     },
     {
       "name": "rldyour-serena-mcp",
       "source": "./plugins/rldyour-serena-mcp",
       "description": "Семантический воркфлоу для кода через Serena MCP + синхронизация .serena памяти + хуки жизненного цикла (UserPromptSubmit/PreToolUse/PostToolUse/Stop).",
-      "version": "0.2.0",
+      "version": "0.2.1",
       "author": {
         "name": "rldyourmnd"
       },
       "category": "development",
-      "tags": ["serena", "mcp", "lsp", "code-workflow", "memories", "hooks", "rldyour"],
+      "tags": [
+        "serena",
+        "mcp",
+        "lsp",
+        "code-workflow",
+        "memories",
+        "hooks",
+        "rldyour"
+      ],
       "license": "MIT"
     },
     {
       "name": "rldyour-security",
       "source": "./plugins/rldyour-security",
       "description": "Безопасность по OWASP Top 10 2025 при реализации + защитный Mythos-style security review через /ry-sec-review slash command.",
-      "version": "0.2.0",
+      "version": "0.2.1",
       "author": {
         "name": "rldyourmnd"
       },
       "category": "security",
-      "tags": ["security", "owasp", "asvs", "ry-sec-review", "vulnerability-review", "rldyour"],
+      "tags": [
+        "security",
+        "owasp",
+        "asvs",
+        "ry-sec-review",
+        "vulnerability-review",
+        "rldyour"
+      ],
       "license": "MIT"
     },
     {
       "name": "rldyour-browser",
       "source": "./plugins/rldyour-browser",
       "description": "Браузерные воркфлоу через Playwright и Chrome DevTools MCP — валидация UI/pixel-perfect/e2e, дебаг console/network/perf, маршрутизация. Skills-only — MCP transport from rldyour-mcps. Browser workflows.",
-      "version": "0.2.0",
+      "version": "0.2.1",
       "author": {
         "name": "rldyourmnd"
       },
       "category": "development",
-      "tags": ["browser", "playwright", "chrome-devtools", "mcp", "ui-validation", "browser-debug", "rldyour"],
+      "tags": [
+        "browser",
+        "playwright",
+        "chrome-devtools",
+        "mcp",
+        "ui-validation",
+        "browser-debug",
+        "rldyour"
+      ],
       "license": "MIT"
     },
     {
       "name": "rldyour-design",
       "source": "./plugins/rldyour-design",
       "description": "Сквозной дизайн-воркфлоу: Figma → код → токены → FSD → shadcn/ui → ReactBits → browser-валидация. 5 скиллов + /ry-design. Skills-only — MCP transport from rldyour-mcps.",
-      "version": "0.2.0",
+      "version": "0.2.1",
       "author": {
         "name": "rldyourmnd"
       },
       "category": "design",
-      "tags": ["design", "figma", "shadcn", "reactbits", "fsd", "design-system", "tokens", "ry-design", "rldyour"],
+      "tags": [
+        "design",
+        "figma",
+        "shadcn",
+        "reactbits",
+        "fsd",
+        "design-system",
+        "tokens",
+        "ry-design",
+        "rldyour"
+      ],
       "license": "MIT"
     },
     {
       "name": "rldyour-lsps",
       "source": "./plugins/rldyour-lsps",
       "description": "LSP-воркфлоу: маршрутизация, health-check, brew-first установка, Serena LSP integration. 4 skills + 2 scripts + 3 references. Покрывает Python/Rust/Dart/TS/Go/C++/Qt/YAML/Docker/HTML/CSS/Shell/JSON/TOML/Markdown.",
-      "version": "0.2.0",
+      "version": "0.2.1",
       "author": {
         "name": "rldyourmnd"
       },
       "category": "development",
-      "tags": ["lsp", "language-server", "serena", "pyright", "typescript-language-server", "rust-analyzer", "gopls", "clangd", "rldyour"],
+      "tags": [
+        "lsp",
+        "language-server",
+        "serena",
+        "pyright",
+        "typescript-language-server",
+        "rust-analyzer",
+        "gopls",
+        "clangd",
+        "rldyour"
+      ],
       "license": "MIT"
     },
     {
       "name": "rldyour-flow",
       "source": "./plugins/rldyour-flow",
       "description": "Автономный SDLC-воркфлоу: ry-init/start/newp/review/deploy + 6 reviewer subagents + post-task-sync + instruction-docs-sync. Хуки SessionStart/PreToolUse/Stop. Fullrepo branch.",
-      "version": "0.2.2",
+      "version": "0.2.3",
       "author": {
         "name": "rldyourmnd"
       },
       "category": "development",
-      "tags": ["sdlc", "workflow", "ry-init", "ry-start", "ry-review", "ry-deploy", "reviewer", "fullrepo", "rldyour"],
+      "tags": [
+        "sdlc",
+        "workflow",
+        "ry-init",
+        "ry-start",
+        "ry-review",
+        "ry-deploy",
+        "reviewer",
+        "fullrepo",
+        "rldyour"
+      ],
       "license": "MIT"
     },
     {
       "name": "rldyour-rules",
       "source": "./plugins/rldyour-rules",
       "description": "Quality-first инженерные правила: clean architecture (FSD/VSA/Hexagonal), implementation discipline, dependency policy + supply chain (SLSA L2), verification gates (pyright/ruff/ESLint v9), AGENTS.md/.claude/CLAUDE.md/MADR 4.0.0, /ry-rules-review.",
-      "version": "0.2.0",
+      "version": "0.2.1",
       "author": {
         "name": "rldyourmnd"
       },
       "category": "development",
-      "tags": ["rules", "quality", "fsd", "vsa", "hexagonal", "supply-chain", "slsa", "adr", "ry-rules-review", "rldyour"],
+      "tags": [
+        "rules",
+        "quality",
+        "fsd",
+        "vsa",
+        "hexagonal",
+        "supply-chain",
+        "slsa",
+        "adr",
+        "ry-rules-review",
+        "rldyour"
+      ],
       "license": "MIT"
     }
   ]

@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""validate_instruction_docs.py — verify AGENTS.md and .claude/CLAUDE.md hygiene.
+"""validate_instruction_docs.py - verify AGENTS.md and .claude/CLAUDE.md hygiene.
 
 For the rldyour-claudecode marketplace these files are agent-only (live on the
 `fullrepo` branch, excluded from `main` via `.git/info/exclude`). The validator
-only inspects the worktree state — it does not require the files to be tracked
+only inspects the worktree state - it does not require the files to be tracked
 in the current branch.
 
 Checks:

@@ -42,7 +42,7 @@ Create or update `REVIEW.md` when review-specific rules are durable:
 - Known generated files to ignore.
 - Project-specific false positives.
 
-## ADRs (MADR 4.0.0 — May 2026 canonical)
+## ADRs (MADR 4.0.0 - May 2026 canonical)
 
 Use the **MADR 4.0.0** template from [adr.github.io/madr](https://adr.github.io/madr/). Released September 2024, stable in 2026.
 

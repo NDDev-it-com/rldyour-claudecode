@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# smoke_fullrepo_sync.sh — verify fullrepo CLI subcommands work without surprises.
+# smoke_fullrepo_sync.sh - verify fullrepo CLI subcommands work without surprises.
 #
 # Coverage:
 #   1. --status-json emits valid JSON with expected keys.
@@ -9,7 +9,7 @@
 #      (AGENTS.md, .claude/**, .serena/{project.yml, memories, plans, research,
 #      newproj, deploy}, etc.).
 #
-# Does NOT touch the remote `fullrepo` branch — never runs --publish.
+# Does NOT touch the remote `fullrepo` branch - never runs --publish.
 
 set -euo pipefail
 IFS=$'\n\t'

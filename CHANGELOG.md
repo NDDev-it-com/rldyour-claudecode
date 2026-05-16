@@ -6,9 +6,11 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+## [0.2.3] - 2026-05-17
+
 ### Fixed
 
-- **Stop-hook loop guard fingerprint coverage gap (HIGH, D31)** —
+- **Stop-hook loop guard fingerprint coverage gap (HIGH, D31)** -
   closure of `2026-05-16T1859Z-61b913d` systemic audit wave quality F-1
   (severity high, confidence 85). `plugins/rldyour-flow/scripts/flow_post_task_state.py:267-279`
   `fingerprint_payload` previously excluded three contributors to
@@ -19,10 +21,13 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
   / doc-file state produced an identical fingerprint, the loop guard at
   `plugins/rldyour-flow/hooks/stop_post_task_sync.sh:74` matched the
   stale marker, and Stop passed silently despite `needs_flow_sync=true`.
-  Fix adds the three missing fields to `fingerprint_payload`. Verified:
-  fingerprint changed from `77fcb6aade5fc6ff` to `3c758e857d07cf8e`
-  after the edit at HEAD `61b913d`.
-- **Serena Stop-hook loop guard asymmetry (MEDIUM, D32)** —
+  Fix adds the three missing fields to `fingerprint_payload`. Verified
+  live in this wave: fingerprint changed from `4b98fbf9540c2719`
+  (clean state, HEAD 557bc00) to `a828ea1a9635f8eb` (clean state,
+  HEAD 00d3f82) - two different fingerprints for the same `ahead=0,
+  dirty=0` state because the new fields now correctly enter the hash.
+  Commit `23901c6`.
+- **Serena Stop-hook loop guard asymmetry (MEDIUM, D32)** -
   closure of `2026-05-16T1859Z-61b913d` quality F-2 (medium, 80).
   `plugins/rldyour-serena-mcp/hooks/stop_memory_sync.sh:72,77` wrote a
   bare `HEAD_SHA` to `.serena/.sync_marker` while
@@ -31,18 +36,51 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
   Stop saw the same `HEAD_SHA` and silently passed. Fix mirrors the
   flow pattern: marker now contains `${HEAD_SHA}:${NEWEST_SHA:-none}`
   compound fingerprint that captures both the project HEAD and the most
-  recent memory-sync commit.
-- **Swallowed non-dict analysis payload (MEDIUM, D33)** —
+  recent memory-sync commit. Commit `23901c6`.
+- **Swallowed non-dict analysis payload (MEDIUM, D33)** -
   closure of `2026-05-16T1859Z-61b913d` quality F-3 (medium, 75).
-  `plugins/rldyour-serena-mcp/scripts/serena_memory_state.py:102-104`
+  `plugins/rldyour-serena-mcp/scripts/serena_memory_state.py:102-107`
   had a bare `pass` that silently discarded malformed analysis
   payloads, violating PHILOSOPHY-01-QUALITY-FIRST "no swallowed errors"
   hard ban. Fix logs the discard to stderr with type information; the
   control flow continues with the ref-range fallback as before.
+  Commit `d563ea5`.
+- **`validate_reviewer_contracts.sh` header listed 8 invariants but
+  script checks 9 (D36)** - closure of wave-3 doc-fix pass.
+  `scripts/validate_reviewer_contracts.sh` header comment missed
+  invariant #9 (`RLDYOUR_REPORT_EOF` appears `>= 3` times in protocol)
+  at line 100. Header now lists all 9 invariants and adds the concrete
+  PASS breakdown: 7 PASS per agent x 6 agents = 42, plus 4
+  protocol-level PASS = 46 total. No functional change. Commit
+  `6f0c70d`.
+- **Non-canonical cross-plugin path in rldyour-rules (D37)** -
+  closure of architecture F-2 (info 78). `plugins/rldyour-rules/skills/project-instructions-policy/SKILL.md:28`
+  referenced `${CLAUDE_PLUGIN_ROOT}/../rldyour-flow/scripts/fullrepo_sync.py`,
+  a relative cross-plugin path that fails under partial install since
+  `rldyour-rules/plugin.json` does not declare `rldyour-flow` as a
+  dependency. Replaced with the canonical cross-plugin pattern
+  `python3 "$(git rev-parse --show-toplevel)"/plugins/rldyour-flow/scripts/fullrepo_sync.py --bootstrap-init`
+  per PATTERNS-01-CANONICAL Cross-Plugin Path Patterns. Both plugins
+  co-exist inside the marketplace `pluginRoot: ./plugins`, so the
+  git-toplevel path resolves correctly without a declared dependency.
+  Commit `9a49121`.
+
+### Added
+
+- **`config/REVIEW.md.template` (D38)** - closure of verification F-4
+  (info 90). Global `~/.claude/CLAUDE.md` REVIEW.md section promised
+  `Template in config/REVIEW.md.template` but the template was absent
+  from the repository - a documented promise without an artifact. New
+  68-line template with eight sections (Always Check, Architecture,
+  Quality, Consistency, Tests, Security, Skip, Notes) plus
+  project-specific examples. Downstream projects consuming this
+  marketplace copy the template to their repo root as `REVIEW.md`;
+  reviewer agents (`flow-*-review`, `ry-rules-review`, `ry-sec-review`)
+  auto-discover and read `REVIEW.md` when present. Commit `00d3f82`.
 
 ### Changed
 
-- **CI parity with local validation harness (D34)** —
+- **CI parity with local validation harness (D34)** -
   closure of `2026-05-16T1859Z-61b913d` verification F-1 + F-2 (both
   medium, confidence 90/85). `.github/workflows/validate.yml`
   `syntax-checks` job now invokes `scripts/validate_reviewer_contracts.sh`
@@ -50,9 +88,10 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
   discipline + HTTP preflight). Reviewer-transport drift and MCP
   pinning regressions can no longer pass CI on the basis of "local
   validate_marketplace.sh catches it" alone. `smoke_mcp_capabilities.sh`
-  remains local-only by design — it performs interactive session-based
-  JSON-RPC initialize that requires auth unavailable in CI.
-- **Semgrep CI container digest-pinned (D35)** —
+  remains local-only by design - it performs interactive session-based
+  JSON-RPC initialize that requires auth unavailable in CI. Commit
+  `dcbc7cc`.
+- **Semgrep CI container digest-pinned (D35)** -
   closure of `2026-05-16T1859Z-61b913d` security F-1 (medium, 90, OWASP
   A03:2025 Software Supply Chain Failures). `.github/workflows/semgrep.yml`
   `container.image` changed from the mutable tag `semgrep/semgrep:1.163.0`
@@ -62,26 +101,52 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
   claim "SHA-pinned" is now structurally true. Re-resolution
   procedure is documented inline. Bumping the MCP `semgrep` pin in
   `plugins/rldyour-mcps/.mcp.json` should be paired with re-resolving
-  this digest.
+  this digest. Commit `dcbc7cc`.
+- **Codebase-wide em-dash normalisation** - the global rldyour rule
+  `No em dashes ( - ) - use only hyphens (-) everywhere` was previously
+  violated in 603+ locations across docs, memories, skills, agents,
+  references, commands, scripts, CHANGELOG, README, plugin.json
+  descriptions, and config files. Every ` - ` (space + em-dash +
+  space) and bare em-dash replaced with hyphen via a two-pass `sed`
+  over the entire repository. Zero em-dashes remain at HEAD. No
+  functional change: only typographic normalisation aligning practice
+  with policy.
+- **All marketplace and plugin versions bumped** - per the project
+  release policy ("after any marketplace or plugin change, bump
+  versions of both the marketplace and all touched plugins"). VERSION
+  `0.2.2 -> 0.2.3`. `rldyour-flow` `0.2.2 -> 0.2.3`. All eight other
+  plugins (`rldyour-mcps`, `rldyour-serena-mcp`, `rldyour-explore`,
+  `rldyour-security`, `rldyour-browser`, `rldyour-design`,
+  `rldyour-lsps`, `rldyour-rules`) bumped `0.2.0 -> 0.2.1` because
+  the em-dash normalisation touched their `plugin.json` `description`
+  fields and several of their `SKILL.md` / agent / command bodies,
+  triggering the cache-refresh rule per AGENTS.md
+  (`SKILL.md/agent.md/hooks.json/.mcp.json` changes trigger refresh).
+  `marketplace.json` entries updated to match.
 
 ### Notes
 
-- All five fixes are script body / hook script body / CI workflow
-  changes. No `plugins/*/plugin.json` version bump required per
-  AGENTS.md cache-refresh rule (`SKILL.md/agent.md/hooks.json/.mcp.json`
-  changes trigger refresh; script body changes do not). `VERSION`
-  remains at `0.2.2` until a marketplace-boundary release rolls these
-  up alongside other changes.
-- Verification: `bash scripts/validate_marketplace.sh` PASSES after all
-  five fixes at HEAD (pre-commit). Updated state-script outputs:
-  `flow_post_task_state.py fingerprint=3c758e857d07cf8e`,
-  `serena_memory_state.py is_current=true memory_count=18`.
+- This release is a documentation, version-policy, and consistency
+  consolidation. Every file change is auditable to a specific finding
+  ID (D31 through D38) or to the explicit codebase-wide em-dash
+  normalisation decision. No new features.
+- Verification at HEAD: `bash scripts/validate_marketplace.sh` PASSES;
+  `bash scripts/validate_reviewer_contracts.sh` reports `46 PASS / 0
+  drift`; `python3 scripts/validate_plugin_versions.py` reports
+  marketplace/manifest parity for all nine plugins;
+  `python3 plugins/rldyour-serena-mcp/scripts/serena_memory_state.py`
+  reports `is_current=true, memory_count=18,
+  memory_match_reason=direct-head-reference`.
+- Tag convention: `marketplace--v0.2.3` for the marketplace boundary
+  and `<plugin-name>--v<version>` per plugin (nine plugin tags) via
+  `claude plugin tag --push`. Tags should be created only after this
+  release is pushed and validated.
 
 ## [0.2.2] - 2026-05-16
 
 ### Fixed
 
-- **Reviewer output transport — wave-2 hardening (D29 follow-up)** —
+- **Reviewer output transport - wave-2 hardening (D29 follow-up)** -
   applied the medium-priority findings from the
   `2026-05-16T1433Z-e3d146b` self-bootstrap review wave. The
   `0.2.1` contract worked end-to-end (5 of 6 reviewers returned
@@ -167,7 +232,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ### Fixed
 
-- **Reviewer subagent output transport (D29, R6)** — Claude Code 2.0.77+
+- **Reviewer subagent output transport (D29, R6)** - Claude Code 2.0.77+
   has a confirmed regression where `task.output` from a subagent can be
   returned to the parent session as the full JSONL transcript (up to
   200-500 KB) instead of the final assistant text (~500 bytes), and
@@ -213,7 +278,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
   cross-track artefact.
 - `.gitignore` adds `.serena/reviews/` alongside the existing
   `.serena/cache/` and `.serena/diagnostics/` runtime-artefact entries.
-  Fullrepo policy unchanged — `.serena/reviews/` is not in
+  Fullrepo policy unchanged - `.serena/reviews/` is not in
   `AGENT_ONLY_PATTERNS` in
   `plugins/rldyour-flow/scripts/fullrepo_sync.py`, so it stays regular
   gitignored content and is not fullrepo-managed.
@@ -248,7 +313,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ### Changed
 
-- **Marketplace + all 9 plugins synchronised to `0.2.0`** — first
+- **Marketplace + all 9 plugins synchronised to `0.2.0`** - first
   MINOR-line boundary that consolidates the Wave 1-5 series into a
   single release tag set. No plugin runtime files added or modified
   relative to 0.1.9; the bump invalidates the per-plugin runtime cache at
@@ -265,16 +330,16 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
   entries aligned. Tags created via `claude plugin tag --push` per
   plugin plus `marketplace--v0.2.0` for the marketplace boundary.
 
-- **Wave 1-2 consolidation** — Conventional Commits discipline, strict-mode propagation
+- **Wave 1-2 consolidation** - Conventional Commits discipline, strict-mode propagation
   to 14 utility/plugin scripts, prompt-injection markers expanded to 13+
   families with `re.IGNORECASE | re.UNICODE`, branch-name two-gate
   validation, agent `tools:` allowlist invariant via
   `scripts/validate_agent_tools.py`.
-- **Wave 3 consolidation** — Serena memory base extended into the project brain: 8 new
+- **Wave 3 consolidation** - Serena memory base extended into the project brain: 8 new
   topic memories (`PHILOSOPHY-01-QUALITY-FIRST`, `PATTERNS-01-CANONICAL`,
   `BROWSER-01-WORKFLOW`, `DESIGN-01-WORKFLOW`, `EXPLORE-01-RESEARCH`,
   `LSPS-01-LANGUAGE-SERVERS`, `RULES-01-POLICY`, `SECURITY-01-OWASP`).
-- **Wave 4 consolidation** — `bootstrap_check.sh` agent-only divergence guard (R5
+- **Wave 4 consolidation** - `bootstrap_check.sh` agent-only divergence guard (R5
   closure as `D19`), `.aider*` glob expansion at runtime, `WARN` to
   stderr for `RLDYOUR_FORCE_BOOTSTRAP=1` bypass and `git fetch`
   failures, `scripts/smoke_bootstrap_check.sh` with 7 assertions plus
@@ -283,7 +348,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
   `CORE-01-INDEX`), OWASP Top 10:2025 (Final 2025-11-06) + ASVS 5.0.0
   precision, `TECHDEBT-01-NOW` Source Of Truth (11 anchors), D19-D23
   closures.
-- **Wave 5 consolidation** — repository transferred from `rldyourmnd/rldyour-claude`
+- **Wave 5 consolidation** - repository transferred from `rldyourmnd/rldyour-claude`
   to `NDDev-it-com/rldyour-claudecode` (private). Marketplace slug
   renamed to `rldyour-claudecode`. CI hardening per OWASP A01:2025 +
   A03:2025: SHA-pinned `actions/checkout@v6.0.2`,
@@ -302,7 +367,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 - **No plugin runtime files added or modified in this release.** All hooks,
   skills, agents, slash commands, references, and scripts retain their
   Wave 5 state byte-for-byte. The bump is purely a cache-invalidation +
-  tag boundary — same pattern Anthropic uses for minor-version bumps that
+  tag boundary - same pattern Anthropic uses for minor-version bumps that
   consolidate doc and CI improvements without behavior change.
 - **Done criteria for 0.2.0** (operator-verifiable):
   - `bash scripts/validate_marketplace.sh` passes (incl.
@@ -315,7 +380,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
   - CI workflows on the release commit: `validate`, `semgrep`,
     `dependency-check` green. `actionlint` is skipped by its
     path-filter on pure version-bump commits (no
-    `.github/workflows/**` changes) — the last green `actionlint` run
+    `.github/workflows/**` changes) - the last green `actionlint` run
     is on `334fe09` where workflow YAML was last touched. This is
     intentional and documented; not a regression.
   - Fullrepo branch republished with `tracked_agent_paths: []` and
@@ -327,7 +392,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ### Changed
 
-- **Wave 5 — CI hardening + org transfer** (repository moves from
+- **Wave 5 - CI hardening + org transfer** (repository moves from
   `rldyourmnd/rldyour-claude` to `nddev-it-com/rldyour-claudecode`,
   private visibility preserved).
   - **SHA-pinned actions** per OWASP A03:2025 supply-chain hardening.
@@ -342,21 +407,21 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
     per OWASP A01:2025 least-privilege.
   - **Concurrency group** cancels redundant runs on the same ref across all four
     workflows.
-  - **harden-runner egress audit** at the start of every job — surfaces
+  - **harden-runner egress audit** at the start of every job - surfaces
     unexpected outbound network calls in the GitHub Security tab.
   - **Claude Code CLI pinned**: `npm install -g @anthropic-ai/claude-code@2.1.143`
     (was unpinned). Closes Wave 4 security F-5 (INFO 35).
-  - **New `.github/workflows/semgrep.yml`** — SAST via Semgrep OSS rules
+  - **New `.github/workflows/semgrep.yml`** - SAST via Semgrep OSS rules
     (Docker image `semgrep/semgrep:1.163.0`, matches the MCP server pin).
     Runs `semgrep scan --config=auto --error --metrics=off` on push, PR,
     and weekly schedule. Replaces an initial CodeQL workflow that required
     GitHub Advanced Security (paid add-on, not available for this repo's
     plan); Semgrep runs as a CLI without GHAS and fails CI on
     WARNING/ERROR-severity findings.
-  - **New `.github/workflows/actionlint.yml`** — workflow YAML linter using
+  - **New `.github/workflows/actionlint.yml`** - workflow YAML linter using
     `rhysd/actionlint` v1.7.12 binary, SHA256-verified against upstream
     `checksums.txt` (`8aca8db96f1b94770f1b0d72b6dddcb1ebb8123cb3712530b08cc387b349a3d8`).
-  - **New `.github/dependabot.yml`** — monthly `github-actions` ecosystem
+  - **New `.github/dependabot.yml`** - monthly `github-actions` ecosystem
     updates, grouped minor+patch bumps, max 5 open PRs.
   - **Python AST + JSON parse checks** in `validate.yml` now use `fail=1` +
     `sys.exit(fail)` instead of fail-first behavior, surfacing all failures
@@ -392,8 +457,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ### Changed
 
-- **Wave 4 polish — R5 hardening + memory graph + research precision** (continues Wave 3
-  vision: "Serena memories — мозг проекта" with quality-first / scalability-first
+- **Wave 4 polish - R5 hardening + memory graph + research precision** (continues Wave 3
+  vision: "Serena memories - мозг проекта" with quality-first / scalability-first
   defaults). Closes 6 deferred items from Wave 3 audit plus 21 findings from 6 parallel
   reviewer subagents (architecture, quality, consistency, integration, verification,
   security):
@@ -402,7 +467,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
     `git cat-file -e origin/fullrepo:$file` + `cmp -s $file <(git show ...)` detects
     content drift and refuses to proceed if local edits would be silently overwritten.
     Override via `RLDYOUR_FORCE_BOOTSTRAP=1` (now `WARN ... BYPASSED` to stderr, was
-    `INFO` to stdout — closes Wave 4 security F-2, conf 70). `.aider*` glob expansion
+    `INFO` to stdout - closes Wave 4 security F-2, conf 70). `.aider*` glob expansion
     via `shopt -s nullglob` covers `.aiderignore` / `.aider.conf.yml` / etc. that the
     earlier literal `.aider` entry missed (closes Wave 4 quality+integration F-1,
     conf 90). `git fetch` failure emits explicit `WARN ... possibly stale local ref`
@@ -447,10 +512,10 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
   - **R6 (new, open)**: `AGENT_ONLY_PATHS` bash array vs `AGENT_ONLY_PATTERNS`
     python tuple manual synchronization. Mitigation: smoke drift detector with
     tolerance `<=5`. Future hardening: generate bash array from python via
-    `--list-agent-only-patterns` CLI flag (deferred — smoke gate sufficient at
+    `--list-agent-only-patterns` CLI flag (deferred - smoke gate sufficient at
     current scale).
 - **Deferred to Wave 5** (acknowledged, not blocking 0.1.8): GitHub Actions SHA
-  pinning (security F-3, LOW 90 — `actions/checkout@v5` and `actions/setup-{node,
+  pinning (security F-3, LOW 90 - `actions/checkout@v5` and `actions/setup-{node,
   python}@v5` use mutable tags), `npm install -g @anthropic-ai/claude-code` pinning
   (security F-5, INFO 35), symlink handling in `cmp -s` content compare (quality
   F-3, LOW 80), `flow-memory-sync` ↔ `session_start_*` path sanitization variant
@@ -468,7 +533,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ### Changed
 
-- **Wave 2 polish — "идеально выточенная система" (single seamless mechanism)**:
+- **Wave 2 polish - "идеально выточенная система" (single seamless mechanism)**:
   - **Tier 1 (critical fixes)**: cross-plugin path in `flow-post-task-sync` SKILL replaced
     with `$(git rev-parse --show-toplevel)` (cwd-independent; `${CLAUDE_PROJECT_DIR}` is
     documented only for hook commands and stdio MCP env, not for skill execution context).
@@ -477,7 +542,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
     TECHDEBT-01-NOW.md gained R4 (non-Serena MCP wildcard future-proofing) and R5
     (bootstrap_check.sh footgun documentation).
   - **Tier 2 (consistency + observability)**: 14 utility/plugin scripts gained
-    `IFS=$'\n\t'` + `unset CDPATH` after `set -euo pipefail` — 9 root `scripts/*.sh`
+    `IFS=$'\n\t'` + `unset CDPATH` after `set -euo pipefail` - 9 root `scripts/*.sh`
     (smoke_hooks, smoke_fullrepo_sync, smoke_mcp_capabilities, smoke_mcp_runtime,
     smoke_serena_memory_taxonomy, sync_fullrepo_branch, validate_marketplace,
     collect_diagnostics, install_local_git_hooks) plus 5 plugin scripts
@@ -487,10 +552,10 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
     existing gold standard in `scripts/install-rldyour-marketplace.sh`.
     CI workflow `.github/workflows/validate.yml` extended with 3 new steps in
     syntax-checks job: Agent tools allowlist validation, Hook lifecycle smoke,
-    Serena memory taxonomy smoke. No `fetch-depth: 0` — current smokes don't need it.
+    Serena memory taxonomy smoke. No `fetch-depth: 0` - current smokes don't need it.
   - **Tier 3 (defensive security)**: `scripts/worktree_add.sh` adds `git
     check-ref-format --branch` as second gate after the conservative regex
-    `^[A-Za-z0-9._/-]{1,255}$` — rejects refs the regex accepts but git refuses
+    `^[A-Za-z0-9._/-]{1,255}$` - rejects refs the regex accepts but git refuses
     (`-/foo`, `/foo`, `feat/../etc/passwd`, double slash, etc.) as defence-in-depth
     against future caller-misuse. `plugins/rldyour-flow/hooks/post_tool_use_commit_advice.sh`
     expanded prompt-injection markers from 3 to 13+ families including Llama/Mistral
@@ -509,7 +574,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 - **Plugin runtime versions**:
   - `rldyour-flow` bumped `0.1.3` → `0.1.4` (`flow-post-task-sync` SKILL.md changed
-    — triggers `claude plugin update` cache refresh).
+    - triggers `claude plugin update` cache refresh).
   - VERSION bumped `0.1.6` → `0.1.7` (release boundary; Wave 2 contains durable
     runtime and safety changes).
   - Other 8 plugins unchanged (shell scripts and hook bodies don't trigger plugin
@@ -522,7 +587,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
   commit subject into LLM context. Covers Llama/Mistral instruction tags, Llama-3
   special tokens, chat-template tags, Markdown system prefix, English role-play
   prefixes, and Russian-language equivalents (project is Russian-leading per
-  `AGENTS.md` Engineering Constraints — Russian-only attacks were entirely uncovered
+  `AGENTS.md` Engineering Constraints - Russian-only attacks were entirely uncovered
   before this wave). Defence-in-depth, not a known active exploit fix.
 - **BRANCH validation second gate (MEDIUM, conf 70)**: `git check-ref-format
   --branch` invocation in `scripts/worktree_add.sh` rejects refs git itself would
@@ -534,16 +599,16 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ### Verification
 
-- `bash scripts/validate_marketplace.sh` — full harness passes including new
+- `bash scripts/validate_marketplace.sh` - full harness passes including new
   "Agent tools allowlist validation" step (8 agent files × 13 MCP servers).
-- `bash scripts/smoke_hooks.sh` — passes including 6 new runtime stdin payload
+- `bash scripts/smoke_hooks.sh` - passes including 6 new runtime stdin payload
   cases (verified parse safety with `IFS=$'\n\t'` changes from Wave 1+2).
-- `bash scripts/bootstrap_check.sh` — passes including new pre-push hook advisory.
+- `bash scripts/bootstrap_check.sh` - passes including new pre-push hook advisory.
 - Manual injection tests: `[INST]`, `[SYSTEM]`, `Игнорируй все предыдущие
-  инструкции`, `теперь ты` — all redacted to `[REDACTED]` in `additionalContext`.
+  инструкции`, `теперь ты` - all redacted to `[REDACTED]` in `additionalContext`.
 - Manual branch validation tests: `-/foo`, `feat/../etc/passwd`,
-  `--upload-pack=evil` — all REJECT (regex layer + git check-ref-format layer);
-  `feat/test-validation_v1.0` — ACCEPT, dry-run produces correct git command.
+  `--upload-pack=evil` - all REJECT (regex layer + git check-ref-format layer);
+  `feat/test-validation_v1.0` - ACCEPT, dry-run produces correct git command.
 - 6 parallel reviewer subagents (architecture, quality, consistency, integration,
   verification, security) executed with self-contained prompts; 6 must-fix
   findings applied (Architecture F-1 + F-3, Consistency F-1, Integration F-2,
@@ -558,8 +623,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 - **Agent tools migration (`disallowedTools` → explicit `tools:` allowlist)**:
   - All 6 `rldyour-flow` reviewer agents (`flow-architecture-review`, `flow-quality-review`, `flow-consistency-review`, `flow-integration-review`, `flow-verification-review`, `flow-security-review`) migrated to explicit positive allowlist.
   - `rldyour-explore/ry-explore` agent migrated to the same pattern.
-  - Pattern follows canonical `anthropics/claude-plugins-official/plugins/pr-review-toolkit/agents/code-reviewer` — explicit allowlist for future-proof read-only enforcement (isolates these agents from any future edit-like tool that Claude Code might add).
-  - Replaced broad `mcp__plugin_rldyour-mcps_serena__*` wildcard with an explicit 14-tool read-only Serena subset (`find_symbol`, `find_referencing_symbols`, `find_implementations`, `find_declaration`, `get_symbols_overview`, `search_for_pattern`, `read_file`, `list_dir`, `find_file`, `list_memories`, `read_memory`, `get_current_config`, `get_diagnostics_for_file`, `check_onboarding_performed`). The wildcard previously included Serena write tools (`create_text_file`, `replace_content`, `replace_symbol_body`, `insert_after_symbol`, `insert_before_symbol`, `rename_symbol`, `safe_delete_symbol`, `write_memory`, `edit_memory`, `delete_memory`, `rename_memory`) — the new explicit list eliminates that confused-deputy / prompt-injection risk for read-only reviewer and research agents.
+  - Pattern follows canonical `anthropics/claude-plugins-official/plugins/pr-review-toolkit/agents/code-reviewer` - explicit allowlist for future-proof read-only enforcement (isolates these agents from any future edit-like tool that Claude Code might add).
+  - Replaced broad `mcp__plugin_rldyour-mcps_serena__*` wildcard with an explicit 14-tool read-only Serena subset (`find_symbol`, `find_referencing_symbols`, `find_implementations`, `find_declaration`, `get_symbols_overview`, `search_for_pattern`, `read_file`, `list_dir`, `find_file`, `list_memories`, `read_memory`, `get_current_config`, `get_diagnostics_for_file`, `check_onboarding_performed`). The wildcard previously included Serena write tools (`create_text_file`, `replace_content`, `replace_symbol_body`, `insert_after_symbol`, `insert_before_symbol`, `rename_symbol`, `safe_delete_symbol`, `write_memory`, `edit_memory`, `delete_memory`, `rename_memory`) - the new explicit list eliminates that confused-deputy / prompt-injection risk for read-only reviewer and research agents.
   - `flow-security-review` additionally allows `WebFetch`, `WebSearch`, `mcp__plugin_rldyour-mcps_semgrep__*` for CVE lookups and SAST. Semgrep MCP wildcard kept (server exposes only scan/analysis tools).
   - `flow-memory-sync` intentionally retains `disallowedTools: [Edit, Write, NotebookEdit]` denylist (its `tools:` allowlist already grants Serena memory write tools needed for its canonical writer role; the denylist is defence-in-depth against project-file mutation).
   - Plugin version bumps: `rldyour-flow` `0.1.2` → `0.1.3` and `rldyour-explore` `0.1.2` → `0.1.3` (agent frontmatter affects runtime; bump triggers `claude plugin update` cache refresh).
@@ -572,7 +637,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 - **Instruction docs expansion (cross-tool best practices, no `@import` redirection)**:
   - `AGENTS.md`: new `## Codex CLI Compatibility` section (OpenAI Codex CLI reads AGENTS.md, layered `~/.codex/AGENTS.md` + repository concatenation, Codex runs test commands listed in AGENTS.md before finishing); new `## Cross-Tool Support` section (Linux Foundation AAIF since `2025-12-09`, 30+ supported tools, 60k+ adopting repos per `https://agents.md/` as of May 2026); bilingual descriptions rationale in Engineering Constraints; HTML maintainer comment line cap raised `180` → `200`.
-  - `.claude/CLAUDE.md`: new `## Anthropic Precedent Confirmations` section (7 verified canonical patterns with citations to `anthropics/claude-plugins-official` SHA `1a2f18b05cf5652fd25403e8d229fc884fb84103` + community precedents); `skillListingBudgetFraction` recommendation `0.03` → `0.04` (Sonnet 200K context truncates tail-end auto-trigger descriptions for bilingual entries averaging ~373-400 chars at 0.03 — 0.04 fits both 200K and 1M context); agent frontmatter spec updated (`tools:` allowlist primary, `disallowedTools:` legacy); v2.1.139 `args: string[]` exec-form decline expanded with verification evidence (none of Anthropic's own plugin hooks.json use exec-form either).
+  - `.claude/CLAUDE.md`: new `## Anthropic Precedent Confirmations` section (7 verified canonical patterns with citations to `anthropics/claude-plugins-official` SHA `1a2f18b05cf5652fd25403e8d229fc884fb84103` + community precedents); `skillListingBudgetFraction` recommendation `0.03` → `0.04` (Sonnet 200K context truncates tail-end auto-trigger descriptions for bilingual entries averaging ~373-400 chars at 0.03 - 0.04 fits both 200K and 1M context); agent frontmatter spec updated (`tools:` allowlist primary, `disallowedTools:` legacy); v2.1.139 `args: string[]` exec-form decline expanded with verification evidence (none of Anthropic's own plugin hooks.json use exec-form either).
 
 ### Fixed
 
@@ -661,7 +726,7 @@ Hotfix for GitHub MCP server: the previous `https://api.githubcopilot.com/mcp/` 
 ### Fixed
 
 - `plugins/rldyour-mcps/.mcp.json` `github` entry rewritten from HTTP transport (`api.githubcopilot.com/mcp/`, Copilot-gated) to local stdio `github-mcp-server stdio --toolsets=repos,issues,pull_requests,users,context` with `GITHUB_PERSONAL_ACCESS_TOKEN` env. Requires `brew install github-mcp-server` (or equivalent) on PATH; minimum version v1.0.4. PAT scopes: `repo` + `read:org` (Copilot subscription not required).
-- `scripts/smoke_mcp_capabilities.sh` no longer blanket-passes HTTP 401/403 for `HTTP_AUTH_GATED` servers — that shortcut hid the exact 403 entitlement-denial above. Now performs a real MCP `initialize` JSON-RPC handshake against HTTP endpoints, parses both `application/json` and `text/event-stream` response bodies, checks `result.serverInfo.name`, and classifies failures: 401 without auth → SKIP (reachable, no creds), 401 with auth → FAIL (token rejected), 403 → FAIL with explicit "switch to stdio github-mcp-server" hint, 200 without `serverInfo` → FAIL (silent-misconfig catch). Sends canonical `MCP-Protocol-Version` header. `figma` remains in `HTTP_AUTH_GATED` (accepts 200 without `serverInfo` until session id is established); `github` removed because it is now stdio.
+- `scripts/smoke_mcp_capabilities.sh` no longer blanket-passes HTTP 401/403 for `HTTP_AUTH_GATED` servers - that shortcut hid the exact 403 entitlement-denial above. Now performs a real MCP `initialize` JSON-RPC handshake against HTTP endpoints, parses both `application/json` and `text/event-stream` response bodies, checks `result.serverInfo.name`, and classifies failures: 401 without auth → SKIP (reachable, no creds), 401 with auth → FAIL (token rejected), 403 → FAIL with explicit "switch to stdio github-mcp-server" hint, 200 without `serverInfo` → FAIL (silent-misconfig catch). Sends canonical `MCP-Protocol-Version` header. `figma` remains in `HTTP_AUTH_GATED` (accepts 200 without `serverInfo` until session id is established); `github` removed because it is now stdio.
 
 ### Changed
 
@@ -715,7 +780,7 @@ Release boundary cut after the 2026-05-08..2026-05-12 wave of best-practice, MCP
 ### Added
 
 - Worktree workflow:
-  - `plugins/rldyour-flow/hooks/session_start_worktree_bootstrap.sh` —
+  - `plugins/rldyour-flow/hooks/session_start_worktree_bootstrap.sh` -
     `SessionStart` hook (timeout 30s) that detects a fresh worktree
     (missing AGENTS.md / .claude/CLAUDE.md / .serena/project.yml marker)
     and auto-runs `fullrepo_sync.py --restore` to install the
@@ -723,7 +788,7 @@ Release boundary cut after the 2026-05-08..2026-05-12 wave of best-practice, MCP
     paths from `origin/fullrepo`. Skip via
     `RLDYOUR_SKIP_WORKTREE_BOOTSTRAP=1`. The hook never publishes,
     never mutates origin.
-  - `scripts/worktree_add.sh` — one-step helper for the manual
+  - `scripts/worktree_add.sh` - one-step helper for the manual
     `git worktree add` flow: detects whether the branch is local /
     remote / new, runs `git worktree add` with the right ref, then
     bootstraps agent-only context. Supports `RLDYOUR_DRY_RUN=1` and
@@ -733,7 +798,7 @@ Release boundary cut after the 2026-05-08..2026-05-12 wave of best-practice, MCP
     flow, the Claude Code v2.1.139 `worktree.{baseRef,symlinkDirectories,
     sparsePaths}` settings, and the maintenance contract (per-worktree
     `.serena/memories/`, reconciled via `flow-post-task-sync` publish).
-- `scripts/smoke_mcp_capabilities.sh` — capability-level smoke harness.
+- `scripts/smoke_mcp_capabilities.sh` - capability-level smoke harness.
   Spawns each pinned MCP server (stdio) or POSTs to its endpoint (HTTP),
   performs the JSON-RPC `initialize` + `tools/list` handshake, and asserts
   a non-empty tool set. Supports `--server <name>` for targeted probes,
@@ -760,7 +825,7 @@ Release boundary cut after the 2026-05-08..2026-05-12 wave of best-practice, MCP
   user-visible runtime indicators while hooks fire.
 - `flow-memory-sync` plugin-shipped subagent with anti-hallucination contract
   (source-of-truth hierarchy code > tests > git diff > existing memories;
-  citation per claim; removal-first principle; narrow tools — Serena memory
+  citation per claim; removal-first principle; narrow tools - Serena memory
   MCP plus read-only Bash/Read/Grep/Glob; `disallowedTools: [Edit, Write,
   NotebookEdit]`). Invoked by orchestrator from Stop hook advisory.
 
@@ -788,7 +853,7 @@ Release boundary cut after the 2026-05-08..2026-05-12 wave of best-practice, MCP
 
 ### Added
 
-- Initial controlled Claude Code marketplace with nine first-party plugins —
+- Initial controlled Claude Code marketplace with nine first-party plugins -
   `rldyour-mcps` (MCP transport, 13 pinned servers), `rldyour-serena-mcp`
   (semantic code workflow + memory sync + 4 lifecycle hooks), `rldyour-flow`
   (SDLC orchestrator: ry-init/start/newp/review/deploy + 6 reviewer subagents
@@ -810,7 +875,8 @@ Release boundary cut after the 2026-05-08..2026-05-12 wave of best-practice, MCP
   shell syntax checks, frontmatter presence verification on all skills,
   agents, and commands.
 
-[Unreleased]: https://github.com/NDDev-it-com/rldyour-claudecode/compare/marketplace--v0.2.2...HEAD
+[Unreleased]: https://github.com/NDDev-it-com/rldyour-claudecode/compare/marketplace--v0.2.3...HEAD
+[0.2.3]: https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/marketplace--v0.2.3
 [0.2.2]: https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/marketplace--v0.2.2
 [0.2.1]: https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/marketplace--v0.2.1
 [0.2.0]: https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/marketplace--v0.2.0

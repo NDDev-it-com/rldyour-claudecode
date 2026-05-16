@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# sync_fullrepo_branch.sh — top-level wrapper around the canonical fullrepo CLI.
+# sync_fullrepo_branch.sh - top-level wrapper around the canonical fullrepo CLI.
 #
 # Forwards every argument to plugins/rldyour-flow/scripts/fullrepo_sync.py.
 # Use this wrapper from the marketplace root for shorter, stable invocations:

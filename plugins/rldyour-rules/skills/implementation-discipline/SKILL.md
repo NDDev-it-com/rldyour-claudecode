@@ -33,6 +33,6 @@ Read `${CLAUDE_PLUGIN_ROOT}/references/rules-policy.md` for the full implementat
 - Edit без understanding existing implementation (use Serena first).
 - Mix mechanical refactors с behavior changes в одном коммите.
 - Premature abstraction для single speculative future case.
-- Skip integration tracing — забыть про clients, schemas, generated types.
+- Skip integration tracing - забыть про clients, schemas, generated types.
 - Comments объясняющие WHAT (имена должны это делать), а не WHY.
 - Leave dead code / stale flags / outdated tests в touched scope.

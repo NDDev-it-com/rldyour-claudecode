@@ -31,7 +31,7 @@ bash ${CLAUDE_PLUGIN_ROOT}/scripts/check_lsps.sh /path/to/project
 1. Run the health-check script when available.
 2. If the script is not available in the current environment, check commands manually using stable executable names from `${CLAUDE_PLUGIN_ROOT}/references/lsp-server-matrix.md`.
 3. Report missing commands separately from project prerequisite warnings.
-4. Do not start raw `stdio` LSP sessions as a test — they hang waiting for a real LSP client.
+4. Do not start raw `stdio` LSP sessions as a test - they hang waiting for a real LSP client.
 5. For C, C++, and Qt C++, treat missing `compile_commands.json` as a serious warning because diagnostics may be wrong.
 6. For TypeScript and JavaScript, verify `tsconfig.json` or `jsconfig.json`.
 7. For Python, verify `pyproject.toml`, `pyrightconfig.json`, or virtual environment expectations.

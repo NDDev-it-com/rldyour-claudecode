@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# stop_post_task_sync.sh — advisory enforcement gate for Stop event.
+# stop_post_task_sync.sh - advisory enforcement gate for Stop event.
 #
 # Behaviour: this hook does NOT perform git push, merge, fullrepo publish, or
 # branch/worktree cleanup. Those are high-blast-radius operations and belong to

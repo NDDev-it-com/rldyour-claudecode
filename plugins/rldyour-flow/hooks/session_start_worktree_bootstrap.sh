@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
-# session_start_worktree_bootstrap.sh — restore agent-only files into a fresh
+# session_start_worktree_bootstrap.sh - restore agent-only files into a fresh
 # git worktree on first SessionStart.
 #
 # Triggers a `fullrepo_sync.py --restore` (NEVER --publish) when:
 #   1. Current cwd is inside a git work-tree.
 #   2. At least one canonical agent-only file is missing in the worktree
-#      (.serena/project.yml is the marker we trust most — small, unique, and
+#      (.serena/project.yml is the marker we trust most - small, unique, and
 #      always present in a synchronised marketplace tree).
 #   3. `origin/fullrepo` exists on the remote (otherwise --restore is a no-op
 #      and we exit cleanly without noise).
@@ -72,7 +72,7 @@ print("true" if s.get("remote_fullrepo_exists") else "false")
 ' 2>/dev/null || echo "false")
 
 if [ "$remote_present" != "true" ]; then
-  # No fullrepo upstream — nothing to restore. Silent no-op.
+  # No fullrepo upstream - nothing to restore. Silent no-op.
   exit 0
 fi
 

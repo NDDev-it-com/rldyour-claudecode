@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# bootstrap_check.sh — verify a fresh-clone or new-machine bootstrap works end-to-end.
+# bootstrap_check.sh - verify a fresh-clone or new-machine bootstrap works end-to-end.
 #
 # Coverage:
 #   1. Agent-only worktree divergence guard (TECHDEBT-01 R5 mitigation):
@@ -31,7 +31,7 @@ fail() { printf '\033[1;31m%s\033[0m\n' "$1" >&2; exit 1; }
 step "agent-only divergence guard (TECHDEBT-01 R5)"
 # Before --bootstrap-init: detect whether worktree agent-only files have local
 # edits that are not yet in origin/fullrepo. If they do, running
-# --bootstrap-init silently overwrites them with the remote tree — exactly the
+# --bootstrap-init silently overwrites them with the remote tree - exactly the
 # footgun documented in TECHDEBT-01 R5. Refuse here unless the operator sets
 # RLDYOUR_FORCE_BOOTSTRAP=1 to accept the overwrite explicitly.
 #
@@ -40,19 +40,19 @@ step "agent-only divergence guard (TECHDEBT-01 R5)"
 # would treat them as "deleted" (they exist only in fullrepo tree, not in main
 # index), so we use `git cat-file -e` + `cmp -s` against `git show` content.
 if [ "${RLDYOUR_FORCE_BOOTSTRAP:-0}" = "1" ]; then
-  echo "WARN RLDYOUR_FORCE_BOOTSTRAP=1 set — divergence guard BYPASSED (operator accepted overwrite risk; see TECHDEBT-01 R5)" >&2
+  echo "WARN RLDYOUR_FORCE_BOOTSTRAP=1 set - divergence guard BYPASSED (operator accepted overwrite risk; see TECHDEBT-01 R5)" >&2
 elif ! git ls-remote --exit-code origin fullrepo >/dev/null 2>&1; then
-  echo "INFO origin/fullrepo does not exist yet — no divergence possible (initial-publish flow)"
+  echo "INFO origin/fullrepo does not exist yet - no divergence possible (initial-publish flow)"
 else
   # Make sure refs/remotes/origin/fullrepo is fresh for accurate comparison.
-  # If fetch fails (offline, auth issue), emit explicit WARN — comparison
+  # If fetch fails (offline, auth issue), emit explicit WARN - comparison
   # against a stale local ref is a false-positive risk that operators must
   # see in stderr rather than silently swallow.
   if ! git fetch origin fullrepo --quiet 2>/dev/null; then
-    echo "WARN git fetch origin fullrepo failed — comparison uses possibly stale local ref" >&2
+    echo "WARN git fetch origin fullrepo failed - comparison uses possibly stale local ref" >&2
   fi
   # Agent-only path roots. The canonical full list is AGENT_ONLY_PATTERNS in
-  # plugins/rldyour-flow/scripts/fullrepo_sync.py — keep this array in sync
+  # plugins/rldyour-flow/scripts/fullrepo_sync.py - keep this array in sync
   # with that constant. The `.aider*` glob from fullrepo_sync.py is expanded
   # explicitly below the array because bash literal entries cannot match
   # `.aiderignore`/`.aider.conf.yml`/etc. SKILL.md only covers the minimal
@@ -101,11 +101,11 @@ else
   check_file() {
     local file=$1
     if ! git cat-file -e "origin/fullrepo:$file" 2>/dev/null; then
-      diverged+=("$file (new — not yet in origin/fullrepo)")
+      diverged+=("$file (new - not yet in origin/fullrepo)")
       return
     fi
     if ! cmp -s "$file" <(git show "origin/fullrepo:$file" 2>/dev/null); then
-      diverged+=("$file (modified locally — not yet published)")
+      diverged+=("$file (modified locally - not yet published)")
     fi
   }
 
@@ -141,7 +141,7 @@ step "fullrepo bootstrap"
 python3 plugins/rldyour-flow/scripts/fullrepo_sync.py --bootstrap-init >/dev/null 2>&1 || fail "--bootstrap-init failed"
 TRACKED=$(python3 plugins/rldyour-flow/scripts/fullrepo_sync.py --status-json | python3 -c 'import json,sys; print(len(json.load(sys.stdin)["tracked_agent_paths"]))')
 if [ "$TRACKED" != "0" ]; then
-  fail "tracked_agent_paths=$TRACKED (expected 0 — agent-only files leaking into branch index)"
+  fail "tracked_agent_paths=$TRACKED (expected 0 - agent-only files leaking into branch index)"
 fi
 echo "OK bootstrap clean (tracked_agent_paths=0)"
 
@@ -176,11 +176,11 @@ if command -v dart >/dev/null 2>&1; then
     if [ "$DART_MAJOR" -gt 3 ] || { [ "$DART_MAJOR" -eq 3 ] && [ "$DART_MINOR" -ge 9 ]; }; then
       echo "OK dart $DART_VERSION (>=3.9.0)"
     else
-      fail "dart $DART_VERSION below 3.9.0 — dart-flutter MCP requires >=3.9.0 (https://docs.flutter.dev/ai/mcp-server)"
+      fail "dart $DART_VERSION below 3.9.0 - dart-flutter MCP requires >=3.9.0 (https://docs.flutter.dev/ai/mcp-server)"
     fi
   fi
 else
-  echo "INFO dart not on PATH — dart-flutter MCP will not start until Dart SDK 3.9+ is installed"
+  echo "INFO dart not on PATH - dart-flutter MCP will not start until Dart SDK 3.9+ is installed"
 fi
 
 step "env example coverage"
@@ -190,7 +190,7 @@ if [ -f plugins/rldyour-mcps/.env.example ]; then
     [[ "$line" =~ ^# ]] && continue
     key="${line%%=*}"
     if [ -z "${!key:-}" ]; then
-      echo "INFO $key not set in environment (default empty in .env.example — set before running MCP server)"
+      echo "INFO $key not set in environment (default empty in .env.example - set before running MCP server)"
     else
       echo "OK $key set in environment"
     fi

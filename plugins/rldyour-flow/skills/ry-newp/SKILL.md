@@ -43,6 +43,6 @@ Default docs:
 
 - Scaffold без approval.
 - Generic architecture без проверки project constraints.
-- Skip skeptical questions — accept все assumptions of the prompt as-is.
+- Skip skeptical questions - accept все assumptions of the prompt as-is.
 - Plan без research current best practices через rldyour-explore.
 - Initialize Serena memories до того как scaffold approved и commit'нулся.

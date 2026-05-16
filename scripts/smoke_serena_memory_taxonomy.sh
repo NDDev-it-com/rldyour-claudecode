@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# smoke_serena_memory_taxonomy.sh — focused checks for the Serena memory brain contract.
+# smoke_serena_memory_taxonomy.sh - focused checks for the Serena memory brain contract.
 #
 # Coverage:
 #   1. analyze_sync_scope.py schema v2, taxonomy, and target routing.

@@ -35,7 +35,7 @@ Fix quality issues inside the touched scope and affected integration path. If se
 
 ## Conventional Commits
 
-Use [Conventional Commits v1.0.0](https://www.conventionalcommits.org/en/v1.0.0/) — stable as of May 2026. Eleven canonical types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, `revert`. Subject ≤72 chars. Scope optional in parentheses. Use `!` after type/scope or `BREAKING CHANGE:` footer for breaking changes.
+Use [Conventional Commits v1.0.0](https://www.conventionalcommits.org/en/v1.0.0/) - stable as of May 2026. Eleven canonical types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, `revert`. Subject ≤72 chars. Scope optional in parentheses. Use `!` after type/scope or `BREAKING CHANGE:` footer for breaking changes.
 
 Read `${CLAUDE_PLUGIN_ROOT}/references/rules-policy.md` when a task requires the full policy.
 
@@ -44,5 +44,5 @@ Read `${CLAUDE_PLUGIN_ROOT}/references/rules-policy.md` when a task requires the
 - Hacks / temporary workarounds в touched scope (нарушает hard ban).
 - Swallowed errors / generic exception traps без meaningful messages.
 - Fake green checks (claim что test passed без запуска).
-- Secrets в commits/logs/docs/memories — non-negotiable.
+- Secrets в commits/logs/docs/memories - non-negotiable.
 - Speculative абстракции для одного hypothetical future case.

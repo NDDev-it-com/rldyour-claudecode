@@ -106,4 +106,4 @@ If browser validation cannot run, state the blocker and the exact fallback used.
 - Skip'нуть error/empty/loading states because "main flow works".
 - Коммит screenshots в репо вместо хранения под `browser/` локально.
 - Считать что accessibility snapshot заменяет визуальную проверку.
-- Игнорировать console/network errors при validation — это сигнал для `browser-debug`.
+- Игнорировать console/network errors при validation - это сигнал для `browser-debug`.

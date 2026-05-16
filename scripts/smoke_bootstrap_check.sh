@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# smoke_bootstrap_check.sh — verifies the R5 agent-only divergence guard in
+# smoke_bootstrap_check.sh - verifies the R5 agent-only divergence guard in
 # scripts/bootstrap_check.sh covers its four documented code paths:
 #   (a) RLDYOUR_FORCE_BOOTSTRAP=1 → WARN to stderr + bypass
 #   (b) origin/fullrepo missing → INFO + skip (initial-publish flow)
@@ -16,7 +16,7 @@
 #   3. Static: `.aider*` glob expansion is wired (closes Wave 4 quality F-1).
 #   4. Runtime: extracts just the divergence-guard block from bootstrap_check.sh
 #      (lines from `step "agent-only divergence guard"` up to the next `step`)
-#      and runs it in a subshell with RLDYOUR_FORCE_BOOTSTRAP=1 — must exit 0
+#      and runs it in a subshell with RLDYOUR_FORCE_BOOTSTRAP=1 - must exit 0
 #      with WARN bypass message to stderr.
 #
 # Wired into scripts/validate_marketplace.sh and .github/workflows/validate.yml.
@@ -94,7 +94,7 @@ trap 'rm -f "$TMP_GUARD"' EXIT
 #   2. Inline step()/fail() helpers (bootstrap_check.sh defines them on a
 #      single line each; extracting them via awk function-body regex would
 #      misbehave for one-line `step() { ...; }` form because `^}` never
-#      matches as a separate line — the resulting awk would dump the entire
+#      matches as a separate line - the resulting awk would dump the entire
 #      remainder of the file).
 #   3. Just the divergence-guard step extracted via awk range, with the
 #      trailing `step "fullrepo bootstrap"` line stripped via `sed '$d'`.

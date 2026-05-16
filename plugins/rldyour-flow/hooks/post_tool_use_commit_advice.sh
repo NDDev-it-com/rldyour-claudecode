@@ -54,15 +54,15 @@ head_sha, subject, raw_files = sys.argv[1:4]
 # warnings text travels via `additionalContext` to the model, so an
 # attacker-controlled subject (e.g., auto-merged PR from a fork, or a
 # branch-rename attack on a shared repo) could theoretically inject prompts.
-# Defence-in-depth — not a complete mitigation, but reduces the vector:
+# Defence-in-depth - not a complete mitigation, but reduces the vector:
 #   1. Truncate to 200 chars. Conventional Commits subjects are ≤72 by policy,
 #      so this only fires for abnormal subjects.
-#   2. Collapse control chars and newlines to spaces — subjects are single-line.
+#   2. Collapse control chars and newlines to spaces - subjects are single-line.
 #   3. Strip known prompt-injection markers (system tags, instruction overrides,
 #      turn-boundary tokens). Replace with `[REDACTED]` so the audit trail shows
 #      the subject was modified rather than silently dropping content.
 MAX_SUBJECT_LEN = 200
-# Prompt-injection markers — defence-in-depth, not exhaustive. Covers known LLM
+# Prompt-injection markers - defence-in-depth, not exhaustive. Covers known LLM
 # system-tag patterns (Anthropic/OpenAI/Llama/Gemini families) and English/Russian
 # instruction-override phrases. Add patterns conservatively when new attack
 # vectors emerge in commit messages.
