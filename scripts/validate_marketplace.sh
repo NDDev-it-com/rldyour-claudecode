@@ -154,4 +154,16 @@ else
   echo "SKIP scripts/smoke_bootstrap_check.sh not yet present"
 fi
 
+# Note: scripts/smoke_fullrepo_sync.sh is intentionally NOT wired into this
+# harness (closure of verification F-5, info 75, from review wave
+# `2026-05-16T1859Z-61b913d`). The fullrepo sync smoke invokes
+# `fullrepo_sync.py --bootstrap-init` which restores agent-only files from
+# `origin/fullrepo` - running it mid-session would silently overwrite any
+# in-flight agent-only edits before they are published. The R5 footgun is
+# documented in `.claude/CLAUDE.md` "Smoke-script footgun" section and
+# the divergence guard in `scripts/bootstrap_check.sh` lines 42-58 prevents
+# accidental data loss when explicitly invoked. Run `smoke_fullrepo_sync.sh`
+# only manually, only after `--publish`, only when the operator can verify
+# no agent-only edits are in flight.
+
 printf '\n\033[1;32m✔ marketplace validation passed\033[0m\n'
