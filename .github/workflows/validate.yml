@@ -1,5 +1,10 @@
 name: validate
 
+# SHA-pinned actions per OWASP A03:2025 supply-chain hardening. Tag → SHA
+# mapping resolved on 2026-05-16 via `gh api /repos/<owner>/<repo>/git/ref/tags/<tag>`.
+# When updating, run scripts/refresh_actions_pins.sh (or manually re-resolve via gh
+# api) and update the trailing comment to reflect the new semantic tag.
+
 on:
   push:
     branches: [main]
@@ -7,22 +12,38 @@ on:
     branches: [main]
   workflow_dispatch:
 
+# Deny-all default per OWASP A01:2025; grant per-job below.
+permissions: {}
+
+# Cancel redundant runs on the same ref to save CI minutes and surface
+# the freshest result first.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   validate-marketplace:
     name: claude plugin validate
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    permissions:
+      contents: read
     steps:
+      - name: Harden runner (egress audit + block surprises)
+        uses: step-security/harden-runner@ab7a9404c0f3da075243ca237b5fac12c98deaa5  # v2.19.3
+        with:
+          egress-policy: audit
+
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
 
       - name: Set up Node.js
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e  # v6.4.0
         with:
           node-version: 22
 
-      - name: Install Claude Code CLI
-        run: npm install -g @anthropic-ai/claude-code
+      - name: Install Claude Code CLI (pinned)
+        run: npm install -g '@anthropic-ai/claude-code@2.1.143'
 
       - name: claude --version
         run: claude --version
@@ -43,12 +64,19 @@ jobs:
     name: Python + shell + JSON syntax + smoke
     runs-on: ubuntu-latest
     timeout-minutes: 8
+    permissions:
+      contents: read
     steps:
+      - name: Harden runner (egress audit + block surprises)
+        uses: step-security/harden-runner@ab7a9404c0f3da075243ca237b5fac12c98deaa5  # v2.19.3
+        with:
+          egress-policy: audit
+
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405  # v6.2.0
         with:
           python-version: '3.13'
 
@@ -63,30 +91,38 @@ jobs:
               + sorted(glob.glob('plugins/*/.mcp.json'))
               + sorted(glob.glob('plugins/*/hooks/hooks.json'))
           )
+          fail = 0
           for p in paths:
               try:
                   with open(p, 'r', encoding='utf-8') as fp:
                       json.load(fp)
               except Exception as exc:
                   print(f'{p}: {exc}', file=sys.stderr)
-                  sys.exit(1)
+                  fail = 1
               else:
                   print(f'OK {p}')
+          sys.exit(fail)
           PY
 
       - name: Validate Python script syntax
         run: |
           set -euo pipefail
           python3 - <<'PY'
-          import ast, glob
+          import ast, glob, sys
+          fail = 0
           for p in (
               sorted(glob.glob('plugins/*/scripts/*.py'))
               + sorted(glob.glob('plugins/*/hooks/*.py'))
               + sorted(glob.glob('scripts/*.py'))
           ):
-              with open(p, 'r', encoding='utf-8') as fp:
-                  ast.parse(fp.read())
-              print(f'OK {p}')
+              try:
+                  with open(p, 'r', encoding='utf-8') as fp:
+                      ast.parse(fp.read())
+                  print(f'OK {p}')
+              except SyntaxError as e:
+                  print(f'FAIL {p}: {e}', file=sys.stderr)
+                  fail = 1
+          sys.exit(fail)
           PY
 
       - name: Validate shell script syntax
