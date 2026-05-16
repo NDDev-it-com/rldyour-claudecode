@@ -25,7 +25,7 @@ Keep durable project instructions useful for future Claude Code sessions without
 
 In normal product repositories, instruction files (`AGENTS.md`, `.claude/CLAUDE.md`, `REVIEW.md`) are agent-only context. They should be:
 
-- Restored locally from `fullrepo` branch via `python3 ${CLAUDE_PLUGIN_ROOT}/../rldyour-flow/scripts/fullrepo_sync.py --bootstrap-init`.
+- Restored locally from `fullrepo` branch via `python3 "$(git rev-parse --show-toplevel)"/plugins/rldyour-flow/scripts/fullrepo_sync.py --bootstrap-init` (canonical cross-plugin path per PATTERNS-01-CANONICAL; works without declaring `rldyour-flow` in `rldyour-rules` plugin.json because both plugins co-exist inside the same marketplace `pluginRoot: ./plugins`).
 - Ignored through `.git/info/exclude` (`fullrepo` block installed automatically).
 - Published to `fullrepo` branch via `flow-post-task-sync`.
 - Never committed to normal product branches (`main`, feature branches).
