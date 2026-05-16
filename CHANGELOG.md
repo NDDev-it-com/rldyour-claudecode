@@ -6,6 +6,77 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+### Fixed
+
+- **Stop-hook loop guard fingerprint coverage gap (HIGH, D31)** —
+  closure of `2026-05-16T1859Z-61b913d` systemic audit wave quality F-1
+  (severity high, confidence 85). `plugins/rldyour-flow/scripts/flow_post_task_state.py:267-279`
+  `fingerprint_payload` previously excluded three contributors to
+  `needs_flow_sync`: `doc_files_changed`, `fullrepo_needs_attention`,
+  and `instruction_docs_state.needs_instruction_docs_review`. Two
+  consecutive Stop events with identical `(head, dirty, ahead/behind,
+  branch_cleanup, serena_current)` but differing fullrepo / instruction
+  / doc-file state produced an identical fingerprint, the loop guard at
+  `plugins/rldyour-flow/hooks/stop_post_task_sync.sh:74` matched the
+  stale marker, and Stop passed silently despite `needs_flow_sync=true`.
+  Fix adds the three missing fields to `fingerprint_payload`. Verified:
+  fingerprint changed from `77fcb6aade5fc6ff` to `3c758e857d07cf8e`
+  after the edit at HEAD `61b913d`.
+- **Serena Stop-hook loop guard asymmetry (MEDIUM, D32)** —
+  closure of `2026-05-16T1859Z-61b913d` quality F-2 (medium, 80).
+  `plugins/rldyour-serena-mcp/hooks/stop_memory_sync.sh:72,77` wrote a
+  bare `HEAD_SHA` to `.serena/.sync_marker` while
+  `stop_post_task_sync.sh` wrote a full content-hash fingerprint. If a
+  partial memory sync wrote memories without advancing HEAD, the next
+  Stop saw the same `HEAD_SHA` and silently passed. Fix mirrors the
+  flow pattern: marker now contains `${HEAD_SHA}:${NEWEST_SHA:-none}`
+  compound fingerprint that captures both the project HEAD and the most
+  recent memory-sync commit.
+- **Swallowed non-dict analysis payload (MEDIUM, D33)** —
+  closure of `2026-05-16T1859Z-61b913d` quality F-3 (medium, 75).
+  `plugins/rldyour-serena-mcp/scripts/serena_memory_state.py:102-104`
+  had a bare `pass` that silently discarded malformed analysis
+  payloads, violating PHILOSOPHY-01-QUALITY-FIRST "no swallowed errors"
+  hard ban. Fix logs the discard to stderr with type information; the
+  control flow continues with the ref-range fallback as before.
+
+### Changed
+
+- **CI parity with local validation harness (D34)** —
+  closure of `2026-05-16T1859Z-61b913d` verification F-1 + F-2 (both
+  medium, confidence 90/85). `.github/workflows/validate.yml`
+  `syntax-checks` job now invokes `scripts/validate_reviewer_contracts.sh`
+  (the D30 drift detector) and `scripts/smoke_mcp_runtime.sh` (pinning
+  discipline + HTTP preflight). Reviewer-transport drift and MCP
+  pinning regressions can no longer pass CI on the basis of "local
+  validate_marketplace.sh catches it" alone. `smoke_mcp_capabilities.sh`
+  remains local-only by design — it performs interactive session-based
+  JSON-RPC initialize that requires auth unavailable in CI.
+- **Semgrep CI container digest-pinned (D35)** —
+  closure of `2026-05-16T1859Z-61b913d` security F-1 (medium, 90, OWASP
+  A03:2025 Software Supply Chain Failures). `.github/workflows/semgrep.yml`
+  `container.image` changed from the mutable tag `semgrep/semgrep:1.163.0`
+  to the immutable manifest-list digest
+  `semgrep/semgrep:1.163.0@sha256:7cad2bc2d1e44f87f0bf4be6d1fa23aa90fb72015bebc89fb91385d813987a03`
+  resolved 2026-05-16 via the Docker Hub v2 manifest API. The comment
+  claim "SHA-pinned" is now structurally true. Re-resolution
+  procedure is documented inline. Bumping the MCP `semgrep` pin in
+  `plugins/rldyour-mcps/.mcp.json` should be paired with re-resolving
+  this digest.
+
+### Notes
+
+- All five fixes are script body / hook script body / CI workflow
+  changes. No `plugins/*/plugin.json` version bump required per
+  AGENTS.md cache-refresh rule (`SKILL.md/agent.md/hooks.json/.mcp.json`
+  changes trigger refresh; script body changes do not). `VERSION`
+  remains at `0.2.2` until a marketplace-boundary release rolls these
+  up alongside other changes.
+- Verification: `bash scripts/validate_marketplace.sh` PASSES after all
+  five fixes at HEAD (pre-commit). Updated state-script outputs:
+  `flow_post_task_state.py fingerprint=3c758e857d07cf8e`,
+  `serena_memory_state.py is_current=true memory_count=18`.
+
 ## [0.2.2] - 2026-05-16
 
 ### Fixed
