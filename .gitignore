@@ -52,6 +52,7 @@ bun.lockb
 .serena/.flow_sync_marker
 .serena/.flow_post_task_state.json
 .serena/diagnostics/
+.serena/reviews/
 
 # Claude Code local-only
 .claude/settings.local.json
