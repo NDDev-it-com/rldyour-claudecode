@@ -89,29 +89,29 @@ echo "OK path arrays in sync (bash=$BASH_COUNT, py=$PY_COUNT, drift=$DRIFT)"
 step "runtime path (a): extracted guard block honors RLDYOUR_FORCE_BOOTSTRAP=1"
 TMP_GUARD=$(mktemp /tmp/smoke_bootstrap_guard.XXXXXX.sh)
 trap 'rm -f "$TMP_GUARD"' EXIT
-# Extract the guard block: from `step "agent-only divergence guard"` up to the
-# next `step "fullrepo bootstrap"`. Prepend the header (strict mode + cd) so
-# the block runs identically in isolation.
-awk '
-  /^step\(\) \{/ {print; in_step=1; next}
-  /^fail\(\) \{/ {print; in_fail=1; next}
-  in_step && /^\}/ {print; in_step=0; next}
-  in_fail && /^\}/ {print; in_fail=0; next}
-  in_step || in_fail {print; next}
-' "$GUARD_FILE" > "$TMP_GUARD"
+# Build a minimal harness:
+#   1. Strict mode prelude.
+#   2. Inline step()/fail() helpers (bootstrap_check.sh defines them on a
+#      single line each; extracting them via awk function-body regex would
+#      misbehave for one-line `step() { ...; }` form because `^}` never
+#      matches as a separate line — the resulting awk would dump the entire
+#      remainder of the file).
+#   3. Just the divergence-guard step extracted via awk range, with the
+#      trailing `step "fullrepo bootstrap"` line stripped via `sed '$d'`.
+#   4. Sentinel echo to confirm bypass branch falls through cleanly.
 {
-  # Strict-mode prelude — heredoc preserves literal $'\n\t' without escape
-  # mangling that printf/echo would apply.
   cat <<'PRELUDE'
-
+#!/usr/bin/env bash
 set -euo pipefail
 IFS=$'\n\t'
 unset CDPATH
+step() { printf '\n\033[1;36m== %s ==\033[0m\n' "$1"; }
+fail() { printf '\033[1;31m%s\033[0m\n' "$1" >&2; exit 1; }
 PRELUDE
   awk '/^step "agent-only divergence guard/,/^step "fullrepo bootstrap"/' "$GUARD_FILE" \
     | sed '$d'
   printf '%s\n' 'echo "RUNTIME-PATH-A-OK"'
-} >> "$TMP_GUARD"
+} > "$TMP_GUARD"
 # Run extracted block. Path (a) should print WARN to stderr + RUNTIME-PATH-A-OK to stdout.
 output_stderr=$(RLDYOUR_FORCE_BOOTSTRAP=1 bash "$TMP_GUARD" 2>&1 >/dev/null || true)
 output_stdout=$(RLDYOUR_FORCE_BOOTSTRAP=1 bash "$TMP_GUARD" 2>/dev/null || true)
