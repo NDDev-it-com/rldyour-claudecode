@@ -136,3 +136,6 @@ jobs:
 
       - name: Serena memory taxonomy smoke
         run: bash scripts/smoke_serena_memory_taxonomy.sh
+
+      - name: Bootstrap R5 divergence guard smoke
+        run: bash scripts/smoke_bootstrap_check.sh
