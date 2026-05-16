@@ -49,6 +49,21 @@ If the model cannot answer the gate questions in `${CLAUDE_PLUGIN_ROOT}/referenc
 
 Invoking `ry-start` is the user's explicit permission to use parallel reviewer subagents during the review phase. Reviewer agents (`flow-architecture-review`, `flow-quality-review`, `flow-consistency-review`, `flow-integration-review`, `flow-verification-review`, `flow-security-review`) are orchestrated by this command, not broad implicit-entry skills. Prompts must be self-contained and read-only for reviewers.
 
+## Review Phase Output Transport
+
+Reviewer subagents follow the file-first output contract in `${CLAUDE_PLUGIN_ROOT}/references/reviewer-protocol.md` (section "Output Transport"). The orchestrator (this skill body, executed by the main session model) is responsible for the run-level coordination:
+
+1. **Generate one `run_id` per review wave** in the form `<UTC ISO compact>-<git short sha>`. Example: `2026-05-16T18Z-91cc276`. Use the same `run_id` for all reviewers in the wave so their reports land in the same directory.
+2. **Compute `report_dir = .serena/reviews/<run_id>/`** (relative to repo root). `.serena/reviews/` is gitignored by repo policy and treated as runtime artefact (`.serena/cache/`, `.serena/diagnostics/` follow the same pattern). Create it once with `mkdir -p` before dispatching reviewers, or let the first reviewer create it — both are safe because `mkdir -p` is idempotent.
+3. **Inject `run_id` and `report_dir` into every reviewer prompt**, alongside scope, diff, constraints, expected reviewer-protocol citation, and read-only reminder. Without these fields each reviewer derives safe defaults, but explicit values keep the wave consistent.
+4. **After all reviewers complete**, read each compact summary from the agent result. Aggregate `Counts:` across tracks. Identify the critical/high findings that need synthesis.
+5. **Read the per-reviewer report files via `Read`** for the findings that require full evidence — typically critical/high first, then medium when scope expands. Do not blindly read all 6 reports for trivial cases; prefer targeted reads.
+6. **Resolve contradictions** between reviewer tracks against code evidence (Serena `find_symbol`, `find_referencing_symbols`).
+7. **Write a consolidated `<report_dir>/_summary.md`** with cross-track findings, plan disposition (must-fix / should-fix / defer / false-positive), and the chosen fix order. This file is durable wave artefact — useful for the user to inspect and for `flow-post-task-sync` to reference.
+8. **Report back to the user in Russian**. List the report-file paths so the user can inspect full findings on disk. Quote no more than the top critical/high entries inline; everything else stays in the files.
+
+Rationale: Claude Code 2.0.77+ has a confirmed `task.output` regression (Anthropic issues `#16789`, `#20531`, `#23463`, all closed as "not planned") that can deliver up to 200-500 KB of JSONL transcript per subagent to the parent session, with combined subagent results capable of overflowing the parent context and crashing the session. Capping each reviewer at a 4 KB summary while preserving full evidence on disk structurally prevents that failure mode.
+
 ## Non-Negotiables
 
 - No hacks, temporary workarounds, or untracked debt in touched scope.
