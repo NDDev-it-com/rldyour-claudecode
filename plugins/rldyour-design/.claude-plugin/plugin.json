@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "rldyour-design",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "Дизайн-воркфлоу для Claude Code: Figma → код, централизованные токены (W3C DTCG/Tailwind v4), строгий FSD, shadcn/ui, ReactBits + браузер-валидация. Skills-only — MCP-транспорт (Figma, shadcn, Playwright, Chrome DevTools) берётся из rldyour-mcps.",
   "author": {
     "name": "rldyourmnd",
@@ -10,6 +10,22 @@
   "license": "MIT",
   "homepage": "https://github.com/nddev-it-com/rldyour-claudecode/tree/main/plugins/rldyour-design",
   "repository": "https://github.com/nddev-it-com/rldyour-claudecode",
-  "keywords": ["design", "figma", "shadcn", "reactbits", "fsd", "feature-sliced-design", "design-system", "tokens", "tailwind", "ui-implementation", "pixel-perfect", "rldyour"],
-  "dependencies": ["rldyour-mcps", "rldyour-browser"]
+  "keywords": [
+    "design",
+    "figma",
+    "shadcn",
+    "reactbits",
+    "fsd",
+    "feature-sliced-design",
+    "design-system",
+    "tokens",
+    "tailwind",
+    "ui-implementation",
+    "pixel-perfect",
+    "rldyour"
+  ],
+  "dependencies": [
+    "rldyour-mcps",
+    "rldyour-browser"
+  ]
 }
