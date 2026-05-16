@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-16
-Last commit: ebeb062 docs(changelog): polish 0.2.0 entry per reviewer findings
+Last commit: e3d146b chore(release): cut 0.2.1 (D29 reviewer output transport)
 Scope: .claude-plugin/marketplace.json, plugins/*/.claude-plugin/plugin.json, README.md, AGENTS.md
 Area: CORE
 -->
@@ -19,14 +19,14 @@ Current business logic and architecture of the `rldyour-claude` marketplace. The
 - `README.md`: owner-facing catalog, control model, install/check commands, active per-plugin versions.
 - `AGENTS.md`: concise cross-tool project rules and boundaries.
 
-## Current State (HEAD `ebeb062`)
+## Current State (HEAD `e3d146b`)
 
-- **VERSION**: `0.2.0` (release boundary).
+- **VERSION**: `0.2.1` (release boundary).
 - **9 plugins** verified at HEAD from `.claude-plugin/marketplace.json`: `rldyour-mcps`, `rldyour-explore`, `rldyour-serena-mcp`, `rldyour-security`, `rldyour-browser`, `rldyour-design`, `rldyour-lsps`, `rldyour-flow`, `rldyour-rules`.
-- **Per-plugin versions** (all `0.2.0`, synchronized in Wave 6 commits `26dbd54` + `ebeb062`):
+- **Per-plugin versions** (`0.2.0` baseline, with scoped `rldyour-flow` patch at `0.2.1`):
   - `rldyour-mcps`: `0.2.0`
   - `rldyour-serena-mcp`: `0.2.0`
-  - `rldyour-flow`: `0.2.0`
+  - `rldyour-flow`: `0.2.1`
   - `rldyour-explore`: `0.2.0`
   - `rldyour-browser`: `0.2.0`
   - `rldyour-design`: `0.2.0`

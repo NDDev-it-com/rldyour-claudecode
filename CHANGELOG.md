@@ -6,6 +6,87 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-05-16
+
+### Fixed
+
+- **Reviewer subagent output transport (D29, R6)** — Claude Code 2.0.77+
+  has a confirmed regression where `task.output` from a subagent can be
+  returned to the parent session as the full JSONL transcript (up to
+  200-500 KB) instead of the final assistant text (~500 bytes), and
+  combined results from multiple subagents can overflow the parent
+  context and crash the session. The regression is documented in
+  Anthropic issues
+  [#16789](https://github.com/anthropics/claude-code/issues/16789),
+  [#20531](https://github.com/anthropics/claude-code/issues/20531), and
+  [#23463](https://github.com/anthropics/claude-code/issues/23463), all
+  closed as "not planned". This wave adopts the Anthropic-suggested
+  workaround from `#23463` ("cap agent result sizes and write full
+  results to a file with summary + path") for every reviewer track in
+  this marketplace.
+
+### Changed
+
+- `plugins/rldyour-flow/references/reviewer-protocol.md` gained an
+  **Output Transport** section defining the file-first contract:
+  orchestrator generates one `run_id = <UTC-ISO-compact>-<git-short-sha>`
+  per review wave and `report_dir = .serena/reviews/<run_id>/`, injects
+  both into every reviewer prompt; each reviewer writes the full
+  long-form report to `<report_dir>/<reviewer-name>.md` via `Bash`
+  (`mkdir -p` + `cat` heredoc) and returns a compact summary ≤ 4 KB
+  containing `Report:` path, `Counts:` by severity, and `All findings`
+  one-liner with hard cap 30 entries (`... +M more findings in report
+  file` when total exceeds 30).
+- All six reviewer agents
+  (`plugins/rldyour-flow/agents/flow-architecture-review.md`,
+  `flow-quality-review.md`, `flow-consistency-review.md`,
+  `flow-integration-review.md`, `flow-verification-review.md`,
+  `flow-security-review.md`) replaced their inline `Output Format`
+  section with an `Output Transport` block citing the new protocol.
+  `flow-security-review` keeps OWASP/ASVS `Category`, `Attack path`, and
+  `Verification` fields in the long-form report and surfaces only the
+  category bracketed in the one-liner; secret redaction applies to both
+  the summary and the report file.
+- `plugins/rldyour-flow/skills/ry-start/SKILL.md` and
+  `plugins/rldyour-flow/skills/ry-review/SKILL.md` gained
+  orchestrator-side `Output Transport` sections describing `run_id`
+  generation, report-dir creation, prompt injection, summary
+  aggregation, targeted `Read` of report files for critical/high
+  findings, and writing a consolidated `<report_dir>/_summary.md`
+  cross-track artefact.
+- `.gitignore` adds `.serena/reviews/` alongside the existing
+  `.serena/cache/` and `.serena/diagnostics/` runtime-artefact entries.
+  Fullrepo policy unchanged — `.serena/reviews/` is not in
+  `AGENT_ONLY_PATTERNS` in
+  `plugins/rldyour-flow/scripts/fullrepo_sync.py`, so it stays regular
+  gitignored content and is not fullrepo-managed.
+- `plugins/rldyour-flow/.claude-plugin/plugin.json` and
+  `.claude-plugin/marketplace.json` `rldyour-flow` entry bumped
+  `0.2.0` → `0.2.1` to invalidate the per-plugin runtime cache
+  (`~/.claude/plugins/cache/rldyour-claudecode/rldyour-flow/0.2.1/`).
+  Marketplace `VERSION` bumped `0.2.0` → `0.2.1` to mark the patch
+  release boundary. All other plugins stay at `0.2.0`.
+
+### Notes
+
+- Read-only invariant for reviewer subagents is unchanged: `Edit`,
+  `Write`, and `NotebookEdit` remain absent from every reviewer
+  `tools:` allowlist. `Bash` continues to be the only write-capable
+  mechanism, and the new contract uses it solely to write reviewer
+  result files under `.serena/reviews/<run_id>/`; it cannot reach
+  project source. `scripts/validate_agent_tools.py` continues to pass
+  with all 8 agent files validated.
+- Reviewer agents that face a read-only filesystem (sandbox, restored
+  worktree without write access) fall back to inline summary-only
+  output with `Notes: filesystem-readonly`, still respecting the 4 KB
+  summary cap.
+- Done criteria: `claude plugin validate plugins/rldyour-flow` passes;
+  `python3 scripts/validate_plugin_versions.py` reports `rldyour-flow
+  0.2.1` and all other plugins `0.2.0`; `python3
+  scripts/validate_instruction_docs.py --require-agent-docs` confirms
+  `AGENTS.md` and `.claude/CLAUDE.md` line budgets remain under 200;
+  `bash scripts/validate_marketplace.sh` runs cleanly end-to-end.
+
 ## [0.2.0] - 2026-05-16
 
 ### Changed
@@ -572,7 +653,8 @@ Release boundary cut after the 2026-05-08..2026-05-12 wave of best-practice, MCP
   shell syntax checks, frontmatter presence verification on all skills,
   agents, and commands.
 
-[Unreleased]: https://github.com/NDDev-it-com/rldyour-claudecode/compare/marketplace--v0.2.0...HEAD
+[Unreleased]: https://github.com/NDDev-it-com/rldyour-claudecode/compare/marketplace--v0.2.1...HEAD
+[0.2.1]: https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/marketplace--v0.2.1
 [0.2.0]: https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/marketplace--v0.2.0
 [0.1.9]: https://github.com/NDDev-it-com/rldyour-claudecode/commit/99f9809
 [0.1.8]: https://github.com/NDDev-it-com/rldyour-claudecode/commit/9bf3c70
