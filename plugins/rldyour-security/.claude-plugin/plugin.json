@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "rldyour-security",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "Безопасность по OWASP Top 10 2025 при реализации + защитный Mythos-style security review через /ry-sec-review. Skills-only auto-invoked guidance для Claude Code.",
   "author": {
     "name": "rldyourmnd",
@@ -10,6 +10,17 @@
   "license": "MIT",
   "homepage": "https://github.com/nddev-it-com/rldyour-claudecode/tree/main/plugins/rldyour-security",
   "repository": "https://github.com/nddev-it-com/rldyour-claudecode",
-  "keywords": ["security", "owasp", "asvs", "secure-code-review", "vulnerability-review", "defensive-security", "ry-sec-review", "rldyour"],
-  "dependencies": ["rldyour-mcps"]
+  "keywords": [
+    "security",
+    "owasp",
+    "asvs",
+    "secure-code-review",
+    "vulnerability-review",
+    "defensive-security",
+    "ry-sec-review",
+    "rldyour"
+  ],
+  "dependencies": [
+    "rldyour-mcps"
+  ]
 }
