@@ -21,6 +21,13 @@
 #   7. `reviewer-protocol.md` Severity enum lists `critical, high, medium, low,
 #      info`.
 #   8. `reviewer-protocol.md` Bash write boundary statement present.
+#   9. `reviewer-protocol.md` cites the `RLDYOUR_REPORT_EOF` marker at least
+#      3 times (open + close pattern example + documentation prose).
+#
+# Total: 9 invariant types. Concrete log_pass output: 7 PASS per agent
+# (eof once + cap once + info once + 3 Anthropic issues + target once) ×
+# 6 agents = 42, plus 4 protocol-level PASS (run_id + severity + boundary
+# + EOF count) = 46 PASS at HEAD `557bc00`.
 #
 # Exits 0 on PASS, 1 on FAIL.
 
