@@ -19,7 +19,7 @@ Current business logic and architecture of the `rldyour-claude` marketplace. The
 - `README.md`: owner-facing catalog, control model, install/check commands, active per-plugin versions.
 - `AGENTS.md`: concise cross-tool project rules and boundaries.
 
-## Current State (HEAD `0ff613d`)
+## Current State (HEAD `e5a7694`)
 
 - **VERSION**: `0.2.2` (release boundary).
 - **9 plugins** verified at HEAD from `.claude-plugin/marketplace.json`: `rldyour-mcps`, `rldyour-explore`, `rldyour-serena-mcp`, `rldyour-security`, `rldyour-browser`, `rldyour-design`, `rldyour-lsps`, `rldyour-flow`, `rldyour-rules`.
