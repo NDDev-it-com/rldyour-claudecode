@@ -44,14 +44,14 @@ To stay safe regardless of upstream behavior, every reviewer subagent in this ma
 The orchestrator (`ry-start` or `ry-review` skill body) generates one `run_id` per review wave and passes it inside each reviewer prompt:
 
 ```
-run_id    = <UTC ISO-8601 compact>-<git-short-sha>
-            e.g. 2026-05-16T18Z-91cc276
+run_id    = <UTC-ISO-compact>-<git-short-sha>
+            e.g. 2026-05-16T1433Z-91cc276    (minute-precision UTC)
 report_dir = .serena/reviews/<run_id>/
 ```
 
-- `report_dir` is a runtime artifact directory, not durable knowledge. It must be ignored by git (`.gitignore: .serena/reviews/`).
-- One subdirectory per review wave; one file per reviewer track: `<report_dir>/<reviewer-name>.md` (e.g. `flow-architecture-review.md`).
-- The orchestrator may additionally write a consolidated `_summary.md` after aggregating all reviewer outputs.
+- `report_dir` is a runtime artefact directory, not durable knowledge. It must be ignored by git (`.gitignore: .serena/reviews/`).
+- One subdirectory per review wave; one file per reviewer track: `<report_dir>/<reviewer-name>.md` where `<reviewer-name>` is the agent frontmatter `name:` field (e.g. `flow-architecture-review`, `flow-security-review`). Distinct filenames per track prevent collisions when 6+ reviewers run in parallel.
+- The orchestrator writes a consolidated `_summary.md` after aggregating reviewer outputs whenever any track reported one or more findings (see "Orchestrator read contract" below).
 
 ### Reviewer write contract
 
@@ -78,7 +78,7 @@ Counts: critical=N, high=N, medium=N, low=N, info=N, total=N
 All findings (one-liner, cap 30 entries — additional findings only in the report file):
 - F-1 <severity> (<confidence>): <relative path>:<line> — <one-sentence description, ≤ 100 chars>
 - F-2 ...
-- ... (cap at 30 entries; append "... +M more findings in report file" when total > 30)
+- ... (cap 30 entries; append "... +M more findings in report file" when total > 30)
 
 Notes: any blocker, error, or constraint encountered while writing the report.
 ```
