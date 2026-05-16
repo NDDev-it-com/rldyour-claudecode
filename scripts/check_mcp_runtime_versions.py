@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""check_mcp_runtime_versions.py — detect drift between .mcp.json and config/mcp-runtime-versions.env.
+"""check_mcp_runtime_versions.py - detect drift between .mcp.json and config/mcp-runtime-versions.env.
 
 The canonical pinning lives inside `plugins/rldyour-mcps/.mcp.json`. The env
 file `config/mcp-runtime-versions.env` is a portable companion that humans and
@@ -132,7 +132,7 @@ def main() -> int:
             continue
         if actual != expected:
             print(
-                f"FAIL {name}: drift detected — .mcp.json pins {actual!r}, "
+                f"FAIL {name}: drift detected - .mcp.json pins {actual!r}, "
                 f"{env_path.name} pins {env_key}={expected!r}",
                 file=sys.stderr,
             )
@@ -154,7 +154,7 @@ def main() -> int:
         expected_url = env.get(env_key, "")
         if actual_url != expected_url:
             print(
-                f"FAIL {name}: URL drift — .mcp.json={actual_url!r}, "
+                f"FAIL {name}: URL drift - .mcp.json={actual_url!r}, "
                 f"{env_path.name} {env_key}={expected_url!r}",
                 file=sys.stderr,
             )
@@ -184,13 +184,13 @@ def main() -> int:
         actual = probe_binary_version(spec["binary"], spec["version_regex"])
         if actual is None:
             print(
-                f"INFO {name}: binary {spec['binary']!r} absent on PATH — "
+                f"INFO {name}: binary {spec['binary']!r} absent on PATH - "
                 f"pin {spec['env_key']}={expected} cannot be enforced locally"
             )
             continue
         if actual != expected:
             print(
-                f"FAIL {name}: drift detected — host {spec['binary']} reports {actual!r}, "
+                f"FAIL {name}: drift detected - host {spec['binary']} reports {actual!r}, "
                 f"{env_path.name} pins {spec['env_key']}={expected!r}. "
                 f"Run `brew upgrade {spec['binary']}` or update the env pin.",
                 file=sys.stderr,

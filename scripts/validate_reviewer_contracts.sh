@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# validate_reviewer_contracts.sh — assert the file-first reviewer output transport
+# validate_reviewer_contracts.sh - assert the file-first reviewer output transport
 # contract is consistent across all 6 reviewer agents and the canonical
 # reviewer-protocol.md reference.
 #

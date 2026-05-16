@@ -23,12 +23,12 @@ Find real issues before merge or deploy. Default mode is report-only: do not edi
 
 Read `${CLAUDE_PLUGIN_ROOT}/references/reviewer-protocol.md`. These tracks are orchestrated by `ry-review` or `ry-start`; they are not broad implicit-entry skills.
 
-- `flow-architecture-review` — boundary, dependency, module shape, data flow.
-- `flow-quality-review` — correctness, edge cases, error handling, hacks, tech debt.
-- `flow-consistency-review` — naming, style, imports, public APIs.
-- `flow-integration-review` — contracts, schemas, configs, generated types, migrations.
-- `flow-verification-review` — tests, quality gates, browser/server evidence.
-- `flow-security-review` — auth, secrets, OWASP, injection, SSRF/XSS — when sensitive or requested.
+- `flow-architecture-review` - boundary, dependency, module shape, data flow.
+- `flow-quality-review` - correctness, edge cases, error handling, hacks, tech debt.
+- `flow-consistency-review` - naming, style, imports, public APIs.
+- `flow-integration-review` - contracts, schemas, configs, generated types, migrations.
+- `flow-verification-review` - tests, quality gates, browser/server evidence.
+- `flow-security-review` - auth, secrets, OWASP, injection, SSRF/XSS - when sensitive or requested.
 
 ## Output Transport
 
@@ -49,7 +49,7 @@ Rationale: Claude Code 2.0.77+ has a confirmed `task.output` regression (Anthrop
 
 - Edit files в default mode без user'ского explicit ask после findings.
 - Reporting confidence <30 без validation.
-- Run reviewer agents implicitly (без ry-start или ry-review trigger) — ломает orchestration intent.
+- Run reviewer agents implicitly (без ry-start или ry-review trigger) - ломает orchestration intent.
 - Skip Serena symbol/reference mapping для changed code.
-- Dispatch reviewer subagents without `run_id` / `report_dir` in the prompt — reviewers fall back to defaults, but explicit values keep wave artefacts consistent and inspectable.
-- Return long-form findings from a reviewer inline instead of via the report file — triggers the Claude Code 2.0.77+ task.output truncation regression.
+- Dispatch reviewer subagents without `run_id` / `report_dir` in the prompt - reviewers fall back to defaults, but explicit values keep wave artefacts consistent and inspectable.
+- Return long-form findings from a reviewer inline instead of via the report file - triggers the Claude Code 2.0.77+ task.output truncation regression.

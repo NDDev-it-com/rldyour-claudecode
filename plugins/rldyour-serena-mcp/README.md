@@ -5,13 +5,13 @@ Serena-first semantic code workflow + fact-only memory sync + lifecycle hooks.
 ## What's inside
 
 - `2` skills: `serena-code-workflow` (semantic inspection patterns), `serena-memory-sync` (memory write rules).
-- `1` subagent: `flow-memory-sync` (`model: sonnet`, `effort: high`, `maxTurns: 36`, `color: yellow`, explicit `tools:` allowlist that grants Serena memory write tools — `write_memory`, `edit_memory`, `delete_memory`, `rename_memory` — plus read-only Read/Grep/Glob/Bash and Serena symbol/file inspection tools; additionally retains `disallowedTools: [Edit, Write, NotebookEdit]` defence-in-depth to block project-file mutation) — the canonical handler for numbered `.serena/memories/*.md` updates (`AREA-01-SLUG.md`) with anti-hallucination contract (citation per claim, source-of-truth hierarchy code > tests > git diff > existing memories, removal-first principle).
-- `4` hooks: `UserPromptSubmit`, `PreToolUse:Bash` (auto-sync baseline), `PostToolUse:Bash` (mark sync required), `Stop` (memory-sync gate — emits advisory + `exit 2` when memories are stale).
+- `1` subagent: `flow-memory-sync` (`model: sonnet`, `effort: high`, `maxTurns: 36`, `color: yellow`, explicit `tools:` allowlist that grants Serena memory write tools - `write_memory`, `edit_memory`, `delete_memory`, `rename_memory` - plus read-only Read/Grep/Glob/Bash and Serena symbol/file inspection tools; additionally retains `disallowedTools: [Edit, Write, NotebookEdit]` defence-in-depth to block project-file mutation) - the canonical handler for numbered `.serena/memories/*.md` updates (`AREA-01-SLUG.md`) with anti-hallucination contract (citation per claim, source-of-truth hierarchy code > tests > git diff > existing memories, removal-first principle).
+- `4` hooks: `UserPromptSubmit`, `PreToolUse:Bash` (auto-sync baseline), `PostToolUse:Bash` (mark sync required), `Stop` (memory-sync gate - emits advisory + `exit 2` when memories are stale).
 - `3` scripts: `analyze_sync_scope.py` (commit-range/file-list impact analysis for focused sync, canonical memory taxonomy, and topic target mapping), `serena_memory_state.py` (machine-readable freshness check), `commit_serena_knowledge.sh` (acknowledge sync state, used by hooks and the `flow-memory-sync` subagent).
 
 ## Coordination contract
 
-Serena owns memory freshness. The flow plugin's Stop hook derives `serena_current` from `serena_memory_state.py` before checking git/docs/fullrepo state — so memory sync runs first, then post-task pipeline.
+Serena owns memory freshness. The flow plugin's Stop hook derives `serena_current` from `serena_memory_state.py` before checking git/docs/fullrepo state - so memory sync runs first, then post-task pipeline.
 
 Memory taxonomy is explicit and stable: `CORE-01-INDEX.md` is the map, topic files use `AREA-01-SLUG.md`, and the analyzer emits `analysis.memory_taxonomy` + `analysis.memory_targets` so the Stop hook and `flow-memory-sync` agent work from the same scope.
 

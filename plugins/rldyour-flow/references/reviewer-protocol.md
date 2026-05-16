@@ -57,11 +57,11 @@ report_dir = .serena/reviews/<run_id>/
 
 Each reviewer:
 
-1. Uses `Bash` (already in the allowlist) to write the full markdown report. **The Bash write must target only `<report_dir>/<reviewer-name>.md`; no other paths.** Reviewers have read-only access to project source via the absence of `Edit`, `Write`, and `NotebookEdit` from the allowlist, but `Bash` is technically arbitrary — the contract bounds it to the single report path. Canonical pattern:
+1. Uses `Bash` (already in the allowlist) to write the full markdown report. **The Bash write must target only `<report_dir>/<reviewer-name>.md`; no other paths.** Reviewers have read-only access to project source via the absence of `Edit`, `Write`, and `NotebookEdit` from the allowlist, but `Bash` is technically arbitrary - the contract bounds it to the single report path. Canonical pattern:
    ```bash
    mkdir -p "${report_dir}"
    cat > "${report_dir}/<reviewer-name>.md" <<'RLDYOUR_REPORT_EOF'
-   # <Reviewer Title> — <scope>
+   # <Reviewer Title> - <scope>
    ...full long-form findings (Severity / Confidence / Location / Evidence / Impact / Fix / Disposition,
    plus security extras when applicable)...
    RLDYOUR_REPORT_EOF
@@ -70,13 +70,13 @@ Each reviewer:
 2. Returns to the parent session a **compact summary ≤ 4 KB** with this exact structure:
 
 ```
-## Review Summary — <reviewer-name>
+## Review Summary - <reviewer-name>
 Report: <relative path to report file from repo root>
 
 Counts: critical=N, high=N, medium=N, low=N, info=N, total=N
 
-All findings (one-liner, cap 30 entries — additional findings only in the report file):
-- F-1 <severity> (<confidence>): <relative path>:<line> — <one-sentence description, ≤ 100 chars>
+All findings (one-liner, cap 30 entries - additional findings only in the report file):
+- F-1 <severity> (<confidence>): <relative path>:<line> - <one-sentence description, ≤ 100 chars>
 - F-2 ...
 - ... (cap 30 entries; append "... +M more findings in report file" when total > 30)
 
@@ -104,7 +104,7 @@ The orchestrator (`ry-start` or `ry-review` skill body) after subagent completio
 - **Cap on parent context impact**: 6 reviewers × ≤ 4 KB summary = ≤ 24 KB injected into parent context, well below any plausible overflow threshold. The bug class described in Anthropic `#23463` (15-37 KB per reviewer × 7 reviewers → 150 KB → overflow) is structurally prevented.
 - **Full evidence preserved**: long-form findings live on disk and are not lost even when subagent transport truncates.
 - **Backward compatible**: reviewers that find few findings produce short summaries; the file is optional metadata, the summary alone is sufficient for the orchestrator to act.
-- **Read-only invariant intact**: reviewers still only modify their own report files under `.serena/reviews/` — they do not touch project source. The marketplace `validate_agent_tools.py` invariant continues to allow `Bash` for read-only inspection plus reviewer-result writes; project files remain unreachable because `Edit`, `Write`, and `NotebookEdit` are absent from the allowlist.
+- **Read-only invariant intact**: reviewers still only modify their own report files under `.serena/reviews/` - they do not touch project source. The marketplace `validate_agent_tools.py` invariant continues to allow `Bash` for read-only inspection plus reviewer-result writes; project files remain unreachable because `Edit`, `Write`, and `NotebookEdit` are absent from the allowlist.
 
 ## Parent Integration
 
@@ -112,13 +112,13 @@ The parent workflow (`ry-start` or `ry-review`) consolidates all findings, resol
 
 ## Why agents, not skills
 
-As of May 2026, `disable-model-invocation: true` on plugin skills has known limitations (cannot be invoked by user via slash command either when installed in a plugin — issue #26251). The canonical pattern from `anthropics/claude-plugins-official/plugins/pr-review-toolkit` is reviewer **agents**, not skills. Reviewer agents have:
+As of May 2026, `disable-model-invocation: true` on plugin skills has known limitations (cannot be invoked by user via slash command either when installed in a plugin - issue #26251). The canonical pattern from `anthropics/claude-plugins-official/plugins/pr-review-toolkit` is reviewer **agents**, not skills. Reviewer agents have:
 
 - Short orchestration-focused descriptions (no "use when..." trigger phrases) to discourage implicit invocation.
-- `tools: [Read, Grep, Glob, Bash, mcp__plugin_rldyour-mcps_serena__*, mcp__plugin_rldyour-mcps_context7__*, mcp__plugin_rldyour-mcps_deepwiki__*, mcp__plugin_rldyour-mcps_grep__*]` explicit allowlist to enforce read-only review with future-proof safety. `flow-security-review` adds `WebFetch`, `WebSearch`, and `mcp__plugin_rldyour-mcps_semgrep__*` for CVE lookups and SAST. Pattern follows canonical `anthropics/claude-plugins-official/plugins/pr-review-toolkit/agents/code-reviewer` (explicit allowlist), not the older `disallowedTools` denylist — explicit positive intent is stronger than denying a finite list.
+- `tools: [Read, Grep, Glob, Bash, mcp__plugin_rldyour-mcps_serena__*, mcp__plugin_rldyour-mcps_context7__*, mcp__plugin_rldyour-mcps_deepwiki__*, mcp__plugin_rldyour-mcps_grep__*]` explicit allowlist to enforce read-only review with future-proof safety. `flow-security-review` adds `WebFetch`, `WebSearch`, and `mcp__plugin_rldyour-mcps_semgrep__*` for CVE lookups and SAST. Pattern follows canonical `anthropics/claude-plugins-official/plugins/pr-review-toolkit/agents/code-reviewer` (explicit allowlist), not the older `disallowedTools` denylist - explicit positive intent is stronger than denying a finite list.
 - `model: sonnet` for cost-efficiency on read-only inspection work.
 - `effort: high` (uniform across all 6 tracks).
-- `maxTurns: 36` for all tracks; `42` for `flow-security-review` (extra +6 turns reserved for variant-hunt sweep — searching sibling files and repeated helpers for the same root cause once an issue is found). Generous limits compensate for MCP-rich toolsets (Serena + Context7 + DeepWiki + Grep) consuming turns on tool plumbing — tight 12-14 caps left only 4-7 effective reasoning turns. When adding a new reviewer track, default to `maxTurns: 36` unless the track requires variant-hunting beyond the single finding.
+- `maxTurns: 36` for all tracks; `42` for `flow-security-review` (extra +6 turns reserved for variant-hunt sweep - searching sibling files and repeated helpers for the same root cause once an issue is found). Generous limits compensate for MCP-rich toolsets (Serena + Context7 + DeepWiki + Grep) consuming turns on tool plumbing - tight 12-14 caps left only 4-7 effective reasoning turns. When adding a new reviewer track, default to `maxTurns: 36` unless the track requires variant-hunting beyond the single finding.
 - Distinct `color` per track for visual differentiation in the task list:
   - `flow-architecture-review`: `blue`
   - `flow-quality-review`: `green`

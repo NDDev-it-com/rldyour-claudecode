@@ -55,6 +55,6 @@ Report in Russian:
 
 - Запускать `serena-memory-sync` автоматически без user request или stale-memory хука.
 - Останавливаться на file listings без понимания end-to-end behavior.
-- Skip'ать `--bootstrap-init` когда AGENTS.md/CLAUDE.md missing — fullrepo restore первый.
+- Skip'ать `--bootstrap-init` когда AGENTS.md/CLAUDE.md missing - fullrepo restore первый.
 - Treat'ить runtime snapshots как memory material.
 - Editing scope-detection ambiguous prompts без 2-3 concrete option questions.

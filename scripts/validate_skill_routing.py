@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""validate_skill_routing.py — assert skill description coverage for routing policy.
+"""validate_skill_routing.py - assert skill description coverage for routing policy.
 
 Reads `config/skill-routing-policy.json` and for each test case verifies:
   1. The referenced skill exists at `plugins/<plugin>/skills/<skill>/SKILL.md`.

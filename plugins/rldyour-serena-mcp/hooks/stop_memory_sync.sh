@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# stop_memory_sync.sh — advisory enforcement gate for Stop event.
+# stop_memory_sync.sh - advisory enforcement gate for Stop event.
 #
 # Behaviour: this hook does NOT mutate memories itself. Memory updates require
 # code understanding and source-of-truth verification, which is the job of the
@@ -156,7 +156,7 @@ ${NON_KNOWLEDGE_FILES:-unknown}
 
 Continue this turn and run the serena-memory-sync workflow now.
 
-Preferred path — invoke the flow-memory-sync subagent:
+Preferred path - invoke the flow-memory-sync subagent:
 
   Agent({
     description: 'Sync Serena memories against HEAD ${HEAD_SHA}',
@@ -166,7 +166,7 @@ Preferred path — invoke the flow-memory-sync subagent:
 
 The flow-memory-sync subagent has narrow tool access (Serena memory tools + Read/Grep/Glob/Bash; Edit/Write/NotebookEdit are disallowed in its frontmatter). It enforces fact-only updates with anti-hallucination guards and runs ${COMMIT_SCRIPT} at the end.
 
-Fallback path (if the subagent is not available — e.g. plugin not yet reloaded):
+Fallback path (if the subagent is not available - e.g. plugin not yet reloaded):
 1. Use Serena MCP for code inspection: check_onboarding_performed -> list_memories -> read_memory(relevant) -> get_symbols_overview -> find_symbol(include_body=false) -> find_symbol(include_body=true only where needed) -> find_referencing_symbols -> search_for_pattern.
 2. Update .serena/memories with high-signal fact-only English content. Use numbered topic files (AREA-01-SLUG.md) and update CORE-01-INDEX.md when adding, renaming, or splitting memories. Code, git diff, and tests are the source of truth.
 3. Each touched memory must contain a 'Last commit: ${HEAD_SHA}' line so the state script recognises sync via direct-head-reference.

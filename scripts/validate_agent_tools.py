@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""validate_agent_tools.py — static validation of agent `tools:` allowlists.
+"""validate_agent_tools.py - static validation of agent `tools:` allowlists.
 
 Parses every `plugins/*/agents/*.md` frontmatter and verifies that each entry
 in the `tools:` list is syntactically valid and references a real MCP server
@@ -13,7 +13,7 @@ Validation rules:
      - Reference a real server name from `plugins/rldyour-mcps/.mcp.json`
        (or a known external pattern when plugin owns its own .mcp.json).
   3. Wildcards (`__*`) for non-Serena MCP servers must be listed in
-     `READ_ONLY_BY_DESIGN_MCPS` — these servers are documented invariant as
+     `READ_ONLY_BY_DESIGN_MCPS` - these servers are documented invariant as
      read-only-by-contract. Adding a wildcard for a server that exposes write
      tools (currently only Serena) is a FAIL.
 

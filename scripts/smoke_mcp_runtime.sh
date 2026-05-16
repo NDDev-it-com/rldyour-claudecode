@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# smoke_mcp_runtime.sh — verify MCP server runtime definitions are usable.
+# smoke_mcp_runtime.sh - verify MCP server runtime definitions are usable.
 #
 # Coverage:
 #   1. Pinned-spec discipline: every stdio entry has ==X.Y.Z or @X.Y.Z;
@@ -87,7 +87,7 @@ for name, cfg in mcp.get("mcpServers", {}).items():
         if e.code in (401, 403):
             print(f"OK {name}: HTTP {e.code} (auth-gated, accepted) from {url}")
         elif e.code == 405:
-            print(f"WARN {name}: HTTP 405 from {url} — only valid for optional SSE GET, not POST initialize", file=sys.stderr)
+            print(f"WARN {name}: HTTP 405 from {url} - only valid for optional SSE GET, not POST initialize", file=sys.stderr)
             fail = 1
         else:
             print(f"FAIL {name}: HTTP {e.code} from {url}: {e.reason}", file=sys.stderr)
