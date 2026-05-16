@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-16
-Last commit: 61b913d feat(scripts): add validate_reviewer_contracts for heredoc drift detection
+Last updated: 2026-05-17
+Last commit: 00d3f82 docs(config): add REVIEW.md template per global CLAUDE.md spec
 Scope: AGENTS.md, .claude/CLAUDE.md, plugins/rldyour-rules/skills/project-instructions-policy/SKILL.md, plugins/rldyour-flow/scripts/instruction_docs_state.py, scripts/validate_instruction_docs.py, plugins/rldyour-serena-mcp/scripts/analyze_sync_scope.py
 Area: DOCS
 -->
@@ -29,6 +29,7 @@ Durable instruction-file policy for the repository: what belongs in `AGENTS.md`,
 - `.claude/CLAUDE.md` is first-class Claude Code memory and must not be reduced to only an `@AGENTS.md` import.
 - Both `AGENTS.md` and `.claude/CLAUDE.md` are agent-only in this fullrepo-managed repository and are excluded from `main` through `.git/info/exclude`.
 - Current docs include the numbered Serena memory contract: `CORE-01-INDEX.md` is the memory map; topic files use `AREA-01-SLUG.md`.
+- `config/REVIEW.md.template` (68 lines) exists at HEAD `00d3f82` — template for project-level `REVIEW.md`. Sections: Always Check, Architecture, Quality, Consistency, Tests, Security, Skip, Notes. Downstream projects copy to project root as `REVIEW.md`; reviewer agents (`flow-*-review`, `ry-rules-review`, `ry-sec-review`) auto-discover it. Verified at `config/REVIEW.md.template` at HEAD `00d3f82`.
 - `AGENTS.md` routes memory writes through `flow-memory-sync` when Stop/post-task sync requires it and through `serena-memory-sync` as a manual/fallback workflow.
 - Instruction-only commits are sync-relevant. They are not treated as knowledge-only no-ops by `mark_sync_required.sh` or `serena_memory_state.py`.
 
@@ -36,7 +37,7 @@ Durable instruction-file policy for the repository: what belongs in `AGENTS.md`,
 
 - `AGENTS.md` should contain cross-tool facts: source-of-truth paths, plugin boundaries, validation/setup commands, SDLC routing, fullrepo policy, MCP transport summary, engineering constraints, and done criteria.
 - `.claude/CLAUDE.md` should contain Claude Code-specific facts: subagent matrix, hook lifecycle/canon, skill-listing budget, changelog adoption, diagnostics, and Claude-specific Don't/Done rules.
-- Current line counts at HEAD: `AGENTS.md` 184 lines; `.claude/CLAUDE.md` 180 lines (verified by `wc -l` at HEAD `334fe09`). Both files declare a 200-line cap in HTML maintainer comments (stripped from Claude's context per CC v2.1.72).
+- Current line counts at HEAD: `AGENTS.md` 186 lines; `.claude/CLAUDE.md` 182 lines (verified by `wc -l` at HEAD `557bc00`). Both files declare a 200-line cap in HTML maintainer comments (stripped from Claude's context per CC v2.1.72).
 - Do not put secrets, chat transcripts, raw tokens, private cookies, or local credentials into instruction docs.
 - Do not store generic advice when a source path or command is more useful.
 - Memory taxonomy changes require updates to `AGENTS.md`, `.claude/CLAUDE.md`, `serena-memory-sync` skill, `flow-memory-sync` agent, and `CORE-01-INDEX.md`.

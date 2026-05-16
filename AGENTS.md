@@ -76,16 +76,16 @@ Reviewer output uses a **file-first transport contract** (full text in `plugins/
 
 Two plugins coordinate hooks. `flow.stop_post_task_sync.sh` derives `serena_current` by calling `plugins/rldyour-serena-mcp/scripts/serena_memory_state.py`; it does not consume output from the Serena Stop hook.
 
-| Event | Owner | Script |
-|---|---|---|
-| UserPromptSubmit | rldyour-serena-mcp | `hooks/user_prompt_submit.sh` |
-| PreToolUse:Bash | rldyour-serena-mcp | `hooks/prepare_auto_sync.sh` |
-| PostToolUse:Bash | rldyour-serena-mcp | `hooks/mark_sync_required.sh` |
-| PostToolUse:Bash | rldyour-flow | `hooks/post_tool_use_commit_advice.sh` |
-| SessionStart | rldyour-flow | `hooks/session_start_worktree_bootstrap.sh` |
-| SessionStart | rldyour-flow | `hooks/session_start_context.sh` |
-| Stop | rldyour-serena-mcp | `hooks/stop_memory_sync.sh` |
-| Stop | rldyour-flow | `hooks/stop_post_task_sync.sh` |
+| Event | Owner | Script | Timeout |
+|---|---|---|---|
+| UserPromptSubmit | rldyour-serena-mcp | `hooks/user_prompt_submit.sh` | 5s |
+| PreToolUse:Bash | rldyour-serena-mcp | `hooks/prepare_auto_sync.sh` | 5s |
+| PostToolUse:Bash | rldyour-serena-mcp | `hooks/mark_sync_required.sh` | 5s |
+| PostToolUse:Bash | rldyour-flow | `hooks/post_tool_use_commit_advice.sh` | 5s |
+| SessionStart | rldyour-flow | `hooks/session_start_worktree_bootstrap.sh` | 30s |
+| SessionStart | rldyour-flow | `hooks/session_start_context.sh` | 5s |
+| Stop | rldyour-serena-mcp | `hooks/stop_memory_sync.sh` | 10s |
+| Stop | rldyour-flow | `hooks/stop_post_task_sync.sh` | 10s |
 
 Most hooks are advisory and exit `0`; Stop hooks are advisory enforcement gates that write guidance to stderr and block with `exit 2` when memory or post-task sync is required. The single hook that performs a bounded worktree mutation is `session_start_worktree_bootstrap.sh` — it runs `fullrepo_sync.py --restore` (never `--publish`, never touches origin) only when an agent-only marker is missing in the active worktree. Skip flags: `RLDYOUR_SKIP_FLOW_SESSION_CONTEXT`, `RLDYOUR_SKIP_FLOW_COMMIT_ADVICE`, `RLDYOUR_SKIP_STOP_GATES`, `RLDYOUR_SKIP_FLOW_SYNC`, `RLDYOUR_SKIP_SERENA_SYNC`, `RLDYOUR_SKIP_WORKTREE_BOOTSTRAP`.
 

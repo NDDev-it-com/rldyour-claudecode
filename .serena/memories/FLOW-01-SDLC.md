@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-17
-Last commit: 557bc00 docs(changelog): wave-3 audit closures D31-D35
+Last commit: 00d3f82 docs(config): add REVIEW.md template per global CLAUDE.md spec
 Scope: plugins/rldyour-flow/**, scripts/worktree_add.sh, AGENTS.md, .claude/CLAUDE.md, plugins/rldyour-flow/scripts/fullrepo_sync.py
 Area: FLOW
 -->

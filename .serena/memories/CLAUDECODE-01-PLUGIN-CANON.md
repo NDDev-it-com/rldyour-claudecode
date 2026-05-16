@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-16
-Last commit: 61b913d feat(scripts): add validate_reviewer_contracts for heredoc drift detection
+Last updated: 2026-05-17
+Last commit: 00d3f82 docs(config): add REVIEW.md template per global CLAUDE.md spec
 Scope: .claude/CLAUDE.md, AGENTS.md, plugins/*/.claude-plugin/plugin.json, plugins/rldyour-mcps/.mcp.json, plugins/*/skills/*/SKILL.md, plugins/*/agents/*.md, plugins/*/hooks/hooks.json, plugins/rldyour-serena-mcp/scripts/analyze_sync_scope.py
 Area: CLAUDECODE
 -->

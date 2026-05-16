@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-17
-Last commit: 557bc00 docs(changelog): wave-3 audit closures D31-D35
+Last commit: 00d3f82 docs(config): add REVIEW.md template per global CLAUDE.md spec
 Scope: plugins/rldyour-serena-mcp/hooks/hooks.json, plugins/rldyour-serena-mcp/hooks/*.sh, plugins/rldyour-flow/hooks/hooks.json, plugins/rldyour-flow/hooks/*.sh, scripts/smoke_hooks.sh, scripts/smoke_serena_memory_taxonomy.sh, .claude/CLAUDE.md, AGENTS.md
 Area: HOOKS
 -->
