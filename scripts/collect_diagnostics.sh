@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# collect_diagnostics.sh — bundle local diagnostic state for failure triage.
+# collect_diagnostics.sh - bundle local diagnostic state for failure triage.
 #
 # Writes a timestamped tarball under .serena/diagnostics/ (gitignored) that
 # captures everything an off-machine reviewer would need to investigate a
@@ -7,7 +7,7 @@
 # plugin list, manifest snapshots, MCP server config, hook scripts, current
 # branch state, fullrepo sync state, runtime state files, recent CI logs.
 #
-# The bundle never contains secrets — env vars are filtered, .env files are
+# The bundle never contains secrets - env vars are filtered, .env files are
 # skipped, and OAuth/API tokens never appear because we only read from the
 # repo, not from the environment.
 #

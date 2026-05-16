@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# worktree_add.sh — one-step git worktree creation for the rldyour-claudecode
+# worktree_add.sh - one-step git worktree creation for the rldyour-claudecode
 # marketplace.
 #
 # Wraps `git worktree add` + `fullrepo_sync.py --restore` so a fresh
@@ -29,7 +29,7 @@
 #   RLDYOUR_DRY_RUN=1   Print what would happen, do not execute.
 #
 # This script invokes `fullrepo_sync.py --restore` (NOT --bootstrap-init).
-# Restore is purely additive — it fetches origin/fullrepo, installs the
+# Restore is purely additive - it fetches origin/fullrepo, installs the
 # per-worktree .git/info/exclude block, and checks out agent-only paths.
 # It NEVER pushes, NEVER publishes, NEVER touches origin write-side.
 # If `origin/fullrepo` does not exist yet, the script aborts with a clear
@@ -68,7 +68,7 @@ fi
 # something exotic (Unicode, +, =), update this regex consciously rather than
 # loosening it on first failure.
 if ! [[ "${BRANCH}" =~ ^[A-Za-z0-9._/-]{1,255}$ ]]; then
-  echo "FAIL invalid branch name '${BRANCH}' — must match ^[A-Za-z0-9._/-]{1,255}\$ (rejected to prevent git-option injection via crafted branch strings)" >&2
+  echo "FAIL invalid branch name '${BRANCH}' - must match ^[A-Za-z0-9._/-]{1,255}\$ (rejected to prevent git-option injection via crafted branch strings)" >&2
   exit 1
 fi
 
@@ -128,7 +128,7 @@ fi
 # Before creating the worktree, verify origin/fullrepo exists. Otherwise
 # --restore in the new worktree would be a no-op and the user would end up
 # with an empty agent-only context, wondering why. We intentionally do NOT
-# fall through to --publish here — publishing is a high-blast-radius
+# fall through to --publish here - publishing is a high-blast-radius
 # operation that must stay under explicit user judgement, not buried in a
 # helper script.
 STATUS_JSON=$(python3 "${ROOT}/plugins/rldyour-flow/scripts/fullrepo_sync.py" --status-json 2>/dev/null || true)
@@ -144,7 +144,7 @@ print("true" if s.get("remote_fullrepo_exists") else "false")
 
 if [[ "${REMOTE_PRESENT}" != "true" ]]; then
   cat >&2 <<EOF
-FAIL origin/fullrepo does not exist yet — refusing to auto-publish from a helper script.
+FAIL origin/fullrepo does not exist yet - refusing to auto-publish from a helper script.
 
 Run this once from the main worktree to seed it:
     python3 ${ROOT}/plugins/rldyour-flow/scripts/fullrepo_sync.py --publish

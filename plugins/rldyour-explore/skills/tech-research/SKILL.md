@@ -34,7 +34,7 @@ Skip when: question is news / current events (use `web-research`), or it's purel
 ## Output style
 
 - Tag each finding with confidence: **Confirmed** / **Strongly supported** / **Inferred**
-- Cite exact source — `<library>@<version>`, repo path, doc section
+- Cite exact source - `<library>@<version>`, repo path, doc section
 - Distinguish documentation claims from real-world code observations
 - Flag version-specific behavior with explicit version numbers
 - Reply in Russian when the user wrote in Russian
@@ -43,6 +43,6 @@ Skip when: question is news / current events (use `web-research`), or it's purel
 
 - Single-source claims for critical decisions
 - Mixing inferences with confirmed facts without explicit labels
-- Ignoring contradictions between docs and code — surface them, don't hide
+- Ignoring contradictions between docs and code - surface them, don't hide
 - Using `web-research` when an MCP server has the authoritative answer
 - Generic "best practice" lists without dated, named sources

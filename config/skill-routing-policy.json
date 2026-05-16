@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "description": "Deterministic policy tests for Russian and English prompt routing into rldyour skills. Each case asserts that for the given prompt the listed skill descriptions contain the expected terms — verifying that skill descriptions stay aligned with the trigger phrases users actually type.",
+  "description": "Deterministic policy tests for Russian and English prompt routing into rldyour skills. Each case asserts that for the given prompt the listed skill descriptions contain the expected terms - verifying that skill descriptions stay aligned with the trigger phrases users actually type.",
   "cases": [
     {
       "id": "ru-technical-research",

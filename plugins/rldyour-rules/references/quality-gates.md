@@ -21,8 +21,8 @@ Run the checks that match the touched stack and risk:
 
 ### Python
 
-- **Type-checker**: `pyright` (default — best speed/spec-conformance ratio). Microsoft-maintained, 98% spec coverage, 2-5x faster than mypy.
-- **Lint**: `ruff` (canonical — replaces flake8/isort/black/pylint).
+- **Type-checker**: `pyright` (default - best speed/spec-conformance ratio). Microsoft-maintained, 98% spec coverage, 2-5x faster than mypy.
+- **Lint**: `ruff` (canonical - replaces flake8/isort/black/pylint).
 - **Test**: `pytest`.
 - Optional **ty** (Astral) for greenfield speed-first projects (10-60x faster than mypy/pyright but only ~53% spec conformance).
 - Avoid `mypy` for new projects unless legacy constraints demand it.
@@ -31,12 +31,12 @@ Run the checks that match the touched stack and risk:
 
 - **Type-check**: `tsc --noEmit` (or `tsgo` when available).
 - **Lint**:
-  - **ESLint v9** with flat config — universal default for established codebases.
-  - **Biome** — recommended for greenfield projects (24x faster, ESM-native).
-  - **Oxlint (OXC)** — emerging, 50-100x faster but linting-only and immature ecosystem; CI speed layer only.
+  - **ESLint v9** with flat config - universal default for established codebases.
+  - **Biome** - recommended for greenfield projects (24x faster, ESM-native).
+  - **Oxlint (OXC)** - emerging, 50-100x faster but linting-only and immature ecosystem; CI speed layer only.
 - **Test**:
-  - **Vitest** — default for new TS/ESM projects.
-  - **Jest** — only if Webpack/CRA constraints exist.
+  - **Vitest** - default for new TS/ESM projects.
+  - **Jest** - only if Webpack/CRA constraints exist.
 - **Format**: Prettier or Biome formatter.
 
 ### Rust

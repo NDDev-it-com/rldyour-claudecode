@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# install_local_git_hooks.sh — install rldyour pre-push guard in a consumer repo.
+# install_local_git_hooks.sh - install rldyour pre-push guard in a consumer repo.
 #
 # The guard is the local_git_ai_guard.sh shipped in plugins/rldyour-flow/scripts/.
 # It is branch-aware: product branches get strict protection against agent-only
@@ -77,7 +77,7 @@ if [ ! -f "$GUARD_SOURCE" ]; then
 fi
 
 if [ "$APPLY" -eq 0 ]; then
-  echo "DRY-RUN — would install:"
+  echo "DRY-RUN - would install:"
   echo "  source: $GUARD_SOURCE"
   echo "  target: $HOOK_PATH"
   exit 0

@@ -99,5 +99,5 @@ For design implementation, report in Russian:
 - Cross-slice internals imports (`@/entities/user/ui/UserCard` вместо `@/entities/user`).
 - Импорты из upper layer в lower (`shared` импортирует из `features`).
 - Business logic в `shared/ui`.
-- Page-local UI которое нужно reuse в других pages — это widget или shared.
+- Page-local UI которое нужно reuse в других pages - это widget или shared.
 - Pasting generated code без architectural cleanup.

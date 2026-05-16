@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# smoke_mcp_capabilities.sh — capability-level MCP server smoke.
+# smoke_mcp_capabilities.sh - capability-level MCP server smoke.
 #
 # Spawns each pinned MCP server (or POSTs to each HTTP endpoint), performs
 # a JSON-RPC `initialize` handshake, then `tools/list`, and verifies the
@@ -11,7 +11,7 @@
 #   - stdio server in ENV_REQUIRED but the env var is absent.
 #   - stdio server in BINARY_REQUIRED but the binary is not on PATH.
 #   - HTTP server expects ${ENV_VAR} in headers and the var is empty (auth
-#     header would resolve to empty bearer — counted as SKIP, not FAIL).
+#     header would resolve to empty bearer - counted as SKIP, not FAIL).
 #
 # HTTP auth handling (no blanket 401/403 = PASS shortcut):
 #   - 200/204 + parseable initialize.result.serverInfo → OK
@@ -19,9 +19,9 @@
 #     wrong protocol; this is exactly the silent-misconfig we want to catch)
 #   - 401 with no env-substituted auth header sent → SKIP (server reachable;
 #     CI just lacks credentials)
-#   - 401 with auth header sent → FAIL (token rejected — wrong scopes/expired)
+#   - 401 with auth header sent → FAIL (token rejected - wrong scopes/expired)
 #   - 403 always → FAIL with explicit message ("entitlement-denied or org
-#     policy blocks the configured token") — this is the failure mode that
+#     policy blocks the configured token") - this is the failure mode that
 #     `api.githubcopilot.com/mcp/` returns for non-Copilot accounts.
 #
 # Optional flags:
@@ -77,7 +77,7 @@ ENV_REQUIRED = {
 }
 
 # Stdio servers that depend on a system binary on PATH (no uvx/bunx
-# bootstrap). Absent binary → SKIP, not FAIL — CI without that toolchain
+# bootstrap). Absent binary → SKIP, not FAIL - CI without that toolchain
 # should not regress the harness.
 BINARY_REQUIRED = {
     "dart-flutter": "dart",
@@ -122,7 +122,7 @@ def parse_args(argv):
             i += 1
             continue
         if a in ("-h", "--help"):
-            print("smoke_mcp_capabilities.sh — see file header for usage")
+            print("smoke_mcp_capabilities.sh - see file header for usage")
             sys.exit(0)
         print(f"unknown arg: {a!r}", file=sys.stderr)
         sys.exit(2)
@@ -310,7 +310,7 @@ def expand_headers(raw_headers):
     """Substitute ${VAR} in header values and report which vars were empty.
 
     Returns (expanded_dict, missing_var_names). A header keeps its slot even
-    if its value substituted to empty — we want to know whether the *upstream*
+    if its value substituted to empty - we want to know whether the *upstream*
     treats the request as authenticated (the empty bearer typically yields
     401), not silently drop the header and accidentally pass an unauth probe.
     """
@@ -320,7 +320,7 @@ def expand_headers(raw_headers):
     for k, v in raw_headers.items():
         names = var_pattern.findall(v)
         substituted = os.path.expandvars(v)
-        # Detect "all referenced vars were empty" — common in CI without secrets.
+        # Detect "all referenced vars were empty" - common in CI without secrets.
         if names and all(not os.environ.get(n, "").strip() for n in names):
             missing.extend(names)
         expanded[k] = substituted
@@ -364,7 +364,7 @@ def parse_mcp_response_body(payload, content_type):
 def smoke_http(name, cfg, timeout_s):
     """POST initialize JSON-RPC to an HTTP MCP server endpoint.
 
-    Verifies a real protocol handshake — the server must return a JSON-RPC
+    Verifies a real protocol handshake - the server must return a JSON-RPC
     `result.serverInfo` object, not just an HTTP 200. 401/403 are evaluated
     against whether a real auth header was actually sent.
     """
@@ -415,18 +415,18 @@ def smoke_http(name, cfg, timeout_s):
 
     if status == 401:
         if not auth_sent:
-            return ("SKIP", f"HTTP 401 with no auth sent — server reachable, no credentials in env")
-        return ("FAIL", f"HTTP 401 with auth sent — token rejected (check scopes/expiry)")
+            return ("SKIP", f"HTTP 401 with no auth sent - server reachable, no credentials in env")
+        return ("FAIL", f"HTTP 401 with auth sent - token rejected (check scopes/expiry)")
 
     if status == 403:
         return (
             "FAIL",
-            "HTTP 403 — entitlement denied (token valid but account/org lacks access; "
-            "for github MCP this means no Copilot allowlist — switch to stdio github-mcp-server)"
+            "HTTP 403 - entitlement denied (token valid but account/org lacks access; "
+            "for github MCP this means no Copilot allowlist - switch to stdio github-mcp-server)"
         )
 
     if status not in (200, 204):
-        # Never echo body — it may contain upstream headers/tokens.
+        # Never echo body - it may contain upstream headers/tokens.
         return ("FAIL", f"HTTP {status} (body {len(payload)} bytes)")
 
     # 200/204: must parse as JSON-RPC and contain serverInfo.
@@ -464,7 +464,7 @@ def main():
 
         transport = scfg.get("type", "stdio")
 
-        # Skip rules apply to stdio only — HTTP auth is handled via 401/403.
+        # Skip rules apply to stdio only - HTTP auth is handled via 401/403.
         if transport != "http":
             env_key = ENV_REQUIRED.get(name)
             if env_key and not envvar_present(env_key):

@@ -56,9 +56,9 @@ Project-specific security checks beyond global OWASP Top 10:
 
 Areas explicitly excluded from review (with rationale):
 
-- Example: `vendor/` — third-party code, not subject to project review.
-- Example: `migrations/0001_initial.sql` — historical baseline, frozen by policy.
-- Example: `docs/legacy/` — pre-redesign documentation kept for reference; do not propose changes.
+- Example: `vendor/` - third-party code, not subject to project review.
+- Example: `migrations/0001_initial.sql` - historical baseline, frozen by policy.
+- Example: `docs/legacy/` - pre-redesign documentation kept for reference; do not propose changes.
 
 ## Notes
 

@@ -22,19 +22,19 @@ Finish work with real evidence, not assumptions. Verification should match the c
 
 **Python:**
 
-- Type-checker: **pyright** (default — best speed/spec-conformance ratio, 2-5x faster than mypy with 98% spec coverage). Optionally **ty** (Astral, 10-60x faster, 53% spec) for greenfield speed-first projects. Avoid mypy for new projects.
-- Lint: **ruff** (canonical — replaces flake8/isort/black/pylint).
+- Type-checker: **pyright** (default - best speed/spec-conformance ratio, 2-5x faster than mypy with 98% spec coverage). Optionally **ty** (Astral, 10-60x faster, 53% spec) for greenfield speed-first projects. Avoid mypy for new projects.
+- Lint: **ruff** (canonical - replaces flake8/isort/black/pylint).
 - Test: **pytest** (canonical, no change).
 
 **JavaScript/TypeScript:**
 
 - Lint:
-  - **ESLint v9** with flat config — universal default for established codebases (largest plugin ecosystem).
-  - **Biome** — recommended for greenfield projects (24x faster than ESLint+Prettier, ESM-native).
-  - **Oxlint (OXC)** — emerging, 50-100x faster but linting-only and immature ecosystem; use as CI speed layer, not primary.
+  - **ESLint v9** with flat config - universal default for established codebases (largest plugin ecosystem).
+  - **Biome** - recommended for greenfield projects (24x faster than ESLint+Prettier, ESM-native).
+  - **Oxlint (OXC)** - emerging, 50-100x faster but linting-only and immature ecosystem; use as CI speed layer, not primary.
 - Test:
-  - **Vitest** — default for new TS/ESM projects (faster, ESM-native).
-  - **Jest** — only if Webpack/CRA constraints exist.
+  - **Vitest** - default for new TS/ESM projects (faster, ESM-native).
+  - **Jest** - only if Webpack/CRA constraints exist.
 - Type-check: `tsc --noEmit` or `tsgo` (TypeScript Go) when available.
 
 **Rust:** `cargo check`, `cargo clippy -- -D warnings`, `cargo test`.
