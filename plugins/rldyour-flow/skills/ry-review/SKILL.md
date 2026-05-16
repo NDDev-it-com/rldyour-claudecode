@@ -34,16 +34,16 @@ Read `${CLAUDE_PLUGIN_ROOT}/references/reviewer-protocol.md`. These tracks are o
 
 Reviewer subagents follow the file-first output contract in `${CLAUDE_PLUGIN_ROOT}/references/reviewer-protocol.md` (section "Output Transport"). The orchestrator (this skill body, executed by the main session model) coordinates the wave:
 
-1. **Generate one `run_id` per review wave** in the form `<UTC ISO compact>-<git short sha>`. Example: `2026-05-16T18Z-91cc276`. Use the same `run_id` for all reviewers in the wave.
+1. **Generate one `run_id` per review wave** in the form `<UTC-ISO-compact>-<git-short-sha>`. Example: `2026-05-16T1433Z-91cc276` (minute-precision). Use the same `run_id` for all reviewers in the wave.
 2. **Compute `report_dir = .serena/reviews/<run_id>/`** (relative to repo root, gitignored runtime artefact).
 3. **Inject `run_id` and `report_dir` into every reviewer prompt** alongside scope, diff, constraints, expected reviewer-protocol citation, and read-only reminder.
 4. **After all reviewers complete**, read each compact summary from the agent result. Aggregate counts across tracks.
-5. **Read per-reviewer report files via `Read`** for findings that require full evidence — critical/high first, medium on demand. Avoid reading all 6 reports for trivial cases.
+5. **Must read each per-reviewer report file via `Read`** for every `critical` and `high` finding before deciding disposition (`flow-security-review` carries fields that exist only in the report file). Medium and low findings may be read on demand.
 6. **Resolve contradictions** between reviewer tracks against code evidence.
-7. **Write a consolidated `<report_dir>/_summary.md`** with cross-track findings, severity ranking, and disposition (must-fix / should-fix / defer / false-positive).
+7. **Write a consolidated `<report_dir>/_summary.md`** with cross-track findings, severity ranking, and disposition (must-fix / should-fix / defer / false-positive). Required whenever any track reported one or more findings.
 8. **Report in Russian** with exact paths, impact, suggested fixes, and disposition. Report-only mode by default: edit files only when the user explicitly asks after seeing findings.
 
-Rationale: Claude Code 2.0.77+ has a confirmed `task.output` regression (Anthropic issues `#16789`, `#20531`, `#23463`, all closed as "not planned") that can deliver 200-500 KB of JSONL transcript per subagent to the parent session and overflow the parent context. Capping each reviewer at a 4 KB summary while keeping full evidence on disk prevents that failure mode.
+Rationale: Claude Code 2.0.77+ has a confirmed `task.output` regression (Anthropic issues [`#16789`](https://github.com/anthropics/claude-code/issues/16789), [`#20531`](https://github.com/anthropics/claude-code/issues/20531), [`#23463`](https://github.com/anthropics/claude-code/issues/23463), all closed as "not planned") that can deliver 200-500 KB of JSONL transcript per subagent to the parent session and overflow the parent context. Capping each reviewer at a 4 KB summary while keeping full evidence on disk prevents that failure mode.
 
 ## Anti-patterns
 
