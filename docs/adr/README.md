@@ -14,6 +14,7 @@ Decisions are recorded in MADR 4.0.0 format. The format and policy live in
 | 0007 | Accepted | [MCP runtime pinning strategy](./0007-mcp-runtime-pinning-strategy.md) |
 | 0008 | Accepted | [CI security baseline without paid add-ons](./0008-ci-baseline-without-paid-addons.md) |
 | 0009 | Accepted | [Release version and tag convention](./0009-release-version-and-tag-convention.md) |
+| 0010 | Accepted | [macOS runner egress trust gap is an accepted upstream limitation](./0010-macos-egress-trust-gap.md) |
 
 ## When to write an ADR
 
