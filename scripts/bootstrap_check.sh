@@ -194,12 +194,49 @@ else
   echo "INFO dart not on PATH - dart-flutter MCP will not start until Dart SDK 3.9+ is installed"
 fi
 
-step "env example coverage"
+step "required MCP credentials (mandatory)"
+# CONTEXT7_API_KEY and GITHUB_PERSONAL_ACCESS_TOKEN are referenced by
+# plugins/rldyour-mcps/.mcp.json via ${VAR} expansion (no default).
+# Claude Code docs are explicit: required env without ${VAR:-default}
+# fallback aborts config parse. The audit (2026-05-17 review wave)
+# recommends fail-fast over silent degraded MCP. Override flag
+# RLDYOUR_SKIP_ENV_CHECK=1 is intentionally not provided - we want
+# operators to set the secret rather than bypass the gate.
+REQUIRED_ENV=(
+  "CONTEXT7_API_KEY"
+  "GITHUB_PERSONAL_ACCESS_TOKEN"
+)
+missing_required=()
+for key in "${REQUIRED_ENV[@]}"; do
+  if [ -z "${!key:-}" ]; then
+    missing_required+=("$key")
+  else
+    echo "OK $key set in environment"
+  fi
+done
+if [ "${#missing_required[@]}" -gt 0 ]; then
+  printf '\033[1;31mFAIL required MCP env var(s) unset:\033[0m\n' >&2
+  for key in "${missing_required[@]}"; do
+    printf '  %s\n' "$key" >&2
+  done
+  printf '\n' >&2
+  printf 'These secrets are referenced by plugins/rldyour-mcps/.mcp.json without a\n' >&2
+  printf 'default; Claude Code aborts config parse when they are unset. Set them in\n' >&2
+  printf 'your shell profile or a .env file consumed before launching Claude Code.\n' >&2
+  printf 'See docs/runtime-env.md and plugins/rldyour-mcps/.env.example.\n' >&2
+  exit 1
+fi
+
+step "env example coverage (optional vars)"
 if [ -f plugins/rldyour-mcps/.env.example ]; then
   while IFS= read -r line; do
     [ -z "$line" ] && continue
     [[ "$line" =~ ^# ]] && continue
     key="${line%%=*}"
+    # Skip the required keys we already reported in the previous step.
+    case " ${REQUIRED_ENV[*]} " in
+      *" $key "*) continue ;;
+    esac
     if [ -z "${!key:-}" ]; then
       echo "INFO $key not set in environment (default empty in .env.example - set before running MCP server)"
     else
