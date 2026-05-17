@@ -1,0 +1,36 @@
+# CODEOWNERS - automatic review requests for security/governance-sensitive paths.
+#
+# Syntax docs: https://docs.github.com/en/repositories/managing-your-repositories-settings-and-features/customizing-your-repository/about-code-owners
+#
+# Personal-marketplace owner: @rldyourmnd. When this repo grows to a team,
+# split CODEOWNERS into per-domain groups (e.g. @nddev-it-com/security for
+# .github/workflows/** + .mcp.json + schemas).
+
+# Default: everything in the repo is owned by rldyourmnd.
+*                                @rldyourmnd
+
+# Security + supply-chain critical: every change must surface for review.
+.github/workflows/**             @rldyourmnd
+.github/dependabot.yml           @rldyourmnd
+.github/CODEOWNERS               @rldyourmnd
+
+# Plugin boundary contracts (mcp owner, hook owners, schemas).
+plugins/rldyour-mcps/.mcp.json   @rldyourmnd
+plugins/rldyour-flow/hooks/**    @rldyourmnd
+plugins/rldyour-serena-mcp/hooks/**  @rldyourmnd
+config/schemas/**                @rldyourmnd
+config/marketplace-policy.json   @rldyourmnd
+
+# Validators are the enforcement layer; CODEOWNERS gives them the same
+# bar as the policies they enforce.
+scripts/validate_*.py            @rldyourmnd
+scripts/validate_*.sh            @rldyourmnd
+
+# Release surface.
+VERSION                          @rldyourmnd
+.claude-plugin/marketplace.json  @rldyourmnd
+CHANGELOG.md                     @rldyourmnd
+docs/release-process.md          @rldyourmnd
+
+# ADRs are architectural decisions; new ADRs and Status changes need review.
+docs/adr/**                      @rldyourmnd
