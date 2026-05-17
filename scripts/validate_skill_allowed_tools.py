@@ -28,7 +28,7 @@ import sys
 from pathlib import Path
 
 FRONTMATTER_RE = re.compile(r"^---\s*\n(.*?)\n---\s*\n", re.DOTALL)
-TOOLS_BLOCK_RE = re.compile(r"^allowed-tools:\s*\n((?:  -\s*.+\n)+)", re.MULTILINE)
+TOOLS_BLOCK_RE = re.compile(r"^allowed-tools:\s*\n((?:  -\s*.+\n?)+)", re.MULTILINE)
 TOOL_ITEM_RE = re.compile(r"^  -\s*(.+?)\s*$", re.MULTILINE)
 MCP_PATTERN_RE = re.compile(
     r"^mcp__plugin_(?P<plugin>[A-Za-z0-9_-]+?)_(?P<server>[A-Za-z0-9-]+)__(?P<tool>.+)$"
@@ -78,6 +78,9 @@ def split_mcp_ref(ref: str, plugins: set[str]) -> tuple[str, str] | None:
         if prefix.startswith(p + "_"):
             server = prefix[len(p) + 1:]
             return p, server
+    if "_" in prefix:
+        plugin, _, server = prefix.rpartition("_")
+        return plugin, server
     return None
 
 

@@ -37,17 +37,19 @@ CHANGELOG_RELEASE_RE = re.compile(
 )
 
 
-def _git(*args: str) -> subprocess.CompletedProcess[str]:
-    return subprocess.run(["git", *args], capture_output=True, text=True, check=False)
+def _git(*args: str, cwd: Path | None = None) -> subprocess.CompletedProcess[str]:
+    return subprocess.run(
+        ["git", *args], capture_output=True, text=True, check=False, cwd=cwd
+    )
 
 
-def _head_sha() -> str:
-    proc = _git("rev-parse", "HEAD")
+def _head_sha(cwd: Path | None = None) -> str:
+    proc = _git("rev-parse", "HEAD", cwd=cwd)
     return proc.stdout.strip() if proc.returncode == 0 else ""
 
 
-def _tag_sha(tag: str) -> str | None:
-    proc = _git("rev-list", "-n", "1", tag)
+def _tag_sha(tag: str, cwd: Path | None = None) -> str | None:
+    proc = _git("rev-list", "-n", "1", tag, cwd=cwd)
     if proc.returncode != 0:
         return None
     return proc.stdout.strip() or None
@@ -107,11 +109,11 @@ def validate_manifest_parity(root: Path) -> list[str]:
 
 def validate_tag_alignment(root: Path, version: str) -> list[str]:
     warnings: list[str] = []
-    head = _head_sha()
+    head = _head_sha(cwd=root)
     if not head:
-        return ["not a git repository or HEAD unreadable; skipping tag alignment"]
+        return ["INFO not a git repository or HEAD unreadable; skipping tag alignment"]
     candidate = f"marketplace--v{version}"
-    tag_sha = _tag_sha(candidate)
+    tag_sha = _tag_sha(candidate, cwd=root)
     if tag_sha is None:
         warnings.append(
             f"INFO tag '{candidate}' does not yet exist locally - "

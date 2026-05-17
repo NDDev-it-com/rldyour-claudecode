@@ -59,8 +59,10 @@ def fake_repo(tmp_path: Path) -> Path:
     )
     (tmp_path / ".claude-plugin").mkdir()
     (tmp_path / ".claude-plugin" / "marketplace.json").write_text(
-        '{"name": "fixture-marketplace", "plugins": [{"name": "sample-plugin",'
-        ' "source": "./plugins/sample-plugin", "version": "0.4.0"}]}',
+        '{"name": "fixture-marketplace", "plugins": ['
+        '{"name": "sample-plugin", "source": "./plugins/sample-plugin", "version": "0.4.0"},'
+        '{"name": "rldyour-mcps", "source": "./plugins/rldyour-mcps", "version": "0.4.0"}'
+        ']}',
         encoding="utf-8",
     )
 
@@ -71,9 +73,13 @@ def fake_repo(tmp_path: Path) -> Path:
         encoding="utf-8",
     )
 
-    mcps_dir = tmp_path / "plugins" / "rldyour-mcps"
-    mcps_dir.mkdir(parents=True)
-    (mcps_dir / ".mcp.json").write_text(
+    mcps_plugin_dir = tmp_path / "plugins" / "rldyour-mcps" / ".claude-plugin"
+    mcps_plugin_dir.mkdir(parents=True)
+    (mcps_plugin_dir / "plugin.json").write_text(
+        '{"name": "rldyour-mcps", "version": "0.4.0"}',
+        encoding="utf-8",
+    )
+    (tmp_path / "plugins" / "rldyour-mcps" / ".mcp.json").write_text(
         '{"mcpServers": {"serena": {"command": "uvx", "args": ["serena-agent==1.3.0"]}}}',
         encoding="utf-8",
     )
