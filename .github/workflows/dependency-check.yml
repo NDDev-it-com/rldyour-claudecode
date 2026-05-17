@@ -33,6 +33,9 @@ jobs:
         uses: step-security/harden-runner@ab7a9404c0f3da075243ca237b5fac12c98deaa5  # v2.19.3
         with:
           egress-policy: block
+          # probe_mcp_upstream.py queries 4 registries: npm, PyPI, Homebrew, Dart.
+          # Without these endpoints the probe silently fails for 7 of 9 servers
+          # and drift never surfaces in CI (false-negative monitoring).
           allowed-endpoints: >
             agent.api.stepsecurity.io:443
             api.github.com:443
@@ -41,6 +44,9 @@ jobs:
             objects.githubusercontent.com:443
             files.pythonhosted.org:443
             pypi.org:443
+            registry.npmjs.org:443
+            formulae.brew.sh:443
+            storage.googleapis.com:443
 
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
