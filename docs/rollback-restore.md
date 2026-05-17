@@ -6,9 +6,9 @@ Safe rollback paths when a `rldyour-claudecode` change breaks consumer projects 
 
 There are three independent surfaces that can need rollback:
 
-1. **Marketplace `main`** — the source-of-truth git history.
-2. **`fullrepo` branch** — agent-only file snapshot.
-3. **User local Claude Code state** — installed plugin cache under `~/.claude/plugins/`.
+1. **Marketplace `main`** - the source-of-truth git history.
+2. **`fullrepo` branch** - agent-only file snapshot.
+3. **User local Claude Code state** - installed plugin cache under `~/.claude/plugins/`.
 
 Each has a different rollback technique. Pick the narrowest one that fixes the problem.
 
@@ -27,7 +27,7 @@ git diff <tag>..main -- plugins/rldyour-flow
 git revert <bad-commit>..<head-commit>
 git push origin main
 
-# Option B: hard reset to tag (DESTRUCTIVE — only if no consumer cloned the bad state).
+# Option B: hard reset to tag (DESTRUCTIVE - only if no consumer cloned the bad state).
 # This requires `--force-with-lease` to a remote and is rarely used.
 # Prefer Option A for shared branches.
 ```
@@ -105,4 +105,4 @@ git show origin/fullrepo:.serena/memories/<name>.md > .serena/memories/<name>.md
 bash plugins/rldyour-serena-mcp/scripts/commit_serena_knowledge.sh
 ```
 
-If the corruption was created in this session and not yet published, check `.serena/diagnostics/` for the latest bundle from `collect_diagnostics.sh` — it carries snapshot copies of state JSONs and runtime markers.
+If the corruption was created in this session and not yet published, check `.serena/diagnostics/` for the latest bundle from `collect_diagnostics.sh` - it carries snapshot copies of state JSONs and runtime markers.

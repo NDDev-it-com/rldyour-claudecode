@@ -4,21 +4,21 @@ Policy and procedure for updating MCP runtime pins and Claude Code minimum versi
 
 ## Sources of truth
 
-- `plugins/rldyour-mcps/.mcp.json` — primary runtime pinning consumed by Claude Code.
-- `config/mcp-runtime-versions.env` — companion env file for scripts and CI; mirrors `.mcp.json` pins.
-- `scripts/check_mcp_runtime_versions.py` — enforces parity between the two.
-- `.github/workflows/dependency-check.yml` — scheduled (Mondays 06:00 UTC) drift check + manual via `workflow_dispatch`.
+- `plugins/rldyour-mcps/.mcp.json` - primary runtime pinning consumed by Claude Code.
+- `config/mcp-runtime-versions.env` - companion env file for scripts and CI; mirrors `.mcp.json` pins.
+- `scripts/check_mcp_runtime_versions.py` - enforces parity between the two.
+- `.github/workflows/dependency-check.yml` - scheduled (Mondays 06:00 UTC) drift check + manual via `workflow_dispatch`.
 
 ## Pinning rules (hard)
 
 - **stdio servers**: pin with `==X.Y.Z` (uvx) or `@X.Y.Z` (bunx).
-- **HTTP servers**: pin by exact URL — there is no version field.
+- **HTTP servers**: pin by exact URL - there is no version field.
 - **No `@latest`, no unpinned `uvx --from`** specs. CI rejects them.
-- Update intentionally — pin bump must be paired with `scripts/smoke_mcp_capabilities.sh` (or `--server <name>` for a targeted probe). The harness spawns each server, does the JSON-RPC `initialize` handshake, then `tools/list`, and verifies a non-empty tool set.
+- Update intentionally - pin bump must be paired with `scripts/smoke_mcp_capabilities.sh` (or `--server <name>` for a targeted probe). The harness spawns each server, does the JSON-RPC `initialize` handshake, then `tools/list`, and verifies a non-empty tool set.
 
 ## Update workflow
 
-1. **Check upstream releases** — Mondays automatically, otherwise `workflow_dispatch` the dependency-check workflow or run locally:
+1. **Check upstream releases** - Mondays automatically, otherwise `workflow_dispatch` the dependency-check workflow or run locally:
 
    ```bash
    python3 scripts/check_mcp_runtime_versions.py
@@ -27,9 +27,9 @@ Policy and procedure for updating MCP runtime pins and Claude Code minimum versi
    bunx @upstash/context7-mcp@latest --version
    ```
 
-2. **Read release notes** for the upstream — known breaking changes, removed tools, new auth requirements.
+2. **Read release notes** for the upstream - known breaking changes, removed tools, new auth requirements.
 
-3. **Update both pins** — in the same commit, edit `.mcp.json` and `config/mcp-runtime-versions.env`. Drift between them is a CI failure.
+3. **Update both pins** - in the same commit, edit `.mcp.json` and `config/mcp-runtime-versions.env`. Drift between them is a CI failure.
 
 4. **Run capability smoke** for the affected server:
 
@@ -48,7 +48,7 @@ Policy and procedure for updating MCP runtime pins and Claude Code minimum versi
    read-only tool live (e.g. `mcp__plugin_rldyour-mcps_context7__resolve-library-id`)
    before merging.
 
-5. **Update CHANGELOG** under `[Unreleased] / Changed` — list each updated server and the new pin.
+5. **Update CHANGELOG** under `[Unreleased] / Changed` - list each updated server and the new pin.
 
 6. **Commit** with conventional format:
 
@@ -72,9 +72,9 @@ Policy and procedure for updating MCP runtime pins and Claude Code minimum versi
 
 `.github/workflows/dependency-check.yml` runs three jobs on schedule + on PRs touching `.mcp.json` / `config/mcp-runtime-versions.env`:
 
-1. `check_mcp_runtime_versions.py` — drift between the two sources of truth.
-2. Unpinned-spec scan — fails if any `@latest` or unpinned `uvx --from` appears.
-3. `validate_plugin_versions.py` — marketplace ↔ plugin.json version parity.
+1. `check_mcp_runtime_versions.py` - drift between the two sources of truth.
+2. Unpinned-spec scan - fails if any `@latest` or unpinned `uvx --from` appears.
+3. `validate_plugin_versions.py` - marketplace ↔ plugin.json version parity.
 
 `.github/workflows/validate.yml` already runs `check_mcp_runtime_versions.py` on every push/PR for fast feedback.
 
