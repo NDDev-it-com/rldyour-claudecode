@@ -64,9 +64,9 @@ Policy and procedure for updating MCP runtime pins and Claude Code minimum versi
 ## Claude Code CLI minimum version
 
 - Lives in `config/mcp-runtime-versions.env` as `CLAUDE_CODE_MIN_VERSION`.
-- Currently configured at `2.1.111`.
-- This value is a project compatibility floor; `[1m]` extended-context variants remain account/plan-dependent in Claude Code (`/model` omits `opus[1m]`/`sonnet[1m]` when not available).
-- Bump only when a hard requirement appears (new manifest field, new hook event, new frontmatter field that we use). Bumping forces all consumers to upgrade — be deliberate.
+- Currently configured at `2.1.143`, matching the CI pin in `.github/workflows/validate.yml`.
+- This value is a project compatibility floor covering every Claude Code feature used here: `opus[1m]` extended-context syntax (v2.1.111+; `[1m]` variants remain account/plan-dependent, `/model` omits `opus[1m]`/`sonnet[1m]` when not available), `alwaysLoad: true` MCP option (v2.1.121+), `claude plugin tag --push` (v2.1.118+), hook `if` filter (v2.1.118+), `maxSkillDescriptionChars` and `skillListingBudgetFraction` user settings (v2.1.105+), `skillOverrides` (v2.1.129+, plugin skills exempt), `experimental.{themes,monitors}` wrapper (v2.1.129+).
+- Bump only when a hard requirement appears (new manifest field, new hook event, new frontmatter field that we use). Bumping forces all consumers to upgrade - be deliberate. Bump the CI pin in `.github/workflows/validate.yml` and the `package.json` devDependency in lockstep.
 
 ## What CI checks
 

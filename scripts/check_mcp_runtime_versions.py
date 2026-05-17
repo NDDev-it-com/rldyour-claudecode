@@ -41,13 +41,19 @@ HTTP_TO_ENV = {
 
 # Host-binary MCP servers: command must match `binary`, version is probed via
 # `<binary> --version` and parsed against `version_regex` (first capture group).
-# Used for github-mcp-server (Homebrew bottle) where .mcp.json args carry no
-# version literal.
+# Used for servers where .mcp.json args carry no version literal (Homebrew
+# bottles, Dart SDK, etc.). Bumping the env pin must be paired with verifying
+# the host binary installed locally and on CI runners.
 SYSTEM_BINARY_TO_ENV = {
     "github": {
         "env_key": "GITHUB_MCP_SERVER_VERSION",
         "binary": "github-mcp-server",
         "version_regex": r"Version:\s*(\S+)",
+    },
+    "dart-flutter": {
+        "env_key": "DART_SDK_VERSION",
+        "binary": "dart",
+        "version_regex": r"Dart SDK version:\s*(\S+)",
     },
 }
 
