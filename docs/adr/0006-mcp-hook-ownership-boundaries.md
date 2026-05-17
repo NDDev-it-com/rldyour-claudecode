@@ -77,13 +77,21 @@ All other plugins:
 
 ## Confirmation
 
-- `bash scripts/validate_marketplace.sh` step "JSON manifests parse"
-  checks every `plugins/*/.mcp.json` (only `rldyour-mcps` should match).
-- `config/marketplace-policy.json` fields `mcp_owner` and `hook_owners`
-  are the machine-readable source of truth. A future
-  `validate_boundaries.py` (not yet implemented) will enforce them.
-- 9 plugin.json dependencies match `config/marketplace-policy.json`
-  plugin_dependencies map.
+- `bash scripts/validate_marketplace.sh` step
+  "Plugin ownership boundaries (mcp_owner + hook_owners + dependencies)"
+  runs `python3 scripts/validate_boundaries.py` which reads
+  `config/marketplace-policy.json` and enforces all four invariants
+  documented in this ADR:
+  1. exactly one plugin owns `.mcp.json` (matches `policy.mcp_owner`),
+  2. only declared plugins own `hooks/hooks.json` (matches
+     `policy.hook_owners` set exactly - no extras, no missing),
+  3. each plugin.json `name` field matches its directory name,
+  4. each plugin.json `dependencies` array matches
+     `policy.plugin_dependencies[<plugin>]` exactly (sorted).
+- CI mirror: `.github/workflows/validate.yml` runs the same validator
+  as a dedicated step in the `validate-plugins` job.
+- Closure added 2026-05-17 in wave 0.4.3 commit; the older
+  "(not yet implemented)" wording was retired with `scripts/validate_boundaries.py`.
 
 ## More Information
 
