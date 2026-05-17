@@ -58,7 +58,7 @@ def main() -> int:
     for instance_glob, schema_rel in SCHEMA_MAP:
         schema_path = root / schema_rel
         if not schema_path.is_file():
-            print(f"SKIP schema missing: {schema_rel}", file=sys.stderr)
+            print(f"SKIP schema missing: {schema_rel}")
             continue
         schema = load_schema(schema_path)
         validator_cls = jsonschema.validators.validator_for(schema)

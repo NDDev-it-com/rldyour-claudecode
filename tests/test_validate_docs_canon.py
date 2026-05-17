@@ -1,11 +1,14 @@
 """Unit tests for scripts/validate_docs_canon.py.
 
 Covers forbidden_tokens detection and version_floors window heuristic
-(30-char direct-association). Closes F-TEST-05 for docs canon track.
+(max(30, len(knob)+15) direct-association). Closes F-TEST-05 for docs
+canon track plus quality-review MED-1 regression lock-in for long knob
+names like `maxSkillDescriptionChars` (24 chars).
 """
 
 from __future__ import annotations
 
+import json
 import subprocess
 import sys
 from pathlib import Path
@@ -58,6 +61,30 @@ class TestVersionFloors:
         )
         result = _run(patch_repo_root)
         assert result.returncode == 0, f"unexpected drift: {result.stderr}"
+
+    def test_long_knob_window_expands_dynamically(self, patch_repo_root: Path) -> None:
+        # Lock-in for MED-1: knob `aVeryLongConfigKnob` (19 chars) placed 33
+        # chars before `v1.9`. Old fixed-30 window would miss it (window starts
+        # at offset 3, knob starts at 0). New max(30, len(knob)+15) window =
+        # max(30, 34) = 34, which clamps to start at 0 and catches the knob.
+        canon = patch_repo_root / "config" / "cc-canon.json"
+        data = json.loads(canon.read_text(encoding="utf-8"))
+        data["version_floors"]["aVeryLongConfigKnob"] = {
+            "floor": "v2.0+", "wrong_floors": ["v1.9"],
+        }
+        canon.write_text(json.dumps(data), encoding="utf-8")
+        (patch_repo_root / "README.md").write_text(
+            "aVeryLongConfigKnob added once in v1.9 here\n\n"
+            "<!-- inventory:begin -->\n<!-- inventory:end -->\n",
+            encoding="utf-8",
+        )
+        result = _run(patch_repo_root)
+        assert result.returncode == 1, (
+            f"long-knob heuristic regression: returncode={result.returncode}, "
+            f"stdout={result.stdout!r}, stderr={result.stderr!r}"
+        )
+        assert "aVeryLongConfigKnob" in result.stderr
+        assert "v1.9" in result.stderr
 
 
 class TestGracefulSkip:
