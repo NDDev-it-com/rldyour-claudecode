@@ -169,7 +169,10 @@ assert_agent_invariants() {
   #
   # Forbidden tokens (whole-word boundaries to avoid matching the agent name
   # `flow-quality-review` containing "mv"):
-  #   - `rm `, `mv `, `cp -`, `sed -i`, `tee `, `touch ` - destructive/copy ops
+  #   - `rm -` (flagged form), `mv `, `cp -`, `sed -i`, `tee `, `touch ` -
+  #     destructive/copy ops. Note: bare `rm filename` (no flags) is NOT
+  #     detected; reviewer Bash visibility in agent transcript is the
+  #     compensating control for that narrow gap (security F-2 closure).
   #   - `>>` - append redirect (legitimate uses must be in fenced code)
   #
   # Note: we deliberately do NOT forbid bare `>` because the agent
