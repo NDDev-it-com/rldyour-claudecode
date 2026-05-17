@@ -2,54 +2,126 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/nddev-it-com/rldyour-claudecode/blob/main/config/schemas/hooks.json",
   "title": "Claude Code Hooks Manifest",
-  "description": "Validates plugins/*/hooks/hooks.json (only rldyour-flow and rldyour-serena-mcp may declare this file per AGENTS.md). Mirrors the canonical Claude Code hooks event surface; new events can be added as they appear in code.claude.com/docs/en/hooks.",
+  "description": "Validates plugins/*/hooks/hooks.json (only rldyour-flow and rldyour-serena-mcp may declare this file per AGENTS.md). Mirrors the canonical Claude Code hooks model: 'if' lives inside the inner hook handler (sibling to 'type'/'command'/'args'), NOT on the matcher group. Source: code.claude.com/docs/en/hooks (May 2026).",
   "type": "object",
   "required": ["hooks"],
   "additionalProperties": false,
   "properties": {
-    "$schema": { "type": "string", "format": "uri" },
+    "$schema": { "type": "string", "format": "uri-reference" },
     "hooks": {
       "type": "object",
       "additionalProperties": false,
       "patternProperties": {
         "^(SessionStart|Setup|UserPromptSubmit|UserPromptExpansion|PreToolUse|PermissionRequest|PermissionDenied|PostToolUse|PostToolUseFailure|PostToolBatch|Notification|SubagentStart|SubagentStop|TaskCreated|TaskCompleted|Stop|StopFailure|TeammateIdle|InstructionsLoaded|ConfigChange|CwdChanged|FileChanged|WorktreeCreate|WorktreeRemove|PreCompact|PostCompact|Elicitation|ElicitationResult|SessionEnd)$": {
           "type": "array",
-          "items": {
-            "type": "object",
-            "required": ["hooks"],
-            "additionalProperties": false,
-            "properties": {
-              "matcher": { "type": "string" },
-              "if": {
-                "type": "string",
-                "description": "v2.1.118+. Declarative filter (e.g. 'Bash(git commit*)') so the hook only fires for matching tool calls."
-              },
-              "hooks": {
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "required": ["type"],
-                  "additionalProperties": false,
-                  "properties": {
-                    "type": {
-                      "type": "string",
-                      "enum": ["command", "http", "mcp_tool", "prompt", "agent"]
-                    },
-                    "command": { "type": "string" },
-                    "url": { "type": "string", "format": "uri" },
-                    "prompt": { "type": "string" },
-                    "agent": { "type": "string" },
-                    "timeout": {
-                      "type": "integer",
-                      "minimum": 1,
-                      "description": "Seconds; Claude Code default is 60."
-                    },
-                    "statusMessage": { "type": "string" }
-                  }
-                }
-              }
-            }
-          }
+          "items": { "$ref": "#/$defs/matcherGroup" }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "matcherGroup": {
+      "type": "object",
+      "required": ["hooks"],
+      "additionalProperties": false,
+      "properties": {
+        "matcher": {
+          "type": "string",
+          "description": "Optional event-specific matcher (e.g. 'Bash' for PreToolUse/PostToolUse, glob for FileChanged)."
+        },
+        "hooks": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/hookHandler" }
+        }
+      }
+    },
+    "hookHandler": {
+      "type": "object",
+      "required": ["type"],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["command", "http", "mcp_tool", "prompt", "agent"]
+        },
+        "if": {
+          "type": "string",
+          "description": "v2.1.118+. Permission rule filter such as 'Bash(git commit*)' or 'Edit(*.ts)'. Applies to tool events only; sibling to 'type' inside the handler, NOT on the matcher group."
+        },
+        "timeout": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Seconds. Defaults: command/http/mcp_tool 600; prompt 30; agent 60."
+        },
+        "statusMessage": { "type": "string" },
+        "once": {
+          "type": "boolean",
+          "description": "Skill frontmatter only - runs once per session then removed. Ignored in settings."
+        },
+        "async": {
+          "type": "boolean",
+          "description": "Command hook only - run in background without blocking."
+        },
+        "asyncRewake": {
+          "type": "boolean",
+          "description": "Command hook only - run in background and wake Claude on exit code 2. Implies async."
+        },
+        "continueOnBlock": {
+          "type": "boolean",
+          "description": "v2.1.139+. PostToolUse only - feed the hook's rejection reason back to Claude and continue the turn."
+        },
+        "command": {
+          "type": "string",
+          "description": "Command hook: shell command (shell-form) OR executable name (exec-form when 'args' is present)."
+        },
+        "args": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "v2.1.139+. Command hook: argument list. Presence triggers exec-form (no shell tokenization). Recommended when referencing ${CLAUDE_PLUGIN_ROOT} or other path placeholders."
+        },
+        "shell": {
+          "type": "string",
+          "enum": ["bash", "powershell"],
+          "description": "Command hook: shell to use (default bash). Ignored when 'args' is set."
+        },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "description": "HTTP hook: URL to POST to."
+        },
+        "headers": {
+          "type": "object",
+          "additionalProperties": { "type": "string" },
+          "description": "HTTP hook: additional headers."
+        },
+        "allowedEnvVars": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "HTTP hook: env var names allowed for interpolation in headers."
+        },
+        "server": {
+          "type": "string",
+          "description": "MCP tool hook: name of configured MCP server."
+        },
+        "tool": {
+          "type": "string",
+          "description": "MCP tool hook: tool name on that server."
+        },
+        "input": {
+          "type": "object",
+          "description": "MCP tool hook: tool arguments; string values support ${path} substitution from hook input."
+        },
+        "prompt": {
+          "type": "string",
+          "description": "Prompt/agent hook: prompt text. Use $ARGUMENTS for hook input JSON placeholder."
+        },
+        "model": {
+          "type": "string",
+          "description": "Prompt/agent hook: model to evaluate with (defaults to fast model)."
+        },
+        "agent": {
+          "type": "string",
+          "description": "Agent hook: agent name to invoke."
         }
       }
     }
