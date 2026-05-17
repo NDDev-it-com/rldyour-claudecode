@@ -6,17 +6,48 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash",
+            "command": "/bin/bash",
             "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/session_start_worktree_bootstrap.sh"],
             "timeout": 30,
             "statusMessage": "Checking worktree agent-only bootstrap"
           },
           {
             "type": "command",
-            "command": "bash",
+            "command": "/bin/bash",
             "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/session_start_context.sh"],
             "timeout": 5,
             "statusMessage": "Loading rldyour-flow session context"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "if": "Bash(gh workflow*)",
+            "command": "/bin/bash",
+            "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/pre_tool_use_ci_advisory.sh"],
+            "timeout": 5,
+            "statusMessage": "Checking CI manual-first policy"
+          },
+          {
+            "type": "command",
+            "if": "Bash(gh run*)",
+            "command": "/bin/bash",
+            "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/pre_tool_use_ci_advisory.sh"],
+            "timeout": 5,
+            "statusMessage": "Checking CI manual-first policy"
+          },
+          {
+            "type": "command",
+            "if": "Bash(gh actions*)",
+            "command": "/bin/bash",
+            "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/pre_tool_use_ci_advisory.sh"],
+            "timeout": 5,
+            "statusMessage": "Checking CI manual-first policy"
           }
         ]
       }
@@ -28,7 +59,7 @@
           {
             "type": "command",
             "if": "Bash(git commit*)",
-            "command": "bash",
+            "command": "/bin/bash",
             "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/post_tool_use_commit_advice.sh"],
             "timeout": 5,
             "statusMessage": "Checking rldyour commit advice"
@@ -41,7 +72,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash",
+            "command": "/bin/bash",
             "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/stop_post_task_sync.sh"],
             "timeout": 10,
             "statusMessage": "Checking rldyour-flow post-task sync"
