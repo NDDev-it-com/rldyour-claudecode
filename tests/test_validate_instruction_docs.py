@@ -29,6 +29,7 @@ def _run(
         text=True,
         check=False,
         cwd=fake_repo,
+        timeout=30,
     )
 
 

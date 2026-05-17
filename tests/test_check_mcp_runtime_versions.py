@@ -41,6 +41,7 @@ def test_real_repo_passes() -> None:
         text=True,
         check=False,
         cwd=REPO_ROOT,
+        timeout=30,
     )
     assert result.returncode == 0, f"stderr: {result.stderr}"
 
