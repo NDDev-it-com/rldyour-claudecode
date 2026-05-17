@@ -61,34 +61,53 @@
     "dependencies": {
       "type": "array",
       "items": {
-        "type": "string",
-        "pattern": "^[a-z][a-z0-9-]*$"
+        "oneOf": [
+          {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]*$",
+            "description": "Plugin name only."
+          },
+          {
+            "type": "object",
+            "required": ["name"],
+            "additionalProperties": false,
+            "properties": {
+              "name": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+              "version": {
+                "type": "string",
+                "description": "Optional semver constraint (e.g. '^0.5.0')."
+              }
+            },
+            "description": "Plugin name plus optional version constraint."
+          }
+        ]
       },
-      "description": "List of plugin names this plugin depends on (resolved by `claude plugin install`)."
+      "description": "List of plugin names (or {name, version} objects) this plugin depends on (resolved by `claude plugin install`)."
     },
     "skills": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
+      "oneOf": [
+        { "type": "string" },
+        { "type": "array", "items": { "type": "string" } }
+      ],
+      "description": "Component path override: string replaces the default `./skills/`; array adds to default."
     },
     "commands": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
+      "oneOf": [
+        { "type": "string" },
+        { "type": "array", "items": { "type": "string" } }
+      ]
     },
     "agents": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
+      "oneOf": [
+        { "type": "string" },
+        { "type": "array", "items": { "type": "string" } }
+      ]
     },
     "hooks": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
+      "oneOf": [
+        { "type": "string" },
+        { "type": "array", "items": { "type": "string" } }
+      ]
     },
     "mcpServers": {
       "type": [
