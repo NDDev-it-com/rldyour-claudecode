@@ -13,6 +13,8 @@ import subprocess
 import sys
 from pathlib import Path
 
+import pytest
+
 
 def _run(fake_repo: Path) -> subprocess.CompletedProcess[str]:
     return subprocess.run(
@@ -88,7 +90,9 @@ class TestVersionFloors:
 
 
 class TestGracefulSkip:
-    def test_skip_when_canon_missing(self, fake_repo: Path, monkeypatch) -> None:
+    def test_skip_when_canon_missing(
+        self, fake_repo: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
         # Remove cc-canon.json so the validator skips gracefully (per docstring contract).
         (fake_repo / "config" / "cc-canon.json").unlink()
         # Symlink validator into fake_repo/scripts so it sees fake_repo as root.
