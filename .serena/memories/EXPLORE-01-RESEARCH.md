@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-17
-Last commit: 065d6a4 fix(security): close 6 findings from flow-security-review (F-1..F-6)
+Last commit: cc742d5 ci(release): restore fullrepo agent-only files before harness
 Scope: plugins/rldyour-explore/skills/tech-research/SKILL.md, plugins/rldyour-explore/skills/web-research/SKILL.md, plugins/rldyour-explore/agents/ry-explore.md, plugins/rldyour-explore/commands/ry-explore.md, plugins/rldyour-mcps/.mcp.json (context7 + deepwiki + grep entries)
 Area: EXPLORE
 -->

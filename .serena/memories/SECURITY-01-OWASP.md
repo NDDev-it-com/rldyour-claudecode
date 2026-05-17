@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-17
-Last commit: 065d6a4 fix(security): close 6 findings from flow-security-review (F-1..F-6)
+Last commit: cc742d5 ci(release): restore fullrepo agent-only files before harness
 Scope: plugins/rldyour-security/skills/owasp-top-10-implementation/SKILL.md, plugins/rldyour-security/skills/ry-sec-review/SKILL.md, plugins/rldyour-security/commands/ry-sec-review.md, plugins/rldyour-flow/agents/flow-security-review.md, plugins/rldyour-mcps/.mcp.json (semgrep entry)
 Area: SECURITY
 -->

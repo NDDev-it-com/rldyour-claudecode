@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-17
-Last commit: 065d6a4 fix(security): close 6 findings from flow-security-review (F-1..F-6)
+Last commit: cc742d5 ci(release): restore fullrepo agent-only files before harness
 Scope: .claude/CLAUDE.md (Engineering Conventions), AGENTS.md (Engineering Constraints), plugins/rldyour-flow/agents/flow-*-review.md, plugins/rldyour-explore/agents/ry-explore.md, plugins/rldyour-serena-mcp/agents/flow-memory-sync.md, plugins/*/skills/*/SKILL.md, plugins/*/hooks/*.sh, plugins/*/hooks/hooks.json, scripts/validate_agent_tools.py, scripts/worktree_add.sh, scripts/install-rldyour-marketplace.sh
 Area: PATTERNS
 -->

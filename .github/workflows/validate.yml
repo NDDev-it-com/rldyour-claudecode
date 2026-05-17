@@ -103,6 +103,14 @@ jobs:
       - name: Install Python deps for schema validation
         run: pip install --user 'jsonschema>=4.21' 'attrs>=23.2'
 
+      - name: Restore agent-only files from origin/fullrepo
+        # ADR-0001: AGENTS.md, .claude/CLAUDE.md, .serena/memories/*,
+        # .serena/project.yml live only on origin/fullrepo. Several
+        # validators (validate_instruction_docs --require-agent-docs;
+        # generate_inventory --check counting .serena/memories) require
+        # them in the worktree to behave consistently with local runs.
+        run: python3 plugins/rldyour-flow/scripts/fullrepo_sync.py --restore
+
       - name: JSON Schema validation (marketplace + plugin + mcp + lsp + hooks)
         run: python3 scripts/validate_json_schemas.py
 
