@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json.schemastore.org/package.json",
+  "name": "rldyour-claudecode",
+  "version": "0.2.3",
+  "private": true,
+  "description": "Personal Claude Code plugin marketplace. This package.json exists only to pin @anthropic-ai/claude-code (so Dependabot can track drift via npm ecosystem) and to provide a single source of truth for the CLI version used by CI. The repository itself has no Node.js source code.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nddev-it-com/rldyour-claudecode.git"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "devDependencies": {
+    "@anthropic-ai/claude-code": "2.1.143"
+  }
+}

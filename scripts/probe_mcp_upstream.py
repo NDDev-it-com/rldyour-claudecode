@@ -1,0 +1,139 @@
+#!/usr/bin/env python3
+"""probe_mcp_upstream.py - probe upstream registries for MCP server updates.
+
+Compares config/mcp-runtime-versions.env against:
+- npm registry for bunx servers (sequential-thinking, playwright, chrome-devtools,
+  context7, shadcn)
+- PyPI JSON for uvx-installed packages (serena-agent, semgrep)
+- Homebrew formula JSON for system binaries (github-mcp-server)
+
+Each probe is best-effort: a network failure is reported as INFO, not FAIL.
+The script exits 0 always; output is consumed by the dependency-check.yml
+workflow to surface drift in the job log via `::warning::`.
+
+Closes audit F-SYNC-02 (docs claimed upstream monitoring but config only
+detected local drift).
+"""
+
+from __future__ import annotations
+
+import json
+import sys
+import urllib.error
+import urllib.request
+from pathlib import Path
+
+NPM_REGISTRY = "https://registry.npmjs.org"
+PYPI = "https://pypi.org/pypi"
+HOMEBREW = "https://formulae.brew.sh/api/formula"
+
+# Maps env var -> (registry, package identifier).
+PROBES: tuple[tuple[str, str, str], ...] = (
+    ("SERENA_AGENT_VERSION", "pypi", "serena-agent"),
+    ("SEMGREP_VERSION", "pypi", "semgrep"),
+    ("SEQUENTIAL_THINKING_MCP_VERSION", "npm", "@modelcontextprotocol/server-sequential-thinking"),
+    ("PLAYWRIGHT_MCP_VERSION", "npm", "@playwright/mcp"),
+    ("CHROME_DEVTOOLS_MCP_VERSION", "npm", "chrome-devtools-mcp"),
+    ("CONTEXT7_MCP_VERSION", "npm", "@upstash/context7-mcp"),
+    ("SHADCN_VERSION", "npm", "shadcn"),
+    ("GITHUB_MCP_SERVER_VERSION", "brew", "github-mcp-server"),
+)
+
+
+def load_env(path: Path) -> dict[str, str]:
+    out: dict[str, str] = {}
+    for line in path.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, _, value = line.partition("=")
+        out[key.strip()] = value.strip()
+    return out
+
+
+def fetch_json(url: str, timeout: float = 10.0) -> dict[str, object] | None:
+    try:
+        req = urllib.request.Request(url, headers={"User-Agent": "rldyour-mcp-upstream-probe"})
+        with urllib.request.urlopen(req, timeout=timeout) as resp:
+            return json.loads(resp.read().decode("utf-8"))
+    except (urllib.error.URLError, json.JSONDecodeError, TimeoutError):
+        return None
+
+
+def latest_npm(package: str) -> str | None:
+    data = fetch_json(f"{NPM_REGISTRY}/{package}/latest")
+    if data is None:
+        return None
+    version = data.get("version")
+    return str(version) if isinstance(version, str) else None
+
+
+def latest_pypi(package: str) -> str | None:
+    data = fetch_json(f"{PYPI}/{package}/json")
+    if data is None:
+        return None
+    info = data.get("info", {})
+    if isinstance(info, dict):
+        version = info.get("version")
+        return str(version) if isinstance(version, str) else None
+    return None
+
+
+def latest_brew(formula: str) -> str | None:
+    data = fetch_json(f"{HOMEBREW}/{formula}.json")
+    if data is None:
+        return None
+    versions = data.get("versions", {})
+    if isinstance(versions, dict):
+        stable = versions.get("stable")
+        return str(stable) if isinstance(stable, str) else None
+    return None
+
+
+def normalize(version: str) -> str:
+    return version.lstrip("v").strip()
+
+
+def main() -> int:
+    root = Path(__file__).resolve().parent.parent
+    env_path = root / "config" / "mcp-runtime-versions.env"
+    if not env_path.is_file():
+        print(f"FAIL {env_path} missing", file=sys.stderr)
+        return 0
+    env = load_env(env_path)
+
+    drift = 0
+    checked = 0
+    for env_key, registry, package in PROBES:
+        pinned = env.get(env_key)
+        if not pinned:
+            print(f"SKIP {env_key}: not in env file")
+            continue
+        checked += 1
+        if registry == "npm":
+            latest = latest_npm(package)
+        elif registry == "pypi":
+            latest = latest_pypi(package)
+        elif registry == "brew":
+            latest = latest_brew(package)
+        else:
+            print(f"SKIP {env_key}: unknown registry {registry!r}")
+            continue
+
+        if latest is None:
+            print(f"INFO {env_key} ({package}): upstream probe unreachable (network/timeout)")
+            continue
+        if normalize(latest) == normalize(pinned):
+            print(f"OK   {env_key}: pinned={pinned} == latest={latest}")
+        else:
+            print(f"DRIFT {env_key} ({package}): pinned={pinned}, latest={latest}")
+            drift += 1
+
+    print(f"\nProbed {checked} upstreams; {drift} drift(s) detected.")
+    if drift > 0:
+        print(f"::warning::Probed {checked} MCP upstreams; {drift} drift(s) detected. See job log for details.")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
