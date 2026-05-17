@@ -13,7 +13,28 @@ either is unset.
 | Variable | Used by | Purpose | Where to obtain |
 | --- | --- | --- | --- |
 | `CONTEXT7_API_KEY` | `plugins/rldyour-mcps/.mcp.json` `context7.env` | API key for the Upstash Context7 MCP server (`@upstash/context7-mcp`). | https://context7.com (dashboard -> API keys) |
-| `GITHUB_PERSONAL_ACCESS_TOKEN` | `plugins/rldyour-mcps/.mcp.json` `github.env` | PAT consumed by the local `github-mcp-server stdio` binary. | GitHub Settings -> Developer settings -> PAT (classic). Scopes: `repo` + `read:org`. No Copilot subscription required. |
+| `GITHUB_PERSONAL_ACCESS_TOKEN` | `plugins/rldyour-mcps/.mcp.json` `github.env` | PAT consumed by the local `github-mcp-server stdio` binary. | GitHub Settings -> Developer settings -> PAT. No Copilot subscription required. See PAT scope guidance below. |
+
+### PAT scope guidance
+
+Two PAT types are supported by `github-mcp-server`:
+
+**Fine-grained PAT (recommended for least privilege)** — pick only the resources
+the MCP server actually touches. For `--toolsets=repos,issues,pull_requests,users,context`
+the minimum is:
+- Repository permissions: `Contents: Read & write`, `Issues: Read & write`,
+  `Pull requests: Read & write`, `Metadata: Read-only`, `Commit statuses: Read-only`.
+- Account permissions: `Read access to user email` (optional, for user lookups).
+- Resource scope: select only the repositories the MCP needs (private + public
+  it should be able to operate on); avoid "all repositories" unless required.
+
+**Classic PAT (legacy, broader scope)** — if fine-grained PAT is not viable
+(some org policies still require classic), use `repo` + `read:org`. Caveat:
+`repo` includes `workflow` and PR write across **all** repositories the user
+can access, which is wider than fine-grained equivalents. Prefer fine-grained.
+
+Rotate the PAT at least every 90 days. Never commit it to git; the repo
+`.gitignore` blocks `.env`, `.env.*`, `*.pem`, `*.key` already.
 
 ## Optional Claude Code MCP knobs
 
@@ -40,6 +61,17 @@ read them when present. Leaving them unset is the production default.
 | `RLDYOUR_SKIP_FLOW_SYNC` | rldyour-flow Stop | Skip flow Stop gate only (Serena Stop still runs). |
 | `RLDYOUR_SKIP_SERENA_SYNC` | rldyour-serena-mcp Stop | Skip Serena memory Stop gate only (flow Stop still runs). |
 | `RLDYOUR_FORCE_BOOTSTRAP` | `scripts/bootstrap_check.sh` | Bypass agent-only divergence guard before `--bootstrap-init`. Audit-trailed in `.serena/.bootstrap_overrides.log`. |
+| `RLDYOUR_SKIP_USER_PROMPT_HINT` | rldyour-serena-mcp UserPromptSubmit | Skip Serena-first context injection (parity with other rldyour skip flags). |
+
+### Why `RLDYOUR_SKIP_ENV_CHECK` is intentionally absent
+
+`scripts/bootstrap_check.sh` enforces `CONTEXT7_API_KEY` and
+`GITHUB_PERSONAL_ACCESS_TOKEN` as **mandatory** for any session because
+`plugins/rldyour-mcps/.mcp.json` references them via `${VAR}` (no fallback)
+and Claude Code aborts config parse when they are unset. A bypass flag
+would let the operator skip the check, but the downstream failure mode
+(MCP servers refusing to start with confusing error messages) is worse
+than the upfront block. Fix the env, not the check. (Verification F-5 closure.)
 
 ## Setup procedure
 
