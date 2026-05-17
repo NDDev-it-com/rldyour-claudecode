@@ -20,17 +20,31 @@ plugins/rldyour-flow/hooks/**    @rldyourmnd
 plugins/rldyour-serena-mcp/hooks/**  @rldyourmnd
 config/schemas/**                @rldyourmnd
 config/marketplace-policy.json   @rldyourmnd
+config/cc-canon.json             @rldyourmnd
+config/skill-routing-policy.json @rldyourmnd
+config/text-hygiene-allowlist.json  @rldyourmnd
 
 # Validators are the enforcement layer; CODEOWNERS gives them the same
-# bar as the policies they enforce.
+# bar as the policies they enforce. Explicit glob coverage instead of the
+# default '*' wildcard so review requests fire on every validator change
+# even when the wildcard catches files later in the file (security F-4).
 scripts/validate_*.py            @rldyourmnd
 scripts/validate_*.sh            @rldyourmnd
+scripts/check_mcp_runtime_versions.py  @rldyourmnd
+scripts/probe_mcp_upstream.py    @rldyourmnd
+scripts/release_manifest.py      @rldyourmnd
+scripts/bootstrap_check.sh       @rldyourmnd
+scripts/smoke_*.sh               @rldyourmnd
+scripts/_mcp_parse.py            @rldyourmnd
 
 # Release surface.
 VERSION                          @rldyourmnd
 .claude-plugin/marketplace.json  @rldyourmnd
 CHANGELOG.md                     @rldyourmnd
+package.json                     @rldyourmnd
+pyproject.toml                   @rldyourmnd
 docs/release-process.md          @rldyourmnd
 
 # ADRs are architectural decisions; new ADRs and Status changes need review.
 docs/adr/**                      @rldyourmnd
+docs/security/**                 @rldyourmnd
