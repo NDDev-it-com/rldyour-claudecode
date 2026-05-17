@@ -93,8 +93,8 @@ Hooks return discriminated-union JSON:
 
 Both Stop hooks write fingerprint markers to detect "stop already attempted with this state" loops:
 
-- `.serena/.sync_marker` - Serena memory sync: stores `HEAD_SHA` as fingerprint.
-- `.serena/.flow_sync_marker` - Flow post-task: stores `(HEAD, dirty_files, ahead/behind, branch, serena_freshness)` fingerprint.
+- `.serena/.sync_marker` - Serena memory sync: stores compound `${HEAD_SHA}:${NEWEST_SHA:-none}` fingerprint, capturing both project HEAD and the newest memory-sync commit (D32 fix). A partial memory sync that writes memories without advancing HEAD changes `NEWEST_SHA`, so the next Stop sees a different fingerprint and re-fires the advisory instead of silently passing.
+- `.serena/.flow_sync_marker` - Flow post-task: stores SHA-256 content-hash fingerprint of a 10-field payload covering `(HEAD, dirty_files, ahead/behind, branch_cleanup, serena_current, doc_files_changed, fullrepo_needs_attention, instruction_docs_state.needs_instruction_docs_review)` (D31 fix added the last three fields so all contributors to `needs_flow_sync` enter the hash).
 
 If `stop_hook_active=true` (from event payload, set when same Stop has fired before) AND the fingerprint matches, the hook exits 0 silently - letting Stop succeed without re-emitting the same advisory. This is what prevents infinite-loop "you must run X" prompts.
 
