@@ -27,12 +27,11 @@ import re
 import sys
 from pathlib import Path
 
+from _mcp_parse import split_mcp_ref
+
 FRONTMATTER_RE = re.compile(r"^---\s*\n(.*?)\n---\s*\n", re.DOTALL)
 TOOLS_BLOCK_RE = re.compile(r"^allowed-tools:\s*\n((?:  -\s*.+\n?)+)", re.MULTILINE)
 TOOL_ITEM_RE = re.compile(r"^  -\s*(.+?)\s*$", re.MULTILINE)
-MCP_PATTERN_RE = re.compile(
-    r"^mcp__plugin_(?P<plugin>[A-Za-z0-9_-]+?)_(?P<server>[A-Za-z0-9-]+)__(?P<tool>.+)$"
-)
 
 
 def load_marketplace_plugins(root: Path) -> set[str]:
@@ -58,32 +57,6 @@ def extract_allowed_tools(skill_text: str) -> list[str]:
     return [m.group(1).strip() for m in TOOL_ITEM_RE.finditer(block_match.group(1))]
 
 
-def split_mcp_ref(ref: str, plugins: set[str]) -> tuple[str, str] | None:
-    """Extract (plugin, server) from an MCP tool ref.
-
-    `mcp__plugin_<plugin>_<server>__<tool>` - plugin may contain hyphens
-    (rldyour-mcps), server may contain hyphens (chrome-devtools). We split by
-    matching the longest plugin prefix that exists in `plugins`.
-    """
-    if not ref.startswith("mcp__plugin_"):
-        return None
-    rest = ref[len("mcp__plugin_"):]
-    if "__" not in rest:
-        return None
-    prefix = rest.partition("__")[0]
-    # Try matching plugin names by suffix replacement: prefix = "<plugin>_<server>"
-    # We need to find a known plugin name `p` such that prefix.startswith(p + "_")
-    # and the remainder after the underscore is the server.
-    for p in sorted(plugins, key=len, reverse=True):
-        if prefix.startswith(p + "_"):
-            server = prefix[len(p) + 1:]
-            return p, server
-    if "_" in prefix:
-        plugin, _, server = prefix.rpartition("_")
-        return plugin, server
-    return None
-
-
 def main() -> int:
     root = Path(__file__).resolve().parent.parent
     plugins = load_marketplace_plugins(root)
@@ -105,7 +78,7 @@ def main() -> int:
             if parts is None:
                 failures.append(f"{skill.relative_to(root)}: malformed MCP ref `{tool}`")
                 continue
-            plugin, server = parts
+            plugin, server, _ = parts
             if plugin not in plugins:
                 failures.append(
                     f"{skill.relative_to(root)}: unknown plugin `{plugin}` in `{tool}` "

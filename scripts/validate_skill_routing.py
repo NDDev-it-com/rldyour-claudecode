@@ -21,7 +21,6 @@ import re
 import sys
 from pathlib import Path
 
-
 FRONTMATTER_RE = re.compile(r"^---\n(.*?)\n---", re.DOTALL)
 
 
