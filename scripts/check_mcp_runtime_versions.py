@@ -20,7 +20,6 @@ import subprocess
 import sys
 from pathlib import Path
 
-
 # Map between server name in .mcp.json and the env variable that should pin it.
 SERVER_TO_ENV = {
     "serena": ("SERENA_AGENT_VERSION", "serena-agent=="),

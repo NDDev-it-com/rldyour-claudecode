@@ -68,7 +68,7 @@ def fetch_json(url: str, timeout: float = 10.0) -> dict[str, object] | None:
     try:
         req = urllib.request.Request(url, headers={"User-Agent": "rldyour-mcp-upstream-probe"})
         # nosem: python.lang.security.audit.dynamic-urllib-use-detected.dynamic-urllib-use-detected
-        with urllib.request.urlopen(req, timeout=timeout) as resp:  # noqa: S310
+        with urllib.request.urlopen(req, timeout=timeout) as resp:
             return json.loads(resp.read().decode("utf-8"))
     except (urllib.error.URLError, json.JSONDecodeError, TimeoutError):
         return None

@@ -31,6 +31,8 @@ import re
 import sys
 from pathlib import Path
 
+from _mcp_parse import split_mcp_ref
+
 # Built-in tool names supported by Claude Code (verified against v2.1.142 docs).
 # Source: code.claude.com/docs/en/sub-agents + plugin-shipped agents canonical examples.
 KNOWN_BUILTIN_TOOLS: frozenset[str] = frozenset(
@@ -88,16 +90,20 @@ SERVERS_WITH_WRITE_TOOLS: frozenset[str] = frozenset(
 )
 
 FRONTMATTER_RE = re.compile(r"^---\s*\n(.*?)\n---\s*\n", re.DOTALL)
-TOOLS_BLOCK_RE = re.compile(r"^tools:\s*\n((?:  -\s*.+\n)+)", re.MULTILINE)
+TOOLS_BLOCK_RE = re.compile(r"^tools:\s*\n((?:  -\s*.+\n?)+)", re.MULTILINE)
 TOOL_ITEM_RE = re.compile(r"^  -\s*(.+?)\s*$", re.MULTILINE)
-MCP_PATTERN_RE = re.compile(r"^mcp__plugin_(?P<plugin>[A-Za-z0-9_-]+)__(?P<tool>.+)$")
 
 
 def load_marketplace_plugins(repo_root: Path) -> set[str]:
-    """Return the set of plugin names declared in marketplace.json."""
+    """Return the set of plugin names declared in marketplace.json.
+
+    Names preserved verbatim (hyphenated) for parity with the shared
+    `split_mcp_ref` helper which longest-prefix-matches against the
+    `mcp__plugin_<plugin>_<server>__*` reference form.
+    """
     manifest = repo_root / ".claude-plugin" / "marketplace.json"
     data = json.loads(manifest.read_text(encoding="utf-8"))
-    return {p["name"].replace("-", "_") for p in data.get("plugins", [])}
+    return {p["name"] for p in data.get("plugins", [])}
 
 
 def load_mcp_servers(repo_root: Path) -> set[str]:
@@ -116,33 +122,9 @@ def extract_tools_list(frontmatter_text: str) -> list[str] | None:
     return [m.group(1) for m in TOOL_ITEM_RE.finditer(block)]
 
 
-def parse_mcp_tool(raw: str) -> tuple[str, str] | None:
-    """Parse mcp__plugin_<plugin>__<tool>; returns (server_name, tool_or_star)."""
-    match = MCP_PATTERN_RE.match(raw)
-    if not match:
-        return None
-    plugin_and_server = match.group("plugin")
-    tool = match.group("tool")
-    # plugin_and_server format: rldyour-mcps_serena where last segment is the
-    # server name. We split on the last underscore-separated segment after the
-    # plugin name prefix `rldyour-mcps_`.
-    # NOTE: plugin names use hyphens in marketplace.json but Claude Code
-    # normalizes to underscores in MCP namespace.
-    parts = plugin_and_server.rsplit("_", 1)
-    if len(parts) != 2:
-        return None
-    plugin_normalized, server = parts
-    # Sanity check the plugin prefix is what we expect (this validator is
-    # scoped to rldyour-mcps for now; extend READ_ONLY_BY_DESIGN_MCPS and the
-    # plugin loader if other plugins ship .mcp.json in the future).
-    expected_plugin = "rldyour-mcps"
-    if plugin_normalized.replace("_", "-") != expected_plugin:
-        return None
-    return server, tool
-
-
 def validate_agent_file(
     path: Path,
+    valid_plugins: set[str],
     valid_servers: set[str],
     failures: list[str],
 ) -> None:
@@ -160,12 +142,23 @@ def validate_agent_file(
     for raw in tools:
         if raw in KNOWN_BUILTIN_TOOLS:
             continue
-        parsed = parse_mcp_tool(raw)
+        parsed = split_mcp_ref(raw, valid_plugins)
         if parsed is None:
             failures.append(f"{path}: unrecognised tool entry `{raw}` "
                             "(not a built-in tool and not an mcp__plugin_* pattern)")
             continue
-        server, tool = parsed
+        plugin, server, tool = parsed
+        # Scope: this validator targets rldyour-mcps MCP namespace only.
+        # Other plugins are recognised by `split_mcp_ref` but their server
+        # surface is not currently audited here. If/when another plugin ships
+        # its own .mcp.json, add it to the scope below + load its servers.
+        if plugin != "rldyour-mcps":
+            if plugin not in valid_plugins:
+                failures.append(
+                    f"{path}: tool `{raw}` references unknown plugin `{plugin}` "
+                    f"(known: {sorted(valid_plugins)})"
+                )
+            continue
         if server not in valid_servers:
             failures.append(
                 f"{path}: tool `{raw}` references MCP server `{server}` "
@@ -193,9 +186,7 @@ def validate_agent_file(
 def main() -> int:
     repo_root = Path(__file__).resolve().parent.parent
     valid_servers = load_mcp_servers(repo_root)
-    # marketplace plugins not currently used in the validation path but kept for
-    # future cross-plugin checks (e.g., if multiple plugins ship .mcp.json).
-    _ = load_marketplace_plugins(repo_root)
+    valid_plugins = load_marketplace_plugins(repo_root)
 
     # Scope: this validator targets `plugins/*/agents/*.md` ONLY.
     # SKILL.md and slash command files are intentionally excluded for these
@@ -220,7 +211,7 @@ def main() -> int:
 
     failures: list[str] = []
     for agent_path in agent_files:
-        validate_agent_file(agent_path, valid_servers, failures)
+        validate_agent_file(agent_path, valid_plugins, valid_servers, failures)
 
     if failures:
         print("validate_agent_tools.py: validation FAILED", file=sys.stderr)
