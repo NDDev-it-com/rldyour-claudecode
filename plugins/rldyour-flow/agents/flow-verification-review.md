@@ -3,7 +3,7 @@ name: flow-verification-review
 description: Orchestrated verification-review subagent invoked by /ry-start or /ry-review review phase only. Reviews test coverage of new behavior + critical paths + edge cases + error paths, LSP/type/lint/project checks adequacy, browser validation for UI work, server/deploy evidence for deployment changes. Read-only - no file edits.
 model: sonnet
 effort: high
-maxTurns: 36
+maxTurns: 90
 tools:
   - Read
   - Grep

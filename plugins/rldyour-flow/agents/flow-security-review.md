@@ -3,7 +3,7 @@ name: flow-security-review
 description: Orchestrated security-review subagent invoked by /ry-start or /ry-review review phase only when scope is security-sensitive or explicitly requested. Reviews authentication/authorization boundaries, input validation, output encoding, injection/XSS/SSRF/path-traversal/insecure-deserialization, secrets handling, dependency/config changes, unsafe deploy/rollback. Defensive-only. Read-only - no file edits.
 model: sonnet
 effort: high
-maxTurns: 42
+maxTurns: 100
 tools:
   - Read
   - Grep
