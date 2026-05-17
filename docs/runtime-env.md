@@ -19,7 +19,7 @@ either is unset.
 
 Two PAT types are supported by `github-mcp-server`:
 
-**Fine-grained PAT (recommended for least privilege)** — pick only the resources
+**Fine-grained PAT (recommended for least privilege)** - pick only the resources
 the MCP server actually touches. For `--toolsets=repos,issues,pull_requests,users,context`
 the minimum is:
 - Repository permissions: `Contents: Read & write`, `Issues: Read & write`,
@@ -28,7 +28,7 @@ the minimum is:
 - Resource scope: select only the repositories the MCP needs (private + public
   it should be able to operate on); avoid "all repositories" unless required.
 
-**Classic PAT (legacy, broader scope)** — if fine-grained PAT is not viable
+**Classic PAT (legacy, broader scope)** - if fine-grained PAT is not viable
 (some org policies still require classic), use `repo` + `read:org`. Caveat:
 `repo` includes `workflow` and PR write across **all** repositories the user
 can access, which is wider than fine-grained equivalents. Prefer fine-grained.

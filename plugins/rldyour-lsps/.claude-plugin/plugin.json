@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "rldyour-lsps",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "LSP-\u0432\u043e\u0440\u043a\u0444\u043b\u043e\u0443 \u0434\u043b\u044f Claude Code: \u043c\u0430\u0440\u0448\u0440\u0443\u0442\u0438\u0437\u0430\u0446\u0438\u044f, health-checks, brew-first \u0443\u0441\u0442\u0430\u043d\u043e\u0432\u043a\u0430, Serena LSP integration. Skills + scripts + references. \u041f\u043e\u043a\u0440\u044b\u0432\u0430\u0435\u0442 Python, Rust, Dart/Flutter, TS/JS, Go, C/C++, Qt, YAML, Docker, HTML/CSS, Shell, JSON, TOML, Markdown.",
   "author": {
     "name": "rldyourmnd",
