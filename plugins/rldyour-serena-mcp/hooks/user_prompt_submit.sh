@@ -20,6 +20,12 @@ set -euo pipefail
 IFS=$'\n\t'
 unset CDPATH
 
+# Consistency F-3 closure: parity with other rldyour-serena-mcp + rldyour-flow
+# hooks that all expose RLDYOUR_SKIP_<NAME>=1 short-circuit.
+if [ "${RLDYOUR_SKIP_USER_PROMPT_HINT:-0}" = "1" ]; then
+  exit 0
+fi
+
 INPUT=$(cat 2>/dev/null || true)
 
 RLDYOUR_PROMPT_RAW="$INPUT" python3 <<'PY'
