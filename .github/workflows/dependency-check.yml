@@ -5,7 +5,7 @@ name: dependency-check
 
 on:
   schedule:
-    # Mondays 06:00 UTC — weekly cadence so MCP server upstreams have time to publish.
+    # Mondays 06:00 UTC - weekly cadence so MCP server upstreams have time to publish.
     - cron: '0 6 * * 1'
   workflow_dispatch:
   pull_request:
