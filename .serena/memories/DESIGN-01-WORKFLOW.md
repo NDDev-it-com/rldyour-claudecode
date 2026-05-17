@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-17
-Last commit: cc742d5 ci(release): restore fullrepo agent-only files before harness
+Last commit: 6b59af7 fix(security): explicit https/http scheme guard in fetch_json
 Scope: plugins/rldyour-design/skills/ry-design/SKILL.md, plugins/rldyour-design/skills/figma-to-code/SKILL.md, plugins/rldyour-design/skills/design-system-implementation/SKILL.md, plugins/rldyour-design/skills/fsd-frontend-architecture/SKILL.md, plugins/rldyour-design/skills/design-validation/SKILL.md, plugins/rldyour-design/commands/ry-design.md, plugins/rldyour-mcps/.mcp.json (figma + shadcn entries)
 Area: DESIGN
 -->

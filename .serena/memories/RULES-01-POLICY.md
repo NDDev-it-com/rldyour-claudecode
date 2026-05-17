@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-17
-Last commit: cc742d5 ci(release): restore fullrepo agent-only files before harness
+Last commit: 6b59af7 fix(security): explicit https/http scheme guard in fetch_json
 Scope: plugins/rldyour-rules/skills/quality-first-engineering/SKILL.md, plugins/rldyour-rules/skills/architecture-boundaries/SKILL.md, plugins/rldyour-rules/skills/dependency-compatibility-policy/SKILL.md, plugins/rldyour-rules/skills/implementation-discipline/SKILL.md, plugins/rldyour-rules/skills/verification-quality-gates/SKILL.md, plugins/rldyour-rules/skills/project-instructions-policy/SKILL.md, plugins/rldyour-rules/skills/ry-rules-review/SKILL.md, plugins/rldyour-rules/references/{rules-policy,quality-gates,architecture-policy,dependency-policy,project-instructions-and-adrs,sources}.md, plugins/rldyour-rules/commands/ry-rules-review.md
 Area: RULES
 -->

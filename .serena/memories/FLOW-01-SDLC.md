@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-17
-Last commit: cc742d5 ci(release): restore fullrepo agent-only files before harness
+Last commit: 6b59af7 fix(security): explicit https/http scheme guard in fetch_json
 Scope: plugins/rldyour-flow/**, scripts/worktree_add.sh, AGENTS.md, .claude/CLAUDE.md, plugins/rldyour-flow/scripts/fullrepo_sync.py
 Area: FLOW
 -->
