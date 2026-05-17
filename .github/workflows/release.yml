@@ -85,14 +85,32 @@ jobs:
 
       - name: Dry-run version check (workflow_dispatch only)
         if: github.event_name == 'workflow_dispatch' && inputs.version != ''
+        # Inputs interpolation moved to env: per OWASP A05:2025 (security review F-3).
+        # Inline ${{ inputs.version }} in `run:` would template-expand into bash
+        # source where any shell-metacharacter in the input would alter command
+        # semantics; env: passes the value as a normal shell variable so it can
+        # only be read, not parsed as code.
+        env:
+          VERSION_INPUT: ${{ inputs.version }}
         run: |
           set -euo pipefail
-          CURRENT="$(cat VERSION)"
-          if [ "$CURRENT" != "${{ inputs.version }}" ]; then
-            echo "VERSION file is $CURRENT but dry-run asked for ${{ inputs.version }}" >&2
+          # Reject inputs that are not bare SemVer X.Y.Z (extra guard since
+          # VERSION_INPUT enters shell context as $VAR not template).
+          if ! printf '%s' "$VERSION_INPUT" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "Invalid VERSION_INPUT (not bare SemVer): $VERSION_INPUT" >&2
             exit 1
           fi
-          grep -q "^## \[${{ inputs.version }}\] - " CHANGELOG.md
+          CURRENT="$(cat VERSION)"
+          if [ "$CURRENT" != "$VERSION_INPUT" ]; then
+            echo "VERSION file is $CURRENT but dry-run asked for $VERSION_INPUT" >&2
+            exit 1
+          fi
+          # `grep -F --` treats the argument as a fixed string and stops option
+          # parsing - safe with shell variables even after SemVer validation above.
+          if ! grep -qF -- "## [$VERSION_INPUT] - " CHANGELOG.md; then
+            echo "CHANGELOG.md missing [$VERSION_INPUT] entry" >&2
+            exit 1
+          fi
 
       - name: Generate release manifest
         run: |
@@ -104,7 +122,7 @@ jobs:
           tar -czf release-evidence.tgz release-evidence/
 
       - name: Upload release manifest artifact
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # v4.6.2
         with:
           name: release-manifest-${{ github.ref_name }}
           path: release-evidence/release-manifest.json

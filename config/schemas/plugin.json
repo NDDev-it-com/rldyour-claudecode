@@ -5,7 +5,7 @@
   "description": "Validates plugins/*/.claude-plugin/plugin.json. Per Claude Code docs the manifest is optional; only `name` is required when present. All other fields here are documented metadata or component-path overrides.",
   "type": "object",
   "required": ["name"],
-  "additionalProperties": true,
+  "additionalProperties": false,
   "properties": {
     "$schema": { "type": "string", "format": "uri" },
     "name": {
@@ -21,7 +21,7 @@
     "author": {
       "type": "object",
       "required": ["name"],
-      "additionalProperties": true,
+      "additionalProperties": false,
       "properties": {
         "name": { "type": "string" },
         "url": { "type": "string", "format": "uri" }
@@ -50,7 +50,7 @@
     "channels": { "type": ["array", "object"] },
     "experimental": {
       "type": "object",
-      "additionalProperties": true,
+      "additionalProperties": false,
       "properties": {
         "themes": { "type": ["array", "object"] },
         "monitors": { "type": ["array", "object"] }
