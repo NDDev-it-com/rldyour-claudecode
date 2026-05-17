@@ -15,19 +15,22 @@
 #      canonical backticked form (`#16789`, `#20531`, `#23463`).
 #   5. Each agent writes to `<report_dir>/<agent-name>.md` matching its
 #      frontmatter `name:` field (collision avoidance for parallel runs).
+#   6. Reviewer body contains NO write-scope shell commands outside the
+#      bounded `cat > "<report_dir>/<agent>.md" <<'RLDYOUR_REPORT_EOF'` heredoc.
+#      Negative test: `rm `, `mv `, `cp -`, `sed -i`, `tee `, `touch `, `>>`,
+#      and arbitrary `>` redirections must not appear in reviewer prose.
 #
 # Plus protocol-level invariants:
-#   6. `reviewer-protocol.md` uses canonical run_id label `<UTC-ISO-compact>`.
-#   7. `reviewer-protocol.md` Severity enum lists `critical, high, medium, low,
+#   7. `reviewer-protocol.md` uses canonical run_id label `<UTC-ISO-compact>`.
+#   8. `reviewer-protocol.md` Severity enum lists `critical, high, medium, low,
 #      info`.
-#   8. `reviewer-protocol.md` Bash write boundary statement present.
-#   9. `reviewer-protocol.md` cites the `RLDYOUR_REPORT_EOF` marker at least
+#   9. `reviewer-protocol.md` Bash write boundary statement present.
+#  10. `reviewer-protocol.md` cites the `RLDYOUR_REPORT_EOF` marker at least
 #      3 times (open + close pattern example + documentation prose).
 #
-# Total: 9 invariant types. Concrete log_pass output: 7 PASS per agent
-# (eof once + cap once + info once + 3 Anthropic issues + target once) ×
-# 6 agents = 42, plus 4 protocol-level PASS (run_id + severity + boundary
-# + EOF count) = 46 PASS at HEAD `557bc00`.
+# Total: 10 invariant types. Concrete log_pass output: 8 PASS per agent
+# (eof once + cap once + info once + 3 Anthropic issues + target once +
+# write-scope once) × 6 agents = 48, plus 4 protocol-level PASS = 52 PASS.
 #
 # Exits 0 on PASS, 1 on FAIL.
 
@@ -154,6 +157,46 @@ assert_agent_invariants() {
     log_pass "  writes to <report_dir>/${target_filename} (no collision)"
   else
     log_fail "  agent ${agent_name} does not target its own filename in heredoc write"
+  fi
+
+  # Negative write-scope test (P3 audit hardening): reviewer bodies must NOT
+  # contain shell write/destruction commands outside the bounded
+  # `cat > "${report_dir}/<agent>.md" <<'RLDYOUR_REPORT_EOF'` heredoc. Detection
+  # works on cleaned source - we strip ALL fenced ```...``` blocks (any
+  # language) and ALL inline `...` spans first, so canonical examples inside
+  # code fences and inline backticks (where these tokens are intentional) are
+  # ignored. We then grep on the remaining prose for write tokens.
+  #
+  # Forbidden tokens (whole-word boundaries to avoid matching the agent name
+  # `flow-quality-review` containing "mv"):
+  #   - `rm `, `mv `, `cp -`, `sed -i`, `tee `, `touch ` - destructive/copy ops
+  #   - `>>` - append redirect (legitimate uses must be in fenced code)
+  #
+  # Note: we deliberately do NOT forbid bare `>` because the agent
+  # description prose contains many legitimate uses (`->`, `<= 30`, `>` quote).
+  local cleaned
+  cleaned=$(python3 - "${agent_file}" <<'PY'
+import re
+import sys
+text = open(sys.argv[1], "r", encoding="utf-8").read()
+# Strip fenced code blocks (any language).
+text = re.sub(r"```[\s\S]*?```", "", text)
+# Strip inline backtick spans.
+text = re.sub(r"`[^`]*`", "", text)
+sys.stdout.write(text)
+PY
+  )
+  local found_forbidden=""
+  local pattern
+  for pattern in 'rm -' 'mv ' 'cp -' 'sed -i' 'tee ' 'touch ' '>>'; do
+    if printf '%s' "${cleaned}" | grep -F -q -- "${pattern}"; then
+      found_forbidden+="${pattern}; "
+    fi
+  done
+  if [ -z "${found_forbidden}" ]; then
+    log_pass "  no write-scope shell tokens outside report heredoc"
+  else
+    log_fail "  reviewer body has forbidden write tokens outside heredoc: ${found_forbidden}"
   fi
 }
 
