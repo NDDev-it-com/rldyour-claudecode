@@ -107,8 +107,14 @@ jobs:
         with:
           python-version: '3.13'
 
-      - name: Install Python deps for schema validation
-        run: pip install --user 'jsonschema>=4.21' 'attrs>=23.2'
+      - name: Install Python deps for schema validation + lint advisory
+        # ruff + pyright + pyyaml + pytest installed for the advisory lint
+        # steps below. pyyaml and pytest let pyright resolve runtime/test
+        # imports under static analysis. PyPI versions intentionally floored
+        # (not pinned by SHA) because they are advisory-only with
+        # `continue-on-error: true` - drift never blocks the job. Tighten
+        # when MED-2 graduates from advisory to hard-fail.
+        run: pip install --user 'jsonschema>=4.21' 'attrs>=23.2' 'ruff>=0.7' 'pyright>=1.1' 'pyyaml>=6' 'pytest>=8'
 
       - name: Restore agent-only files from origin/fullrepo
         # ADR-0001: AGENTS.md, .claude/CLAUDE.md, .serena/memories/*,
@@ -202,6 +208,26 @@ jobs:
 
       - name: Plugin ownership boundaries (mcp_owner + hook_owners + deps)
         run: python3 scripts/validate_boundaries.py
+
+      - name: Ruff lint (advisory)
+        # Advisory until MED-2 graduates to hard-fail. Wave 0.4.3 cleared the
+        # backlog so this starts at zero violations across scripts/ + plugins/.
+        # `continue-on-error: true` keeps the CI gate non-blocking; surface
+        # appears in the workflow run summary for visibility.
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          ~/.local/bin/ruff check scripts/ plugins/
+
+      - name: Pyright type check (advisory)
+        # Advisory until MED-2 graduates to hard-fail. Wave 0.4.3 brought the
+        # project to zero pyright errors across scripts/, plugins/, tests/.
+        # `pyyaml` + `pytest` installed in the deps step so imports resolve
+        # under static analysis.
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          ~/.local/bin/pyright
 
       - name: MCP runtime version drift
         run: python3 scripts/check_mcp_runtime_versions.py
