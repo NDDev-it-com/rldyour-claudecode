@@ -43,7 +43,7 @@ class TestNegative:
         assert "drift.md" in result.stderr
 
     def test_en_dash_is_blocked(self, patch_repo_root: Path) -> None:
-        (patch_repo_root / "drift.md").write_text("range 1–3", encoding="utf-8")
+        (patch_repo_root / "drift.md").write_text("range 1–3", encoding="utf-8")  # noqa: RUF001 - intentional EN DASH detection fixture
         result = _run(patch_repo_root)
         assert result.returncode == 1
         assert "en-dash" in result.stderr
