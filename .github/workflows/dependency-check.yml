@@ -71,6 +71,10 @@ jobs:
           sys.exit(fail)
           PY
 
+      - name: Probe upstream MCP registries (npm + PyPI + Homebrew)
+        run: python3 scripts/probe_mcp_upstream.py
+        continue-on-error: true  # network probe is best-effort; drift surfaces as ::warning::
+
   manifest-versions:
     name: Plugin version consistency
     runs-on: ubuntu-latest

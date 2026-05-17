@@ -1,0 +1,71 @@
+name: gitleaks
+
+# Defense-in-depth secret scanning on top of Semgrep p/secrets. Runs the
+# gitleaks OSS CLI inside its official Docker image; no SARIF upload to
+# the GitHub Security tab (which would require paid GitHub Advanced
+# Security on private repos). Findings surface in the job summary +
+# stderr and fail CI when any non-allowlisted finding is detected.
+#
+# Image pinned to a digest below; refresh occasionally via
+# `docker pull zricethezav/gitleaks:v8.30.0 && docker inspect --format='{{index .RepoDigests 0}}' zricethezav/gitleaks:v8.30.0`
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  gitleaks:
+    name: gitleaks scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    steps:
+      - name: Harden runner (egress block + explicit allowlist)
+        uses: step-security/harden-runner@ab7a9404c0f3da075243ca237b5fac12c98deaa5  # v2.19.3
+        with:
+          egress-policy: block
+          allowed-endpoints: >
+            agent.api.stepsecurity.io:443
+            api.github.com:443
+            github.com:443
+            codeload.github.com:443
+            objects.githubusercontent.com:443
+            registry-1.docker.io:443
+            auth.docker.io:443
+            production.cloudflare.docker.com:443
+
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+        with:
+          fetch-depth: 0  # gitleaks needs full history for `--source` git mode
+
+      - name: Run gitleaks detect (full history)
+        run: |
+          set -euo pipefail
+          docker run --rm \
+            -v "${{ github.workspace }}:/repo:ro" \
+            zricethezav/gitleaks:v8.30.0 \
+            detect \
+              --source /repo \
+              --redact \
+              --no-banner \
+              --report-format sarif \
+              --report-path /repo/gitleaks-report.sarif \
+              --exit-code 1
+
+      - name: Surface report on failure
+        if: failure()
+        run: |
+          if [ -f gitleaks-report.sarif ]; then
+            cat gitleaks-report.sarif
+          fi
