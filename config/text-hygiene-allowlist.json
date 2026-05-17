@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "_description": "Paths exempted from validate_text_hygiene.py character-specific scans. Each list is repo-relative paths (forward slashes). em_dash / en_dash exempt the literal U+2014 / U+2013 chars; bidi exempts the U+202A-202E + U+2066-2069 Trojan Source family. Externalised from the script in wave 0.4.4 (closes review LOW-10) so adding/removing an exemption is a config edit rather than a code edit.",
+  "verified_on": "2026-05-17",
+  "em_dash": [
+    "tests/test_validate_text_hygiene.py"
+  ],
+  "en_dash": [
+    "tests/test_validate_text_hygiene.py"
+  ],
+  "bidi": [
+    "plugins/rldyour-flow/hooks/post_tool_use_commit_advice.sh",
+    "tests/test_validate_text_hygiene.py"
+  ]
+}
