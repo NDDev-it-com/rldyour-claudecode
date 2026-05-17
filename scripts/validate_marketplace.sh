@@ -136,6 +136,13 @@ python3 scripts/validate_agent_tools.py
 step "Skill allowed-tools server-namespace check"
 python3 scripts/validate_skill_allowed_tools.py
 
+step "Command vs skill drift (thin-wrapper invariant)"
+if [ -f scripts/validate_command_skill_drift.py ]; then
+  python3 scripts/validate_command_skill_drift.py
+else
+  echo "SKIP scripts/validate_command_skill_drift.py not yet present"
+fi
+
 step "Reviewer output transport contract drift"
 if [ -f scripts/validate_reviewer_contracts.sh ]; then
   bash scripts/validate_reviewer_contracts.sh
