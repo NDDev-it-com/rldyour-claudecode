@@ -6,6 +6,74 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+## [0.4.2] - 2026-05-17
+
+Second wave from the 2026-05-17 review (`2026-05-17T0948Z-12a2bdc`) -
+high-value medium fixes after 0.4.1 closed the three CI-blocking
+HIGHs. Targets the monitoring blind spot (egress allowlist), CLI
+version single-source-of-truth, validator UX (SKIP stream + window
+heuristic), and OWASP wording drift in the security reviewer skill.
+Zero production runtime behavior changes; CI monitoring widens
+coverage from 2/9 effective upstream probes to 9/9.
+
+### Fixed
+
+- **CI egress allowlist closed for 7/9 MCP upstream probes**
+  (`.github/workflows/dependency-check.yml:36-48`). The
+  mcp-runtime-drift job ran `probe_mcp_upstream.py` with an allowlist
+  that included only GitHub and PyPI endpoints; the probe also queries
+  `registry.npmjs.org` (5 servers), `formulae.brew.sh` (1 server), and
+  `storage.googleapis.com` (Dart SDK). Without these three endpoints
+  the npm/brew/dart probes silently returned `None` and drift went
+  undetected in weekly CI - a false-negative monitoring pattern that
+  defeated the purpose of weekly drift checks. Added all three with an
+  inline rationale comment. Closes A-MED-3 (architecture) + S-LOW-1
+  (security) cross-reviewer finding.
+- **validate.yml CLI version now reads from package.json dynamically**
+  (`.github/workflows/validate.yml:55-65`). Previously the npm install
+  step hardcoded `'@anthropic-ai/claude-code@2.1.143'` as a shell
+  literal; release.yml and claude-cli-drift.yml both read the pin from
+  package.json. Dependabot bumps package.json (npm ecosystem) but does
+  NOT update inline shell strings in `run:` blocks, so the next CLI
+  bump would leave validate.yml stale while the other workflows
+  auto-picked the new version. New step reads version via Python +
+  `$GITHUB_OUTPUT`, install step references the output. Same pattern
+  as release.yml + cli-drift. Closes A-MED-2 (architecture).
+- **SKIP messages now consistently on stdout in 2 validators**
+  (`scripts/validate_instruction_sync.py:87`,
+  `scripts/validate_json_schemas.py:61`). Both validators printed SKIP
+  messages to `sys.stderr` while every other validator's SKIP path
+  goes to stdout. Tests that assert `'SKIP' in result.stdout` silently
+  falsely passed when pyyaml or jsonschema was absent locally (SKIP
+  went to stderr, stdout was empty). Removed `file=sys.stderr` from
+  both lines. Closes Q-LOW-2 (quality) + I-MED-4 (integration)
+  cross-reviewer finding.
+- **validate_docs_canon window now adapts to knob length**
+  (`scripts/validate_docs_canon.py:82-92`). The 30-char backwards
+  window was shorter than long knob names like `maxSkillDescriptionChars`
+  (24 chars) plus reasonable prose budget ('added in', 10 chars =
+  34 total). Real canonical-drift bugs phrased naturally went
+  undetected. Window is now `max(30, len(knob) + 15)` - preserves the
+  original baseline for short knobs while adapting up for long names.
+  Closes Q-MED-1 (quality).
+- **ry-sec-review SKILL.md A01-A10 OWASP wording aligned**
+  (`plugins/rldyour-security/skills/ry-sec-review/SKILL.md:64-73`).
+  Quality reviewer flagged A09 only (missing year + 'and' instead of
+  '&'). Cross-file verification at HEAD showed the entire A01-A10
+  block in this skill lacked the `:2025` year suffix while four other
+  canonical locations (sister skill, cc-canon.json, threat-model,
+  SECURITY-01 memory) all used the OWASP 2025 form. Updated all 10
+  entries. Closes Q-INFO-1 (quality, expanded scope after manual
+  verification).
+
+### Added
+
+- **tests/test_validate_docs_canon.py::test_long_knob_window_expands_dynamically**:
+  regression lock-in for the docs_canon window heuristic. Uses a
+  synthetic 19-char knob `aVeryLongConfigKnob` placed 33 chars before
+  v1.9 - distance that the old fixed-30 window missed and the new
+  `max(30, len(knob)+15) = 34` window catches.
+
 ## [0.4.1] - 2026-05-17
 
 Critical fixes from the 2026-05-17 review wave (run
