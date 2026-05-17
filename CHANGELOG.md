@@ -6,6 +6,167 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-05-17
+
+Feature wave consolidating the 4-audit closure (research mеta-audit,
+Python extractor methodology, full Health-84 audit, and Health-84
+audit with self-critique). 28 user decisions captured across 7
+AskUserQuestion rounds drove the implementation. All findings
+verified live (live grep + ry-explore deep research with opus[1m]
+max effort, 14 canonical Claude Code claims cross-validated against
+official docs at 2026-05-17).
+
+### Added
+
+- **ADR corpus** (`docs/adr/`): 9 MADR 4.0.0 records covering
+  irreversible decisions (fullrepo branch policy, dual-doc split,
+  bilingual skill descriptions, file-first reviewer transport, local
+  stdio GitHub MCP, MCP/hook ownership boundaries, MCP runtime pinning,
+  CI baseline without paid add-ons, release version + tag convention).
+  Plus `0000-template.md` and indexing `README.md`. Closes audit
+  F-DEBT-01 / F-DOC-01.
+- **Threat model** (`docs/security/threat-model.md`, ~250 lines):
+  OWASP 2025-mapped surfaces with per-A0X mitigation cross-references
+  to ADR / validator / D-number. Closes audit F-SEC-05.
+- **JSON schemas** (`config/schemas/`): 5 schemas (marketplace, plugin,
+  mcp, lsp, hooks) validated via new `scripts/validate_json_schemas.py`
+  (jsonschema-backed; graceful SKIP when not importable). Includes
+  `$dynamicRef`-aware Draft 2020-12 schemas with full canonical field
+  coverage (e.g., `experimental.{themes,monitors}` wrapper v2.1.129+).
+  Closes audit F-CONS-02 (.lsp.json validation).
+- **Canon database** (`config/cc-canon.json`): forbidden_tokens,
+  version_floors (7 knobs), hook_events (29), owasp_top_10_2025 (full
+  canonical names). Read by new `scripts/validate_docs_canon.py`.
+- **Marketplace policy** (`config/marketplace-policy.json`): centralized
+  invariants table (mcp_owner, hook_owners, lsp_owner, skills_only_plugins,
+  plugin dependency graph, protected branches, agent-only globs, runtime
+  excludes, tag conventions, skill listing budget).
+- **6 new validators** (`scripts/`): `validate_text_hygiene.py`,
+  `validate_skill_allowed_tools.py`, `validate_release_state.py`,
+  `validate_docs_canon.py`, `validate_instruction_sync.py`,
+  `generate_inventory.py`. Plus `validate_json_schemas.py` (G9) and
+  `probe_mcp_upstream.py` (G11). All wired into `validate_marketplace.sh`
+  + `.github/workflows/validate.yml`. Harness grew from 13 to 19 steps.
+- **3 new CI workflows**: `release.yml` (fully automated on tag push -
+  validates release state, generates evidence bundle, creates GitHub
+  Release via `gh release create --verify-tag`), `gitleaks.yml`
+  (standalone secret scanner, docker zricethezav/gitleaks v8.30.0),
+  `claude-cli-drift.yml` (weekly compare of pinned CLI to npm latest).
+- **package.json** at root: pins `@anthropic-ai/claude-code@2.1.143`
+  for Dependabot npm ecosystem tracking. `.github/dependabot.yml` now
+  also tracks npm.
+- **`scripts/refresh_actions_pins.sh`** (159 lines): resolves tag
+  comments to fresh SHAs via `gh api`. Closes audit F-CI-03 (script was
+  referenced in validate.yml comment but did not exist).
+- **MCP upstream drift probes**: `scripts/probe_mcp_upstream.py` probes
+  npm / PyPI / Homebrew JSON weekly via `dependency-check.yml`. Closes
+  audit F-SYNC-02.
+- **sync_contract YAML blocks** in AGENTS.md and .claude/CLAUDE.md
+  (agent-only): 14 shared claims validated by
+  `validate_instruction_sync.py`. Closes audit F-SYNC-01.
+- **README inventory** (`<!-- inventory:begin --> ... <!-- inventory:end -->`):
+  auto-generated 10-column per-plugin table + summary line.
+  `generate_inventory.py --check` enforces freshness. Closes audit
+  F-CONS-04 (drift between manual counts: README "10 skills with
+  allowed-tools" was actually 15).
+
+### Changed
+
+- **`.claude/CLAUDE.md` + AGENTS.md docs canon** (audit F-CANON-01):
+  `skillListingMaxDescChars` -> `maxSkillDescriptionChars` (canonical
+  name); version floors corrected to v2.1.105+ for
+  `maxSkillDescriptionChars` and `skillListingBudgetFraction`;
+  `skillOverrides` documented as v2.1.129+ and NOT applying to plugin
+  skills; `claude plugin tag --push` v2.1.119+ -> v2.1.118+; counts
+  4 skills with `disable-model-invocation` (was 2), 15 skills with
+  `allowed-tools` (was 10).
+- **Claude Code compatibility floor** raised from `v2.1.111` to
+  **`v2.1.143`** (matches CI pin). Covers all features used:
+  `opus[1m]` (v2.1.111+), `alwaysLoad` (v2.1.121+), `claude plugin
+  tag` (v2.1.118+), hook `if` filter (v2.1.118+), skill listing
+  settings (v2.1.105+), `skillOverrides` (v2.1.129+), `experimental
+  .{themes,monitors}` (v2.1.129+). Updated in
+  `config/mcp-runtime-versions.env`, `docs/dependency-updates.md`,
+  `README.md`, `AGENTS.md`. Closes audit F-COMPAT-01.
+- **Dart SDK pin added**: `DART_SDK_VERSION=3.11.0` in
+  `config/mcp-runtime-versions.env`;
+  `scripts/check_mcp_runtime_versions.py` `SYSTEM_BINARY_TO_ENV` now
+  includes `dart-flutter` (binary=`dart`, regex captures `Dart SDK
+  version:`). 13/13 MCP servers now enforceable (was 12/13). Closes
+  audit F-SYNC-01.
+- **Marketplace manifest hardening**:
+  `.claude-plugin/marketplace.json` `rldyour-flow` description corrected
+  from `SessionStart/PreToolUse/Stop` to `SessionStart/PostToolUse/Stop`
+  (audit F-ARCH-01). `metadata.pluginRoot: "./plugins"` removed to match
+  Anthropic plugins-official precedent (audit F-ARCH-03). `$schema` URL
+  replaced from broken 404 `https://anthropic.com/claude-code/marketplace.schema.json`
+  to local `../config/schemas/marketplace.json`.
+- **Hook `if` filters** (CC v2.1.118+) added to all 3 Bash lifecycle
+  hooks (`post_tool_use_commit_advice`, `prepare_auto_sync`,
+  `mark_sync_required`). Scope: `Bash(git commit*)` family. Reduces
+  process spawning on unrelated Bash calls. Shell-side stdin filtering
+  retained as defence-in-depth. Closes audit F-SCALE-01.
+- **47 em-dashes + 1 en-dash normalized** to ASCII hyphens across 6
+  files (`marketplace.json`, `docs/release-process.md`,
+  `docs/rollback-restore.md`, `docs/dependency-updates.md`,
+  `docs/observability.md`, `web-research/SKILL.md`) plus 5 em-dashes in
+  `.github/workflows/*.yml` (caught by `validate_text_hygiene.py`).
+  CHANGELOG [0.2.3] "zero em-dashes" claim is now retroactively true.
+  Closes audit F-CONS-01 / F-DOC-02.
+- **`docs/observability.md:96`** describes `.serena/.sync_marker`
+  correctly as compound `${HEAD_SHA}:${NEWEST_SHA:-none}` fingerprint
+  (D32 fix) plus full 10-field SHA-256 hash description for
+  `.flow_sync_marker` (D31 fix). Closes audit F-SYNC-04.
+- **`plugins/rldyour-lsps/README.md`** removes `.hcl/Bake` claims from
+  Docker LSP coverage section (`.lsp.json` only maps `.dockerfile`).
+  Closes audit F-LSP-01.
+- **Semgrep `.serena/**` exclude narrowed** to explicit runtime
+  artefact list (cache/reviews/diagnostics/markers); `.serena/memories/**`
+  is now in scope of the secrets pack. Closes audit F-SEC-01.
+- **All marketplace and plugin versions bumped** (project rule):
+  VERSION `0.2.3 -> 0.3.0`; all 9 per-plugin versions bumped to
+  **0.3.0** (was 0.2.1 for 8 plugins + 0.2.3 for `rldyour-flow`).
+  Minor bump (not patch) signals feature wave: 8+ new validators,
+  3 new workflows, ADR corpus, threat model, JSON schemas, centralized
+  policy, sync_contract validator.
+
+### Fixed
+
+- **`smoke_serena_memory_taxonomy.sh:192`** stdin closure
+  (`</dev/null`) so stop hook invocation does not block. Closes audit
+  F-TEST-01.
+- **`smoke_mcp_runtime.sh`** `HOST_BINARY_ALLOWLIST = {github,
+  dart-flutter}` - pin=None outside the allowlist now FAILs. Closes
+  audit F-TEST-02.
+- **`.lsp.json` JSON validation**: now included in both
+  `validate_marketplace.sh` and `.github/workflows/validate.yml` JSON
+  parse step. Closes audit F-CONS-02.
+- **dependabot.yml comment** corrected from "and the Claude Code npm
+  pin" (was misleading: only github-actions ecosystem was actually
+  tracked) to accurate dual-ecosystem language after G11 added npm
+  block. Closes audit F-CI-01 / F-SYNC-03.
+
+### Security
+
+- **Tighter injection sanitization** (G8 + previous waves): repo-wide
+  `validate_text_hygiene.py` enforces no em-dashes, no en-dashes, no
+  BIDI control chars outside the hook-sanitizer regex (legitimate
+  detection input).
+- **gitleaks workflow** (G11): defence-in-depth on top of Semgrep
+  p/secrets pack. Full-history scan with `--redact` mode.
+
+### Notes
+
+- All 14 audit-flagged technical claims verified against official
+  Claude Code docs at 2026-05-17 (ry-explore deep research, opus[1m]
+  max effort, 90 maxTurns). 7 verified-true, 3 partial, 0 verified-false.
+- Feature branch: `feat/v0.3.0-comprehensive-audit-fixes`; 14 atomic
+  commits.
+- Memory sync via `flow-memory-sync` subagent + post-task sync to
+  publish `fullrepo` snapshot follow this commit.
+- Tags planned: `marketplace--v0.3.0` + 9 `<plugin>--v0.3.0` tags
+  (10 tags total). `release.yml` triggers on tag push.
+
 ## [0.2.3] - 2026-05-17
 
 ### Fixed
@@ -875,7 +1036,8 @@ Release boundary cut after the 2026-05-08..2026-05-12 wave of best-practice, MCP
   shell syntax checks, frontmatter presence verification on all skills,
   agents, and commands.
 
-[Unreleased]: https://github.com/NDDev-it-com/rldyour-claudecode/compare/marketplace--v0.2.3...HEAD
+[Unreleased]: https://github.com/NDDev-it-com/rldyour-claudecode/compare/marketplace--v0.3.0...HEAD
+[0.3.0]: https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/marketplace--v0.3.0
 [0.2.3]: https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/marketplace--v0.2.3
 [0.2.2]: https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/marketplace--v0.2.2
 [0.2.1]: https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/marketplace--v0.2.1
