@@ -161,24 +161,25 @@ def patch_repo_root(monkeypatch: pytest.MonkeyPatch, fake_repo: Path) -> Path:
     # `_mcp_parse.py` is the shared module imported by both
     # validate_skill_allowed_tools.py and validate_agent_tools.py - copy it
     # so the `from _mcp_parse import split_mcp_ref` resolves at test runtime.
+    # Alphabetized so future additions land in the obvious slot (consistency F-1).
     for name in [
-        "validate_text_hygiene.py",
-        "validate_skill_allowed_tools.py",
-        "validate_agent_tools.py",
-        "validate_release_state.py",
-        "validate_docs_canon.py",
-        "validate_instruction_sync.py",
+        "_mcp_parse.py",
+        "check_mcp_runtime_versions.py",
         "generate_inventory.py",
-        "validate_json_schemas.py",
+        "probe_mcp_upstream.py",
         "release_manifest.py",
-        "validate_plugin_versions.py",
-        "validate_instruction_docs.py",
-        "validate_skill_routing.py",
+        "validate_agent_tools.py",
         "validate_boundaries.py",
         "validate_command_skill_drift.py",
-        "check_mcp_runtime_versions.py",
-        "probe_mcp_upstream.py",
-        "_mcp_parse.py",
+        "validate_docs_canon.py",
+        "validate_instruction_docs.py",
+        "validate_instruction_sync.py",
+        "validate_json_schemas.py",
+        "validate_plugin_versions.py",
+        "validate_release_state.py",
+        "validate_skill_allowed_tools.py",
+        "validate_skill_routing.py",
+        "validate_text_hygiene.py",
     ]:
         src = SCRIPTS_DIR / name
         if src.is_file():
