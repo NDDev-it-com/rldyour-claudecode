@@ -122,9 +122,13 @@ def patch_repo_root(monkeypatch: pytest.MonkeyPatch, fake_repo: Path) -> Path:
     scripts_link = fake_repo / "scripts"
     scripts_link.mkdir(exist_ok=True)
     # Copy real scripts so __file__ inside the script resolves to fake_repo/scripts/<name>.
+    # `_mcp_parse.py` is the shared module imported by both
+    # validate_skill_allowed_tools.py and validate_agent_tools.py - copy it
+    # so the `from _mcp_parse import split_mcp_ref` resolves at test runtime.
     for name in [
         "validate_text_hygiene.py",
         "validate_skill_allowed_tools.py",
+        "validate_agent_tools.py",
         "validate_release_state.py",
         "validate_docs_canon.py",
         "validate_instruction_sync.py",
@@ -132,6 +136,7 @@ def patch_repo_root(monkeypatch: pytest.MonkeyPatch, fake_repo: Path) -> Path:
         "validate_json_schemas.py",
         "release_manifest.py",
         "validate_plugin_versions.py",
+        "_mcp_parse.py",
     ]:
         src = SCRIPTS_DIR / name
         if src.is_file():

@@ -78,3 +78,7 @@ exclude = [
   ".venv",
   "node_modules",
 ]
+# `scripts/` on extraPaths so Pyright can resolve `from _mcp_parse import ...`
+# the same way Python does at runtime (script directory is auto-prepended to
+# sys.path for scripts launched as `python3 scripts/<name>.py`).
+extraPaths = ["scripts"]

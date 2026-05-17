@@ -29,7 +29,7 @@ import sys
 from pathlib import Path
 
 EM_DASH = "—"
-EN_DASH = "–"
+EN_DASH = "–"  # noqa: RUF001 - this IS the EN DASH character we detect; intentional
 BIDI_CONTROLS = (
     "‪", "‫", "‬", "‭", "‮",
     "⁦", "⁧", "⁨", "⁩",
@@ -84,7 +84,10 @@ def scan(root: Path) -> int:
         if should_skip(path.relative_to(root)):
             continue
         # Skip self to avoid matching the literal U+2014 escape in this source.
-        if path.name == "validate_text_hygiene.py":
+        # Use resolved-path comparison rather than `path.name == ...` so a
+        # future file named `validate_text_hygiene.py` placed elsewhere in the
+        # tree (e.g., tests/) is NOT silently exempted from scanning.
+        if path.resolve() == Path(__file__).resolve():
             continue
         try:
             text = path.read_text(encoding="utf-8")

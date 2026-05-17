@@ -26,7 +26,6 @@ import re
 import sys
 from pathlib import Path
 
-
 SECRET_PATTERNS = [
     re.compile(r"\bctx7sk-[A-Za-z0-9_-]{20,}\b"),
     re.compile(r"\bghp_[A-Za-z0-9]{20,}\b"),
