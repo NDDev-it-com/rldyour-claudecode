@@ -102,21 +102,57 @@ README). All 9 plugins and the marketplace VERSION bumped to 0.5.0.
   shortening the worktree trust-model paragraph, and compressing the
   MCP transport listing.
 
+### Reviewer wave closures (commits e956be5, 69d1105, a6bde4d)
+
+Six parallel reviewer subagents (`flow-architecture/quality/consistency/
+integration/verification/security-review`) ran against HEAD `b5e78d4`,
+file-first transport to `.serena/reviews/2026-05-17T1448Z-b5e78d4/`. 0
+critical, 1 high, 9 medium, 11 low, 28 info findings total.
+
+Closed in 3 fix commits within this same release block:
+
+- `e956be5` - **Quality F-1 HIGH (95)**: `scripts/smoke_hooks.sh`
+  discovery walked only `handler["command"]`; the exec-form migration
+  silently dropped all 8 hook scripts from the `bash -n` check. Now
+  walks both `command` AND `args` tokens. Verified: 8/8 scripts found.
+- `69d1105` - **Architecture F-1 + Integration F-2 + Verification F-1
+  (convergent)**: `validate_command_skill_drift.py` added to
+  `.github/workflows/validate.yml` PR gate. Same for
+  `validate_instruction_docs.py --require-agent-docs` (Verification F-4).
+  **Integration F-1**: `validate_boundaries.py` normalizes `{name, version}`
+  dependency dicts (forward-compat for 0.5.0 schema expansion).
+  **Security F-5**: drift validator FAIL output moved to stderr.
+- `a6bde4d` - **Quality F-3 + F-6**: numbered-list blank-line reset +
+  ACTION regex `\b` boundary (`editor` no longer triggers `edit`).
+  **Security F-2**: `validate_reviewer_contracts.sh` comment sync
+  (`rm -`). **Verification F-2**: new test `test_wrong_delegation_target_blocks`
+  covers the previously-untested branch.
+  **`.claude/CLAUDE.md`** lines 123 + 145 updated to reflect exec-form
+  adoption (Quality F-2).
+
+Deferred (documented in `.serena/memories/TECHDEBT-01-NOW.md`):
+Architecture F-2/F-3 (broader git filter, labeled trigger noise),
+Integration F-3 (silent null host_binary_pin), Security F-1/F-3/F-4/F-8
+(macOS egress, manual-first docs-only, CODEOWNERS wildcards, dependency
+version pattern).
+
 ### Verified
 
 - `python3 scripts/validate_json_schemas.py`: 14/14 OK.
-- `bash scripts/smoke_hooks.sh`: PASS (27 checks).
+- `bash scripts/smoke_hooks.sh`: PASS (now 8/8 hook scripts discovered + bash-n).
 - `bash scripts/validate_reviewer_contracts.sh`: 52 PASS / 0 drift.
 - `python3 scripts/validate_command_skill_drift.py`: 8 OK / 1 SKIP.
-- `python3 scripts/check_mcp_runtime_versions.py`: 13/13 OK.
-- `python3 scripts/check_mcp_runtime_versions.py --strict`: 13/13 OK on
-  the maintainer machine (github-mcp-server v1.0.4 + dart v3.11.0 present).
-- `python3 scripts/release_manifest.py`: all 13 MCP pins extracted
-  (no more `pin: null`), host_binary_pins populated.
+- `python3 scripts/validate_boundaries.py`: OK (mcp_owner + hook_owners
+  + 9 plugin dependency contracts; `{name, version}` form also accepted).
+- `python3 scripts/check_mcp_runtime_versions.py [--strict]`: 13/13 OK
+  on maintainer machine (github-mcp-server v1.0.4 + dart v3.11.0 present).
+- `python3 scripts/release_manifest.py`: all 13 MCP pins extracted,
+  `host_binary_pins` populated, `claude_code_min_version: 2.1.143`.
+- `bash scripts/validate_marketplace.sh`: passed end-to-end.
 - `PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 python3 -m pytest tests/ -m "not integration"`:
-  73 passed.
+  **75 passed, 3 deselected** (added 2 drift tests for F-2/F-3 closures).
 - `python3 scripts/validate_instruction_docs.py --require-agent-docs`:
-  AGENTS.md 198 lines OK, .claude/CLAUDE.md 200 lines OK.
+  AGENTS.md 198 lines OK, `.claude/CLAUDE.md` 200 lines OK.
 
 ## [0.4.4] - 2026-05-17
 
