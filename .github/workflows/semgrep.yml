@@ -85,7 +85,17 @@ jobs:
             --config=p/ci \
             --error \
             --metrics=off \
-            --exclude='.serena/**' \
+            --exclude='.serena/cache/**' \
+            --exclude='.serena/reviews/**' \
+            --exclude='.serena/diagnostics/**' \
+            --exclude='.serena/.sync_marker' \
+            --exclude='.serena/.flow_sync_marker' \
+            --exclude='.serena/.serena_sync_state.json' \
+            --exclude='.serena/.auto_sync_head' \
+            --exclude='.serena/.active_workflow_intent.json' \
+            --exclude='.serena/.dirty_stop_ack' \
+            --exclude='.serena/.flow_post_task_state.json' \
+            --exclude='.serena/.bootstrap_overrides.log' \
             --exclude='**/__pycache__/**' \
             --severity=WARNING \
             --severity=ERROR
