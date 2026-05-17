@@ -40,6 +40,7 @@ paths = (
     [".claude-plugin/marketplace.json"]
     + sorted(glob.glob("plugins/*/.claude-plugin/plugin.json"))
     + sorted(glob.glob("plugins/*/.mcp.json"))
+    + sorted(glob.glob("plugins/*/.lsp.json"))
     + sorted(glob.glob("plugins/*/hooks/hooks.json"))
 )
 fail = 0
@@ -83,6 +84,9 @@ while IFS= read -r -d '' f; do
 done < <(find plugins scripts -type f -name '*.sh' -print0 2>/dev/null)
 test "$fail" -eq 0
 
+step "Text hygiene (em-dashes, en-dashes, BIDI controls)"
+python3 scripts/validate_text_hygiene.py
+
 step "Frontmatter on SKILL.md / agents / commands"
 fail=0
 while IFS= read -r -d '' f; do
@@ -119,12 +123,27 @@ fi
 step "Agent tools allowlist validation"
 python3 scripts/validate_agent_tools.py
 
+step "Skill allowed-tools server-namespace check"
+python3 scripts/validate_skill_allowed_tools.py
+
 step "Reviewer output transport contract drift"
 if [ -f scripts/validate_reviewer_contracts.sh ]; then
   bash scripts/validate_reviewer_contracts.sh
 else
   echo "SKIP scripts/validate_reviewer_contracts.sh not yet present"
 fi
+
+step "Claude Code docs canon drift"
+python3 scripts/validate_docs_canon.py
+
+step "AGENTS.md <-> .claude/CLAUDE.md sync_contract drift"
+python3 scripts/validate_instruction_sync.py
+
+step "Release state parity (VERSION + CHANGELOG + manifests + tag)"
+python3 scripts/validate_release_state.py
+
+step "README inventory block freshness"
+python3 scripts/generate_inventory.py --check
 
 step "MCP runtime version drift"
 if [ -f scripts/check_mcp_runtime_versions.py ]; then

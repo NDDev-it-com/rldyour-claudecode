@@ -109,6 +109,7 @@ jobs:
               ['.claude-plugin/marketplace.json']
               + sorted(glob.glob('plugins/*/.claude-plugin/plugin.json'))
               + sorted(glob.glob('plugins/*/.mcp.json'))
+              + sorted(glob.glob('plugins/*/.lsp.json'))
               + sorted(glob.glob('plugins/*/hooks/hooks.json'))
           )
           fail = 0
@@ -187,6 +188,12 @@ jobs:
       - name: Agent tools allowlist validation
         run: python3 scripts/validate_agent_tools.py
 
+      - name: Skill allowed-tools server-namespace check
+        run: python3 scripts/validate_skill_allowed_tools.py
+
+      - name: Text hygiene (em-dashes + BIDI controls)
+        run: python3 scripts/validate_text_hygiene.py
+
       - name: Hook lifecycle smoke
         run: bash scripts/smoke_hooks.sh
 
@@ -198,6 +205,18 @@ jobs:
 
       - name: Reviewer output transport contract drift
         run: bash scripts/validate_reviewer_contracts.sh
+
+      - name: Claude Code docs canon drift
+        run: python3 scripts/validate_docs_canon.py
+
+      - name: AGENTS.md <-> .claude/CLAUDE.md sync_contract drift
+        run: python3 scripts/validate_instruction_sync.py
+
+      - name: Release state parity (VERSION + CHANGELOG + manifests + tag)
+        run: python3 scripts/validate_release_state.py
+
+      - name: README inventory block freshness
+        run: python3 scripts/generate_inventory.py --check
 
       - name: MCP runtime smoke (pinning + HTTP preflight)
         run: bash scripts/smoke_mcp_runtime.sh

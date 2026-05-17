@@ -189,7 +189,9 @@ printf '# Agent docs\n' > AGENTS.md
 git add AGENTS.md
 git_commit "docs"
 set +e
-bash "$STOP_HOOK" >stop.out 2>stop.err
+# Close stdin explicitly: stop_memory_sync.sh reads hook input via `cat`
+# (line 35); without </dev/null the harness would block waiting for input.
+bash "$STOP_HOOK" </dev/null >stop.out 2>stop.err
 STOP_RC=$?
 set -e
 if [ "$STOP_RC" -ne 2 ]; then
