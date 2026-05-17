@@ -48,10 +48,11 @@ Chosen option: **C**. The CI baseline:
   `p/security-audit`, `p/secrets`, `p/owasp-top-ten`, `p/ci`). `--error`
   fails CI on WARNING/ERROR findings. Findings surface in job log; no
   SARIF upload.
-- **`gitleaks.yml`** (G11): defence-in-depth secret scanner via official
-  Docker image (`zricethezav/gitleaks:v8.30.0`), `detect --redact` with
-  full git history (fetch-depth: 0). Findings surface in job log + SARIF
-  report archived on failure.
+- **`gitleaks.yml`** (G11; bumped to v8.30.1 in 0.4.0): defence-in-depth
+  secret scanner via official Docker image (`zricethezav/gitleaks:v8.30.1`,
+  digest-pinned), `detect --redact` with full git history (fetch-depth: 0).
+  Findings surface in job log + SARIF report archived on failure (always:,
+  retained 30 days).
 - **`actionlint.yml`**: workflow YAML linter with checksum-verified
   install.
 - **`dependency-check.yml`** + **`claude-cli-drift.yml`** (G11): weekly
