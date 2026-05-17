@@ -8,11 +8,19 @@ checker enforces parity: every stdio MCP server must have its version pin
 mirrored in the env file with the matching value, and every env entry must
 reference a real server in `.mcp.json`.
 
+Modes:
+  default       Missing host binaries (e.g. `dart`, `github-mcp-server`) are
+                INFO only - useful in CI where the runner may legitimately not
+                ship those binaries.
+  --strict      Missing host binaries become FAIL. Use on release-build
+                machines where the binaries are required to be present.
+
 Exit codes: 0 success, 1 on any drift.
 """
 
 from __future__ import annotations
 
+import argparse
 import json
 import re
 import shutil
@@ -101,6 +109,20 @@ def extract_version(args: list[str], prefix: str) -> str | None:
 
 
 def main() -> int:
+    parser = argparse.ArgumentParser(
+        description="Detect drift between .mcp.json and config/mcp-runtime-versions.env.",
+    )
+    parser.add_argument(
+        "--strict",
+        action="store_true",
+        help=(
+            "Treat missing host binaries (github-mcp-server, dart) as FAIL "
+            "instead of INFO. Use on release-build machines."
+        ),
+    )
+    cli = parser.parse_args()
+    strict = cli.strict
+
     root = Path(__file__).resolve().parent.parent
     mcp_path = root / "plugins" / "rldyour-mcps" / ".mcp.json"
     env_path = root / "config" / "mcp-runtime-versions.env"
@@ -188,10 +210,20 @@ def main() -> int:
             continue
         actual = probe_binary_version(spec["binary"], spec["version_regex"])
         if actual is None:
-            print(
-                f"INFO {name}: binary {spec['binary']!r} absent on PATH - "
-                f"pin {spec['env_key']}={expected} cannot be enforced locally"
-            )
+            if strict:
+                print(
+                    f"FAIL {name}: binary {spec['binary']!r} absent on PATH "
+                    f"(--strict requires every pinned host binary to be installed; "
+                    f"pin {spec['env_key']}={expected}).",
+                    file=sys.stderr,
+                )
+                fail = 1
+            else:
+                print(
+                    f"INFO {name}: binary {spec['binary']!r} absent on PATH - "
+                    f"pin {spec['env_key']}={expected} cannot be enforced locally "
+                    f"(use --strict on release-build machines to make this a FAIL)"
+                )
             continue
         if actual != expected:
             print(
