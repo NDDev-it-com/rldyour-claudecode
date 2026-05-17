@@ -6,6 +6,118 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-05-17
+
+Minor-version wave closing the external audit findings (P0/P1/P2/P3) into
+a single coherent release. Touches plugin runtime contracts (hooks JSON
+canonical form, schema corrections, agent tool boundaries, command/skill
+drift, MCP env policy), validator surface (+1 validator, +1 negative test
+in an existing one, +6 unit tests), CI/CD policy (manual-first agent gate,
+macOS cross-platform schedule, CODEOWNERS), and docs (runtime-env, workflow
+README). All 9 plugins and the marketplace VERSION bumped to 0.5.0.
+
+### Added
+
+- `scripts/validate_command_skill_drift.py` + 6 unit tests. Enforces that
+  any slash command whose `name` matches a skill stays a thin wrapper
+  (<= 800 chars body, `Use the \`<name>\` skill` delegation phrase, no
+  forbidden workflow headings, numbered checklist <= 3 items). Skips the
+  ry-explore command+agent pattern silently. Wired into
+  `scripts/validate_marketplace.sh`.
+- `docs/runtime-env.md`: full reference for required (CONTEXT7_API_KEY,
+  GITHUB_PERSONAL_ACCESS_TOKEN), optional MCP knobs (MCP_TIMEOUT etc.),
+  and all `RLDYOUR_SKIP_*` skip flags.
+- `.github/CODEOWNERS`: auto-review requests for workflows, schemas, MCP
+  transport, hook owners, validators, release surface, ADRs.
+- `.github/workflows/README.md`: Required PR / Advisory Scheduled /
+  Release-only split with GHEC cost-policy notes; documents the
+  manual-first CI rule for AI agents.
+- `.github/workflows/cross-platform.yml`: macOS + Ubuntu smoke matrix on
+  workflow_dispatch + Sunday 04:00 UTC schedule + opt-in PR label
+  `cross-platform`. NOT triggered on every PR (macOS = 10x cost factor).
+- `--strict` flag on `scripts/check_mcp_runtime_versions.py`: promotes
+  absent host binaries (`github-mcp-server`, `dart`) from INFO to FAIL
+  for release-build machines.
+- Negative write-scope test in `scripts/validate_reviewer_contracts.sh`:
+  reviewer bodies cannot contain shell write tokens (`rm -`, `mv `,
+  `cp -`, `sed -i`, `tee `, `touch `, `>>`) outside the bounded
+  `RLDYOUR_REPORT_EOF` heredoc. Brings total assertions to 52 PASS.
+
+### Changed
+
+- **Hooks JSON canonical form** (P0):
+  `plugins/rldyour-flow/hooks/hooks.json` and
+  `plugins/rldyour-serena-mcp/hooks/hooks.json` rewritten so the `if`
+  filter lives INSIDE the inner hook handler (sibling to `type`/`command`),
+  not at the matcher-group level. All hook handlers use exec-form
+  `command: "bash"` + `args: ["${CLAUDE_PLUGIN_ROOT}/hooks/X.sh"]` per
+  v2.1.139+ recommendation. Serena PreToolUse/PostToolUse use a broad
+  `Bash(git *)` rule plus script-level self-filter (one rule per `if`).
+- **`config/schemas/hooks.json`** rewritten to mirror canonical Claude
+  Code: `if` is a hookHandler property; full v2.1.142 field set added
+  (`args`, `async`, `asyncRewake`, `shell`, `continueOnBlock`, `url`,
+  `headers`, `allowedEnvVars`, `server`, `tool`, `input`, `prompt`,
+  `model`, `agent`, `once`). `additionalProperties: false` keeps drift
+  surfaced.
+- **`$schema` format**: all 5 schemas changed `format: "uri"` -> `"uri-reference"`
+  so the repo-relative `$schema` paths in JSON manifests validate
+  (`format: "uri"` requires absolute URI per RFC 3986).
+- **`config/schemas/plugin.json`** expanded: `dependencies` items accept
+  `string` OR `{name, version}` object; component paths
+  (`skills`/`commands`/`agents`/`hooks`) accept `string` OR `array of strings`
+  matching documented Claude Code component-path shapes (string replaces
+  default, array adds to default).
+- **`scripts/release_manifest.py`**: new `NPM_PIN_RE` extracts unscoped
+  npm pins (`chrome-devtools-mcp@0.26.0`, `shadcn@4.7.0`) that the
+  previous parser missed (pin=null). New `host_binary_pins` block from
+  `config/mcp-runtime-versions.env` for `github-mcp-server` v1.0.4 and
+  `dart` v3.11.0. Top-level `claude_code_min_version` exposed.
+- **Slash commands thinned** (8 wrappers <= 800 chars each):
+  `ry-start`, `ry-init`, `ry-newp`, `ry-review`, `ry-deploy` (rldyour-flow),
+  `ry-design` (rldyour-design), `ry-rules-review` (rldyour-rules),
+  `ry-sec-review` (rldyour-security). All delegate to their same-named
+  skill via the canonical `Use the \`<name>\` skill` phrase. `ry-explore`
+  remains as-is (command + agent, no skill - audit recommendation).
+- **Agent descriptions shortened**:
+  `ry-explore` 1660 -> 407 chars, `flow-memory-sync` 1574 -> 552 chars.
+  Examples moved out of frontmatter into agent body.
+- **`scripts/bootstrap_check.sh`**: new mandatory `required MCP credentials`
+  step FAILs on missing CONTEXT7_API_KEY or GITHUB_PERSONAL_ACCESS_TOKEN
+  (Claude Code aborts config parse on these unset). Existing
+  `env example coverage` demoted to optional-vars INFO.
+- **`scripts/check_mcp_runtime_versions.py`**: argparse + `--strict` mode
+  (see Added).
+- **`plugins/rldyour-serena-mcp/hooks/user_prompt_submit.sh`**: surgical
+  trigger rewrite. Strong triggers (code/class/function/refactor/...)
+  inject directly; weak triggers (project/directory/file) inject only
+  when paired with an action verb. Single python3 parser/emitter
+  replaces the python|grep|python pipeline.
+- **`tests/test_*.py`**: every `subprocess.run()` helper now carries
+  `timeout=30` (14 files updated) so any future validator regression
+  surfaces as `TimeoutExpired` instead of an infinite hang.
+- **`.github/workflows/pytest.yml`**: runs `pytest -m "not integration"`
+  so live network probes never execute in the unit-test gate.
+- **`AGENTS.md`** trimmed from 205 to 198 lines (within the 200-line
+  soft cap) by collapsing repeated Claude Code version-floor claims,
+  shortening the worktree trust-model paragraph, and compressing the
+  MCP transport listing.
+
+### Verified
+
+- `python3 scripts/validate_json_schemas.py`: 14/14 OK.
+- `bash scripts/smoke_hooks.sh`: PASS (27 checks).
+- `bash scripts/validate_reviewer_contracts.sh`: 52 PASS / 0 drift.
+- `python3 scripts/validate_command_skill_drift.py`: 8 OK / 1 SKIP.
+- `python3 scripts/check_mcp_runtime_versions.py`: 13/13 OK.
+- `python3 scripts/check_mcp_runtime_versions.py --strict`: 13/13 OK on
+  the maintainer machine (github-mcp-server v1.0.4 + dart v3.11.0 present).
+- `python3 scripts/release_manifest.py`: all 13 MCP pins extracted
+  (no more `pin: null`), host_binary_pins populated.
+- `PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 python3 -m pytest tests/ -m "not integration"`:
+  73 passed.
+- `python3 scripts/validate_instruction_docs.py --require-agent-docs`:
+  AGENTS.md 198 lines OK, .claude/CLAUDE.md 200 lines OK.
+
 ## [0.4.4] - 2026-05-17
 
 Fourth wave from the 2026-05-17 review wave

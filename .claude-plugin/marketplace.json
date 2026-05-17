@@ -6,13 +6,13 @@
     "email": "danilsilantyevnewlife+claude@gmail.com",
     "url": "https://github.com/rldyourmnd"
   },
-  "description": "Personal Claude Code plugin marketplace by rldyourmnd - SDLC flow, Serena, MCP, security, browser, design, LSP, rules. Персональный маркетплейс плагинов Claude Code: SDLC flow, Serena, MCP, безопасность, браузер, дизайн, LSP, правила.",
+  "description": "Personal Claude Code plugin marketplace by rldyourmnd - SDLC flow, Serena, MCP, security, browser, design, LSP, rules. \u041f\u0435\u0440\u0441\u043e\u043d\u0430\u043b\u044c\u043d\u044b\u0439 \u043c\u0430\u0440\u043a\u0435\u0442\u043f\u043b\u0435\u0439\u0441 \u043f\u043b\u0430\u0433\u0438\u043d\u043e\u0432 Claude Code: SDLC flow, Serena, MCP, \u0431\u0435\u0437\u043e\u043f\u0430\u0441\u043d\u043e\u0441\u0442\u044c, \u0431\u0440\u0430\u0443\u0437\u0435\u0440, \u0434\u0438\u0437\u0430\u0439\u043d, LSP, \u043f\u0440\u0430\u0432\u0438\u043b\u0430.",
   "plugins": [
     {
       "name": "rldyour-mcps",
       "source": "./plugins/rldyour-mcps",
-      "description": "Транспортный слой MCP - 13 серверов с зафиксированными версиями: Serena, Sequential Thinking, Playwright, Chrome DevTools, Context7, DeepWiki, Grep, Semgrep, shadcn, Dart/Flutter, Figma, OpenAI Docs, GitHub.",
-      "version": "0.4.4",
+      "description": "\u0422\u0440\u0430\u043d\u0441\u043f\u043e\u0440\u0442\u043d\u044b\u0439 \u0441\u043b\u043e\u0439 MCP - 13 \u0441\u0435\u0440\u0432\u0435\u0440\u043e\u0432 \u0441 \u0437\u0430\u0444\u0438\u043a\u0441\u0438\u0440\u043e\u0432\u0430\u043d\u043d\u044b\u043c\u0438 \u0432\u0435\u0440\u0441\u0438\u044f\u043c\u0438: Serena, Sequential Thinking, Playwright, Chrome DevTools, Context7, DeepWiki, Grep, Semgrep, shadcn, Dart/Flutter, Figma, OpenAI Docs, GitHub.",
+      "version": "0.5.0",
       "author": {
         "name": "rldyourmnd"
       },
@@ -27,8 +27,8 @@
     {
       "name": "rldyour-explore",
       "source": "./plugins/rldyour-explore",
-      "description": "Скиллы технического и веб-исследования + ry-explore субагент глубокого анализа (Opus 4.7 1M, max effort) через Context7/DeepWiki/Grep MCP. /ry-explore slash command included.",
-      "version": "0.4.4",
+      "description": "\u0421\u043a\u0438\u043b\u043b\u044b \u0442\u0435\u0445\u043d\u0438\u0447\u0435\u0441\u043a\u043e\u0433\u043e \u0438 \u0432\u0435\u0431-\u0438\u0441\u0441\u043b\u0435\u0434\u043e\u0432\u0430\u043d\u0438\u044f + ry-explore \u0441\u0443\u0431\u0430\u0433\u0435\u043d\u0442 \u0433\u043b\u0443\u0431\u043e\u043a\u043e\u0433\u043e \u0430\u043d\u0430\u043b\u0438\u0437\u0430 (Opus 4.7 1M, max effort) \u0447\u0435\u0440\u0435\u0437 Context7/DeepWiki/Grep MCP. /ry-explore slash command included.",
+      "version": "0.5.0",
       "author": {
         "name": "rldyourmnd"
       },
@@ -47,8 +47,8 @@
     {
       "name": "rldyour-serena-mcp",
       "source": "./plugins/rldyour-serena-mcp",
-      "description": "Семантический воркфлоу для кода через Serena MCP + синхронизация .serena памяти + хуки жизненного цикла (UserPromptSubmit/PreToolUse/PostToolUse/Stop).",
-      "version": "0.4.4",
+      "description": "\u0421\u0435\u043c\u0430\u043d\u0442\u0438\u0447\u0435\u0441\u043a\u0438\u0439 \u0432\u043e\u0440\u043a\u0444\u043b\u043e\u0443 \u0434\u043b\u044f \u043a\u043e\u0434\u0430 \u0447\u0435\u0440\u0435\u0437 Serena MCP + \u0441\u0438\u043d\u0445\u0440\u043e\u043d\u0438\u0437\u0430\u0446\u0438\u044f .serena \u043f\u0430\u043c\u044f\u0442\u0438 + \u0445\u0443\u043a\u0438 \u0436\u0438\u0437\u043d\u0435\u043d\u043d\u043e\u0433\u043e \u0446\u0438\u043a\u043b\u0430 (UserPromptSubmit/PreToolUse/PostToolUse/Stop).",
+      "version": "0.5.0",
       "author": {
         "name": "rldyourmnd"
       },
@@ -67,8 +67,8 @@
     {
       "name": "rldyour-security",
       "source": "./plugins/rldyour-security",
-      "description": "Безопасность по OWASP Top 10 2025 при реализации + защитный Mythos-style security review через /ry-sec-review slash command.",
-      "version": "0.4.4",
+      "description": "\u0411\u0435\u0437\u043e\u043f\u0430\u0441\u043d\u043e\u0441\u0442\u044c \u043f\u043e OWASP Top 10 2025 \u043f\u0440\u0438 \u0440\u0435\u0430\u043b\u0438\u0437\u0430\u0446\u0438\u0438 + \u0437\u0430\u0449\u0438\u0442\u043d\u044b\u0439 Mythos-style security review \u0447\u0435\u0440\u0435\u0437 /ry-sec-review slash command.",
+      "version": "0.5.0",
       "author": {
         "name": "rldyourmnd"
       },
@@ -86,8 +86,8 @@
     {
       "name": "rldyour-browser",
       "source": "./plugins/rldyour-browser",
-      "description": "Браузерные воркфлоу через Playwright и Chrome DevTools MCP - валидация UI/pixel-perfect/e2e, дебаг console/network/perf, маршрутизация. Skills-only - MCP transport from rldyour-mcps. Browser workflows.",
-      "version": "0.4.4",
+      "description": "\u0411\u0440\u0430\u0443\u0437\u0435\u0440\u043d\u044b\u0435 \u0432\u043e\u0440\u043a\u0444\u043b\u043e\u0443 \u0447\u0435\u0440\u0435\u0437 Playwright \u0438 Chrome DevTools MCP - \u0432\u0430\u043b\u0438\u0434\u0430\u0446\u0438\u044f UI/pixel-perfect/e2e, \u0434\u0435\u0431\u0430\u0433 console/network/perf, \u043c\u0430\u0440\u0448\u0440\u0443\u0442\u0438\u0437\u0430\u0446\u0438\u044f. Skills-only - MCP transport from rldyour-mcps. Browser workflows.",
+      "version": "0.5.0",
       "author": {
         "name": "rldyourmnd"
       },
@@ -106,8 +106,8 @@
     {
       "name": "rldyour-design",
       "source": "./plugins/rldyour-design",
-      "description": "Сквозной дизайн-воркфлоу: Figma → код → токены → FSD → shadcn/ui → ReactBits → browser-валидация. 5 скиллов + /ry-design. Skills-only - MCP transport from rldyour-mcps.",
-      "version": "0.4.4",
+      "description": "\u0421\u043a\u0432\u043e\u0437\u043d\u043e\u0439 \u0434\u0438\u0437\u0430\u0439\u043d-\u0432\u043e\u0440\u043a\u0444\u043b\u043e\u0443: Figma \u2192 \u043a\u043e\u0434 \u2192 \u0442\u043e\u043a\u0435\u043d\u044b \u2192 FSD \u2192 shadcn/ui \u2192 ReactBits \u2192 browser-\u0432\u0430\u043b\u0438\u0434\u0430\u0446\u0438\u044f. 5 \u0441\u043a\u0438\u043b\u043b\u043e\u0432 + /ry-design. Skills-only - MCP transport from rldyour-mcps.",
+      "version": "0.5.0",
       "author": {
         "name": "rldyourmnd"
       },
@@ -128,8 +128,8 @@
     {
       "name": "rldyour-lsps",
       "source": "./plugins/rldyour-lsps",
-      "description": "LSP-воркфлоу: маршрутизация, health-check, brew-first установка, Serena LSP integration. 4 skills + 2 scripts + 3 references. Покрывает Python/Rust/Dart/TS/Go/C++/Qt/YAML/Docker/HTML/CSS/Shell/JSON/TOML/Markdown.",
-      "version": "0.4.4",
+      "description": "LSP-\u0432\u043e\u0440\u043a\u0444\u043b\u043e\u0443: \u043c\u0430\u0440\u0448\u0440\u0443\u0442\u0438\u0437\u0430\u0446\u0438\u044f, health-check, brew-first \u0443\u0441\u0442\u0430\u043d\u043e\u0432\u043a\u0430, Serena LSP integration. 4 skills + 2 scripts + 3 references. \u041f\u043e\u043a\u0440\u044b\u0432\u0430\u0435\u0442 Python/Rust/Dart/TS/Go/C++/Qt/YAML/Docker/HTML/CSS/Shell/JSON/TOML/Markdown.",
+      "version": "0.5.0",
       "author": {
         "name": "rldyourmnd"
       },
@@ -150,8 +150,8 @@
     {
       "name": "rldyour-flow",
       "source": "./plugins/rldyour-flow",
-      "description": "Автономный SDLC-воркфлоу: ry-init/start/newp/review/deploy + 6 reviewer subagents + post-task-sync + instruction-docs-sync. Хуки SessionStart/PostToolUse/Stop. Fullrepo branch.",
-      "version": "0.4.4",
+      "description": "\u0410\u0432\u0442\u043e\u043d\u043e\u043c\u043d\u044b\u0439 SDLC-\u0432\u043e\u0440\u043a\u0444\u043b\u043e\u0443: ry-init/start/newp/review/deploy + 6 reviewer subagents + post-task-sync + instruction-docs-sync. \u0425\u0443\u043a\u0438 SessionStart/PostToolUse/Stop. Fullrepo branch.",
+      "version": "0.5.0",
       "author": {
         "name": "rldyourmnd"
       },
@@ -172,8 +172,8 @@
     {
       "name": "rldyour-rules",
       "source": "./plugins/rldyour-rules",
-      "description": "Quality-first инженерные правила: clean architecture (FSD/VSA/Hexagonal), implementation discipline, dependency policy + supply chain (SLSA L2), verification gates (pyright/ruff/ESLint v9), AGENTS.md/.claude/CLAUDE.md/MADR 4.0.0, /ry-rules-review.",
-      "version": "0.4.4",
+      "description": "Quality-first \u0438\u043d\u0436\u0435\u043d\u0435\u0440\u043d\u044b\u0435 \u043f\u0440\u0430\u0432\u0438\u043b\u0430: clean architecture (FSD/VSA/Hexagonal), implementation discipline, dependency policy + supply chain (SLSA L2), verification gates (pyright/ruff/ESLint v9), AGENTS.md/.claude/CLAUDE.md/MADR 4.0.0, /ry-rules-review.",
+      "version": "0.5.0",
       "author": {
         "name": "rldyourmnd"
       },
