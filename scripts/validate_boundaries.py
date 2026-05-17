@@ -114,8 +114,22 @@ def _check_plugin_manifests(
                 f"{plugin_dir.name}: plugin.json name={name!r} differs from directory name"
             )
             continue
+        # Per the 0.5.0 schema expansion, each dependency item may be either
+        # a bare string ("rldyour-mcps") OR a {name, version} object. Normalize
+        # both forms to the plugin name before comparison.
         raw_deps = data.get("dependencies", [])
-        actual_deps = sorted(raw_deps) if isinstance(raw_deps, list) else []
+        if isinstance(raw_deps, list):
+            actual_names: list[str] = []
+            for item in raw_deps:
+                if isinstance(item, dict):
+                    nm = item.get("name")
+                    if isinstance(nm, str):
+                        actual_names.append(nm)
+                elif isinstance(item, str):
+                    actual_names.append(item)
+            actual_deps = sorted(actual_names)
+        else:
+            actual_deps = []
         expected_deps = sorted(plugin_dependencies.get(name, []))
         if actual_deps != expected_deps:
             failures.append(
@@ -157,8 +171,18 @@ def main() -> int:
             f"got {type(raw_plugin_deps).__name__}"
         )
         raw_plugin_deps = {}
+    # Per `config/schemas/plugin.json` (0.5.0 expansion), each dependency item
+    # may be either a bare string ("rldyour-mcps") OR a {name, version} object.
+    # Normalize both forms to the plugin name for comparison against
+    # policy.plugin_dependencies (which holds plain strings).
+    def _dep_name(d: object) -> str:
+        if isinstance(d, dict):
+            name = d.get("name")
+            return str(name) if isinstance(name, str) else ""
+        return str(d)
+
     plugin_deps: dict[str, list[str]] = {
-        str(k): [str(d) for d in v] if isinstance(v, list) else []
+        str(k): [_dep_name(d) for d in v if _dep_name(d)] if isinstance(v, list) else []
         for k, v in raw_plugin_deps.items()
     }
     _check_plugin_manifests(root, plugin_deps, failures)
