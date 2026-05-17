@@ -150,6 +150,7 @@ scripts/collect_diagnostics.sh                 # local ignored diagnostics bundl
 
 Reference documents:
 
+- `docs/adr/` - Architecture Decision Records (MADR 4.0.0). Nine ADRs cover irreversible decisions: fullrepo policy, dual-doc split, bilingual descriptions, reviewer transport, local GitHub MCP, ownership boundaries, MCP pinning, CI baseline, release/tag conventions. Start with `docs/adr/README.md`.
 - `docs/release-process.md` - versioning, CHANGELOG, release evidence, `claude plugin tag --push` flow.
 - `docs/rollback-restore.md` - safe restore from previous tags or fullrepo snapshots.
 - `docs/dependency-updates.md` - pinned MCP runtime update policy.
