@@ -6,6 +6,107 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+## [0.5.1] - 2026-05-17
+
+Patch-level **hardening wave** that closes the 13 deferred low/medium
+findings carried over from the 0.5.0 reviewer phase plus actionable info
+items. No new features; no contract changes. Goal: zero outstanding
+deferred findings before tag boundary.
+
+### Added
+
+- **`docs/adr/0010-macos-egress-trust-gap.md`** (MADR 4.0.0): documents
+  the macOS-runner egress gap as an accepted upstream limitation of
+  `step-security/harden-runner` (no macOS support since 2022), with
+  the four non-egress mitigations actually in place (schedule-only
+  trigger, `contents: read`, read-only validators, 10-min timeout).
+  Closes Security F-1 (MEDIUM 75).
+- **`plugins/rldyour-flow/hooks/pre_tool_use_ci_advisory.sh`**: new
+  PreToolUse hook fires on `Bash(gh workflow*)`, `Bash(gh run*)`,
+  `Bash(gh actions*)` and emits a stderr advisory reminding the model
+  that GitHub Actions control commands are reserved for explicit user
+  gestures (`сделай ci`, `запусти сиай`, etc.). Advisory ONLY, exits 0,
+  no blocking. Skip flag: `RLDYOUR_SKIP_CI_ADVISORY=1`. Closes
+  Security F-3 (MEDIUM 65) - the manual-first CI rule now has a
+  programmatic reminder, not just docs.
+- **`RLDYOUR_SKIP_USER_PROMPT_HINT`** skip flag on
+  `plugins/rldyour-serena-mcp/hooks/user_prompt_submit.sh`: parity with
+  every other rldyour hook. Documented in `docs/runtime-env.md` skip-flag
+  table. Closes Consistency F-3 (LOW 75).
+
+### Changed
+
+- **Serena hooks `if` filter narrowed**: `plugins/rldyour-serena-mcp/hooks/hooks.json`
+  PreToolUse + PostToolUse switched from broad `Bash(git *)` (which
+  spawned the script on every git read - log/status/diff/etc.) to
+  five explicit handlers per event scoping to `git commit*`, `git merge*`,
+  `git cherry-pick*`, `git rebase*`, `git am*`. Each handler points at
+  the same script. Net effect: zero subprocess spawn on `git log` /
+  `git status` / `git diff` (was 3 spawns per call). Closes
+  Architecture F-2 (LOW 85).
+- **Hook `command` field switched from `"bash"` to `"/bin/bash"` (absolute
+  path)** across both `hooks.json` files. Eliminates the PATH-resolution
+  risk class flagged as Security F-6 (LOW 75). Verified all 8 hook
+  scripts use only bash 3.2-compatible features (macOS system bash).
+- **`config/schemas/plugin.json`**: `dependencies[].version` field gained
+  a semver pattern constraint (`^[~^>=<]{0,2}\d+.\d+.\d+(-pre)?(+meta)?$`
+  with `||` and `&&` separators, plus `*` wildcard). Blocks shell-injection
+  chars per Security F-8 (LOW 70).
+- **`scripts/release_manifest.py`** `NPM_PIN_RE` tightened: first char of
+  unscoped and scoped names must be alphanumeric. Rejects `-pkg@1.0`,
+  `.hidden@1.0`, `_priv@1.0` that npm itself refuses. Closes Quality F-5
+  (info 70).
+- **`scripts/release_manifest.py`** emits WARN to stderr when a server has
+  neither an extractable npm/uvx pin nor a host_binary_pin (or when its
+  version_env is absent from the env file). The JSON shape is unchanged
+  (`"pin": null` stays); operators now see the gap during the build
+  rather than after shipping. Closes Integration F-3 (LOW 80) + Security
+  F-10 (LOW 65).
+- **`.github/workflows/cross-platform.yml`**: removed `pull_request:
+  types: [labeled]` trigger (created skipped-run noise in Actions UI
+  on every label add); reordered `on:` keys to schedule-first per the
+  README convention. Operators who want cross-platform verification on
+  a PR can now use `gh workflow run cross-platform.yml --ref <branch>`.
+  Closes Architecture F-3 (LOW 78) + Consistency F-8 (info 65).
+- **`.github/CODEOWNERS`**: replaced reliance on the default `*`
+  wildcard for security-critical files with explicit glob patterns
+  for `bootstrap_check.sh`, `check_mcp_runtime_versions.py`,
+  `release_manifest.py`, `smoke_*.sh`, `_mcp_parse.py`,
+  `probe_mcp_upstream.py`, and all `config/*.json` policy files.
+  Closes Security F-4 (MEDIUM 60).
+- **`docs/runtime-env.md`**: added "PAT scope guidance" section
+  recommending fine-grained PAT (per-resource permissions) over the
+  classic `repo` + `read:org` PAT with explicit caveat that `repo`
+  is wider scope than the fine-grained equivalents. Documents the
+  intentional absence of `RLDYOUR_SKIP_ENV_CHECK` (downstream MCP
+  failure mode is worse than the upfront block - fix the env, not
+  the check). Closes Security F-9 (LOW 60) + Verification F-5 (LOW 80).
+- **`tests/conftest.py`**: alphabetized `patch_repo_root` copy list
+  (17 entries). Closes Consistency F-1 (info 85).
+
+### Verified
+
+- `python3 scripts/validate_json_schemas.py`: 14/14 OK.
+- `bash scripts/smoke_hooks.sh`: PASS (8 hook scripts now include the
+  new `pre_tool_use_ci_advisory.sh`).
+- `bash scripts/validate_reviewer_contracts.sh`: 52 PASS / 0 drift.
+- `python3 scripts/release_manifest.py`: emits no WARN at HEAD; emits
+  expected WARN when env file is removed (manual test).
+- `PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 python3 -m pytest tests/ -m "not integration"`:
+  75 passed, 3 deselected.
+- `bash scripts/validate_marketplace.sh`: passed end-to-end.
+
+### Notes
+
+- Consistency F-5 (info 88, `$defs` usage variance across schemas):
+  intentionally skipped. `$defs` is applied where subschemas are reused
+  (hooks.json, mcp.json); not applied where each item is inline-defined
+  (lsp.json, marketplace.json, plugin.json). Refactoring inline schemas
+  to `$defs` adds indirection without functional benefit.
+- Consistency F-2 (LOW 80, "14 files updated" in CHANGELOG):
+  retroactive fix declined. The 0.5.0 entry was descriptive prose; line
+  count vs file count was an approximation, not a load-bearing claim.
+
 ## [0.5.0] - 2026-05-17
 
 Minor-version wave closing the external audit findings (P0/P1/P2/P3) into
