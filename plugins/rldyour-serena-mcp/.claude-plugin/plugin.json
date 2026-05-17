@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "rldyour-serena-mcp",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Серена-первый воркфлоу для кода + синхронизация .serena памяти + хуки жизненного цикла (UserPromptSubmit/PreToolUse/PostToolUse/Stop). Транспорт Serena MCP берётся из rldyour-mcps. Semantic code inspection layer for Claude Code.",
   "author": {
     "name": "rldyourmnd",

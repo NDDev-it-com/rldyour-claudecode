@@ -6,6 +6,118 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-05-17
+
+Polish wave following 0.3.0. Verified the full dependency stack against
+live registries on 2026-05-17 via ry-explore deep research (opus[1m] max
+effort): all 8 MCP runtimes, all 5 GitHub Actions, Claude Code CLI,
+Docker images, Node engine, OWASP Top 10:2025, MCP spec 2025-11-25, and
+MADR 4.0.0 confirmed latest stable. Three patch/cosmetic drifts found
+and closed; one major (actions/upload-artifact v4 -> v7) upgraded after
+compatibility analysis.
+
+### Changed
+
+- **actions/upload-artifact v4.6.2 -> v7.0.1** in both release.yml and
+  gitleaks.yml (`043fb46d1a93c77aae656e7c1c64a875d1fc6a0a`). 3 majors
+  forward: v5 declared Node v24 support, v6 moved runtime to Node 24
+  (runner v2.327.1+), v7 added ESM upgrade + `archive: false` direct-upload
+  parameter. ubuntu-latest runners (v2.327.1+ since Dec 2025) satisfy
+  every prerequisite; our use cases (single-file/directory uploads, no
+  multi-file glob, no `archive` param) fully compatible. Closes
+  Dependabot signal previously deferred in 0.3.0.
+- **gitleaks Docker image v8.30.0 -> v8.30.1** completed in 0.3.0+1
+  (commit `6da7e80`) - this wave aligns the comment header (line 10)
+  + ADR-0008 description with the actual image tag/digest in use.
+  v8.30.1 patch is non-breaking (goreleaser update, report template
+  cleanup, Go 1.24 build).
+- **OWASP A09 wording** in 4 places (security skill, threat model, cc-canon
+  database, SECURITY-01-OWASP memory) corrected from "Security Logging
+  and Alerting Failures" to canonical OWASP "Security Logging &
+  Alerting Failures" with ampersand.
+
+### Added
+
+- **Pytest test suite** (`tests/`, 6 files, ~280 LOC): F-TEST-05 audit
+  closure for new validators. Each test imports from `conftest.py`
+  `fake_repo` fixture which builds a minimal marketplace tree per test,
+  then execs the validator subprocess and asserts on exit code + stderr.
+  Coverage:
+  - `test_validate_text_hygiene.py`: positive + em-dash/en-dash/BIDI
+    negatives + ALLOWLIST contract.
+  - `test_validate_docs_canon.py`: forbidden_tokens + version_floors
+    direct-association window + graceful SKIP without cc-canon.json.
+  - `test_validate_instruction_sync.py`: matching claims pass + drift
+    detected + SKIP when blocks absent.
+  - `test_validate_skill_allowed_tools.py`: known server passes +
+    unknown server/plugin blocked.
+  - `test_validate_release_state.py`: VERSION/CHANGELOG/plugin parity.
+  - `test_generate_inventory.py`: --print/--check/refresh modes.
+- **pyproject.toml** (87 lines): Ruff + pytest + Pyright shared config.
+  Ruff `select = [E, W, F, I, B, UP, SIM, RUF]` baseline; pytest
+  strict-markers + strict-config; Pyright basic mode with `include
+  scripts plugins`. Repository remains metadata-only (no Python package
+  built) - file exists purely as canonical settings anchor.
+- **.github/workflows/pytest.yml**: SHA-pinned, harden-runner egress
+  block, pip cache, runs `python3 -m pytest tests/ -v --tb=short` on
+  push to main + path-filtered PRs. Path filter (`scripts/**`,
+  `tests/**`, `pyproject.toml`, `.github/workflows/pytest.yml`)
+  prevents redundant runs on docs-only commits. Closes audit F-CI gap
+  for unit test coverage of new validators.
+- **`probe_mcp_upstream.py` Dart probe**: extended PROBES tuple with
+  `("DART_SDK_VERSION", "dart-stable", "dart")`. New `latest_dart_stable()`
+  queries `storage.googleapis.com/dart-archive/channels/stable/release/latest/VERSION`.
+  Probe reports `DRIFT DART_SDK_VERSION (dart): pinned=3.11.0, latest=3.11.6`
+  as `::warning::` (advisory, not failing) so weekly CI surfaces Dart SDK
+  bumps without forcing host toolchain upgrade.
+- **`tests/conftest.py`** `fake_repo` + `patch_repo_root` fixtures:
+  reusable across all validator tests, isolates filesystem state per
+  test, monkeypatches cwd, copies validator scripts into the fake repo
+  so `Path(__file__).resolve().parent.parent` lands on the fixture.
+
+### Fixed
+
+- **`scripts/validate_text_hygiene.py` ALLOWLIST extended** for
+  `tests/test_validate_text_hygiene.py` (em-dash, en-dash, BIDI). The
+  negative test fixtures intentionally embed dirty content to exercise
+  the detection path; allowlisting the test file is the canonical
+  "test fixture override" pattern.
+- **`tests/conftest.py`**: removed unused `os` import (Pyright clean).
+- **gitleaks.yml comment line 10**: now references `v8.30.1` (was
+  `v8.30.0`) - drift between the comment-pinned refresh command and the
+  actual image tag/digest in use.
+
+### Notes
+
+- **No version bumps required** for: `@anthropic-ai/claude-code 2.1.143`,
+  `serena-agent 1.3.0`, `semgrep 1.163.0`, `@modelcontextprotocol/server-sequential-thinking 2025.12.18`,
+  `@playwright/mcp 0.0.75`, `chrome-devtools-mcp 0.26.0`,
+  `@upstash/context7-mcp 2.2.5`, `shadcn 4.7.0`, `github-mcp-server 1.0.4`,
+  `actions/checkout v6.0.2`, `actions/setup-node v6.4.0`,
+  `actions/setup-python v6.2.0`, `step-security/harden-runner v2.19.3`,
+  `semgrep/semgrep:1.163.0` Docker digest, Node `>=22` engine, OWASP
+  Top 10:2025, MCP spec 2025-11-25, MADR 4.0.0. All verified === upstream
+  latest stable.
+- **Dart SDK 3.11.0 -> 3.11.6** patch upgrade deferred to operator action
+  (`brew upgrade dart`) since local toolchain currently reports 3.11.0;
+  pin stays consistent with installed binary. Probe surfaces the
+  drift as `::warning::` in weekly CI so the bump is not forgotten.
+- **No security advisories found** for any pinned tool in the stack
+  (verified via `gh api /repos/<owner>/<repo>/security-advisories` for
+  serena, semgrep, playwright-mcp, context7, gitleaks; cvedetails.com
+  semgrep sweep clean).
+- **Anthropic plugins-official** verified at 2026-05-16 commit: 35
+  plugins (was ~30 in 0.3.0 inspection), latest additions
+  `carta-cap-table` (2026-05-16), `code-modernization` (2026-05-12).
+  No new top-level manifest fields detected; `tools:` allowlist
+  pattern remains canonical for read-only agents.
+- **Reviewer phase intentionally skipped** in 0.4.0 per user directive
+  ("ревью заново, но только когда я скажу"). All polish landed via
+  static analysis + ry-explore deep research instead of subagent
+  parallel review.
+- **flow-memory-sync subagent** invoked to refresh all 18 numbered
+  memories against new HEAD post-version-bump.
+
 ## [0.3.0] - 2026-05-17
 
 Feature wave consolidating the 4-audit closure (research mеta-audit,
@@ -1040,7 +1152,8 @@ Release boundary cut after the 2026-05-08..2026-05-12 wave of best-practice, MCP
   shell syntax checks, frontmatter presence verification on all skills,
   agents, and commands.
 
-[Unreleased]: https://github.com/NDDev-it-com/rldyour-claudecode/compare/marketplace--v0.3.0...HEAD
+[Unreleased]: https://github.com/NDDev-it-com/rldyour-claudecode/compare/marketplace--v0.4.0...HEAD
+[0.4.0]: https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/marketplace--v0.4.0
 [0.3.0]: https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/marketplace--v0.3.0
 [0.2.3]: https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/marketplace--v0.2.3
 [0.2.2]: https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/marketplace--v0.2.2

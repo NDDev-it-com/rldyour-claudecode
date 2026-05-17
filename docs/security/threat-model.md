@@ -150,7 +150,7 @@ without detection.
 - Semgrep narrowly excludes only `.serena/cache/**` + runtime markers;
   `.serena/memories/**` is in scope (G12 closure).
 
-### A09:2025 Security Logging and Alerting Failures
+### A09:2025 Security Logging & Alerting Failures
 
 **Threat**: security-relevant events (override bypass, capability smoke
 failure, tag drift) happen silently.
