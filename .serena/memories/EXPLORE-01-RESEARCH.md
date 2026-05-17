@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-17
-Last commit: 6b59af7 fix(security): explicit https/http scheme guard in fetch_json
+Last commit: 12a2bdc chore(release): 0.4.0 polish - actuality + tests + upload-artifact v7
 Scope: plugins/rldyour-explore/skills/tech-research/SKILL.md, plugins/rldyour-explore/skills/web-research/SKILL.md, plugins/rldyour-explore/agents/ry-explore.md, plugins/rldyour-explore/commands/ry-explore.md, plugins/rldyour-mcps/.mcp.json (context7 + deepwiki + grep entries)
 Area: EXPLORE
 -->

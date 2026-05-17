@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-17
-Last commit: 6b59af7 fix(security): explicit https/http scheme guard in fetch_json
+Last commit: 12a2bdc chore(release): 0.4.0 polish - actuality + tests + upload-artifact v7
 Scope: plugins/rldyour-mcps/.mcp.json, config/mcp-runtime-versions.env, scripts/check_mcp_runtime_versions.py, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.sh, AGENTS.md
 Area: MCP
 -->

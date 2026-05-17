@@ -1,0 +1,80 @@
+[project]
+# Metadata-only marketplace; no Python package built from this tree. This
+# pyproject.toml exists solely to configure Ruff + pytest for the
+# infrastructure scripts under scripts/ and plugins/*/scripts/, and to
+# give Pyright a stable settings anchor.
+name = "rldyour-claudecode"
+version = "0.4.0"
+description = "Personal Claude Code plugin marketplace (metadata + infrastructure scripts)"
+requires-python = ">=3.12"
+
+[tool.ruff]
+# Ruff is fast (Rust-backed). Run via `ruff check scripts/`. Wired into CI as
+# an optional advisory step (does not block validate_marketplace.sh until
+# every script is migrated to the strict ruleset below).
+line-length = 100
+target-version = "py313"
+extend-exclude = [
+  ".serena",
+  "node_modules",
+  "__pycache__",
+  ".venv",
+]
+
+[tool.ruff.lint]
+# Pragmatic baseline:
+# - E/W: pycodestyle errors and warnings
+# - F:   pyflakes (unused imports, dead code)
+# - I:   isort
+# - B:   flake8-bugbear (common pitfalls)
+# - UP:  pyupgrade (modernize syntax)
+# - SIM: flake8-simplify (simplify expressions)
+# - RUF: ruff-specific rules
+select = ["E", "W", "F", "I", "B", "UP", "SIM", "RUF"]
+ignore = [
+  "E501",  # line-length is configured above and most validators have long descriptive strings
+  "B008",  # function call in default argument - intentional for FormatChecker pattern
+]
+
+[tool.ruff.format]
+# `ruff format` replaces black; quote-style preserve avoids touching mixed
+# quoting in inline literals like SQL fragments.
+quote-style = "double"
+indent-style = "space"
+
+[tool.pytest.ini_options]
+# Unit tests for scripts/validate_*.py live under tests/. Each validator
+# gets a happy-path + at least one mutation/negative fixture per the
+# F-TEST-05 audit closure target.
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+  "-ra",                  # report short test summary for non-pass (skip/xfail/error)
+  "--strict-markers",     # unknown @pytest.mark.X fails the run
+  "--strict-config",      # invalid pytest.ini fails fast
+  "--tb=short",           # short tracebacks
+]
+markers = [
+  "slow: tests that take more than 1 second",
+  "integration: tests that touch git or run full subprocess validators",
+]
+
+[tool.pyright]
+# Conservative settings - our scripts use stdlib only by design (no external
+# dependencies except the optional jsonschema for validate_json_schemas).
+# basic mode keeps signal high without forcing every TypedDict.
+typeCheckingMode = "basic"
+useLibraryCodeForTypes = true
+reportMissingImports = "error"
+reportMissingTypeStubs = "none"
+reportUnusedImport = "warning"
+reportUnusedVariable = "warning"
+include = ["scripts", "plugins"]
+exclude = [
+  "**/__pycache__",
+  ".serena",
+  ".venv",
+  "node_modules",
+]

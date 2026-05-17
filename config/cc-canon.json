@@ -62,7 +62,7 @@
     "A06:2025 Insecure Design",
     "A07:2025 Authentication Failures",
     "A08:2025 Software or Data Integrity Failures",
-    "A09:2025 Security Logging and Alerting Failures",
+    "A09:2025 Security Logging & Alerting Failures",
     "A10:2025 Mishandling of Exceptional Conditions"
   ]
 }

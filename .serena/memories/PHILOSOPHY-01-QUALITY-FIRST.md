@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-17
-Last commit: 6b59af7 fix(security): explicit https/http scheme guard in fetch_json
+Last commit: 12a2bdc chore(release): 0.4.0 polish - actuality + tests + upload-artifact v7
 Scope: plugins/rldyour-rules/skills/quality-first-engineering/SKILL.md, plugins/rldyour-rules/skills/architecture-boundaries/SKILL.md, plugins/rldyour-rules/skills/dependency-compatibility-policy/SKILL.md, plugins/rldyour-rules/skills/implementation-discipline/SKILL.md, plugins/rldyour-rules/skills/verification-quality-gates/SKILL.md, plugins/rldyour-rules/references/rules-policy.md, plugins/rldyour-rules/references/quality-gates.md
 Area: PHILOSOPHY
 -->

@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-17
-Last commit: 6b59af7 fix(security): explicit https/http scheme guard in fetch_json
+Last commit: 12a2bdc chore(release): 0.4.0 polish - actuality + tests + upload-artifact v7
 Scope: AGENTS.md, .claude/CLAUDE.md, plugins/rldyour-rules/skills/project-instructions-policy/SKILL.md, plugins/rldyour-flow/scripts/instruction_docs_state.py, scripts/validate_instruction_docs.py, plugins/rldyour-serena-mcp/scripts/analyze_sync_scope.py
 Area: DOCS
 -->

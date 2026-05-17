@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-17
-Last commit: 6b59af7 fix(security): explicit https/http scheme guard in fetch_json
+Last commit: 12a2bdc chore(release): 0.4.0 polish - actuality + tests + upload-artifact v7
 Scope: .serena/memories/**, plugins/rldyour-serena-mcp/scripts/analyze_sync_scope.py, plugins/rldyour-serena-mcp/skills/serena-memory-sync/SKILL.md, plugins/rldyour-serena-mcp/agents/flow-memory-sync.md, scripts/smoke_serena_memory_taxonomy.sh, AGENTS.md, .claude/CLAUDE.md
 Area: CORE
 -->

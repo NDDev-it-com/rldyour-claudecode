@@ -41,7 +41,7 @@ Check the implementation against:
 6. `A06:2025 Insecure Design`: missing abuse-case handling, unsafe business logic, race conditions, replay/double-spend, missing rate limits, trust-boundary mistakes.
 7. `A07:2025 Authentication Failures`: session fixation, weak password reset, token lifetime, MFA bypass, confused identity flow, insecure credential storage.
 8. `A08:2025 Software or Data Integrity Failures`: unsafe update paths, unsigned/unverified artifacts, mass assignment, trusted client-controlled state, insecure CI/CD assumptions.
-9. `A09:2025 Security Logging and Alerting Failures`: missing audit events, sensitive logs, weak failure visibility, no alertable signal for authz/authn/security events.
+9. `A09:2025 Security Logging & Alerting Failures`: missing audit events, sensitive logs, weak failure visibility, no alertable signal for authz/authn/security events.
 10. `A10:2025 Mishandling of Exceptional Conditions`: unsafe error paths, leaked stack traces/secrets, fail-open behavior, inconsistent rollback/cleanup, exception-driven bypasses.
 
 ## Implementation Checklist
