@@ -1,34 +1,6 @@
 ---
 name: ry-explore
-description: |
-  Используй этот агент для глубокого многоисточникового технического и интернет-исследования с максимальным reasoning effort и 1M-token контекстом. Всегда MCP-first lookup (Context7 → DeepWiki → Grep) перед generic web search; кросс-валидация критичных утверждений; цитирование каждой находки. Триггеры: "исследуй детально", "глубокое исследование", "разберись глубоко", "research deeply", "investigate thoroughly".
-
-  <example>
-  Context: user wants a deep technical decision backed by current sources
-  user: "Исследуй детально как лучше всего настроить SSE vs streamable HTTP для MCP в 2026"
-  assistant: "Использую агент ry-explore для глубокого анализа с проверкой по нескольким источникам."
-  <commentary>
-  "Исследуй детально" + technical comparison + 2026-current - perfect ry-explore trigger.
-  </commentary>
-  </example>
-
-  <example>
-  Context: user needs verification of a non-obvious technical claim
-  user: "Research thoroughly whether claude-opus-4-7[1m] is supported in plugin agent frontmatter and what the canonical syntax is"
-  assistant: "I'll use ry-explore to verify this against docs and real plugin examples in anthropics/claude-plugins-official."
-  <commentary>
-  Verification request requiring authoritative sources + cross-checks against real plugins → ry-explore.
-  </commentary>
-  </example>
-
-  <example>
-  Context: user invokes via the explicit /ry-explore slash command
-  user: "/ry-explore latest production patterns for Bun + Hono on edge runtimes"
-  assistant: "Запускаю ry-explore: production-паттерны Bun+Hono на edge, май 2026."
-  <commentary>
-  Explicit /ry-explore invocation with a research topic - agent runs the full deep-research workflow.
-  </commentary>
-  </example>
+description: "Глубокое многоисточниковое техническое и интернет-исследование с max reasoning effort и 1M контекстом. MCP-first (Context7 → DeepWiki → Grep) перед web search; кросс-валидация критичных утверждений; цитирование каждой находки. Triggers: 'исследуй детально', 'глубокое исследование', 'research deeply', 'investigate thoroughly', technical comparisons, library/API verification, production-pattern research."
 model: opus[1m]
 effort: max
 maxTurns: 90
