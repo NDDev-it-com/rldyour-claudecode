@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-17
-Last commit: a04c6eb chore(release): bump VERSION + all 9 plugins to 0.4.2
+Last commit: 924256c chore(release): bump VERSION + all 9 plugins to 0.4.3
 Scope: Serena memory sync, hook gates, fullrepo lifecycle, MCP pins, validation harness, current implementation risks
 Area: TECHDEBT
 -->
@@ -20,7 +20,8 @@ Open technical debt, implementation mistakes already fixed, and anti-regression 
 - `plugins/rldyour-flow/hooks/post_tool_use_commit_advice.sh`: injection-marker sanitization (D18, D23).
 - `plugins/rldyour-serena-mcp/scripts/analyze_sync_scope.py`: TECHDEBT area mapping.
 - `plugins/rldyour-security/skills/owasp-top-10-implementation/SKILL.md`: OWASP 2025 categories (D22).
-- `scripts/validate_agent_tools.py`: agent tools allowlist enforcement (R4 mitigation).
+- `scripts/validate_agent_tools.py`: agent tools allowlist enforcement (R4 mitigation); imports `split_mcp_ref` from `scripts/_mcp_parse.py` as of `cd13d0a`.
+- `scripts/validate_boundaries.py`: structural boundary enforcement closing ADR-0006 gap (added `66dbdf6`).
 - `scripts/validate_marketplace.sh` line 117: agent tools validator wiring.
 - `.claude/CLAUDE.md`: "Smoke-script footgun" section documents R5 process order.
 - `CHANGELOG.md` `[0.1.8]`: Wave 4 R5 hardening, smoke, SC2044, memory graph record.
@@ -124,6 +125,8 @@ Open technical debt, implementation mistakes already fixed, and anti-regression 
 
 - D48. 0.4.2 validator + CI hardening (commit `8b9a6c6` validators, `8a26e5a` CI, `de1ee41` docs, `a04c6eb` bump): (a) SKIP messages in `scripts/validate_instruction_sync.py` (lines 83, 87, 94) and `scripts/validate_json_schemas.py` (line 61) previously wrote to stderr; changed to stdout for consistency with sibling validators. (b) `scripts/validate_docs_canon.py:88` window heuristic changed from fixed `start - 30` to `max(30, len(knob) + 15)` - the old fixed window was shorter than long knob names like `maxSkillDescriptionChars` (24 chars), causing false-negatives for those knobs. `tests/test_validate_docs_canon.py` gained `test_long_knob_window_expands_dynamically` lock-in (6 tests in class, 23 passing tests + 1 expected SKIP total in CI). (c) `.github/workflows/dependency-check.yml` mcp-runtime-drift job allowlist extended with `registry.npmjs.org:443`, `formulae.brew.sh:443`, `storage.googleapis.com:443` (now 10 endpoints, was 7); ensures `probe_mcp_upstream.py` exercises all 9 probes in CI (was only 2/9 effective). (d) `.github/workflows/validate.yml` Claude CLI install step made dynamic: reads version from `package.json` `devDependencies['@anthropic-ai/claude-code']` via a dedicated step at lines 55-65 with `$GITHUB_OUTPUT`; Dependabot npm bumps now auto-propagate. (e) `plugins/rldyour-security/skills/ry-sec-review/SKILL.md:64-73` all 10 OWASP entries gained `:2025` year suffix; A09 `and` changed to `&` to match canonical OWASP 2025 wording; now consistent with 4 other canonical locations (`owasp-top-10-implementation` SKILL, `cc-canon.json`, `threat-model.md`, SECURITY-01-OWASP memory). Verified at respective source files at HEAD `a04c6eb`.
 
+- D49. 0.4.3 validator refactor + boundaries + advisory CI (commits `cd13d0a` validators, `b820b8b` tests, `66dbdf6` boundaries, `72c5665` CI, `924256c` bump): (a) `scripts/_mcp_parse.py` shared parser introduced; `split_mcp_ref(ref, plugins)` uses longest-known-prefix + `rpartition` fallback, eliminating divergent MCP ref parsing between `validate_skill_allowed_tools.py` (old `MCP_PATTERN_RE` + local `split_mcp_ref`) and `validate_agent_tools.py` (old `parse_mcp_tool` rsplit approach). `validate_agent_tools.py` now reports `unknown plugin X` for marketplace-unknown plugins (was silent pass). Architecture finding Q-F-2 closed. (b) `validate_release_state.py` subprocess.run calls gained `timeout=30s` + `TimeoutExpired` handling (was unbounded). (c) `validate_text_hygiene.py` self-skip changed from `path.name == ...` to `path.resolve() == Path(__file__).resolve()` (symlink-safe). (d) `tests/test_mcp_parse.py` (9 tests, closes A-LOW-5) and `tests/test_validate_agent_tools.py` (7 tests, closes A-LOW-7 / A-F-6); total tests 39 pass + 1 expected SKIP (was 23 + 1 at 0.4.2). `pyproject.toml` `extraPaths = ["scripts"]` enables Pyright to resolve `from _mcp_parse import ...`. `include = ["tests"]` added so Pyright covers test files. (e) `scripts/validate_boundaries.py` enforces 4 structural invariants from `config/marketplace-policy.json`; closes ADR-0006 self-acknowledged gap (the "(not yet implemented)" language in `docs/adr/0006-mcp-hook-ownership-boundaries.md` Confirmation section retired at HEAD `924256c`). Wired into `scripts/validate_marketplace.sh` (between version-consistency and instruction-docs steps) and `.github/workflows/validate.yml` as a mandatory step. (f) `.github/workflows/validate.yml` `syntax-checks` job gained advisory ruff lint (`ruff check scripts/ plugins/`, `continue-on-error: true`) and advisory pyright type check (project-wide `pyright`, `continue-on-error: true`); closes A-MED-2. Verified via `python3 scripts/validate_boundaries.py`, `python3 scripts/validate_plugin_versions.py`, and `cat VERSION` at HEAD `924256c`.
+
 ## Error Patterns To Avoid
 
 - Pattern: updating hook/skill/agent memory contracts without updating analyzer targets.
@@ -168,6 +171,7 @@ Open technical debt, implementation mistakes already fixed, and anti-regression 
 - Release record (D39-D46 0.2.3 security/verification wave): [[RELEASE-01-VALIDATION]] `[0.2.3] - 2026-05-17`.
 - Release record (D47 0.4.1 validator gap closures): [[RELEASE-01-VALIDATION]] `[0.4.1] - 2026-05-17`.
 - Release record (D48 0.4.2 validator + CI hardening): [[RELEASE-01-VALIDATION]] `[0.4.2] - 2026-05-17`.
+- Release record (D49 0.4.3 shared parser + boundaries + advisory CI): [[RELEASE-01-VALIDATION]] `[0.4.3] - 2026-05-17`.
 - Reviewer contract drift detection (D30): [[RELEASE-01-VALIDATION]] (validator wired into `scripts/validate_marketplace.sh`).
 - Loop guard fingerprint fixes (D31, D32): [[HOOKS-01-LIFECYCLE]] (Stop gate fingerprint contracts) and [[SERENA-01-MEMORY-SYNC]] (compound `.sync_marker` payload).
 - Non-dict payload surface fix (D33): [[SERENA-01-MEMORY-SYNC]] (`serena_memory_state.py` contracts).

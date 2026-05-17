@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-17
-Last commit: 12a2bdc chore(release): 0.4.0 polish - actuality + tests + upload-artifact v7
+Last commit: 924256c chore(release): bump VERSION + all 9 plugins to 0.4.3
 Scope: .claude/CLAUDE.md (Engineering Conventions), AGENTS.md (Engineering Constraints), plugins/rldyour-flow/agents/flow-*-review.md, plugins/rldyour-explore/agents/ry-explore.md, plugins/rldyour-serena-mcp/agents/flow-memory-sync.md, plugins/*/skills/*/SKILL.md, plugins/*/hooks/*.sh, plugins/*/hooks/hooks.json, scripts/validate_agent_tools.py, scripts/worktree_add.sh, scripts/install-rldyour-marketplace.sh
 Area: PATTERNS
 -->

@@ -69,9 +69,11 @@ baseline `0.03` specifically because of the bilingual cost.
 
 ## Confirmation
 
-- `python3 scripts/validate_skill_routing.py` ensures all 15 routing
+- `python3 scripts/validate_skill_routing.py` ensures all 19 routing
   cases in `config/skill-routing-policy.json` find the expected skills
-  via the expected description terms.
+  via the expected description terms. Count grew from 15 (0.3.0) to 19
+  (0.4.x) as new skills were added; the validator iterates whatever the
+  policy file declares so the count rises automatically.
 - `python3 scripts/validate_text_hygiene.py` enforces ASCII-only
   punctuation (no em-dashes/en-dashes/BIDI controls in skill bodies).
 

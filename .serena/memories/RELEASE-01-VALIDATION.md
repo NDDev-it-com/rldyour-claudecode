@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-17
-Last commit: a04c6eb chore(release): bump VERSION + all 9 plugins to 0.4.2
-Scope: VERSION, CHANGELOG.md, README.md, .claude-plugin/marketplace.json, plugins/*/.claude-plugin/plugin.json, .github/workflows/validate.yml, .github/workflows/dependency-check.yml, .github/workflows/semgrep.yml, .github/workflows/actionlint.yml, .github/dependabot.yml, scripts/validate_marketplace.sh, scripts/validate_plugin_versions.py, scripts/smoke_serena_memory_taxonomy.sh, docs/release-process.md
+Last commit: 924256c chore(release): bump VERSION + all 9 plugins to 0.4.3
+Scope: VERSION, CHANGELOG.md, README.md, .claude-plugin/marketplace.json, plugins/*/.claude-plugin/plugin.json, .github/workflows/validate.yml, .github/workflows/dependency-check.yml, .github/workflows/semgrep.yml, .github/workflows/actionlint.yml, .github/dependabot.yml, scripts/validate_marketplace.sh, scripts/validate_plugin_versions.py, scripts/validate_boundaries.py, scripts/_mcp_parse.py, scripts/smoke_serena_memory_taxonomy.sh, docs/release-process.md, docs/adr/0006-mcp-hook-ownership-boundaries.md, pyproject.toml
 Area: RELEASE
 -->
 
@@ -23,20 +23,14 @@ Versioning, changelog, validation, tagging, and release evidence contracts for t
 - `scripts/validate_plugin_versions.py`: marketplace/manifest version consistency.
 - `scripts/smoke_serena_memory_taxonomy.sh`: focused Serena memory taxonomy regression smoke.
 - `scripts/validate_reviewer_contracts.sh`: reviewer output transport contract drift detector; asserts 9 invariant types across 6 reviewer agents + `reviewer-protocol.md`. Wired into `scripts/validate_marketplace.sh` after the "Agent tools allowlist validation" step.
+- `scripts/validate_boundaries.py`: structural boundary enforcer; reads `config/marketplace-policy.json` and enforces 4 invariants (mcp_owner, hook_owners, plugin.json name self-consistency, plugin_dependencies parity). Wired into `scripts/validate_marketplace.sh` and `.github/workflows/validate.yml`. Added at HEAD `924256c` (commit `66dbdf6`).
+- `scripts/_mcp_parse.py`: shared MCP reference parser; `split_mcp_ref(ref, plugins) -> (plugin, server, tool) | None`. Imported by `validate_skill_allowed_tools.py` and `validate_agent_tools.py`. Added at HEAD `924256c` (commit `cd13d0a`).
+- `pyproject.toml`: Ruff + Pytest + Pyright configuration; `extraPaths = ["scripts"]` enables `from _mcp_parse import ...` resolution; `include = ["scripts", "plugins", "tests"]`. Updated at HEAD `924256c`.
 
 ## Current Behavior
 
-- Current release boundary at HEAD: `VERSION` is `0.2.3` (verified at `VERSION` file, HEAD `5bd57ae`).
-- Per-plugin versions (verified from `python3 scripts/validate_plugin_versions.py` at HEAD `5bd57ae`):
-  - `rldyour-mcps`: `0.2.1`
-  - `rldyour-serena-mcp`: `0.2.1`
-  - `rldyour-flow`: `0.2.3` (wave-2 reviewer transport hardening + wave-3 em-dash normalization)
-  - `rldyour-explore`: `0.2.1`
-  - `rldyour-browser`: `0.2.1`
-  - `rldyour-design`: `0.2.1`
-  - `rldyour-lsps`: `0.2.1`
-  - `rldyour-rules`: `0.2.1`
-  - `rldyour-security`: `0.2.1`
+- Current release boundary at HEAD: `VERSION` is `0.4.3` (verified at `VERSION` file, HEAD `924256c`).
+- Per-plugin versions (verified from `python3 scripts/validate_plugin_versions.py` at HEAD `924256c`): all 9 plugins at `0.4.3`.
 - **0.2.1 release** (`e3d146b`): `rldyour-flow` bumped to `0.2.1` for the D29 reviewer output transport contract (file-first output, `.serena/reviews/` runtime dir, run_id coordination, `RLDYOUR_REPORT_EOF` precursor pattern). Tags pushed: `marketplace--v0.2.1`, `rldyour-flow--v0.2.1`. All other 8 plugins remained at `0.2.0`.
 - **0.2.2 release** (`0ff613d`): `rldyour-flow` bumped to `0.2.2` for wave-2 reviewer transport hardening after self-bootstrap review wave `2026-05-16T1433Z-e3d146b`. Changes: `RLDYOUR_REPORT_EOF` heredoc EOF marker replacing short tokens (`MD`, `EOF`) that could cause early termination; explicit Bash write boundary `<report_dir>/<reviewer-name>.md`; mandatory orchestrator `Read` of each `critical`/`high` report file before disposition; `run_id` canonicalized to `<UTC-ISO-compact>-<git-short-sha>`; `info` severity added to enum in `reviewer-protocol.md` line 24; `.serena/diagnostics/**` and `.serena/reviews/**` added to `RUNTIME_EXCLUDE_PATTERNS` in `fullrepo_sync.py` lines 50-53. Tags pushed: `marketplace--v0.2.2`, `rldyour-flow--v0.2.2`. Verified via `git tag --list "*--v0.2.2"` at HEAD `0ff613d`.
 - **HEAD `61b913d` (no version bump)**: `scripts/validate_reviewer_contracts.sh` added (173 lines); wired into `scripts/validate_marketplace.sh`. This is a repo-level script addition only - no plugin runtime files changed, no `rldyour-flow` version bump, no new release tag. Wave-3 audit (`2026-05-16T1538Z-0ff613d`) F-3 verification info finding (confidence 85: "no automatic check for heredoc marker drift") closed via this script. All per-plugin versions remain at 0.2.0 / `rldyour-flow` at 0.2.2.
@@ -59,7 +53,8 @@ Versioning, changelog, validation, tagging, and release evidence contracts for t
 - Tag convention for plugins: `<plugin-name>--v<version>` via `claude plugin tag --push`.
 - Tag convention for marketplace boundary: `marketplace--v<version>` (introduced in 0.2.0; pushed manually alongside plugin tags). This is NOT a plugin tag - it marks the aggregate release boundary in the CHANGELOG reference-links block.
 - Tags should be created only after the worktree is clean for tracked files and validation passes.
-- Cache namespace: `~/.claude/plugins/cache/rldyour-claudecode/<plugin>/<version>/`; at HEAD `a04c6eb` all 9 plugins are at `0.4.2/`.
+- Cache namespace: `~/.claude/plugins/cache/rldyour-claudecode/<plugin>/<version>/`; at HEAD `924256c` all 9 plugins are at `0.4.3/`.
+- **0.4.3 release** (`cd13d0a` validators, `b820b8b` tests, `66dbdf6` boundaries, `72c5665` CI, `924256c` bump): five commits since 0.4.2. Changes: (1) `scripts/_mcp_parse.py` shared MCP reference parser added; `validate_skill_allowed_tools.py` and `validate_agent_tools.py` both import from it, eliminating the divergent `MCP_PATTERN_RE`/`parse_mcp_tool` implementations. `validate_agent_tools.py` now reports `unknown plugin X` instead of silent pass for unknown plugin refs. `validate_release_state.py` subprocess.run calls gained `timeout=30s` + `TimeoutExpired` handling. `validate_text_hygiene.py` self-skip changed to `path.resolve() == Path(__file__).resolve()`. `pyproject.toml` gained `extraPaths = ["scripts"]` for Pyright resolution and `include = ["tests"]`. (2) `tests/test_mcp_parse.py` (9 tests) and `tests/test_validate_agent_tools.py` (7 tests) added; total unit tests at HEAD `924256c` is 39 pass + 1 expected SKIP (was 23 + 1 at 0.4.2). `tests/conftest.py` extended with `context7` HTTP server stub and `validate_agent_tools.py` + `_mcp_parse.py` in `patch_repo_root` copy list. (3) `scripts/validate_boundaries.py` enforces 4 structural invariants from `config/marketplace-policy.json` (mcp_owner, hook_owners, plugin.json name self-consistency, dependency parity); closes ADR-0006 gap. Wired into `scripts/validate_marketplace.sh` and `.github/workflows/validate.yml`. (4) `.github/workflows/validate.yml` gained 2 advisory steps: ruff check and pyright type check (both `continue-on-error: true`); pip install expanded to `ruff>=0.7`, `pyright>=1.1`, `pyyaml>=6`, `pytest>=8`. (5) All 9 plugins and marketplace `VERSION` bumped to `0.4.3`. Tags pushed: `marketplace--v0.4.3` plus 9 plugin tags `<plugin>--v0.4.3`. CI: 14 workflows GREEN. CHANGELOG `[0.4.3]` cites 8 finding IDs: A-LOW-5/6/7, A-MED-2/3, Q-F-2, Q-LOW-4/6. Verified via `cat VERSION` (`0.4.3`) and `python3 scripts/validate_plugin_versions.py` at HEAD `924256c`.
 
 ## Change Rules
 
@@ -91,3 +86,6 @@ Versioning, changelog, validation, tagging, and release evidence contracts for t
 - `bash scripts/smoke_mcp_runtime.sh`: MCP runtime smoke.
 - `bash scripts/smoke_mcp_capabilities.sh`: MCP capability smoke; `figma` can be skipped when auth/session env is absent.
 - `bash scripts/validate_reviewer_contracts.sh`: proves reviewer output transport contract (9 invariant types, 6 agents + protocol) is drift-free; wired into `bash scripts/validate_marketplace.sh`.
+- `python3 scripts/validate_boundaries.py`: proves structural ownership invariants (mcp_owner, hook_owners, plugin.json name + dependencies); wired into `bash scripts/validate_marketplace.sh` and `.github/workflows/validate.yml`.
+- `~/.local/bin/ruff check scripts/ plugins/`: advisory lint gate (0 errors at HEAD `924256c`); wired into `.github/workflows/validate.yml` `syntax-checks` with `continue-on-error: true`.
+- `~/.local/bin/pyright`: advisory type check (0 errors, 0 warnings at HEAD `924256c`); wired into `.github/workflows/validate.yml` `syntax-checks` with `continue-on-error: true`.

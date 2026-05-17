@@ -25,6 +25,7 @@ False-positive policy:
 
 from __future__ import annotations
 
+import json
 import sys
 from pathlib import Path
 
@@ -46,22 +47,50 @@ SKIP_DIRS = {
     ".serena/reviews",
 }
 
-# Files exempt from each rule. Add with a comment explaining why.
-ALLOWLIST_EM = frozenset({
-    # Pytest negative fixtures intentionally embed em-dashes to exercise
-    # the validator's detection path; they are scoped to tests/ only.
+# Default allowlists used when `config/text-hygiene-allowlist.json` is
+# absent (fresh checkout before wave 0.4.4 + downstream consumers that
+# vendor the script without the config). Editing these in code requires
+# a script edit; the config file is the preferred lever post-0.4.4.
+_DEFAULT_ALLOWLIST_EM: frozenset[str] = frozenset({
     "tests/test_validate_text_hygiene.py",
 })
-ALLOWLIST_EN = frozenset({
+_DEFAULT_ALLOWLIST_EN: frozenset[str] = frozenset({
     "tests/test_validate_text_hygiene.py",
 })
-ALLOWLIST_BIDI: frozenset[str] = frozenset({
-    # BIDI controls appear as a regex character class in the hook sanitizer
-    # (lines 92-101); they are detection input, not malicious payload.
+_DEFAULT_ALLOWLIST_BIDI: frozenset[str] = frozenset({
     "plugins/rldyour-flow/hooks/post_tool_use_commit_advice.sh",
-    # Same intentional dirty fixture for pytest negative test.
     "tests/test_validate_text_hygiene.py",
 })
+
+
+def load_allowlists(root: Path) -> tuple[frozenset[str], frozenset[str], frozenset[str]]:
+    """Load (em, en, bidi) allowlists from config/text-hygiene-allowlist.json.
+
+    Backward-compat contract:
+    - Config absent -> use compiled-in defaults (matches pre-0.4.4 behavior).
+    - Config present -> use exactly what config declares (no merge with
+      defaults; empty list means zero exemptions). Adding a new exemption
+      is a config edit.
+    - Config malformed -> use defaults + print SKIP-style warning to stderr
+      so the script does not become a no-op when config breaks.
+    """
+    config_path = root / "config" / "text-hygiene-allowlist.json"
+    if not config_path.is_file():
+        return _DEFAULT_ALLOWLIST_EM, _DEFAULT_ALLOWLIST_EN, _DEFAULT_ALLOWLIST_BIDI
+    try:
+        data = json.loads(config_path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        print(
+            f"WARN config/text-hygiene-allowlist.json is not valid JSON ({exc}); "
+            f"falling back to compiled-in defaults",
+            file=sys.stderr,
+        )
+        return _DEFAULT_ALLOWLIST_EM, _DEFAULT_ALLOWLIST_EN, _DEFAULT_ALLOWLIST_BIDI
+    return (
+        frozenset(data.get("em_dash", []) or []),
+        frozenset(data.get("en_dash", []) or []),
+        frozenset(data.get("bidi", []) or []),
+    )
 
 
 def should_skip(path: Path) -> bool:
@@ -77,6 +106,7 @@ def should_skip(path: Path) -> bool:
 
 def scan(root: Path) -> int:
     findings: list[tuple[str, str, int, str]] = []
+    allowlist_em, allowlist_en, allowlist_bidi = load_allowlists(root)
 
     for path in sorted(root.rglob("*")):
         if not path.is_file():
@@ -96,16 +126,16 @@ def scan(root: Path) -> int:
 
         rel = str(path.relative_to(root))
 
-        if EM_DASH in text and rel not in ALLOWLIST_EM:
+        if EM_DASH in text and rel not in allowlist_em:
             for lineno, line in enumerate(text.splitlines(), start=1):
                 if EM_DASH in line:
                     findings.append(("em-dash", rel, lineno, line.strip()[:100]))
-        if EN_DASH in text and rel not in ALLOWLIST_EN:
+        if EN_DASH in text and rel not in allowlist_en:
             for lineno, line in enumerate(text.splitlines(), start=1):
                 if EN_DASH in line:
                     findings.append(("en-dash", rel, lineno, line.strip()[:100]))
         for ch in BIDI_CONTROLS:
-            if ch in text and rel not in ALLOWLIST_BIDI:
+            if ch in text and rel not in allowlist_bidi:
                 for lineno, line in enumerate(text.splitlines(), start=1):
                     if ch in line:
                         findings.append((

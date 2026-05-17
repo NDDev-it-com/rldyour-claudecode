@@ -11,8 +11,6 @@ import subprocess
 import sys
 from pathlib import Path
 
-import pytest
-
 SCRIPTS = Path(__file__).resolve().parent.parent / "scripts"
 
 
@@ -43,7 +41,7 @@ class TestNegative:
         assert "drift.md" in result.stderr
 
     def test_en_dash_is_blocked(self, patch_repo_root: Path) -> None:
-        (patch_repo_root / "drift.md").write_text("range 1–3", encoding="utf-8")
+        (patch_repo_root / "drift.md").write_text("range 1–3", encoding="utf-8")  # noqa: RUF001 - intentional EN DASH detection fixture
         result = _run(patch_repo_root)
         assert result.returncode == 1
         assert "en-dash" in result.stderr
@@ -63,9 +61,22 @@ class TestAllowlist:
         result = _run(patch_repo_root)
         assert result.returncode == 0
 
-    @pytest.mark.skip(
-        reason="BIDI allowlist is hardcoded to plugins/rldyour-flow/hooks/post_tool_use_commit_advice.sh"
-        " which is not part of the minimal fake_repo fixture; integration test in CI exercises it."
-    )
-    def test_bidi_allowlist_skips_documented_file(self) -> None:
-        pass
+    def test_bidi_allowlist_skips_documented_file(self, patch_repo_root: Path) -> None:
+        """The BIDI allowlist exempts the hook sanitiser source from scanning.
+
+        Wave 0.4.4 externalised the allowlist to config/text-hygiene-allowlist.json
+        and the fake_repo fixture now ships a matching stub at the documented
+        path with an embedded BIDI char. Validator must return 0 (exemption
+        respected) instead of flagging the BIDI sequence.
+        """
+        result = _run(patch_repo_root)
+        assert result.returncode == 0, (
+            f"BIDI exemption broken: stderr={result.stderr!r}, stdout={result.stdout!r}"
+        )
+        # Sanity: the stub file is actually present and contains the BIDI char.
+        hook_path = (
+            patch_repo_root / "plugins" / "rldyour-flow"
+            / "hooks" / "post_tool_use_commit_advice.sh"
+        )
+        assert hook_path.is_file()
+        assert "‮" in hook_path.read_text(encoding="utf-8")

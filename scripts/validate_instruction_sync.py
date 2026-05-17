@@ -43,7 +43,9 @@ AGENTS = Path("AGENTS.md")
 CLAUDE = Path(".claude/CLAUDE.md")
 
 CONTRACT_BLOCK_RE = re.compile(
-    r"<!--\s*sync_contract:\s*\n(.*?)\n-->",
+    # `\s*` before `-->` tolerates indented closing tags (rare but valid
+    # HTML-comment style); ensures docs with `  -->` still parse cleanly.
+    r"<!--\s*sync_contract:\s*\n(.*?)\n\s*-->",
     re.DOTALL,
 )
 
