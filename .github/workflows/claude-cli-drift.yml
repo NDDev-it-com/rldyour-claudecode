@@ -19,8 +19,12 @@ on:
 permissions: {}
 
 concurrency:
-  group: ${{ github.workflow }}
-  cancel-in-progress: false
+  # Group + cancel-in-progress aligned with dependency-check.yml so all
+  # weekly drift workflows share the same concurrency contract. Scheduled
+  # cron runs use github.ref=refs/heads/main; manual workflow_dispatch may
+  # target other refs so the per-ref group keeps them isolated.
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   check:
