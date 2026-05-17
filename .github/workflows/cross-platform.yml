@@ -1,0 +1,106 @@
+name: cross-platform
+
+# Cross-platform smoke tests on Linux + macOS. Verifies that shell scripts
+# (hooks + smoke + validation harness) behave consistently on GNU userland
+# (Ubuntu) and BSD userland (macOS), since `sed -i`, `find`, `date`,
+# `readlink` differ between the two.
+#
+# COST POLICY: macOS runners cost 10x Linux on GitHub-hosted runners. To stay
+# within the GitHub Enterprise Cloud monthly minutes budget, this workflow
+# runs ONLY on:
+#   - manual `workflow_dispatch` (operator request)
+#   - weekly schedule (Sunday 04:00 UTC, off-peak)
+#   - PR labelled `cross-platform` (opt-in only - not automatic on every PR)
+#
+# It does NOT run on every push or PR; that is the job of validate.yml +
+# pytest.yml + gitleaks.yml + semgrep.yml on Ubuntu.
+#
+# SHA-pinned actions per OWASP A03:2025.
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 4 * * 0'  # Sunday 04:00 UTC, off-peak (lowest GHEC minute pressure)
+  pull_request:
+    types: [labeled]
+    branches: [main]
+
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  smoke-matrix:
+    name: smoke (${{ matrix.os }})
+    # Gate the labeled PR trigger so it only runs when the 'cross-platform'
+    # label is explicitly added - prevents accidental matrix run from any
+    # unrelated label being applied.
+    if: github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'cross-platform')
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    steps:
+      - name: Harden runner (Ubuntu only - Harden Runner does not support macOS)
+        if: runner.os == 'Linux'
+        uses: step-security/harden-runner@ab7a9404c0f3da075243ca237b5fac12c98deaa5  # v2.19.3
+        with:
+          egress-policy: block
+          allowed-endpoints: >
+            agent.api.stepsecurity.io:443
+            api.github.com:443
+            github.com:443
+            codeload.github.com:443
+            objects.githubusercontent.com:443
+            files.pythonhosted.org:443
+            pypi.org:443
+
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+
+      - name: Set up Python
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405  # v6.2.0
+        with:
+          python-version: '3.13'
+          cache: 'pip'
+
+      - name: Install Python deps (validators that smoke scripts call)
+        run: pip install --user 'jsonschema>=4.21' 'attrs>=23.2' 'pyyaml>=6.0'
+
+      - name: Restore agent-only files from origin/fullrepo
+        run: python3 plugins/rldyour-flow/scripts/fullrepo_sync.py --restore
+
+      - name: Hook lifecycle smoke
+        # Verifies hook scripts behave under runtime stdin payloads and skip
+        # flags. Most likely to surface BSD/GNU userland differences.
+        run: bash scripts/smoke_hooks.sh
+
+      - name: Serena memory taxonomy smoke
+        run: bash scripts/smoke_serena_memory_taxonomy.sh
+
+      - name: Bootstrap R5 divergence guard smoke
+        run: bash scripts/smoke_bootstrap_check.sh
+
+      - name: Reviewer output transport contract drift
+        run: bash scripts/validate_reviewer_contracts.sh
+
+      - name: Python validators (must work on both platforms)
+        run: |
+          set -euo pipefail
+          python3 scripts/validate_plugin_versions.py
+          python3 scripts/validate_boundaries.py
+          python3 scripts/validate_agent_tools.py
+          python3 scripts/validate_skill_allowed_tools.py
+          python3 scripts/validate_command_skill_drift.py
+          python3 scripts/validate_text_hygiene.py
+          python3 scripts/validate_docs_canon.py
+          python3 scripts/validate_instruction_sync.py
+          python3 scripts/validate_release_state.py
+          python3 scripts/generate_inventory.py --check
+          python3 scripts/check_mcp_runtime_versions.py
