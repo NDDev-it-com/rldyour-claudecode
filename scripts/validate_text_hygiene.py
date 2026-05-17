@@ -48,15 +48,19 @@ SKIP_DIRS = {
 
 # Files exempt from each rule. Add with a comment explaining why.
 ALLOWLIST_EM = frozenset({
-    # Example: "docs/some-quote-of-third-party-rfc.md",
+    # Pytest negative fixtures intentionally embed em-dashes to exercise
+    # the validator's detection path; they are scoped to tests/ only.
+    "tests/test_validate_text_hygiene.py",
 })
 ALLOWLIST_EN = frozenset({
-    # Example: "docs/quote-from-paper.md",
+    "tests/test_validate_text_hygiene.py",
 })
 ALLOWLIST_BIDI: frozenset[str] = frozenset({
     # BIDI controls appear as a regex character class in the hook sanitizer
     # (lines 92-101); they are detection input, not malicious payload.
     "plugins/rldyour-flow/hooks/post_tool_use_commit_advice.sh",
+    # Same intentional dirty fixture for pytest negative test.
+    "tests/test_validate_text_hygiene.py",
 })
 
 
