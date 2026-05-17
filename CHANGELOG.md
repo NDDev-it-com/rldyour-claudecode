@@ -6,6 +6,67 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+## [0.4.1] - 2026-05-17
+
+Critical fixes from the 2026-05-17 review wave (run
+`2026-05-17T0948Z-12a2bdc`, 6 parallel reviewer subagents on 22 commits
+since `bf19b44`). Two root causes verified by multiple reviewers + one
+Pyright diagnostic closed; pytest CI was failing at 0.4.0 with 3 broken
+tests, all recovered. No production runtime behavior changes beyond the
+validator gap closure.
+
+### Fixed
+
+- **CONS-1 `TOOLS_BLOCK_RE` parser silently skipped last
+  `allowed-tools` item** (`scripts/validate_skill_allowed_tools.py:31`).
+  Regex required `\n` after every item; when `allowed-tools:` was the
+  last frontmatter key (no trailing newline before `---`), the block
+  was silently dropped. `plugins/rldyour-browser/skills/browser-validation/SKILL.md`
+  hit this case; its MCP namespace was never validated. Tool name is
+  correct at HEAD (`playwright`) so no live misconfig, but the guard
+  was broken. Changed regex to `\n?` on the trailing newline match.
+  Verified by 2 independent reviewers (verification F-1b, integration F-1).
+- **CONS-1 `split_mcp_ref` fallback for unknown plugins**
+  (`scripts/validate_skill_allowed_tools.py:62-83`). Longest-plugin-prefix
+  match returned `None` for refs whose plugin was not in the marketplace,
+  causing generic "malformed MCP ref" errors instead of specific "unknown
+  plugin X" messages. Added `rpartition("_")` fallback so unknown plugin
+  refs still parse to `(plugin, server)` tuples and reach the proper
+  "unknown plugin" branch with a clearer error message. Better debugging
+  UX for new plugin manifests.
+- **CONS-2 `fake_repo` fixture missing rldyour-mcps `plugin.json`**
+  (`tests/conftest.py:60-79`). Fixture created `plugins/rldyour-mcps/`
+  with only `.mcp.json`; `validate_release_state.py` iterates
+  `plugins/*` and requires `.claude-plugin/plugin.json` in every
+  subdirectory, causing `test_version_matches_changelog_passes` to
+  fail with an unexpected error. Fixture now adds a minimal
+  `.claude-plugin/plugin.json` to the rldyour-mcps subdir AND adds
+  `rldyour-mcps` to the fake `marketplace.json` so `split_mcp_ref`
+  recognizes the plugin for unknown-server tests. Verified by 2
+  independent reviewers (verification F-1a, integration F-3).
+- **`validate_release_state.py` "not a git repository" warning
+  miscategorized** (`scripts/validate_release_state.py:112`). The
+  warning was passed through to `failures` instead of `info`, causing
+  `FAIL not a git repository or HEAD unreadable` when the validator
+  runs outside a git context (e.g., test fixtures). Added `INFO ` prefix
+  so the warning lands in the info pile correctly. Closes the third
+  pytest failure mode.
+- **`_git` subprocess wrappers ignored `root` parameter** (Pyright
+  diagnostic on `scripts/validate_release_state.py:108`). The `root`
+  parameter in `validate_tag_alignment` was declared but unused;
+  `_git`/`_head_sha`/`_tag_sha` ran with default cwd, which is fragile
+  if the validator is launched from outside the repo root. Propagated
+  optional `cwd: Path | None` through all three helpers and pass
+  `cwd=root` from `validate_tag_alignment`. Fixes the warning AND
+  hardens against out-of-repo callers.
+
+### Test
+
+- **All 22 unit tests pass + 1 expected SKIP**. `test_unknown_server_blocked`,
+  `test_unknown_plugin_blocked`, `test_version_matches_changelog_passes`
+  recovered from 0.4.0 failures. `pytest.yml` CI workflow expected to
+  return GREEN on next run.
+
 ## [0.4.0] - 2026-05-17
 
 Polish wave following 0.3.0. Verified the full dependency stack against
