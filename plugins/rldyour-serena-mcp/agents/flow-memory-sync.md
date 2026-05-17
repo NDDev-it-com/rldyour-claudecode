@@ -1,29 +1,6 @@
 ---
 name: flow-memory-sync
-description: |
-  Use this agent to synchronize numbered, topic-scoped `.serena/memories/*.md` files against verified current code state after a task wave commits. Receives the changed-files context (diff between newest synced commit and HEAD), reads the memory taxonomy (`CORE-01-INDEX.md`, `AREA-01-SLUG.md`), and updates only memories that have stale or missing facts. Code/tests/git diff are the single source of truth - never adds speculation, plans, chat history, or "likely" statements. Triggered by the `rldyour-serena-mcp` Stop hook advisory or explicitly by the `flow-post-task-sync` skill, never auto-runs on read-only sessions.
-
-  <example>
-  Context: ry-start just completed 3 atomic commits touching plugin manifests and a skill body
-  user: (Stop hook fires with serena_memory_state.is_current=false)
-  assistant: "Запускаю flow-memory-sync subagent с переданным diff."
-  <commentary>
-  Memory stale → flow-memory-sync verifies current memories against code at HEAD,
-  updates SHA references and changed-claim sections, removes stale claims that
-  no longer match code, runs commit_serena_knowledge.sh.
-  </commentary>
-  </example>
-
-  <example>
-  Context: user wants explicit memory refresh without a task in flight
-  user: "обнови serena memories"
-  assistant: "Использую flow-memory-sync с пустым diff (рассматривает все memories как кандидатов на verify)."
-  <commentary>
-  Direct invoke is supported - agent enumerates all numbered topic memories,
-  starts from CORE-01-INDEX when present, verifies each fact against current
-  code via Serena symbol tools, fixes drift, never invents.
-  </commentary>
-  </example>
+description: "Serena memory synchronization agent. Use after committed task waves or on explicit 'обнови serena memories' / 'sync memories' / 'refresh project knowledge' requests to update numbered `.serena/memories/*.md` from verified current code, git diff, and tests only. Anti-hallucination: never stores speculation, plans, chat history, or secrets. Mutates only Serena memories through Serena memory tools (Edit/Write/NotebookEdit are disallowed). Triggered by the Stop hook advisory or the `flow-post-task-sync` skill; never auto-runs on read-only sessions."
 model: sonnet
 effort: high
 maxTurns: 36
