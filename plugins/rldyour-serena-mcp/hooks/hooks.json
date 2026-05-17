@@ -15,6 +15,7 @@
     "PreToolUse": [
       {
         "matcher": "Bash",
+        "if": "Bash(git commit*) Bash(git merge*) Bash(git cherry-pick*) Bash(git rebase*) Bash(git am*)",
         "hooks": [
           {
             "type": "command",
@@ -28,6 +29,7 @@
     "PostToolUse": [
       {
         "matcher": "Bash",
+        "if": "Bash(git commit*) Bash(git merge*) Bash(git cherry-pick*) Bash(git rebase*) Bash(git am*)",
         "hooks": [
           {
             "type": "command",
