@@ -84,7 +84,7 @@ def main() -> int:
         return 0
 
     if yaml is None:
-        print("SKIP PyYAML not installed; install via `pip install pyyaml` to enable", file=sys.stderr)
+        print("SKIP PyYAML not installed; install via `pip install pyyaml` to enable")
         return 0
 
     agents_claims = extract_claims(agents_path.read_text(encoding="utf-8"))
