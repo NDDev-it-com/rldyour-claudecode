@@ -75,11 +75,18 @@ def check_version_floors(
             wrong_pattern = re.escape(wrong) + r"\+?"
             for match in re.finditer(wrong_pattern, text):
                 start = match.start()
-                # Look back 30 chars for the knob; if any intervening
-                # version token sits between the knob and `wrong`, the wrong
-                # version is associated with the intervening token, not the
-                # knob - skip it.
-                window_start = max(0, start - 30)
+                # Look back `max(30, len(knob) + 15)` chars - preserves the
+                # original 30-char baseline (for short knobs like "foo") while
+                # adapting up to cover long knob names like
+                # `maxSkillDescriptionChars` (24 chars) plus a ~15-char prose
+                # budget for connectors like " added in ", " since ", " via ".
+                # The previous fixed 30-char window was a blind spot for
+                # natural-language phrasing around long knobs. If any
+                # intervening version token sits between the knob and `wrong`,
+                # the wrong version is associated with the intervening token,
+                # not the knob - skip.
+                window_size = max(30, len(knob) + 15)
+                window_start = max(0, start - window_size)
                 window = text[window_start:start]
                 knob_pos = window.rfind(knob)
                 if knob_pos == -1:
