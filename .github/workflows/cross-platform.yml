@@ -18,12 +18,17 @@ name: cross-platform
 # SHA-pinned actions per OWASP A03:2025.
 
 on:
-  workflow_dispatch:
+  # Schedule first per .github/workflows/README.md advisory ordering
+  # convention (consistency F-8 closure).
   schedule:
     - cron: '0 4 * * 0'  # Sunday 04:00 UTC, off-peak (lowest GHEC minute pressure)
-  pull_request:
-    types: [labeled]
-    branches: [main]
+  workflow_dispatch:
+  # Architecture F-3 closure: removed `pull_request: types: [labeled]` trigger.
+  # It fired on ANY label add (skipped at job level via the `if:` condition,
+  # but created persistent skipped-run noise in the Actions UI). Operators
+  # who want cross-platform verification on a PR can now use:
+  #   gh workflow run cross-platform.yml --ref <branch>
+  # which still preserves the manual-first CI policy.
 
 permissions: {}
 
@@ -34,10 +39,9 @@ concurrency:
 jobs:
   smoke-matrix:
     name: smoke (${{ matrix.os }})
-    # Gate the labeled PR trigger so it only runs when the 'cross-platform'
-    # label is explicitly added - prevents accidental matrix run from any
-    # unrelated label being applied.
-    if: github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'cross-platform')
+    # Trigger gating not needed: schedule + workflow_dispatch are the only
+    # two triggers, both intentional. Operator-controlled per the
+    # manual-first CI policy in .github/workflows/README.md.
     runs-on: ${{ matrix.os }}
     timeout-minutes: 10
     permissions:
