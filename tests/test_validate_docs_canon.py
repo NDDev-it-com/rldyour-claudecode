@@ -23,6 +23,7 @@ def _run(fake_repo: Path) -> subprocess.CompletedProcess[str]:
         text=True,
         check=False,
         cwd=fake_repo,
+        timeout=30,
     )
 
 
@@ -107,6 +108,7 @@ class TestGracefulSkip:
             text=True,
             check=False,
             cwd=fake_repo,
+            timeout=30,
         )
         assert result.returncode == 0
         assert "SKIP" in result.stdout

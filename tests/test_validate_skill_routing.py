@@ -30,6 +30,7 @@ def _run_in(cwd: Path) -> subprocess.CompletedProcess[str]:
         text=True,
         check=False,
         cwd=cwd,
+        timeout=30,
     )
 
 
@@ -48,6 +49,7 @@ def test_real_repo_passes() -> None:
         text=True,
         check=False,
         cwd=repo_root,
+        timeout=30,
     )
     assert result.returncode == 0, f"stderr: {result.stderr}"
 
