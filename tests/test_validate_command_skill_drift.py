@@ -86,7 +86,7 @@ Use the `test-cmd` skill for this request.
         )
         result = _run(patch_repo_root)
         assert result.returncode == 1
-        assert "thin-wrapper cap" in result.stdout
+        assert "thin-wrapper cap" in result.stderr
 
     def test_missing_delegation_phrase_blocks(self, patch_repo_root: Path) -> None:
         _write_skill(patch_repo_root, "rldyour-test", "test-cmd")
@@ -106,7 +106,7 @@ Step 2. Do that.
         )
         result = _run(patch_repo_root)
         assert result.returncode == 1
-        assert "missing literal" in result.stdout
+        assert "missing literal" in result.stderr
 
     def test_forbidden_heading_blocks(self, patch_repo_root: Path) -> None:
         _write_skill(patch_repo_root, "rldyour-test", "test-cmd")
@@ -127,7 +127,7 @@ Step 1.
         )
         result = _run(patch_repo_root)
         assert result.returncode == 1
-        assert "forbidden heading" in result.stdout.lower()
+        assert "forbidden heading" in result.stderr.lower()
 
     def test_long_numbered_list_blocks(self, patch_repo_root: Path) -> None:
         _write_skill(patch_repo_root, "rldyour-test", "test-cmd")
@@ -150,7 +150,63 @@ Use the `test-cmd` skill for this request.
         )
         result = _run(patch_repo_root)
         assert result.returncode == 1
-        assert "numbered checklist" in result.stdout
+        assert "numbered checklist" in result.stderr
+
+    def test_two_short_lists_separated_by_blank_line_pass(
+        self, patch_repo_root: Path
+    ) -> None:
+        """Two short numbered lists separated by a blank line must NOT merge
+        into a single ``longest_consecutive_numbered_list`` streak.
+
+        Quality reviewer F-3 closure: the previous blank-line tolerance
+        treated `1. a\\n2. b\\n\\n1. c\\n2. d` as streak=4 and false-positive
+        FAILed thin wrappers that legitimately had two adjacent lists.
+        """
+        _write_skill(patch_repo_root, "rldyour-test", "test-cmd")
+        _write_command(
+            patch_repo_root,
+            "rldyour-test",
+            "test-cmd",
+            """---
+description: "Test."
+---
+
+Use the `test-cmd` skill for this request.
+
+1. First short list.
+2. Two items.
+
+1. Second short list.
+2. Also two items.
+""",
+        )
+        result = _run(patch_repo_root)
+        assert result.returncode == 0, result.stdout + result.stderr
+        assert "OK" in result.stdout
+
+    def test_wrong_delegation_target_blocks(self, patch_repo_root: Path) -> None:
+        """When the ``Use the \\`X\\` skill`` phrase names a different skill,
+        the validator must FAIL with ``delegation phrase points to`` message.
+
+        Verification reviewer F-2 closure: the validator code path at
+        ``validate_command`` line 110-112 was previously untested.
+        """
+        _write_skill(patch_repo_root, "rldyour-test", "test-cmd")
+        _write_skill(patch_repo_root, "rldyour-test", "other-skill")
+        _write_command(
+            patch_repo_root,
+            "rldyour-test",
+            "test-cmd",
+            """---
+description: "Test."
+---
+
+Use the `other-skill` skill for this request.
+""",
+        )
+        result = _run(patch_repo_root)
+        assert result.returncode == 1
+        assert "delegation phrase points to" in result.stderr
 
 
 class TestCommandOnlyPattern:

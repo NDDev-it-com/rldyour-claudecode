@@ -65,13 +65,18 @@ WEAK = re.compile(
 )
 
 # Action verbs paired with weak triggers indicate actual code work.
+# Trailing \b prevents over-match on derived nouns/adjectives (e.g. "editor"
+# previously matched "edit" - quality reviewer F-6 closure). The `\w*` after
+# select stems intentionally allows verb conjugations: "implemented",
+# "refactoring", "rename(s)".
 ACTION = re.compile(
     r"\b("
-    r"inspect|analyze|review|fix|edit|modify|implement|find|search|trace|debug|"
-    r"refactor|navigate|locate|rename|extract|optimi[sz]e|test|"
+    r"inspect|analyz\w*|review|fix(?:es|ed|ing)?|edit(?:s|ed|ing)?|modify|"
+    r"implement\w*|find|search\w*|trac(?:e|ed|ing)|debug\w*|"
+    r"refactor\w*|navigat\w*|locat\w*|renam\w*|extract\w*|optimi[sz]\w*|test\w*|"
     r"изуч[аи]|посмотр[ие]|проверь|проанализир|исправ[ьи]|измен[ия]|"
     r"реализ[уя]|найди|поищи|просмотр[ие]|инспект|рефактор|переименуй"
-    r")",
+    r")\b",
     re.IGNORECASE | re.UNICODE,
 )
 
