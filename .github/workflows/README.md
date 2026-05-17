@@ -46,8 +46,12 @@ GHEC plan ships 50,000 included minutes/month; private repo Actions usage is
 billed to the owner.
 
 To stay under budget:
-- macOS runs only in `cross-platform.yml`, gated to schedule + workflow_dispatch
-  + opt-in PR label `cross-platform`. The default PR experience uses Ubuntu only.
+- macOS runs only in `cross-platform.yml`, triggered only by the Sunday schedule
+  or explicit `gh workflow run cross-platform.yml`. The default PR experience
+  uses Ubuntu only. (Architecture F-3 closure: the prior `pull_request:
+  types: [labeled]` trigger was removed in 0.5.1 because it created
+  skipped-run noise on every unrelated label add; manual operator gestures
+  remain available via `gh workflow run`.)
 - `concurrency:` blocks cancel redundant runs on the same ref.
 - PATH-filtered triggers (`actionlint` on `.github/**`, `pytest` on
   `scripts/`/`tests/`) avoid running jobs for irrelevant changes.

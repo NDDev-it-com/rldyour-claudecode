@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash",
+            "command": "/bin/bash",
             "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/user_prompt_submit.sh"],
             "timeout": 5,
             "statusMessage": "Loading Serena workflow context"
@@ -20,8 +20,40 @@
         "hooks": [
           {
             "type": "command",
-            "if": "Bash(git *)",
-            "command": "bash",
+            "if": "Bash(git commit*)",
+            "command": "/bin/bash",
+            "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/prepare_auto_sync.sh"],
+            "timeout": 5,
+            "statusMessage": "Recording Serena auto-sync baseline"
+          },
+          {
+            "type": "command",
+            "if": "Bash(git merge*)",
+            "command": "/bin/bash",
+            "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/prepare_auto_sync.sh"],
+            "timeout": 5,
+            "statusMessage": "Recording Serena auto-sync baseline"
+          },
+          {
+            "type": "command",
+            "if": "Bash(git cherry-pick*)",
+            "command": "/bin/bash",
+            "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/prepare_auto_sync.sh"],
+            "timeout": 5,
+            "statusMessage": "Recording Serena auto-sync baseline"
+          },
+          {
+            "type": "command",
+            "if": "Bash(git rebase*)",
+            "command": "/bin/bash",
+            "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/prepare_auto_sync.sh"],
+            "timeout": 5,
+            "statusMessage": "Recording Serena auto-sync baseline"
+          },
+          {
+            "type": "command",
+            "if": "Bash(git am*)",
+            "command": "/bin/bash",
             "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/prepare_auto_sync.sh"],
             "timeout": 5,
             "statusMessage": "Recording Serena auto-sync baseline"
@@ -35,8 +67,40 @@
         "hooks": [
           {
             "type": "command",
-            "if": "Bash(git *)",
-            "command": "bash",
+            "if": "Bash(git commit*)",
+            "command": "/bin/bash",
+            "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/mark_sync_required.sh"],
+            "timeout": 5,
+            "statusMessage": "Marking Serena sync needs"
+          },
+          {
+            "type": "command",
+            "if": "Bash(git merge*)",
+            "command": "/bin/bash",
+            "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/mark_sync_required.sh"],
+            "timeout": 5,
+            "statusMessage": "Marking Serena sync needs"
+          },
+          {
+            "type": "command",
+            "if": "Bash(git cherry-pick*)",
+            "command": "/bin/bash",
+            "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/mark_sync_required.sh"],
+            "timeout": 5,
+            "statusMessage": "Marking Serena sync needs"
+          },
+          {
+            "type": "command",
+            "if": "Bash(git rebase*)",
+            "command": "/bin/bash",
+            "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/mark_sync_required.sh"],
+            "timeout": 5,
+            "statusMessage": "Marking Serena sync needs"
+          },
+          {
+            "type": "command",
+            "if": "Bash(git am*)",
+            "command": "/bin/bash",
             "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/mark_sync_required.sh"],
             "timeout": 5,
             "statusMessage": "Marking Serena sync needs"
@@ -49,7 +113,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash",
+            "command": "/bin/bash",
             "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/stop_memory_sync.sh"],
             "timeout": 10,
             "statusMessage": "Checking Serena memory sync"

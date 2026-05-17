@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "rldyour-design",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "\u0414\u0438\u0437\u0430\u0439\u043d-\u0432\u043e\u0440\u043a\u0444\u043b\u043e\u0443 \u0434\u043b\u044f Claude Code: Figma \u2192 \u043a\u043e\u0434, \u0446\u0435\u043d\u0442\u0440\u0430\u043b\u0438\u0437\u043e\u0432\u0430\u043d\u043d\u044b\u0435 \u0442\u043e\u043a\u0435\u043d\u044b (W3C DTCG/Tailwind v4), \u0441\u0442\u0440\u043e\u0433\u0438\u0439 FSD, shadcn/ui, ReactBits + \u0431\u0440\u0430\u0443\u0437\u0435\u0440-\u0432\u0430\u043b\u0438\u0434\u0430\u0446\u0438\u044f. Skills-only - MCP-\u0442\u0440\u0430\u043d\u0441\u043f\u043e\u0440\u0442 (Figma, shadcn, Playwright, Chrome DevTools) \u0431\u0435\u0440\u0451\u0442\u0441\u044f \u0438\u0437 rldyour-mcps.",
   "author": {
     "name": "rldyourmnd",

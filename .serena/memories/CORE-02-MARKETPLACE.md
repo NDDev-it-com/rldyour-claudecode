@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-17
-Last commit: b5e78d4 chore(release): bump VERSION + all 9 plugins to 0.5.0
+Last commit: 1937f65 docs(adr-0010): macOS egress trust gap accepted
 Scope: .claude-plugin/marketplace.json, plugins/*/.claude-plugin/plugin.json, README.md, AGENTS.md
 Area: CORE
 -->
@@ -19,12 +19,13 @@ Current business logic and architecture of the `rldyour-claude` marketplace. The
 - `README.md`: owner-facing catalog, control model, install/check commands, active per-plugin versions.
 - `AGENTS.md`: concise cross-tool project rules and boundaries.
 
-## Current State (HEAD `b5e78d4`)
+## Current State (HEAD `7f29df4`)
 
-- **VERSION**: `0.5.0` (release boundary, verified at `VERSION` file at HEAD `b5e78d4`).
+- **VERSION**: `0.5.1` (release boundary, verified at `VERSION` file at HEAD `7effaa8`).
 - **9 plugins** verified at HEAD from `.claude-plugin/marketplace.json`: `rldyour-mcps`, `rldyour-explore`, `rldyour-serena-mcp`, `rldyour-security`, `rldyour-browser`, `rldyour-design`, `rldyour-lsps`, `rldyour-flow`, `rldyour-rules`.
-- **Per-plugin versions** (verified via `python3 scripts/validate_plugin_versions.py` at HEAD `b5e78d4`): all 9 plugins at `0.5.0`.
-- **Component totals**: 32 skills, 9 slash commands, 8 subagents, 8 hook scripts in 2 hook manifests, 12 plugin-owned scripts, 16 references.
+- **Per-plugin versions** (verified via `python3 scripts/validate_plugin_versions.py` at HEAD `7effaa8`): all 9 plugins at `0.5.1`.
+- **Component totals**: 32 skills, 9 slash commands, 8 subagents, 9 hook scripts in 2 hook manifests, 12 plugin-owned scripts, 16 references.
+- **ADR count**: 10 (docs/adr/0001 through 0010 + 0000-template + README; ADR-0010 macOS egress trust gap added at HEAD `7f29df4`).
 - The owner decides what is enabled. Repository docs state nothing is treated as enabled or correct unless explicitly decided by the owner.
 
 ## Plugin Boundaries + Domain Memory Pointers
@@ -33,7 +34,7 @@ Current business logic and architecture of the `rldyour-claude` marketplace. The
 |---|---|---|---|---|
 | `rldyour-mcps` | Transport - 13 pinned MCP servers | 0 skills, 0 cmds, 0 agents, 0 hooks, `.mcp.json` | No | [[MCP-01-TRANSPORT]] |
 | `rldyour-serena-mcp` | Serena-first code workflow + fact-only memory sync | 2 skills, 0 cmds, 1 agent, 4 hooks, 3 scripts | **Yes** | [[SERENA-01-MEMORY-SYNC]] + [[HOOKS-01-LIFECYCLE]] |
-| `rldyour-flow` | SDLC orchestration + 6 reviewer subagents + fullrepo/worktree | 7 skills, 5 cmds, 6 agents, 4 hooks, 7 scripts, 7 references | **Yes** | [[FLOW-01-SDLC]] + [[HOOKS-01-LIFECYCLE]] |
+| `rldyour-flow` | SDLC orchestration + 6 reviewer subagents + fullrepo/worktree | 7 skills, 5 cmds, 6 agents, 5 hooks, 7 scripts, 7 references | **Yes** | [[FLOW-01-SDLC]] + [[HOOKS-01-LIFECYCLE]] |
 | `rldyour-explore` | Deep research (tech + web + `ry-explore` opus[1m]) | 2 skills, 1 cmd, 1 agent, 0 hooks | No | [[EXPLORE-01-RESEARCH]] |
 | `rldyour-security` | OWASP Top 10 2025 + Mythos-style `ry-sec-review` | 2 skills, 1 cmd, 0 agents, 0 hooks | No | [[SECURITY-01-OWASP]] |
 | `rldyour-browser` | Playwright + Chrome DevTools validation/debug routing | 3 skills, 0 cmds, 0 agents, 0 hooks | No | [[BROWSER-01-WORKFLOW]] |

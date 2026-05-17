@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-17
-Last commit: b5e78d4 chore(release): bump VERSION + all 9 plugins to 0.5.0
+Last commit: 1937f65 docs(adr-0010): macOS egress trust gap accepted
 Scope: plugins/rldyour-serena-mcp/hooks/hooks.json, plugins/rldyour-serena-mcp/hooks/*.sh, plugins/rldyour-flow/hooks/hooks.json, plugins/rldyour-flow/hooks/*.sh, scripts/smoke_hooks.sh, scripts/smoke_serena_memory_taxonomy.sh, .claude/CLAUDE.md, AGENTS.md
 Area: HOOKS
 -->
@@ -28,15 +28,17 @@ Claude Code hook lifecycle and coordination contract between Serena freshness ga
 ## Current Behavior
 
 - Two plugins own hooks: `rldyour-serena-mcp` and `rldyour-flow`.
-- Registered lifecycle rows at HEAD:
-  - `UserPromptSubmit`: `rldyour-serena-mcp/hooks/user_prompt_submit.sh`.
-  - `PreToolUse:Bash`: `rldyour-serena-mcp/hooks/prepare_auto_sync.sh`.
-  - `PostToolUse:Bash`: `rldyour-serena-mcp/hooks/mark_sync_required.sh`.
-  - `PostToolUse:Bash`: `rldyour-flow/hooks/post_tool_use_commit_advice.sh`.
-  - `SessionStart`: `rldyour-flow/hooks/session_start_worktree_bootstrap.sh`.
-  - `SessionStart`: `rldyour-flow/hooks/session_start_context.sh`.
-  - `Stop`: `rldyour-serena-mcp/hooks/stop_memory_sync.sh`.
-  - `Stop`: `rldyour-flow/hooks/stop_post_task_sync.sh`.
+- Registered lifecycle rows at HEAD (9 hook scripts in 2 manifests, 19 handlers total):
+  - `UserPromptSubmit`: `rldyour-serena-mcp/hooks/user_prompt_submit.sh` (1 handler). Skip: `RLDYOUR_SKIP_USER_PROMPT_HINT`.
+  - `PreToolUse:Bash`: `rldyour-serena-mcp/hooks/prepare_auto_sync.sh` (5 handlers: `git commit*`, `git merge*`, `git cherry-pick*`, `git rebase*`, `git am*`). Architecture F-2 closure.
+  - `PreToolUse:Bash`: `rldyour-flow/hooks/pre_tool_use_ci_advisory.sh` (3 handlers: `gh workflow*`, `gh run*`, `gh actions*`). Advisory, exits 0. Skip: `RLDYOUR_SKIP_CI_ADVISORY`.
+  - `PostToolUse:Bash`: `rldyour-serena-mcp/hooks/mark_sync_required.sh` (5 handlers: `git commit*`, `git merge*`, `git cherry-pick*`, `git rebase*`, `git am*`).
+  - `PostToolUse:Bash`: `rldyour-flow/hooks/post_tool_use_commit_advice.sh` (1 handler: `git commit*`).
+  - `SessionStart`: `rldyour-flow/hooks/session_start_worktree_bootstrap.sh` (1 handler).
+  - `SessionStart`: `rldyour-flow/hooks/session_start_context.sh` (1 handler).
+  - `Stop`: `rldyour-serena-mcp/hooks/stop_memory_sync.sh` (1 handler).
+  - `Stop`: `rldyour-flow/hooks/stop_post_task_sync.sh` (1 handler).
+- Handler breakdown: rldyour-serena-mcp 1+5+5+1=12; rldyour-flow 2+3+1+1=7; total 19 handlers. Verified at both `hooks.json` files at HEAD `24d2290` (pre_tool_use_ci_advisory.sh added in `22dc9d9`).
 - Stop hooks are advisory enforcement gates. They write guidance to stderr and block with `exit 2` when required work remains.
 - SessionStart and PostToolUse advisory hooks emit JSON `hookSpecificOutput.additionalContext` when applicable.
 - `session_start_worktree_bootstrap.sh` is the only bounded mutating hook; it runs `fullrepo_sync.py --restore`, never `--publish` and never touches origin.
@@ -46,6 +48,9 @@ Claude Code hook lifecycle and coordination contract between Serena freshness ga
 - All 8 hook scripts (`plugins/rldyour-{flow,serena-mcp}/hooks/*.sh`) and 3 helper scripts (`scripts/worktree_add.sh`, `scripts/bootstrap_check.sh`, `plugins/rldyour-flow/scripts/deploy_readiness.sh`) use full strict mode: `set -euo pipefail` + `IFS=$'\n\t'` + `unset CDPATH`. Wave 2 additionally applied `IFS=$'\n\t'` + `unset CDPATH` to 14 more utility/plugin scripts: 9 in `scripts/` (smoke_hooks, smoke_fullrepo_sync, smoke_mcp_capabilities, smoke_mcp_runtime, smoke_serena_memory_taxonomy, sync_fullrepo_branch, validate_marketplace, collect_diagnostics, install_local_git_hooks) and 5 in plugins (`plugins/rldyour-flow/scripts/{detect_project_checks,git_sync_audit,local_git_ai_guard}.sh`, `plugins/rldyour-lsps/scripts/install_lsps_brew.sh`, `plugins/rldyour-serena-mcp/scripts/commit_serena_knowledge.sh`). Pattern matches gold-standard in `scripts/install-rldyour-marketplace.sh`. Verified by `bash -n` + `scripts/smoke_hooks.sh` at HEAD.
 - Wave 5 fix (D27): `scripts/smoke_bootstrap_check.sh` runtime path-a harness awk extractor was broken for one-line `step() { ...; }` function form - `in_step` flag was never reset, causing the awk to dump the entire remainder of `bootstrap_check.sh` into `TMP_GUARD`. Fixed in commit `92eb8dd` by using an inline `PRELUDE` heredoc for step()/fail() helpers and an awk range for the divergence-guard block. Verified at `scripts/smoke_bootstrap_check.sh` lines 89-114 at HEAD `334fe09`.
 - **P0 hooks canonical-form rewrite** (commit `614bdcf fix(hooks)`): both `hooks.json` files rewritten so the `if` filter lives INSIDE the inner hook handler (sibling to `type`/`command`/`args`), not at the matcher-group level. All hook handlers now use exec-form `command: "bash"` + `args: ["${CLAUDE_PLUGIN_ROOT}/hooks/X.sh"]` per CC v2.1.139+. Serena `PreToolUse:Bash` and `PostToolUse:Bash` use a broad `if: "Bash(git *)"` rule in the inner handler plus script-level self-filtering for specificity (single rule per `if`, no whitespace-OR multi-match). Flow `PostToolUse:Bash` inner handler carries `if: "Bash(git commit*)"`. Stop and SessionStart hooks carry no `if` filter (unconditional). Verified at `plugins/rldyour-serena-mcp/hooks/hooks.json` and `plugins/rldyour-flow/hooks/hooks.json` at HEAD `b5e78d4`: `if` is a child of the inner `hooks[]` object, not the outer matcher-group object.
+- **0.5.1 hook changes** (commit `24d2290 perf(hooks)`): Serena `PreToolUse:Bash` and `PostToolUse:Bash` changed from 1 broad `Bash(git *)` handler each to 5 explicit handlers per event, each scoped to a single git verb (`git commit*`, `git merge*`, `git cherry-pick*`, `git rebase*`, `git am*`). All 5 per event point to the same script. This removes the broad `git *` match and eliminates the 3+ subprocess spawns per git read-only operation. Architecture F-2 closure (eliminates R6 Arch F-2). All hook handlers in both `hooks.json` files switched from `command: "bash"` to `command: "/bin/bash"` (absolute path, PATH-independent). Security F-6 closure. Verified at `plugins/rldyour-serena-mcp/hooks/hooks.json` at HEAD `24d2290`: 5 `if`-scoped handlers in PreToolUse Bash matcher, 5 in PostToolUse Bash matcher. Handler totals: Serena 1+5+5+1=12 handlers; flow 2+3+1+1=7 handlers; total 19 handlers in 2 manifests.
+- **New PreToolUse hook `pre_tool_use_ci_advisory.sh`** (commit `22dc9d9 feat(hook)`): 9th hook script added at `plugins/rldyour-flow/hooks/pre_tool_use_ci_advisory.sh`. Three narrow handlers in `plugins/rldyour-flow/hooks/hooks.json` PreToolUse:Bash: `Bash(gh workflow*)`, `Bash(gh run*)`, `Bash(gh actions*)`. Advisory ONLY - exits 0 always. Emits CI manual-first reminder via stderr. Skip flag: `RLDYOUR_SKIP_CI_ADVISORY=1`. Security F-3 closure. Verified at `plugins/rldyour-flow/hooks/pre_tool_use_ci_advisory.sh` and `plugins/rldyour-flow/hooks/hooks.json` at HEAD `22dc9d9`.
+- **`user_prompt_submit.sh` RLDYOUR_SKIP_USER_PROMPT_HINT** (commit `cea0d73 feat(hook)`): `plugins/rldyour-serena-mcp/hooks/user_prompt_submit.sh` line 25 gained `RLDYOUR_SKIP_USER_PROMPT_HINT=1` short-circuit, providing parity with all other rldyour hooks. Consistency F-3 closure. Verified at `plugins/rldyour-serena-mcp/hooks/user_prompt_submit.sh:25` at HEAD `cea0d73`.
 
 ## Coordination Sequence
 
@@ -57,7 +62,7 @@ Claude Code hook lifecycle and coordination contract between Serena freshness ga
 
 ## Contracts And Data
 
-- Skip flags: `RLDYOUR_SKIP_FLOW_SESSION_CONTEXT`, `RLDYOUR_SKIP_FLOW_COMMIT_ADVICE`, `RLDYOUR_SKIP_STOP_GATES`, `RLDYOUR_SKIP_FLOW_SYNC`, `RLDYOUR_SKIP_SERENA_SYNC`, `RLDYOUR_SKIP_WORKTREE_BOOTSTRAP`.
+- Skip flags: `RLDYOUR_SKIP_FLOW_SESSION_CONTEXT`, `RLDYOUR_SKIP_FLOW_COMMIT_ADVICE`, `RLDYOUR_SKIP_STOP_GATES`, `RLDYOUR_SKIP_FLOW_SYNC`, `RLDYOUR_SKIP_SERENA_SYNC`, `RLDYOUR_SKIP_WORKTREE_BOOTSTRAP`, `RLDYOUR_SKIP_CI_ADVISORY`, `RLDYOUR_SKIP_USER_PROMPT_HINT`.
 - Stop hook exit code `2` is intentional blocking guidance; other hook errors should avoid breaking normal work unless the gate is intentionally blocking.
 - `stop_memory_sync.sh` includes analyzer context: risk profile, analysis source, changed file count, memory taxonomy, memory targets, and high-priority areas.
 - `post_tool_use_commit_advice.sh` sanitizes user-controlled text through `sanitize_for_advisory()` helper (extracted at lines 104-122) before embedding in advisory output. The helper applies four-step sanitization: C0/C1 control chars collapsed to spaces; BiDi direction-override/isolate control characters (U+202A-U+202E, U+2066-U+2069 - Trojan Source attack family) replaced with `[REDACTED-BIDI]` via `BIDI_CONTROLS` regex (lines 92-102); `INJECTION_MARKERS` (lines 69-91) replaced with `[REDACTED]`; length-capped to `MAX_SUBJECT_LEN`. `INJECTION_MARKERS` covers Wave 2 families (13+ marker families: bracket/XML role tags, `<<SYS>>`, Llama-3 tokens, chat-template tags, `---system---`, `BEGIN/END PROMPT`, English + Russian instruction-override phrases) PLUS Wave 3/D42 additions: 2026 tool-call/function-call XML tags (`<tool_use>`, `<tool_call>`, `<function_call>`, `<tool_result>`, `<tool_invoke>`, and generic MCP-style `<*>` tags). Subject sanitized at line 124; three path warning sites (sensitive_patterns line 159, runtime_patterns line 170, agent_only_patterns line 185) all pass paths through `sanitize_for_advisory()` (D43 closure). Flags: `re.IGNORECASE | re.UNICODE`. Verified at `plugins/rldyour-flow/hooks/post_tool_use_commit_advice.sh` lines 69-185 at HEAD `5bd57ae`.
