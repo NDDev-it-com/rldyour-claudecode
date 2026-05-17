@@ -100,6 +100,12 @@ jobs:
         with:
           python-version: '3.13'
 
+      - name: Install Python deps for schema validation
+        run: pip install --user 'jsonschema>=4.21' 'attrs>=23.2'
+
+      - name: JSON Schema validation (marketplace + plugin + mcp + lsp + hooks)
+        run: python3 scripts/validate_json_schemas.py
+
       - name: Validate JSON manifests
         run: |
           set -euo pipefail

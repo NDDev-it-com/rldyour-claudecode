@@ -48,7 +48,7 @@ Update `CHANGELOG.md` (Keep-a-Changelog format) before tagging:
 
 ## Tagging
 
-Use `claude plugin tag --push` (CC v2.1.119+) - it validates that `plugin.json` and the marketplace entry agree on version, refuses dirty worktrees and pre-existing tags, then pushes the tag.
+Use `claude plugin tag --push` (CC v2.1.118+) - it validates that `plugin.json` and the marketplace entry agree on version, refuses dirty worktrees and pre-existing tags, then pushes the tag.
 
 Tag conventions:
 

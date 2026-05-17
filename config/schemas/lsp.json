@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/nddev-it-com/rldyour-claudecode/blob/main/config/schemas/lsp.json",
+  "title": "Claude Code LSP Servers Manifest",
+  "description": "Validates plugins/*/.lsp.json. Required fields per Claude Code plugin reference (LSP server component): command + extensionToLanguage. Transport defaults to stdio.",
+  "type": "object",
+  "patternProperties": {
+    "^[a-z][a-z0-9_-]*$": {
+      "type": "object",
+      "required": ["command", "extensionToLanguage"],
+      "additionalProperties": false,
+      "properties": {
+        "command": { "type": "string", "minLength": 1 },
+        "args": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "extensionToLanguage": {
+          "type": "object",
+          "minProperties": 1,
+          "patternProperties": {
+            "^\\.[A-Za-z0-9+]+$": { "type": "string", "minLength": 1 }
+          },
+          "additionalProperties": false,
+          "description": "Maps file extension (with leading dot) to LSP language id."
+        },
+        "transport": {
+          "type": "string",
+          "enum": ["stdio", "socket"]
+        },
+        "env": {
+          "type": "object",
+          "additionalProperties": { "type": "string" }
+        },
+        "initializationOptions": { "type": "object" },
+        "settings": { "type": "object" },
+        "workspaceFolder": { "type": "string" },
+        "startupTimeout": {
+          "type": "integer",
+          "minimum": 1000,
+          "description": "Milliseconds; canonical default 15000."
+        },
+        "shutdownTimeout": {
+          "type": "integer",
+          "minimum": 1000
+        },
+        "restartOnCrash": { "type": "boolean" },
+        "maxRestarts": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "rldyour-lsps standard: 3."
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}

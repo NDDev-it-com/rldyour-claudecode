@@ -55,22 +55,40 @@ def check_version_floors(
     """Detect wrong "v2.1.XXX" assertions for a known knob.
 
     `floors` maps knob name -> {`floor`: "v2.1.105+", `wrong_floors`:
-    ["v2.1.128", "v2.1.129"]}. If the knob name appears within ~80 chars of
-    a wrong-floor pattern, flag it.
+    ["v2.1.128", "v2.1.129"]}. Direct-association heuristic: flag only when
+    a known wrong-floor token is *the immediately following parenthetical*
+    after the knob (no other version token between them), or when the
+    knob appears within 30 chars of the wrong-floor token.
+
+    Tight matching avoids false positives in compatibility-floor paragraphs
+    where many knobs and many versions co-occur in a long enumeration.
     """
     findings: list[tuple[str, str, str]] = []
+    # Pattern: any "v2.1.XXX" token, possibly with trailing "+"
+    version_token = re.compile(r"v\d+\.\d+\.\d+\+?")
+
     for knob, spec in floors.items():
         if knob not in text:
             continue
         correct = spec.get("floor", "")
         for wrong in spec.get("wrong_floors", []):
-            wrong_pattern = re.escape(wrong)
+            wrong_pattern = re.escape(wrong) + r"\+?"
             for match in re.finditer(wrong_pattern, text):
-                window_start = max(0, match.start() - 80)
-                window_end = min(len(text), match.end() + 80)
-                window = text[window_start:window_end]
-                if knob in window:
-                    findings.append((knob, wrong, correct))
+                start = match.start()
+                # Look back 30 chars for the knob; if any intervening
+                # version token sits between the knob and `wrong`, the wrong
+                # version is associated with the intervening token, not the
+                # knob - skip it.
+                window_start = max(0, start - 30)
+                window = text[window_start:start]
+                knob_pos = window.rfind(knob)
+                if knob_pos == -1:
+                    continue
+                between = window[knob_pos + len(knob):]
+                if version_token.search(between):
+                    # Another version is between knob and wrong - not directly associated.
+                    continue
+                findings.append((knob, wrong, correct))
     return findings
 
 
