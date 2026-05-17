@@ -33,6 +33,9 @@ for p in plugins/*/; do
   claude plugin validate "$p" 2>&1 | tail -1
 done
 
+step "JSON Schema validation (marketplace + plugin + mcp + lsp + hooks)"
+python3 scripts/validate_json_schemas.py
+
 step "JSON manifests parse"
 python3 - <<'PY'
 import glob, json, sys
