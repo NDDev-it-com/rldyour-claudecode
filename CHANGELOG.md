@@ -44,9 +44,13 @@ official docs at 2026-05-17).
 - **6 new validators** (`scripts/`): `validate_text_hygiene.py`,
   `validate_skill_allowed_tools.py`, `validate_release_state.py`,
   `validate_docs_canon.py`, `validate_instruction_sync.py`,
-  `generate_inventory.py`. Plus `validate_json_schemas.py` (G9) and
-  `probe_mcp_upstream.py` (G11). All wired into `validate_marketplace.sh`
-  + `.github/workflows/validate.yml`. Harness grew from 13 to 19 steps.
+  `generate_inventory.py`. Plus `validate_json_schemas.py` (G9). All
+  seven wired into `validate_marketplace.sh` + `.github/workflows/validate.yml`
+  (harness grew from 13 to 22 steps). `probe_mcp_upstream.py` (G11) is
+  wired separately into `.github/workflows/dependency-check.yml` (weekly
+  cron + workflow_dispatch); it is intentionally NOT in the per-PR
+  validate.yml because the network probe is best-effort and adds wall-clock
+  to every PR.
 - **3 new CI workflows**: `release.yml` (fully automated on tag push -
   validates release state, generates evidence bundle, creates GitHub
   Release via `gh release create --verify-tag`), `gitleaks.yml`
