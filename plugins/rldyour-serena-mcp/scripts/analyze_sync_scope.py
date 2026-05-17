@@ -8,8 +8,8 @@ import json
 import subprocess
 import sys
 from collections import defaultdict
-from typing import Any, Iterable
-
+from collections.abc import Iterable
+from typing import Any
 
 MEMORY_TAXONOMY = {
     "version": 1,
@@ -282,7 +282,10 @@ def analyze(paths: list[str]) -> dict[str, Any]:
             }
             for area, files in scope.items()
         ),
-        key=lambda item: (-item["count"], item["area"]),
+        # Pyright cannot narrow item["count"] to int from the dict's mixed
+        # value type (str | int | list[str]); the construction site above
+        # always sets count to an int.
+        key=lambda item: (-item["count"], item["area"]),  # type: ignore[operator]
     )
 
     changed_areas = set(scope.keys())

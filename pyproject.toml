@@ -71,7 +71,7 @@ reportMissingImports = "error"
 reportMissingTypeStubs = "none"
 reportUnusedImport = "warning"
 reportUnusedVariable = "warning"
-include = ["scripts", "plugins"]
+include = ["scripts", "plugins", "tests"]
 exclude = [
   "**/__pycache__",
   ".serena",
@@ -80,5 +80,6 @@ exclude = [
 ]
 # `scripts/` on extraPaths so Pyright can resolve `from _mcp_parse import ...`
 # the same way Python does at runtime (script directory is auto-prepended to
-# sys.path for scripts launched as `python3 scripts/<name>.py`).
+# sys.path for scripts launched as `python3 scripts/<name>.py`, and tests
+# inject sys.path.insert in conftest.py).
 extraPaths = ["scripts"]
