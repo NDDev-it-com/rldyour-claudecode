@@ -8,7 +8,6 @@ import subprocess
 from pathlib import Path
 from typing import Any
 
-
 RUNTIME_IGNORED = {
     ".serena/.sync_marker",
     ".serena/.serena_sync_state.json",

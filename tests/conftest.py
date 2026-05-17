@@ -79,8 +79,14 @@ def fake_repo(tmp_path: Path) -> Path:
         '{"name": "rldyour-mcps", "version": "0.4.0"}',
         encoding="utf-8",
     )
+    # Add both a stdio write-capable server (serena) and an HTTP
+    # read-only-by-design server (context7) so agent-tools tests can exercise
+    # both wildcard-blocked and wildcard-passes branches of validate_agent_tools.
     (tmp_path / "plugins" / "rldyour-mcps" / ".mcp.json").write_text(
-        '{"mcpServers": {"serena": {"command": "uvx", "args": ["serena-agent==1.3.0"]}}}',
+        '{"mcpServers": {'
+        '"serena": {"command": "uvx", "args": ["serena-agent==1.3.0"]},'
+        '"context7": {"type": "http", "url": "https://example.com"}'
+        '}}',
         encoding="utf-8",
     )
 
