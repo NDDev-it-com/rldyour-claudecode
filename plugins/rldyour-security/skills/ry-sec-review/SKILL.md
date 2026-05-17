@@ -61,16 +61,16 @@ If scope is unclear, make a reasonable assumption and state it. Do not stop unle
 
 Review against:
 
-- `A01 Broken Access Control`: missing server-side authorization, IDOR/BOLA, tenant boundary bypass, admin route exposure, confused deputy.
-- `A02 Security Misconfiguration`: debug exposure, permissive CORS, missing headers, unsafe cloud/IaC defaults, exposed credentials/config.
-- `A03 Software Supply Chain Failures`: vulnerable dependencies, untrusted scripts, unsigned artifacts, unpinned images/actions, typosquatting risk.
-- `A04 Cryptographic Failures`: weak crypto, bad randomness, plaintext sensitive data, key misuse, token storage and transport issues.
-- `A05 Injection`: SQL/NoSQL/LDAP/template/command injection, unsafe eval, shell interpolation, unsafe deserialization.
-- `A06 Insecure Design`: race conditions, business logic abuse, missing abuse controls, replay, quota/rate limit bypass, unsafe workflow assumptions.
-- `A07 Authentication Failures`: weak reset/login/session/token flow, MFA bypass, session fixation, missing re-auth for sensitive operations.
-- `A08 Software or Data Integrity Failures`: mass assignment, unsafe update/webhook handling, unverified signed data, trusted client-controlled state.
-- `A09 Security Logging and Alerting Failures`: missing audit trail, sensitive logs, lack of alertable authz/authn/security events.
-- `A10 Mishandling of Exceptional Conditions`: fail-open errors, leaked stack traces/secrets, inconsistent rollback, exception path bypass.
+- `A01:2025 Broken Access Control`: missing server-side authorization, IDOR/BOLA, tenant boundary bypass, admin route exposure, confused deputy.
+- `A02:2025 Security Misconfiguration`: debug exposure, permissive CORS, missing headers, unsafe cloud/IaC defaults, exposed credentials/config.
+- `A03:2025 Software Supply Chain Failures`: vulnerable dependencies, untrusted scripts, unsigned artifacts, unpinned images/actions, typosquatting risk.
+- `A04:2025 Cryptographic Failures`: weak crypto, bad randomness, plaintext sensitive data, key misuse, token storage and transport issues.
+- `A05:2025 Injection`: SQL/NoSQL/LDAP/template/command injection, unsafe eval, shell interpolation, unsafe deserialization.
+- `A06:2025 Insecure Design`: race conditions, business logic abuse, missing abuse controls, replay, quota/rate limit bypass, unsafe workflow assumptions.
+- `A07:2025 Authentication Failures`: weak reset/login/session/token flow, MFA bypass, session fixation, missing re-auth for sensitive operations.
+- `A08:2025 Software or Data Integrity Failures`: mass assignment, unsafe update/webhook handling, unverified signed data, trusted client-controlled state.
+- `A09:2025 Security Logging & Alerting Failures`: missing audit trail, sensitive logs, lack of alertable authz/authn/security events.
+- `A10:2025 Mishandling of Exceptional Conditions`: fail-open errors, leaked stack traces/secrets, inconsistent rollback, exception path bypass.
 
 Also check AI/LLM surfaces when present: prompt injection, tool injection, data exfiltration through model output, untrusted tool arguments, unsafe generated code execution, and cost/resource abuse.
 

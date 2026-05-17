@@ -52,8 +52,15 @@ jobs:
         with:
           node-version: 22
 
-      - name: Install Claude Code CLI (pinned)
-        run: npm install -g '@anthropic-ai/claude-code@2.1.143'
+      - name: Read CLI version from package.json
+        id: cli_version
+        run: |
+          set -euo pipefail
+          version="$(python3 -c "import json; print(json.load(open('package.json'))['devDependencies']['@anthropic-ai/claude-code'])")"
+          echo "version=${version}" >> "$GITHUB_OUTPUT"
+
+      - name: Install Claude Code CLI (pinned via package.json)
+        run: npm install -g "@anthropic-ai/claude-code@${{ steps.cli_version.outputs.version }}"
 
       - name: claude --version
         run: claude --version

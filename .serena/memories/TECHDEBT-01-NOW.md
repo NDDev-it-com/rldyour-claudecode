@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-17
-Last commit: 12a2bdc chore(release): 0.4.0 polish - actuality + tests + upload-artifact v7
+Last commit: eb295c0 chore(release): bump VERSION + all 9 plugins to 0.4.1
 Scope: Serena memory sync, hook gates, fullrepo lifecycle, MCP pins, validation harness, current implementation risks
 Area: TECHDEBT
 -->
@@ -120,6 +120,8 @@ Open technical debt, implementation mistakes already fixed, and anti-regression 
 - D45. `smoke_serena_memory_taxonomy.sh` memory section completeness step (verification F-3, info 95, commit `5bd57ae`): `scripts/smoke_serena_memory_taxonomy.sh` gained a new step "memory section completeness (D20 + D21 invariants)" at lines 288-323. The step iterates `.serena/memories/*.md` when present in the current worktree and asserts: (1) every memory has `## Cross-References` (D20 invariant), (2) every memory has `## Source Of Truth` (D21 invariant), (3) every memory has `Last commit:` metadata. Fails the smoke with a per-file report if any invariant is missing. Verified at `scripts/smoke_serena_memory_taxonomy.sh` lines 288-323 at HEAD `5bd57ae`.
 - D46. `validate_marketplace.sh` inline rationale for `smoke_fullrepo_sync.sh` exclusion (verification F-5, info 75, commit `5bd57ae`): `scripts/validate_marketplace.sh` lines 157-165 now carry an inline comment explaining why `smoke_fullrepo_sync.sh` is intentionally NOT wired into the harness (R5 footgun: `--bootstrap-init` can silently overwrite in-flight agent-only edits before publish). Also includes architecture F-4 inline docstring in `_resolve_sibling_plugin_script` (lines 157-162 of `scripts/validate_agent_tools.py`) and architecture F-6 inline scope comment in `validate_agent_tools.py main()` (lines 202-221). Verified at `scripts/validate_marketplace.sh` lines 157-165 and `scripts/validate_agent_tools.py` lines 154-221 at HEAD `5bd57ae`.
 
+- D47. Validator gaps in `validate_skill_allowed_tools.py` (CONS-1, 2026-05-17, commit `a81fe4e`): two bugs found by review wave `2026-05-17T0948Z-12a2bdc`. (a) `TOOLS_BLOCK_RE` regex at `scripts/validate_skill_allowed_tools.py:31` required a trailing `\n` after every `allowed-tools` item, silently dropping the entire block when `allowed-tools:` was the last frontmatter key before `---` (no trailing newline). `plugins/rldyour-browser/skills/browser-validation/SKILL.md` hit this case; its MCP namespace was never validated even though the tool name was correct. Fix: changed `\n` to `\n?` making the trailing newline optional. (b) `split_mcp_ref` longest-plugin-prefix match returned `None` for refs whose plugin was absent from the marketplace, producing a generic "malformed MCP ref" error instead of a specific "unknown plugin X" message. Fix: added `rpartition("_")` fallback at `scripts/validate_skill_allowed_tools.py:82` so unknown-plugin refs still parse to `(plugin, server)` tuples and reach the proper error branch. Verified at `scripts/validate_skill_allowed_tools.py` lines 31 and 78-83 at HEAD `eb295c0`. CONS-2: `tests/conftest.py` `fake_repo` fixture lacked a `plugins/rldyour-mcps/.claude-plugin/plugin.json` stub, causing `validate_release_state.py` to fail with an unexpected error when iterating `plugins/*`. Fix: added minimal `plugin.json` stub and `rldyour-mcps` marketplace entry to the fixture (`tests/conftest.py:60-79` at HEAD `eb295c0`). Also fixed `validate_release_state.py:112` "not a git repository" warning reclassified from failures to info (`INFO ` prefix) and propagated optional `cwd: Path | None` to `_git`/`_head_sha`/`_tag_sha` helpers with `cwd=root` caller at `scripts/validate_release_state.py:40-53`. All 22 unit tests pass + 1 expected SKIP as of HEAD `eb295c0` (CI pytest GREEN, per CHANGELOG `[0.4.1]`). Behavior asserted by code at `scripts/validate_skill_allowed_tools.py:31,78-83`, `scripts/validate_release_state.py:40-53,112`, `tests/conftest.py:60-79`.
+
 ## Error Patterns To Avoid
 
 - Pattern: updating hook/skill/agent memory contracts without updating analyzer targets.
@@ -162,6 +164,7 @@ Open technical debt, implementation mistakes already fixed, and anti-regression 
 - Release record (D29 0.2.1 transport contract): [[RELEASE-01-VALIDATION]] `[0.2.1] - 2026-05-16`.
 - Release record (D29 0.2.2 transport hardening): [[RELEASE-01-VALIDATION]] `[0.2.2] - 2026-05-16`.
 - Release record (D39-D46 0.2.3 security/verification wave): [[RELEASE-01-VALIDATION]] `[0.2.3] - 2026-05-17`.
+- Release record (D47 0.4.1 validator gap closures): [[RELEASE-01-VALIDATION]] `[0.4.1] - 2026-05-17`.
 - Reviewer contract drift detection (D30): [[RELEASE-01-VALIDATION]] (validator wired into `scripts/validate_marketplace.sh`).
 - Loop guard fingerprint fixes (D31, D32): [[HOOKS-01-LIFECYCLE]] (Stop gate fingerprint contracts) and [[SERENA-01-MEMORY-SYNC]] (compound `.sync_marker` payload).
 - Non-dict payload surface fix (D33): [[SERENA-01-MEMORY-SYNC]] (`serena_memory_state.py` contracts).
