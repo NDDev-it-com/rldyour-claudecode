@@ -66,21 +66,18 @@ def find_skills() -> set[str]:
 def longest_consecutive_numbered_list(text: str) -> int:
     """Return the length of the longest run of consecutive numbered list items.
 
-    A run is broken by a blank line or any non-numbered-list line, mirroring
-    Markdown's notion of a single list block.
+    A run is broken by ANY non-numbered-list line, including blank lines.
+    Two adjacent numbered lists separated by a blank line count as two runs,
+    not one merged streak. This matches Markdown's notion of a tight list
+    block (per CommonMark: a blank line between list items terminates the
+    block unless the next item is also a list item with deeper indentation).
     """
     longest = 0
     current = 0
     for line in text.splitlines():
-        stripped = line.strip()
         if NUMBERED_LIST_ITEM_RE.match(line):
             current += 1
             longest = max(longest, current)
-        elif stripped == "":
-            # blank line - lists tolerate this, keep streak only if the next
-            # non-blank line is also a numbered item; we approximate by NOT
-            # resetting here, but resetting on the first non-list non-blank.
-            continue
         else:
             current = 0
     return longest
@@ -154,8 +151,10 @@ def main() -> int:
         failures = validate_command(cmd, skill_names)
         if failures:
             any_failure = True
+            # FAIL lines go to stderr for CI alert-channel consistency with
+            # peer validators (security review F-5).
             for msg in failures:
-                print(f"FAIL {rel}: {msg}")
+                print(f"FAIL {rel}: {msg}", file=sys.stderr)
         else:
             print(f"OK {rel} (≤ {MAX_COMMAND_BODY} chars, delegates to '{name}' skill)")
 
