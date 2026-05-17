@@ -22,8 +22,11 @@ from pathlib import Path
 # Matches scoped (`@scope/name@1.2.3`) AND unscoped (`name@1.2.3`) npm specs.
 # Requires the version segment to begin with a digit so flag-like tokens such
 # as `--from` or option values like `--python=3.13` are not misclassified.
+# Quality F-5 closure: leading char must be alphanumeric to reject
+# hyphen/underscore/dot-leading names like "-pkg@1.0" or ".hidden@1.0"
+# that npm itself rejects but the previous regex accepted.
 NPM_PIN_RE = re.compile(
-    r"^(?:@[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+|[A-Za-z0-9_.-]+)@[0-9][A-Za-z0-9_.+-]*$"
+    r"^(?:@[A-Za-z0-9][A-Za-z0-9_.-]*/[A-Za-z0-9][A-Za-z0-9_.-]*|[A-Za-z0-9][A-Za-z0-9_.-]*)@[0-9][A-Za-z0-9_.+-]*$"
 )
 
 # Host-binary MCP servers - their pin is not in `.mcp.json` `args` but in the
@@ -166,13 +169,36 @@ def main() -> int:
     mcp_summary: list[dict[str, object]] = []
     for name, cfg in mcp_servers.items():
         if cfg.get("type") == "http":
-            mcp_summary.append({"name": name, "transport": "http", "url": cfg.get("url")})
+            url = cfg.get("url")
+            if not url:
+                print(
+                    f"WARN release_manifest: HTTP server {name!r} has no url in .mcp.json",
+                    file=sys.stderr,
+                )
+            mcp_summary.append({"name": name, "transport": "http", "url": url})
             continue
 
         args_raw = cfg.get("args", [])
         args: list[str] = args_raw if isinstance(args_raw, list) else []
         pin = extract_pin(args)
         host_pin = host_binary_pins.get(name)
+        # Integration F-3 + Security F-10 closure: surface silent-null pins
+        # to stderr so operators see the gap during release builds rather
+        # than ship a manifest with `"pin": null` they did not expect.
+        if pin is None and host_pin is None:
+            print(
+                f"WARN release_manifest: server {name!r} has no extractable "
+                f"npm/uvx pin in args and no host_binary_pin in "
+                f"config/mcp-runtime-versions.env",
+                file=sys.stderr,
+            )
+        elif pin is None and host_pin is not None and host_pin.get("version") is None:
+            print(
+                f"WARN release_manifest: host-binary server {name!r} has "
+                f"version_env {host_pin.get('version_env')!r} but the env "
+                f"file does not define it",
+                file=sys.stderr,
+            )
         entry: dict[str, object] = {
             "name": name,
             "transport": cfg.get("type", "stdio"),
