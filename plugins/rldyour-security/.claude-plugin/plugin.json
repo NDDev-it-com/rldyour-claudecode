@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "rldyour-security",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "\u0411\u0435\u0437\u043e\u043f\u0430\u0441\u043d\u043e\u0441\u0442\u044c \u043f\u043e OWASP Top 10 2025 \u043f\u0440\u0438 \u0440\u0435\u0430\u043b\u0438\u0437\u0430\u0446\u0438\u0438 + \u0437\u0430\u0449\u0438\u0442\u043d\u044b\u0439 Mythos-style security review \u0447\u0435\u0440\u0435\u0437 /ry-sec-review. Skills-only auto-invoked guidance \u0434\u043b\u044f Claude Code.",
   "author": {
     "name": "rldyourmnd",

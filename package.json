@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/package.json",
   "name": "rldyour-claudecode",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "private": true,
   "description": "Personal Claude Code plugin marketplace. This package.json exists only to pin @anthropic-ai/claude-code (so Dependabot can track drift via npm ecosystem) and to provide a single source of truth for the CLI version used by CI. The repository itself has no Node.js source code.",
   "license": "MIT",
