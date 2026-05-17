@@ -109,6 +109,13 @@ else
   echo "SKIP scripts/validate_plugin_versions.py not yet present"
 fi
 
+step "Plugin ownership boundaries (mcp_owner + hook_owners + dependencies)"
+if [ -f scripts/validate_boundaries.py ]; then
+  python3 scripts/validate_boundaries.py
+else
+  echo "SKIP scripts/validate_boundaries.py not yet present"
+fi
+
 step "Instruction docs presence"
 if [ -f scripts/validate_instruction_docs.py ]; then
   python3 scripts/validate_instruction_docs.py --require-agent-docs

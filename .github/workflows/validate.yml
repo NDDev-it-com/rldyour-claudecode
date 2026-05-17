@@ -200,6 +200,9 @@ jobs:
       - name: Plugin version consistency
         run: python3 scripts/validate_plugin_versions.py
 
+      - name: Plugin ownership boundaries (mcp_owner + hook_owners + deps)
+        run: python3 scripts/validate_boundaries.py
+
       - name: MCP runtime version drift
         run: python3 scripts/check_mcp_runtime_versions.py
 
