@@ -52,9 +52,13 @@ jobs:
       - name: Run gitleaks detect (full history)
         run: |
           set -euo pipefail
+          # Digest-pinned per OWASP A03:2025 (security review F-1).
+          # Re-resolve via: curl -s https://hub.docker.com/v2/repositories/zricethezav/gitleaks/tags/v8.30.0/ | jq -r .digest
+          # Workspace mounted rw (was ro) so --report-path can actually write the SARIF artifact
+          # (security review F-2 fix - report-path write to :ro mount silently dropped output).
           docker run --rm \
-            -v "${{ github.workspace }}:/repo:ro" \
-            zricethezav/gitleaks:v8.30.0 \
+            -v "${{ github.workspace }}:/repo" \
+            zricethezav/gitleaks:v8.30.0@sha256:691af3c7c5a48b16f187ce3446d5f194838f91238f27270ed36eef6359a574d9 \
             detect \
               --source /repo \
               --redact \
@@ -62,6 +66,15 @@ jobs:
               --report-format sarif \
               --report-path /repo/gitleaks-report.sarif \
               --exit-code 1
+
+      - name: Upload SARIF artifact (always, for forensic review)
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # v4.6.2
+        with:
+          name: gitleaks-sarif-${{ github.run_id }}
+          path: gitleaks-report.sarif
+          if-no-files-found: ignore
+          retention-days: 30
 
       - name: Surface report on failure
         if: failure()

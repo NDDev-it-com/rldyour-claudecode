@@ -57,7 +57,16 @@ def extract_claims(text: str) -> dict[str, object]:
         block = match.group(1)
         try:
             data = yaml.safe_load(block)
-        except yaml.YAMLError:
+        except yaml.YAMLError as exc:
+            # Surface malformed sync_contract blocks to stderr per security
+            # review F-5 (PHILOSOPHY-01-QUALITY-FIRST "no swallowed errors"
+            # hard ban). The block is still skipped (control flow unchanged)
+            # but the operator gets a diagnostic instead of silent failure.
+            print(
+                f"validate_instruction_sync: malformed sync_contract YAML "
+                f"block (offset {match.start()}): {exc}",
+                file=sys.stderr,
+            )
             continue
         if isinstance(data, dict) and "claims" in data and isinstance(data["claims"], dict):
             for key, value in data["claims"].items():
