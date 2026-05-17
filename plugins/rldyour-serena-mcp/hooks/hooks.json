@@ -1,11 +1,13 @@
 {
+  "$schema": "../../../config/schemas/hooks.json",
   "hooks": {
     "UserPromptSubmit": [
       {
         "hooks": [
           {
             "type": "command",
-            "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/user_prompt_submit.sh",
+            "command": "bash",
+            "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/user_prompt_submit.sh"],
             "timeout": 5,
             "statusMessage": "Loading Serena workflow context"
           }
@@ -15,11 +17,12 @@
     "PreToolUse": [
       {
         "matcher": "Bash",
-        "if": "Bash(git commit*) Bash(git merge*) Bash(git cherry-pick*) Bash(git rebase*) Bash(git am*)",
         "hooks": [
           {
             "type": "command",
-            "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/prepare_auto_sync.sh",
+            "if": "Bash(git *)",
+            "command": "bash",
+            "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/prepare_auto_sync.sh"],
             "timeout": 5,
             "statusMessage": "Recording Serena auto-sync baseline"
           }
@@ -29,11 +32,12 @@
     "PostToolUse": [
       {
         "matcher": "Bash",
-        "if": "Bash(git commit*) Bash(git merge*) Bash(git cherry-pick*) Bash(git rebase*) Bash(git am*)",
         "hooks": [
           {
             "type": "command",
-            "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/mark_sync_required.sh",
+            "if": "Bash(git *)",
+            "command": "bash",
+            "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/mark_sync_required.sh"],
             "timeout": 5,
             "statusMessage": "Marking Serena sync needs"
           }
@@ -45,7 +49,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/stop_memory_sync.sh",
+            "command": "bash",
+            "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/stop_memory_sync.sh"],
             "timeout": 10,
             "statusMessage": "Checking Serena memory sync"
           }
