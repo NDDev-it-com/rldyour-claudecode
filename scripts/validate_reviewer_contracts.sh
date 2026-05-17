@@ -177,15 +177,21 @@ assert_agent_invariants() {
   #
   # Note: we deliberately do NOT forbid bare `>` because the agent
   # description prose contains many legitimate uses (`->`, `<= 30`, `>` quote).
+  # bash 3.2 (macOS system bash) tokenizes the heredoc body during initial
+  # parse even with single-quoted delimiter; backticks inside the body would
+  # trigger 'unexpected EOF while looking for matching backtick'. Use the
+  # \x60 hex escape inside the Python regex strings to keep the source ASCII
+  # and bash-3.2-parseable (cross-platform F-1 closure).
   local cleaned
   cleaned=$(python3 - "${agent_file}" <<'PY'
 import re
 import sys
 text = open(sys.argv[1], "r", encoding="utf-8").read()
-# Strip fenced code blocks (any language).
-text = re.sub(r"```[\s\S]*?```", "", text)
+# Strip fenced code blocks (any language). Three-backtick fences expressed
+# as \x60 trio to avoid the bash 3.2 heredoc tokenizer.
+text = re.sub(r"\x60\x60\x60[\s\S]*?\x60\x60\x60", "", text)
 # Strip inline backtick spans.
-text = re.sub(r"`[^`]*`", "", text)
+text = re.sub(r"\x60[^\x60]*\x60", "", text)
 sys.stdout.write(text)
 PY
   )
