@@ -75,7 +75,8 @@
               "name": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
               "version": {
                 "type": "string",
-                "description": "Optional semver constraint (e.g. '^0.5.0')."
+                "pattern": "^(?:[~^>=<]{0,2})?\\d+\\.\\d+\\.\\d+(?:-[0-9A-Za-z.-]+)?(?:\\+[0-9A-Za-z.-]+)?(?:\\s*(?:\\|\\||&&)\\s*(?:[~^>=<]{0,2})?\\d+\\.\\d+\\.\\d+(?:-[0-9A-Za-z.-]+)?(?:\\+[0-9A-Za-z.-]+)?)*$|^\\*$",
+                "description": "Optional semver constraint (e.g. '^0.5.0', '>=0.5.0', '*'). Pattern blocks shell-injection chars per security F-8."
               }
             },
             "description": "Plugin name plus optional version constraint."
