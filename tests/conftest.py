@@ -142,6 +142,11 @@ def patch_repo_root(monkeypatch: pytest.MonkeyPatch, fake_repo: Path) -> Path:
         "validate_json_schemas.py",
         "release_manifest.py",
         "validate_plugin_versions.py",
+        "validate_instruction_docs.py",
+        "validate_skill_routing.py",
+        "validate_boundaries.py",
+        "check_mcp_runtime_versions.py",
+        "probe_mcp_upstream.py",
         "_mcp_parse.py",
     ]:
         src = SCRIPTS_DIR / name
