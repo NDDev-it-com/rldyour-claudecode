@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-17
-Last commit: 924256c chore(release): bump VERSION + all 9 plugins to 0.4.3
+Last commit: 6f07fe8 chore(release): bump VERSION + all 9 plugins to 0.4.4
 Scope: .serena/memories/**, plugins/rldyour-serena-mcp/scripts/analyze_sync_scope.py, plugins/rldyour-serena-mcp/skills/serena-memory-sync/SKILL.md, plugins/rldyour-serena-mcp/agents/flow-memory-sync.md, scripts/smoke_serena_memory_taxonomy.sh, AGENTS.md, .claude/CLAUDE.md
 Area: CORE
 -->
@@ -105,7 +105,7 @@ All 18 active memories are catalogued in the Active Memory Map above. This index
 
 - `python3 plugins/rldyour-serena-mcp/scripts/analyze_sync_scope.py --from-ref HEAD --to-ref HEAD`: proves empty diffs produce no memory targets while still exposing the taxonomy.
 - `bash scripts/smoke_serena_memory_taxonomy.sh`: proves analyzer schema/targets, agent-instruction sync relevance, nested memory freshness, Stop advisory taxonomy, fullrepo-managed acknowledgement.
-- `python3 plugins/rldyour-serena-mcp/scripts/serena_memory_state.py`: proves freshness state and recursive memory scanning. Should report `memory_count: 18`, `is_current: True`, `memory_match_reason: direct-head-reference` at HEAD `924256c`.
+- `python3 plugins/rldyour-serena-mcp/scripts/serena_memory_state.py`: proves freshness state and recursive memory scanning. Should report `memory_count: 18`, `is_current: True`, `memory_match_reason: direct-head-reference` at HEAD `6f07fe8`.
 - `python3 scripts/validate_instruction_docs.py --require-agent-docs`: proves AGENTS.md and `.claude/CLAUDE.md` are present and within policy.
 - `python3 scripts/validate_agent_tools.py`: proves agent `tools:` allowlist invariants ([[TECHDEBT-01-NOW]] R4 mitigation).
 - `bash scripts/validate_marketplace.sh`: full harness covering all of the above plus frontmatter/JSON/Python/shell syntax checks and MCP runtime drift.

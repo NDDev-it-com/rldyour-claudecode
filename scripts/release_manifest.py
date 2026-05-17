@@ -2,8 +2,9 @@
 """release_manifest.py - emit a single-snapshot release manifest as JSON.
 
 Combines the marketplace VERSION file, every plugin.json (`name`+`version`),
-the active MCP server pins from .mcp.json, the current `main` HEAD SHA, and the
-contents of CHANGELOG.md's `[Unreleased]` section into a machine-readable
+the active MCP server pins from `.mcp.json`, host-binary pins from
+`config/mcp-runtime-versions.env`, the current `main` HEAD SHA, and the
+contents of `CHANGELOG.md`'s `[Unreleased]` section into a machine-readable
 manifest. Useful for tagging releases (`claude plugin tag --push`), auditing
 shipped versions, and building release-notes evidence.
 
@@ -18,9 +19,29 @@ import subprocess
 import sys
 from pathlib import Path
 
+# Matches scoped (`@scope/name@1.2.3`) AND unscoped (`name@1.2.3`) npm specs.
+# Requires the version segment to begin with a digit so flag-like tokens such
+# as `--from` or option values like `--python=3.13` are not misclassified.
+NPM_PIN_RE = re.compile(
+    r"^(?:@[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+|[A-Za-z0-9_.-]+)@[0-9][A-Za-z0-9_.+-]*$"
+)
+
+# Host-binary MCP servers - their pin is not in `.mcp.json` `args` but in the
+# `config/mcp-runtime-versions.env` file (system toolchain binaries).
+HOST_BINARY_SERVERS: dict[str, dict[str, str]] = {
+    "github": {"binary": "github-mcp-server", "version_env": "GITHUB_MCP_SERVER_VERSION"},
+    "dart-flutter": {"binary": "dart", "version_env": "DART_SDK_VERSION"},
+}
+
 
 def git(*args: str) -> str:
-    proc = subprocess.run(["git", *args], check=False, capture_output=True, text=True)
+    proc = subprocess.run(
+        ["git", *args],
+        check=False,
+        capture_output=True,
+        text=True,
+        timeout=10,
+    )
     return proc.stdout.strip()
 
 
@@ -43,6 +64,59 @@ def extract_unreleased_section(changelog_text: str) -> str:
     return match.group(1).strip()
 
 
+def extract_pin(args: list[str]) -> str | None:
+    """Extract the version pin from a list of stdio MCP `args`.
+
+    Recognises three forms produced by `bunx`/`uvx`/native commands:
+      1. Python-style `package==1.2.3` (uvx style).
+      2. Scoped npm `@scope/name@1.2.3` (`bunx @anthropic-ai/mcp@1`).
+      3. Unscoped npm `name@1.2.3` (`bunx chrome-devtools-mcp@0.26.0`).
+
+    Returns the first matching token or `None` if none match.
+    """
+    for arg in args:
+        if "==" in arg:
+            return arg
+        if NPM_PIN_RE.match(arg):
+            return arg
+    return None
+
+
+def parse_env_file(path: Path) -> dict[str, str]:
+    """Parse a simple KEY=VALUE env file. Lines starting with `#` and blank
+    lines are skipped. Values are not unquoted (we own this file). Returns
+    an empty dict if the file is absent."""
+    result: dict[str, str] = {}
+    if not path.is_file():
+        return result
+    for raw_line in path.read_text(encoding="utf-8").splitlines():
+        line = raw_line.strip()
+        if not line or line.startswith("#"):
+            continue
+        if "=" not in line:
+            continue
+        key, _, value = line.partition("=")
+        result[key.strip()] = value.strip()
+    return result
+
+
+def build_host_binary_pins(env_values: dict[str, str]) -> dict[str, dict[str, str | None]]:
+    """Return the host-binary pin block: { server_name: {binary, version_env, version} }.
+
+    Pulls the version string from `env_values[version_env]`. When the env file
+    is missing or the key is absent, `version` is `None` so consumers can
+    distinguish "no pin file" from "empty pin".
+    """
+    pins: dict[str, dict[str, str | None]] = {}
+    for server, meta in HOST_BINARY_SERVERS.items():
+        pins[server] = {
+            "binary": meta["binary"],
+            "version_env": meta["version_env"],
+            "version": env_values.get(meta["version_env"]),
+        }
+    return pins
+
+
 def main() -> int:
     root = Path(__file__).resolve().parent.parent
 
@@ -59,16 +133,21 @@ def main() -> int:
     marketplace = json.loads(marketplace_path.read_text(encoding="utf-8"))
 
     mcp_path = root / "plugins" / "rldyour-mcps" / ".mcp.json"
-    mcp_servers: dict[str, dict] = {}
+    mcp_servers: dict[str, dict[str, object]] = {}
     if mcp_path.is_file():
         mcp = json.loads(mcp_path.read_text(encoding="utf-8"))
         mcp_servers = mcp.get("mcpServers", {})
 
-    plugins: list[dict] = []
+    env_path = root / "config" / "mcp-runtime-versions.env"
+    env_values = parse_env_file(env_path)
+    host_binary_pins = build_host_binary_pins(env_values)
+
+    plugins: list[dict[str, object]] = []
     for entry in marketplace.get("plugins", []):
         name = entry.get("name")
-        source = entry.get("source", "")
-        version = None
+        source_raw = entry.get("source", "")
+        source = source_raw if isinstance(source_raw, str) else ""
+        version: str | None = None
         if source.startswith("./"):
             plugin_manifest = (root / source / ".claude-plugin" / "plugin.json").resolve()
             if plugin_manifest.is_file():
@@ -84,22 +163,27 @@ def main() -> int:
             }
         )
 
-    mcp_summary: list[dict] = []
+    mcp_summary: list[dict[str, object]] = []
     for name, cfg in mcp_servers.items():
         if cfg.get("type") == "http":
             mcp_summary.append({"name": name, "transport": "http", "url": cfg.get("url")})
-        else:
-            args = cfg.get("args", [])
-            pin = next((a for a in args if "==" in a or (a.startswith("@") and "@" in a[1:])), None)
-            mcp_summary.append(
-                {
-                    "name": name,
-                    "transport": cfg.get("type", "stdio"),
-                    "command": cfg.get("command"),
-                    "pin": pin,
-                    "always_load": bool(cfg.get("alwaysLoad")),
-                }
-            )
+            continue
+
+        args_raw = cfg.get("args", [])
+        args: list[str] = args_raw if isinstance(args_raw, list) else []
+        pin = extract_pin(args)
+        host_pin = host_binary_pins.get(name)
+        entry: dict[str, object] = {
+            "name": name,
+            "transport": cfg.get("type", "stdio"),
+            "command": cfg.get("command"),
+            "pin": pin,
+            "always_load": bool(cfg.get("alwaysLoad")),
+        }
+        if host_pin is not None:
+            entry["host_binary_pin"] = host_pin
+            entry["pin_source"] = "config/mcp-runtime-versions.env"
+        mcp_summary.append(entry)
 
     head_full = git("rev-parse", "HEAD")
     head_short = head_full[:7] if head_full else ""
@@ -109,7 +193,7 @@ def main() -> int:
     changelog_text = read_text(root / "CHANGELOG.md")
     unreleased = extract_unreleased_section(changelog_text)
 
-    manifest = {
+    manifest: dict[str, object] = {
         "marketplace": {
             "name": marketplace.get("name"),
             "version": marketplace_version,
@@ -125,6 +209,8 @@ def main() -> int:
         },
         "plugins": plugins,
         "mcp_servers": mcp_summary,
+        "host_binary_pins": host_binary_pins,
+        "claude_code_min_version": env_values.get("CLAUDE_CODE_MIN_VERSION"),
         "changelog_unreleased": unreleased,
     }
 

@@ -18,6 +18,7 @@ def _run(fake_repo: Path) -> subprocess.CompletedProcess[str]:
         text=True,
         check=False,
         cwd=fake_repo,
+        timeout=30,
     )
 
 

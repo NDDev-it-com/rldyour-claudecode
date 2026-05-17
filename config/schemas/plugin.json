@@ -4,10 +4,15 @@
   "title": "Claude Code Plugin Manifest",
   "description": "Validates plugins/*/.claude-plugin/plugin.json. Per Claude Code docs the manifest is optional; only `name` is required when present. All other fields here are documented metadata or component-path overrides.",
   "type": "object",
-  "required": ["name"],
+  "required": [
+    "name"
+  ],
   "additionalProperties": false,
   "properties": {
-    "$schema": { "type": "string", "format": "uri" },
+    "$schema": {
+      "type": "string",
+      "format": "uri-reference"
+    },
     "name": {
       "type": "string",
       "pattern": "^[a-z][a-z0-9-]*$",
@@ -17,43 +22,136 @@
       "type": "string",
       "pattern": "^\\d+\\.\\d+\\.\\d+(?:-[0-9A-Za-z.-]+)?(?:\\+[0-9A-Za-z.-]+)?$"
     },
-    "description": { "type": "string" },
+    "description": {
+      "type": "string"
+    },
     "author": {
       "type": "object",
-      "required": ["name"],
+      "required": [
+        "name"
+      ],
       "additionalProperties": false,
       "properties": {
-        "name": { "type": "string" },
-        "url": { "type": "string", "format": "uri" }
+        "name": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri"
+        }
       }
     },
-    "license": { "type": "string" },
-    "homepage": { "type": "string", "format": "uri" },
-    "repository": { "type": "string", "format": "uri" },
+    "license": {
+      "type": "string"
+    },
+    "homepage": {
+      "type": "string",
+      "format": "uri"
+    },
+    "repository": {
+      "type": "string",
+      "format": "uri"
+    },
     "keywords": {
       "type": "array",
-      "items": { "type": "string" }
+      "items": {
+        "type": "string"
+      }
     },
     "dependencies": {
       "type": "array",
-      "items": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
-      "description": "List of plugin names this plugin depends on (resolved by `claude plugin install`)."
+      "items": {
+        "oneOf": [
+          {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]*$",
+            "description": "Plugin name only."
+          },
+          {
+            "type": "object",
+            "required": ["name"],
+            "additionalProperties": false,
+            "properties": {
+              "name": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+              "version": {
+                "type": "string",
+                "description": "Optional semver constraint (e.g. '^0.5.0')."
+              }
+            },
+            "description": "Plugin name plus optional version constraint."
+          }
+        ]
+      },
+      "description": "List of plugin names (or {name, version} objects) this plugin depends on (resolved by `claude plugin install`)."
     },
-    "skills": { "type": "array", "items": { "type": "string" } },
-    "commands": { "type": "array", "items": { "type": "string" } },
-    "agents": { "type": "array", "items": { "type": "string" } },
-    "hooks": { "type": "array", "items": { "type": "string" } },
-    "mcpServers": { "type": ["array", "object"] },
-    "lspServers": { "type": ["array", "object"] },
-    "outputStyles": { "type": "array", "items": { "type": "string" } },
-    "userConfig": { "type": "object" },
-    "channels": { "type": ["array", "object"] },
+    "skills": {
+      "oneOf": [
+        { "type": "string" },
+        { "type": "array", "items": { "type": "string" } }
+      ],
+      "description": "Component path override: string replaces the default `./skills/`; array adds to default."
+    },
+    "commands": {
+      "oneOf": [
+        { "type": "string" },
+        { "type": "array", "items": { "type": "string" } }
+      ]
+    },
+    "agents": {
+      "oneOf": [
+        { "type": "string" },
+        { "type": "array", "items": { "type": "string" } }
+      ]
+    },
+    "hooks": {
+      "oneOf": [
+        { "type": "string" },
+        { "type": "array", "items": { "type": "string" } }
+      ]
+    },
+    "mcpServers": {
+      "type": [
+        "array",
+        "object"
+      ]
+    },
+    "lspServers": {
+      "type": [
+        "array",
+        "object"
+      ]
+    },
+    "outputStyles": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "userConfig": {
+      "type": "object"
+    },
+    "channels": {
+      "type": [
+        "array",
+        "object"
+      ]
+    },
     "experimental": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "themes": { "type": ["array", "object"] },
-        "monitors": { "type": ["array", "object"] }
+        "themes": {
+          "type": [
+            "array",
+            "object"
+          ]
+        },
+        "monitors": {
+          "type": [
+            "array",
+            "object"
+          ]
+        }
       },
       "description": "experimental.themes and experimental.monitors are the v2.1.129+ canonical home for these features (top-level still works with a deprecation warning)."
     }

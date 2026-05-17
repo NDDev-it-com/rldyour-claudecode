@@ -7,34 +7,56 @@
   "patternProperties": {
     "^[a-z][a-z0-9_-]*$": {
       "type": "object",
-      "required": ["command", "extensionToLanguage"],
+      "required": [
+        "command",
+        "extensionToLanguage"
+      ],
       "additionalProperties": false,
       "properties": {
-        "command": { "type": "string", "minLength": 1 },
+        "command": {
+          "type": "string",
+          "minLength": 1
+        },
         "args": {
           "type": "array",
-          "items": { "type": "string" }
+          "items": {
+            "type": "string"
+          }
         },
         "extensionToLanguage": {
           "type": "object",
           "minProperties": 1,
           "patternProperties": {
-            "^\\.[A-Za-z0-9+]+$": { "type": "string", "minLength": 1 }
+            "^\\.[A-Za-z0-9+]+$": {
+              "type": "string",
+              "minLength": 1
+            }
           },
           "additionalProperties": false,
           "description": "Maps file extension (with leading dot) to LSP language id."
         },
         "transport": {
           "type": "string",
-          "enum": ["stdio", "socket"]
+          "enum": [
+            "stdio",
+            "socket"
+          ]
         },
         "env": {
           "type": "object",
-          "additionalProperties": { "type": "string" }
+          "additionalProperties": {
+            "type": "string"
+          }
         },
-        "initializationOptions": { "type": "object" },
-        "settings": { "type": "object" },
-        "workspaceFolder": { "type": "string" },
+        "initializationOptions": {
+          "type": "object"
+        },
+        "settings": {
+          "type": "object"
+        },
+        "workspaceFolder": {
+          "type": "string"
+        },
         "startupTimeout": {
           "type": "integer",
           "minimum": 1000,
@@ -44,7 +66,9 @@
           "type": "integer",
           "minimum": 1000
         },
-        "restartOnCrash": { "type": "boolean" },
+        "restartOnCrash": {
+          "type": "boolean"
+        },
         "maxRestarts": {
           "type": "integer",
           "minimum": 0,

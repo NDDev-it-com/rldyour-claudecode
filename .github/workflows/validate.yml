@@ -241,6 +241,17 @@ jobs:
       - name: Skill allowed-tools server-namespace check
         run: python3 scripts/validate_skill_allowed_tools.py
 
+      - name: Command vs skill drift (thin-wrapper invariant)
+        # Verification F-1 closure: enforce the same thin-wrapper invariant
+        # on every push/PR that validate_marketplace.sh enforces locally.
+        run: python3 scripts/validate_command_skill_drift.py
+
+      - name: Instruction docs presence (AGENTS.md + .claude/CLAUDE.md)
+        # Verification F-4 closure: enforce AGENTS.md / .claude/CLAUDE.md
+        # presence + line budgets on every push/PR (previously only checked
+        # in release.yml via validate_marketplace.sh).
+        run: python3 scripts/validate_instruction_docs.py --require-agent-docs
+
       - name: Text hygiene (em-dashes + BIDI controls)
         run: python3 scripts/validate_text_hygiene.py
 

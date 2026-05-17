@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-17
-Last commit: 924256c chore(release): bump VERSION + all 9 plugins to 0.4.3
+Last commit: b5e78d4 chore(release): bump VERSION + all 9 plugins to 0.5.0
 Scope: .claude-plugin/marketplace.json, plugins/*/.claude-plugin/plugin.json, README.md, AGENTS.md
 Area: CORE
 -->
@@ -19,11 +19,11 @@ Current business logic and architecture of the `rldyour-claude` marketplace. The
 - `README.md`: owner-facing catalog, control model, install/check commands, active per-plugin versions.
 - `AGENTS.md`: concise cross-tool project rules and boundaries.
 
-## Current State (HEAD `924256c`)
+## Current State (HEAD `b5e78d4`)
 
-- **VERSION**: `0.4.3` (release boundary, verified at `VERSION` file at HEAD `924256c`).
+- **VERSION**: `0.5.0` (release boundary, verified at `VERSION` file at HEAD `b5e78d4`).
 - **9 plugins** verified at HEAD from `.claude-plugin/marketplace.json`: `rldyour-mcps`, `rldyour-explore`, `rldyour-serena-mcp`, `rldyour-security`, `rldyour-browser`, `rldyour-design`, `rldyour-lsps`, `rldyour-flow`, `rldyour-rules`.
-- **Per-plugin versions** (verified via `python3 scripts/validate_plugin_versions.py` at HEAD `924256c`): all 9 plugins at `0.4.3`.
+- **Per-plugin versions** (verified via `python3 scripts/validate_plugin_versions.py` at HEAD `b5e78d4`): all 9 plugins at `0.5.0`.
 - **Component totals**: 32 skills, 9 slash commands, 8 subagents, 8 hook scripts in 2 hook manifests, 12 plugin-owned scripts, 16 references.
 - The owner decides what is enabled. Repository docs state nothing is treated as enabled or correct unless explicitly decided by the owner.
 

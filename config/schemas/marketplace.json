@@ -4,10 +4,16 @@
   "title": "Claude Code Plugin Marketplace Manifest",
   "description": "Validates .claude-plugin/marketplace.json against the rldyour-claudecode contract. Tracks Claude Code canonical fields plus repo-specific invariants.",
   "type": "object",
-  "required": ["name", "plugins"],
+  "required": [
+    "name",
+    "plugins"
+  ],
   "additionalProperties": false,
   "properties": {
-    "$schema": { "type": "string", "format": "uri" },
+    "$schema": {
+      "type": "string",
+      "format": "uri-reference"
+    },
     "name": {
       "type": "string",
       "pattern": "^[a-z][a-z0-9-]*$",
@@ -15,15 +21,27 @@
     },
     "owner": {
       "type": "object",
-      "required": ["name"],
+      "required": [
+        "name"
+      ],
       "additionalProperties": false,
       "properties": {
-        "name": { "type": "string" },
-        "email": { "type": "string", "format": "email" },
-        "url": { "type": "string", "format": "uri" }
+        "name": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string",
+          "format": "email"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri"
+        }
       }
     },
-    "description": { "type": "string" },
+    "description": {
+      "type": "string"
+    },
     "metadata": {
       "type": "object",
       "additionalProperties": false,
@@ -39,15 +57,24 @@
       "minItems": 1,
       "items": {
         "type": "object",
-        "required": ["name", "source", "version"],
+        "required": [
+          "name",
+          "source",
+          "version"
+        ],
         "additionalProperties": false,
         "properties": {
-          "name": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+          "name": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]*$"
+          },
           "source": {
             "type": "string",
             "description": "Path relative to the marketplace root (e.g. './plugins/rldyour-mcps')."
           },
-          "description": { "type": "string" },
+          "description": {
+            "type": "string"
+          },
           "version": {
             "type": "string",
             "pattern": "^\\d+\\.\\d+\\.\\d+(?:-[0-9A-Za-z.-]+)?(?:\\+[0-9A-Za-z.-]+)?$",
@@ -55,16 +82,28 @@
           },
           "author": {
             "type": "object",
-            "required": ["name"],
+            "required": [
+              "name"
+            ],
             "additionalProperties": false,
-            "properties": { "name": { "type": "string" } }
+            "properties": {
+              "name": {
+                "type": "string"
+              }
+            }
           },
-          "category": { "type": "string" },
+          "category": {
+            "type": "string"
+          },
           "tags": {
             "type": "array",
-            "items": { "type": "string" }
+            "items": {
+              "type": "string"
+            }
           },
-          "license": { "type": "string" }
+          "license": {
+            "type": "string"
+          }
         }
       }
     }
