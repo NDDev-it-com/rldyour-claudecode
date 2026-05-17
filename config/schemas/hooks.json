@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/nddev-it-com/rldyour-claudecode/blob/main/config/schemas/hooks.json",
+  "title": "Claude Code Hooks Manifest",
+  "description": "Validates plugins/*/hooks/hooks.json (only rldyour-flow and rldyour-serena-mcp may declare this file per AGENTS.md). Mirrors the canonical Claude Code hooks event surface; new events can be added as they appear in code.claude.com/docs/en/hooks.",
+  "type": "object",
+  "required": ["hooks"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string", "format": "uri" },
+    "hooks": {
+      "type": "object",
+      "additionalProperties": false,
+      "patternProperties": {
+        "^(SessionStart|Setup|UserPromptSubmit|UserPromptExpansion|PreToolUse|PermissionRequest|PermissionDenied|PostToolUse|PostToolUseFailure|PostToolBatch|Notification|SubagentStart|SubagentStop|TaskCreated|TaskCompleted|Stop|StopFailure|TeammateIdle|InstructionsLoaded|ConfigChange|CwdChanged|FileChanged|WorktreeCreate|WorktreeRemove|PreCompact|PostCompact|Elicitation|ElicitationResult|SessionEnd)$": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["hooks"],
+            "additionalProperties": false,
+            "properties": {
+              "matcher": { "type": "string" },
+              "if": {
+                "type": "string",
+                "description": "v2.1.118+. Declarative filter (e.g. 'Bash(git commit*)') so the hook only fires for matching tool calls."
+              },
+              "hooks": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": ["type"],
+                  "additionalProperties": false,
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "enum": ["command", "http", "mcp_tool", "prompt", "agent"]
+                    },
+                    "command": { "type": "string" },
+                    "url": { "type": "string", "format": "uri" },
+                    "prompt": { "type": "string" },
+                    "agent": { "type": "string" },
+                    "timeout": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "description": "Seconds; Claude Code default is 60."
+                    },
+                    "statusMessage": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

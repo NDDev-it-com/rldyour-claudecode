@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/nddev-it-com/rldyour-claudecode/blob/main/config/schemas/mcp.json",
+  "title": "Claude Code MCP Servers Manifest",
+  "description": "Validates plugins/rldyour-mcps/.mcp.json (the single-owner transport file). Two server kinds: stdio (command + args, optional env, optional alwaysLoad) and http (type=http, url, optional headers/env). Per AGENTS.md, only rldyour-mcps may declare this file.",
+  "type": "object",
+  "required": ["mcpServers"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string", "format": "uri" },
+    "mcpServers": {
+      "type": "object",
+      "patternProperties": {
+        "^[a-z][a-z0-9-]*$": {
+          "oneOf": [
+            { "$ref": "#/$defs/stdioServer" },
+            { "$ref": "#/$defs/httpServer" }
+          ]
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "$defs": {
+    "stdioServer": {
+      "type": "object",
+      "required": ["command"],
+      "additionalProperties": false,
+      "properties": {
+        "command": { "type": "string", "minLength": 1 },
+        "args": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "env": {
+          "type": "object",
+          "additionalProperties": { "type": "string" },
+          "description": "${VAR} expansion supported."
+        },
+        "alwaysLoad": {
+          "type": "boolean",
+          "description": "v2.1.121+. Eager-load this MCP server at session start instead of on-demand."
+        }
+      }
+    },
+    "httpServer": {
+      "type": "object",
+      "required": ["type", "url"],
+      "additionalProperties": false,
+      "properties": {
+        "type": { "const": "http" },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "pattern": "^https://",
+          "description": "MCP Streamable HTTP transport requires HTTPS."
+        },
+        "headers": {
+          "type": "object",
+          "additionalProperties": { "type": "string" }
+        },
+        "env": {
+          "type": "object",
+          "additionalProperties": { "type": "string" }
+        },
+        "alwaysLoad": { "type": "boolean" }
+      }
+    }
+  }
+}

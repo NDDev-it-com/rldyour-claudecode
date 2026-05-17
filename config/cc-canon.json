@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "_description": "Claude Code canonical terminology database for validate_docs_canon.py. Update when Claude Code introduces new settings, deprecates names, or changes version floors. Verified date is recorded so downstream readers can judge staleness.",
+  "verified_on": "2026-05-17",
+  "cc_version_at_verification": "2.1.143",
+  "forbidden_tokens": {
+    "skillListingMaxDescChars": "maxSkillDescriptionChars"
+  },
+  "version_floors": {
+    "maxSkillDescriptionChars": {
+      "floor": "v2.1.105+",
+      "wrong_floors": ["v2.1.128", "v2.1.129"]
+    },
+    "skillListingBudgetFraction": {
+      "floor": "v2.1.105+",
+      "wrong_floors": ["v2.1.128", "v2.1.129"]
+    },
+    "skillOverrides": {
+      "floor": "v2.1.129+",
+      "wrong_floors": ["v2.1.105"]
+    },
+    "alwaysLoad": {
+      "floor": "v2.1.121+",
+      "wrong_floors": ["v2.1.111", "v2.1.118"]
+    },
+    "claude plugin tag": {
+      "floor": "v2.1.118+",
+      "wrong_floors": ["v2.1.119", "v2.1.120"]
+    },
+    "experimental.themes": {
+      "floor": "v2.1.129+",
+      "wrong_floors": []
+    },
+    "experimental.monitors": {
+      "floor": "v2.1.129+",
+      "wrong_floors": []
+    }
+  },
+  "hook_events": [
+    "SessionStart", "Setup", "UserPromptSubmit", "UserPromptExpansion",
+    "PreToolUse", "PermissionRequest", "PermissionDenied",
+    "PostToolUse", "PostToolUseFailure", "PostToolBatch",
+    "Notification", "SubagentStart", "SubagentStop",
+    "TaskCreated", "TaskCompleted",
+    "Stop", "StopFailure",
+    "TeammateIdle", "InstructionsLoaded",
+    "ConfigChange", "CwdChanged", "FileChanged",
+    "WorktreeCreate", "WorktreeRemove",
+    "PreCompact", "PostCompact",
+    "Elicitation", "ElicitationResult",
+    "SessionEnd"
+  ],
+  "hook_handler_types": ["command", "http", "mcp_tool", "prompt", "agent"],
+  "mcp_transports_canonical": ["stdio", "http"],
+  "mcp_transports_deprecated": ["sse"],
+  "owasp_top_10_2025": [
+    "A01:2025 Broken Access Control",
+    "A02:2025 Security Misconfiguration",
+    "A03:2025 Software Supply Chain Failures",
+    "A04:2025 Cryptographic Failures",
+    "A05:2025 Injection",
+    "A06:2025 Insecure Design",
+    "A07:2025 Authentication Failures",
+    "A08:2025 Software or Data Integrity Failures",
+    "A09:2025 Security Logging and Alerting Failures",
+    "A10:2025 Mishandling of Exceptional Conditions"
+  ]
+}
