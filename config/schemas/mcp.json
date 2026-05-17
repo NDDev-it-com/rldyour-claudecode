@@ -4,17 +4,26 @@
   "title": "Claude Code MCP Servers Manifest",
   "description": "Validates plugins/rldyour-mcps/.mcp.json (the single-owner transport file). Two server kinds: stdio (command + args, optional env, optional alwaysLoad) and http (type=http, url, optional headers/env). Per AGENTS.md, only rldyour-mcps may declare this file.",
   "type": "object",
-  "required": ["mcpServers"],
+  "required": [
+    "mcpServers"
+  ],
   "additionalProperties": false,
   "properties": {
-    "$schema": { "type": "string", "format": "uri" },
+    "$schema": {
+      "type": "string",
+      "format": "uri-reference"
+    },
     "mcpServers": {
       "type": "object",
       "patternProperties": {
         "^[a-z][a-z0-9-]*$": {
           "oneOf": [
-            { "$ref": "#/$defs/stdioServer" },
-            { "$ref": "#/$defs/httpServer" }
+            {
+              "$ref": "#/$defs/stdioServer"
+            },
+            {
+              "$ref": "#/$defs/httpServer"
+            }
           ]
         }
       },
@@ -24,17 +33,26 @@
   "$defs": {
     "stdioServer": {
       "type": "object",
-      "required": ["command"],
+      "required": [
+        "command"
+      ],
       "additionalProperties": false,
       "properties": {
-        "command": { "type": "string", "minLength": 1 },
+        "command": {
+          "type": "string",
+          "minLength": 1
+        },
         "args": {
           "type": "array",
-          "items": { "type": "string" }
+          "items": {
+            "type": "string"
+          }
         },
         "env": {
           "type": "object",
-          "additionalProperties": { "type": "string" },
+          "additionalProperties": {
+            "type": "string"
+          },
           "description": "${VAR} expansion supported."
         },
         "alwaysLoad": {
@@ -45,10 +63,15 @@
     },
     "httpServer": {
       "type": "object",
-      "required": ["type", "url"],
+      "required": [
+        "type",
+        "url"
+      ],
       "additionalProperties": false,
       "properties": {
-        "type": { "const": "http" },
+        "type": {
+          "const": "http"
+        },
         "url": {
           "type": "string",
           "format": "uri",
@@ -57,13 +80,19 @@
         },
         "headers": {
           "type": "object",
-          "additionalProperties": { "type": "string" }
+          "additionalProperties": {
+            "type": "string"
+          }
         },
         "env": {
           "type": "object",
-          "additionalProperties": { "type": "string" }
+          "additionalProperties": {
+            "type": "string"
+          }
         },
-        "alwaysLoad": { "type": "boolean" }
+        "alwaysLoad": {
+          "type": "boolean"
+        }
       }
     }
   }
