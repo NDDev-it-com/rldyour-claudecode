@@ -4,7 +4,25 @@ Personal Claude Code plugin marketplace by `rldyourmnd`. The repository ships ni
 
 This `AGENTS.md` is the concise root project-instruction file for any AI agent working in this repository - cross-tool standard governed by the Linux Foundation Agentic AI Foundation (AAIF) since 2025-12-09 (see https://agents.md/). The deep Claude Code-native memory lives in `./.claude/CLAUDE.md` and contains subagent matrix, hook canon, skill-listing budget, frontmatter conventions, and Don't/Done rules that other AI tools don't need.
 
-<!-- Maintainer note (HTML comments are not parsed by most AI tools): Anthropic's claude-plugins-official marketplace ships `.claude-plugin/marketplace.json` + 8+ first-party plugins (pr-review-toolkit, feature-dev, hookify, ralph-loop, security-guidance, plugin-dev, etc.) but no root AGENTS.md or CLAUDE.md (verified 2026-05-15). Our two-file split is justified by cross-tool ambition (AGENTS.md is read by 30+ tools / 60k+ repos per agents.md spec, May 2026) plus Claude Code-deep specifics. Both files dual-purpose: full information for each agent class, no `@import` redirection. Keep this file under 200 lines. -->
+<!-- Maintainer note (HTML comments are not parsed by most AI tools): Anthropic's claude-plugins-official marketplace ships `.claude-plugin/marketplace.json` + 30+ first-party plugins (pr-review-toolkit, feature-dev, hookify, ralph-loop, security-guidance, plugin-dev + LSP set + more, live snapshot 2026-05-17) but no root AGENTS.md or CLAUDE.md. Our two-file split is justified by cross-tool ambition (AGENTS.md is read by 30+ tools / 60k+ repos per agents.md spec, May 2026) plus Claude Code-deep specifics. Both files dual-purpose: full information for each agent class, no `@import` redirection. Keep this file under 200 lines. -->
+
+<!-- sync_contract:
+claims:
+  mcp_owner: rldyour-mcps
+  hook_owners: [rldyour-flow, rldyour-serena-mcp]
+  lsp_owner: rldyour-lsps
+  reviewer_transport_marker: RLDYOUR_REPORT_EOF
+  reviewer_report_dir_template: ".serena/reviews/<run_id>/"
+  reviewer_run_id_format: "<UTC-ISO-compact>-<git-short-sha>"
+  claude_code_min_version: "2.1.143"
+  skill_listing_budget_fraction: 0.04
+  max_skill_description_chars: 1536
+  fullrepo_branch: fullrepo
+  plugin_count: 9
+  skill_count: 32
+  command_count: 9
+  subagent_count: 8
+-->
 
 
 ## Source Of Truth
@@ -49,10 +67,10 @@ OpenAI Codex CLI reads this `AGENTS.md` before starting work. Codex layers confi
 ## Validation And Setup
 
 - Validate manifests: `claude plugin validate <path>` from repo root after editing any `marketplace.json` or `plugin.json`. CI runs this on every PR via `.github/workflows/validate.yml`.
-- Tag releases: `claude plugin tag --push` (v2.1.119+) validates that `plugin.json` and marketplace entry agree on version, refuses dirty worktrees and pre-existing tags. Tag convention: `<plugin-name>--v<version>`.
+- Tag releases: `claude plugin tag --push` (v2.1.118+) validates that `plugin.json` and marketplace entry agree on version, refuses dirty worktrees and pre-existing tags. Tag convention: `<plugin-name>--v<version>`.
 - Prune orphaned dependencies: `claude plugin prune` (v2.1.121+); `claude plugin uninstall <plugin> --prune` cascades.
 - Inspect a plugin's component inventory and projected per-session token cost: `claude plugin details <name>` (v2.1.139+; v2.1.142 added LSP server visibility to details output).
-- Minimum Claude Code version: **v2.1.111+** as this repository's compatibility floor for bracketed extended-context model syntax used by the `ry-explore` agent. `[1m]` model availability remains account/plan-dependent. Current local: **v2.1.143** (verification range v2.1.111-v2.1.143, May 2026).
+- Minimum Claude Code version: **v2.1.143+** as this repository's compatibility floor, matching the CI pin in `.github/workflows/validate.yml`. This covers all Claude Code features used here: `opus[1m]` extended-context syntax (`ry-explore` agent, v2.1.111+, `[1m]` account/plan-dependent), `alwaysLoad: true` MCP option (v2.1.121+), `claude plugin tag --push` (v2.1.118+), hook `if` filter (v2.1.118+), `maxSkillDescriptionChars` and `skillListingBudgetFraction` (v2.1.105+), `skillOverrides` (v2.1.129+, plugin skills exempt), `experimental.{themes,monitors}` wrapper (v2.1.129+). Verification range: v2.1.111-v2.1.143 (May 2026).
 - Bootstrap a fresh checkout: `python3 plugins/rldyour-flow/scripts/fullrepo_sync.py --bootstrap-init` - installs `.git/info/exclude` block for agent-only files and restores or publishes `fullrepo`.
 - Audit git/branch/worktree state: `bash plugins/rldyour-flow/scripts/git_sync_audit.sh`.
 - Quality checks for product repositories that consume this marketplace: `bash plugins/rldyour-flow/scripts/detect_project_checks.sh`. This repository has no runtime test suite by design.
@@ -167,6 +185,7 @@ Current dependency graph:
 - Conventional Commits for all changes. Atomic commits per logical unit.
 - Never commit secrets, runtime markers, browser artifacts, local env files.
 - All MCP server versions are pinned (stdio servers with `==X.Y.Z`; HTTP servers by URL).
+- **Always Read a file before Edit/Write**. Claude Code's Edit and Write tools track per-session Read state and refuse to write to a file that has not been read since the tool was last seen modifying it ("File has not been read yet. Read it first before writing to it."). For batch updates across many files, use `sed -i` (or equivalent) via the Bash tool - it bypasses the Read-state tracker because it does not go through Edit/Write. Pattern: single `bash` call with a `for` loop + `sed -i` for repetitive edits; targeted `Read` + `Edit` for content-aware edits where you need the file's current state.
 
 ## Done Criteria
 

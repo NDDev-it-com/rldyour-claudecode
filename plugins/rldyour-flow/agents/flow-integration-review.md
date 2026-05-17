@@ -3,7 +3,7 @@ name: flow-integration-review
 description: Orchestrated integration-review subagent invoked by /ry-start or /ry-review review phase only. Reviews cross-module synchronization - API/client/DTO/schema/validation/service/repository/database alignment, config/env/docs/migrations alignment, generated code and type contracts, backward compatibility. Read-only - no file edits.
 model: sonnet
 effort: high
-maxTurns: 36
+maxTurns: 90
 tools:
   - Read
   - Grep

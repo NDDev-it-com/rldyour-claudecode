@@ -42,7 +42,7 @@ jobs:
       # Or:
       #   docker pull semgrep/semgrep:1.163.0 && docker inspect --format='{{index .RepoDigests 0}}' semgrep/semgrep:1.163.0
       # The tag '1.163.0' is mutable upstream; the @sha256 suffix is the immutable manifest-list digest.
-      # OWASP A03:2025 supply-chain hardening — closes wave-3 security F-1.
+      # OWASP A03:2025 supply-chain hardening - closes wave-3 security F-1.
       image: semgrep/semgrep:1.163.0@sha256:7cad2bc2d1e44f87f0bf4be6d1fa23aa90fb72015bebc89fb91385d813987a03
     steps:
       - name: Harden runner (egress block + explicit allowlist)
@@ -64,7 +64,7 @@ jobs:
       - name: Semgrep scan
         run: |
           set -euo pipefail
-          # Explicit OSS rule packs (no telemetry — `--config=auto` requires
+          # Explicit OSS rule packs (no telemetry - `--config=auto` requires
           # `--metrics=on` because the rule pack negotiation calls home).
           # Coverage chosen for this marketplace's Python + Shell + YAML +
           # GitHub Actions surface; secrets pack guards against tokens
@@ -72,7 +72,7 @@ jobs:
           # `--error` makes CI fail on any WARNING/ERROR finding.
           # `--exclude` keeps templates/cache out of scope.
           # Verified-existing rule packs (semgrep.dev/r/ catalog as of 2026-05-16).
-          # `p/bash` and `p/yaml` were attempted but returned HTTP 404 — bash
+          # `p/bash` and `p/yaml` were attempted but returned HTTP 404 - bash
           # security rules are bundled inside `p/security-audit`, YAML lint
           # is covered by `p/github-actions` for workflow YAML and by
           # `p/security-audit` for generic secrets/config patterns.
@@ -85,7 +85,17 @@ jobs:
             --config=p/ci \
             --error \
             --metrics=off \
-            --exclude='.serena/**' \
+            --exclude='.serena/cache/**' \
+            --exclude='.serena/reviews/**' \
+            --exclude='.serena/diagnostics/**' \
+            --exclude='.serena/.sync_marker' \
+            --exclude='.serena/.flow_sync_marker' \
+            --exclude='.serena/.serena_sync_state.json' \
+            --exclude='.serena/.auto_sync_head' \
+            --exclude='.serena/.active_workflow_intent.json' \
+            --exclude='.serena/.dirty_stop_ack' \
+            --exclude='.serena/.flow_post_task_state.json' \
+            --exclude='.serena/.bootstrap_overrides.log' \
             --exclude='**/__pycache__/**' \
             --severity=WARNING \
             --severity=ERROR

@@ -5,7 +5,7 @@ name: dependency-check
 
 on:
   schedule:
-    # Mondays 06:00 UTC — weekly cadence so MCP server upstreams have time to publish.
+    # Mondays 06:00 UTC - weekly cadence so MCP server upstreams have time to publish.
     - cron: '0 6 * * 1'
   workflow_dispatch:
   pull_request:
@@ -70,6 +70,10 @@ jobs:
                       fail = 1
           sys.exit(fail)
           PY
+
+      - name: Probe upstream MCP registries (npm + PyPI + Homebrew)
+        run: python3 scripts/probe_mcp_upstream.py
+        continue-on-error: true  # network probe is best-effort; drift surfaces as ::warning::
 
   manifest-versions:
     name: Plugin version consistency

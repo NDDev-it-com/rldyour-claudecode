@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-17
-Last commit: bf19b44 docs(readme): update versions to 0.2.3 + add Support/Feedback section
+Last commit: 065d6a4 fix(security): close 6 findings from flow-security-review (F-1..F-6)
 Scope: .claude/CLAUDE.md, AGENTS.md, plugins/*/.claude-plugin/plugin.json, plugins/rldyour-mcps/.mcp.json, plugins/*/skills/*/SKILL.md, plugins/*/agents/*.md, plugins/*/hooks/hooks.json, plugins/rldyour-serena-mcp/scripts/analyze_sync_scope.py
 Area: CLAUDECODE
 -->
@@ -28,20 +28,13 @@ Current Claude Code plugin/runtime facts that this marketplace relies on. These 
 - Plugin manifests use SchemaStore `$schema` URLs, but Claude Code validates actual fields through its own plugin validator.
 - `dependencies` in `plugin.json` are plugin names. The repo enforces marketplace/manifest version alignment through `scripts/validate_plugin_versions.py`.
 - Skills are the primary routing surface; descriptions are Russian-leading with English triggers appended.
-- Plugin-shipped subagents use frontmatter for `model`, `effort`, `maxTurns`, `tools`, `disallowedTools`, and `color`. The canonical pattern (per `anthropics/claude-plugins-official/plugins/pr-review-toolkit/agents/code-reviewer`) is an explicit `tools:` allowlist; `disallowedTools:` remains as defence-in-depth legacy (used by `flow-memory-sync` only). Verified at `plugins/rldyour-flow/agents/flow-architecture-review.md` and `plugins/rldyour-serena-mcp/agents/flow-memory-sync.md` at HEAD.
-- Hook exit code `2` is the blocking advisory path. Stop hooks in this repo use `exit 2` to force orchestrator action while avoiding direct high-blast-radius operations.
-- `analyze_sync_scope.py` targets `CLAUDECODE-01-PLUGIN-CANON.md` for plugin manifest, hook, skill, command, agent, marketplace-support, and agent-instruction changes.
-- Reviewer output transport in `plugins/rldyour-flow` is file-first: every `flow-*` reviewer writes a full markdown report to `<report_dir>/<reviewer-name>.md` using heredoc marker `RLDYOUR_REPORT_EOF`, then returns a compact summary (counts + capped one-liners) to avoid Claude Code `task.output` truncation/overflow regressions documented in Anthropic issues [#16789](https://github.com/anthropics/claude-code/issues/16789), [#20531](https://github.com/anthropics/claude-code/issues/20531), [#23463](https://github.com/anthropics/claude-code/issues/23463).
-- `plugins/rldyour-flow/fullrepo_sync.py` keeps `.serena/diagnostics/**` and `.serena/reviews/**` in `RUNTIME_EXCLUDE_PATTERNS` to keep reviewer runtime artifacts from entering restore/publish workflows that use this pattern set.
-
-## Contracts And Data
-
-- Minimum Claude Code compatibility floor is `v2.1.111+` for the `opus[1m]` extended-context syntax used by `ry-explore`; `[1m]` availability remains account/plan dependent.
-- Local verified Claude Code range in project instructions is `v2.1.111-v2.1.143`.
-- Claude Code hook canon recorded in `.claude/CLAUDE.md`: 29 events, five handler types (`command`, `http`, `mcp_tool`, `prompt`, `agent`), and hook hierarchy precedence.
-- Skill listing mitigation recorded in `.claude/CLAUDE.md`: `skillListingBudgetFraction: 0.04` and `skillListingMaxDescChars: 1536` in user settings. `0.04` (4%) is chosen over the Anthropic/claudekit-cli baseline `0.03` to accommodate bilingual Russian-leading + English-triggers descriptions averaging ~400 chars per entry across 32 skills (verified in `.claude/CLAUDE.md` line 82 at HEAD).
-- `claude plugin tag --push` uses `<plugin-name>--v<version>` tag convention and refuses dirty worktrees or pre-existing tags.
+- Plugin-shipped subagents use frontmatter for `model`, `effort`, `maxTurns 90 (security 100, ry-explore 90)` in user settings. `0.04` (4%) is chosen over the Anthropic/claudekit-cli baseline `0.03` to accommodate bilingual Russian-leading + English-triggers descriptions averaging ~400 chars per entry across 32 skills (verified in `.claude/CLAUDE.md` line 82 at HEAD).
+- `claude plugin tag --push` uses `<plugin-name>--v<version>` tag convention and refuses dirty worktrees or pre-existing tags. Available from v2.1.118+. Verified at `AGENTS.md` line 70 at HEAD `a506526`.
 - `claude plugin details <name>` is available from v2.1.139+; v2.1.142 adds LSP visibility.
+- Hook `if` filter (v2.1.118+) scopes Bash lifecycle hooks to specific git command patterns. Used in both `plugins/rldyour-flow/hooks/hooks.json` and `plugins/rldyour-serena-mcp/hooks/hooks.json` to avoid firing on every Bash call. Verified at both `hooks.json` files at HEAD `a506526` (commit `perf(hooks): scope Bash lifecycle hooks with if filters (v2.1.118+)`).
+- JSON schema validation: 5 schemas in `config/schemas/` (`hooks.json`, `lsp.json`, `marketplace.json`, `mcp.json`, `plugin.json`). Enforced by `scripts/validate_json_schemas.py` (104 lines), wired into `scripts/validate_marketplace.sh`. Verified at HEAD `a506526` (commit `feat(config): add 5 JSON schemas + cc-canon + marketplace-policy`).
+- `sync_contract` YAML block added to both `AGENTS.md` (line 9) and `.claude/CLAUDE.md` (line 5) at HEAD `a506526`. 14 shared claims enforced by `scripts/validate_instruction_sync.py` (reports 0 drift). Verified via `python3 scripts/validate_instruction_sync.py` at HEAD `a506526`.
+- Additional validators wired into `scripts/validate_marketplace.sh`: `validate_docs_canon.py` (0 drift across 46 target files), `validate_text_hygiene.py`, `validate_skill_allowed_tools.py`, `validate_release_state.py`, `validate_instruction_sync.py`. `generate_inventory.py` is a standalone reporting script. Verified at HEAD `a506526` (commit `test(harness): add 6 validators`).
 - Official Claude Code MCP docs still show the GitHub remote MCP endpoint as an example; this repository uses local stdio `github-mcp-server` to keep the marketplace self-contained without dependence on `api.githubcopilot.com/mcp/`. A standard GitHub PAT with `repo` + `read:org` scopes is sufficient; no Copilot subscription is required. Rationale source: `plugins/rldyour-mcps/README.md` line 28 at HEAD.
 - Repository transferred from `rldyourmnd/rldyour-claude` to `NDDev-it-com/rldyour-claudecode` (private) in Wave 5. Marketplace slug renamed from `rldyour-claude` to `rldyour-claudecode` in `.claude-plugin/marketplace.json`. All 9 plugin `plugin.json` files updated with new `homepage` and `repository` URLs pointing to `github.com/nddev-it-com/rldyour-claudecode`. Local origin remote is now `git@github.com:NDDev-it-com/rldyour-claudecode.git`. Verified at `.claude-plugin/marketplace.json` and `plugins/rldyour-mcps/.claude-plugin/plugin.json` at HEAD `334fe09`.
 

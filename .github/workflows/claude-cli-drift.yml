@@ -1,0 +1,64 @@
+name: claude-cli-drift
+
+# Weekly check that the pinned Claude Code CLI version
+# (package.json devDependencies."@anthropic-ai/claude-code") is still the
+# npm-registry latest. Opens a Dependabot PR via the npm ecosystem block
+# in .github/dependabot.yml when a new version is published. This workflow
+# is a redundancy belt for surfacing drift even between Dependabot runs.
+#
+# Closes audit F-CI-01 / F-SYNC-03 (pinned CLI version was previously
+# untracked despite the dependabot.yml header comment claiming coverage).
+
+on:
+  schedule:
+    # Weekly Monday 06:17 UTC (offset from semgrep + dependency-check to
+    # spread API quota usage across the included GHEC minutes pool).
+    - cron: '17 6 * * 1'
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+jobs:
+  check:
+    name: Compare pinned CLI to npm registry latest
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    steps:
+      - name: Harden runner (egress block + explicit allowlist)
+        uses: step-security/harden-runner@ab7a9404c0f3da075243ca237b5fac12c98deaa5  # v2.19.3
+        with:
+          egress-policy: block
+          allowed-endpoints: >
+            agent.api.stepsecurity.io:443
+            api.github.com:443
+            github.com:443
+            codeload.github.com:443
+            objects.githubusercontent.com:443
+            registry.npmjs.org:443
+            nodejs.org:443
+
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e  # v6.4.0
+        with:
+          node-version: 22
+
+      - name: Compare pinned vs npm latest
+        run: |
+          set -euo pipefail
+          PINNED="$(python3 -c "import json; print(json.load(open('package.json'))['devDependencies']['@anthropic-ai/claude-code'])")"
+          LATEST="$(npm view @anthropic-ai/claude-code version)"
+          printf 'pinned=%s\nlatest=%s\n' "$PINNED" "$LATEST"
+          if [ "$PINNED" != "$LATEST" ]; then
+            echo "::warning::Pinned Claude Code CLI ($PINNED) is behind npm latest ($LATEST). Dependabot should open a PR soon; if not, bump package.json + .github/workflows/validate.yml + config/mcp-runtime-versions.env in lockstep."
+            exit 1
+          fi
+          echo "Claude Code CLI pin is current."

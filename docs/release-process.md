@@ -10,16 +10,16 @@ Lifecycle for cutting a versioned release of the `rldyour-claudecode` marketplac
 
 ## Release cadence
 
-- Patch (`0.1.x`) — bug fixes, documentation, frontmatter polish, no new components.
-- Minor (`0.x.0`) — new skills, agents, hooks, slash commands, or scripts; backward-compatible changes.
-- Major (`x.0.0`) — boundary changes (plugin renamed/removed, hooks repurposed, marketplace name changed). Reserve for after the project leaves `0.x` territory.
+- Patch (`0.1.x`) - bug fixes, documentation, frontmatter polish, no new components.
+- Minor (`0.x.0`) - new skills, agents, hooks, slash commands, or scripts; backward-compatible changes.
+- Major (`x.0.0`) - boundary changes (plugin renamed/removed, hooks repurposed, marketplace name changed). Reserve for after the project leaves `0.x` territory.
 
 ## Pre-release checks
 
 Run from repo root before tagging:
 
 ```bash
-scripts/validate_marketplace.sh           # full harness — must be green
+scripts/validate_marketplace.sh           # full harness - must be green
 scripts/smoke_mcp_runtime.sh              # MCP servers reachable / pinned
 scripts/smoke_hooks.sh                    # hook lifecycle smoke
 scripts/smoke_fullrepo_sync.sh            # fullrepo state machine
@@ -48,7 +48,7 @@ Update `CHANGELOG.md` (Keep-a-Changelog format) before tagging:
 
 ## Tagging
 
-Use `claude plugin tag --push` (CC v2.1.119+) — it validates that `plugin.json` and the marketplace entry agree on version, refuses dirty worktrees and pre-existing tags, then pushes the tag.
+Use `claude plugin tag --push` (CC v2.1.118+) - it validates that `plugin.json` and the marketplace entry agree on version, refuses dirty worktrees and pre-existing tags, then pushes the tag.
 
 Tag conventions:
 
@@ -66,7 +66,7 @@ git push origin rldyour-flow--v0.2.0
 
 Each release should carry:
 
-- The output of `python3 scripts/release_manifest.py` — JSON snapshot of marketplace + plugin versions + MCP pins + git HEAD + `[Unreleased]` section.
+- The output of `python3 scripts/release_manifest.py` - JSON snapshot of marketplace + plugin versions + MCP pins + git HEAD + `[Unreleased]` section.
 - A green CI run for the tagged commit.
 - The pre-release checks output saved alongside the release notes.
 

@@ -2,6 +2,24 @@
 
 Personal Claude Code plugin marketplace by `rldyourmnd`. Cross-tool overview, source-of-truth manifests, plugin layers, and CLI commands live in `./AGENTS.md`. This file (`./.claude/CLAUDE.md`) is the Claude Code-native deep memory: subagent matrix, hook canon, skill-listing budget, frontmatter conventions, and Don't/Done rules. Both files are agent-only, live on the `fullrepo` branch, and are excluded from `main` via `.git/info/exclude`.
 
+<!-- sync_contract:
+claims:
+  mcp_owner: rldyour-mcps
+  hook_owners: [rldyour-flow, rldyour-serena-mcp]
+  lsp_owner: rldyour-lsps
+  reviewer_transport_marker: RLDYOUR_REPORT_EOF
+  reviewer_report_dir_template: ".serena/reviews/<run_id>/"
+  reviewer_run_id_format: "<UTC-ISO-compact>-<git-short-sha>"
+  claude_code_min_version: "2.1.143"
+  skill_listing_budget_fraction: 0.04
+  max_skill_description_chars: 1536
+  fullrepo_branch: fullrepo
+  plugin_count: 9
+  skill_count: 32
+  command_count: 9
+  subagent_count: 8
+-->
+
 <!-- Maintainer notes (HTML comments are stripped from Claude's context per CC v2.1.72): keep this file under 200 lines per Anthropic official guidance (code.claude.com/docs/en/memory). Project CLAUDE.md re-injects after /compact and is inherited by every subagent - every line is a recurring token cost. Update only when discovering durable Claude Code-specific facts; cross-tool facts belong in AGENTS.md. -->
 
 ## Plugins And Components
@@ -26,15 +44,15 @@ Required fields for plugin-shipped subagents: `name`, `description`. Plugin-ship
 
 | Agent | model | effort | maxTurns | color | role |
 |---|---|---|---|---|---|
-| flow-architecture-review | sonnet | high | 36 | blue | boundaries, dependency direction, public API |
-| flow-quality-review | sonnet | high | 36 | green | correctness, edge cases, lifecycle |
-| flow-consistency-review | sonnet | high | 36 | purple | naming, style, project conventions |
-| flow-integration-review | sonnet | high | 36 | orange | cross-module sync, contracts |
-| flow-verification-review | sonnet | high | 36 | pink | tests, LSP, browser/server evidence |
-| flow-security-review | sonnet | high | 42 | red | defensive auth/authz/secrets/injection |
+| flow-architecture-review | sonnet | high | 90 | blue | boundaries, dependency direction, public API |
+| flow-quality-review | sonnet | high | 90 | green | correctness, edge cases, lifecycle |
+| flow-consistency-review | sonnet | high | 90 | purple | naming, style, project conventions |
+| flow-integration-review | sonnet | high | 90 | orange | cross-module sync, contracts |
+| flow-verification-review | sonnet | high | 90 | pink | tests, LSP, browser/server evidence |
+| flow-security-review | sonnet | high | 100 | red | defensive auth/authz/secrets/injection |
 | ry-explore | opus[1m] | max | 90 | cyan | deep multi-source research, `context: fork` |
 
-All reviewer agents declare explicit `tools:` allowlist (`Read`, `Grep`, `Glob`, `Bash`, plus `mcp__plugin_rldyour-mcps_serena__*`, `mcp__plugin_rldyour-mcps_context7__*`, `mcp__plugin_rldyour-mcps_deepwiki__*`, `mcp__plugin_rldyour-mcps_grep__*`) for future-proof read-only enforcement. `flow-security-review` additionally allows `WebFetch`, `WebSearch`, `mcp__plugin_rldyour-mcps_semgrep__*` for CVE lookups and SAST. `ry-explore` uses the same allowlist pattern. Pattern follows canonical `anthropics/claude-plugins-official/plugins/pr-review-toolkit/agents/code-reviewer` (explicit allowlist), not the older `disallowedTools` denylist - explicit positive intent isolates reviewers from future tool additions. Generous `maxTurns` (×3 of naive limit) compensates MCP-rich toolsets that consume turns on tool plumbing - Serena + Context7 + DeepWiki + Grep eat 5-8 turns before useful work begins.
+All reviewer agents declare explicit `tools:` allowlist (`Read`, `Grep`, `Glob`, `Bash`, plus `mcp__plugin_rldyour-mcps_serena__*`, `mcp__plugin_rldyour-mcps_context7__*`, `mcp__plugin_rldyour-mcps_deepwiki__*`, `mcp__plugin_rldyour-mcps_grep__*`) for future-proof read-only enforcement. `flow-security-review` additionally allows `WebFetch`, `WebSearch`, `mcp__plugin_rldyour-mcps_semgrep__*` for CVE lookups and SAST. `ry-explore` uses the same allowlist pattern. Pattern follows canonical `anthropics/claude-plugins-official/plugins/pr-review-toolkit/agents/code-reviewer` (explicit allowlist), not the older `disallowedTools` denylist - explicit positive intent isolates reviewers from future tool additions. `maxTurns` raised to 90 (security: 100) in 0.3.0 release after the 0.3.0 self-review wave found that 36/42 was insufficient: 3 of 6 reviewers hit limit during investigation and never reached the report-write step. MCP-rich toolsets (Serena + Context7 + DeepWiki + Grep + Semgrep + WebFetch + WebSearch) eat 8-15 turns on tool plumbing before useful work begins, plus the file-first write contract itself costs 2-3 turns; 90 gives ~70 turns of effective reasoning + writing budget.
 
 Reviewer output transport is **file-first** since rldyour-flow `0.2.2`: each reviewer writes the full long-form report to `.serena/reviews/<run_id>/<reviewer-name>.md` via `Bash` using the unique heredoc marker `<<'RLDYOUR_REPORT_EOF'` (multi-char marker prevents early termination on short tokens like `MD`/`EOF`) and returns only a ≤ 4 KB compact summary (Report path + severity counts + one-liner findings, cap 30 entries). The orchestrator (`ry-start` / `ry-review` skill body) generates one `run_id = <UTC-ISO-compact>-<git-short-sha>` per wave (minute-precision UTC), injects `report_dir` into every reviewer prompt, MUST `Read` per-reviewer report files for every critical and high finding before disposition, and writes `<report_dir>/_summary.md` as the consolidated wave artefact. Full contract in `plugins/rldyour-flow/references/reviewer-protocol.md` "Output Transport". Rationale: Claude Code 2.0.77+ regression (Anthropic [`#16789`](https://github.com/anthropics/claude-code/issues/16789), [`#20531`](https://github.com/anthropics/claude-code/issues/20531), [`#23463`](https://github.com/anthropics/claude-code/issues/23463), all closed as "not planned") can deliver 200-500 KB JSONL transcript per subagent and overflow parent context; 6 reviewers × ≤ 4 KB = ≤ 24 KB structurally prevents the failure class. Read-only invariant preserved (`Edit`/`Write`/`NotebookEdit` still absent; `Bash` writes are bounded to `<report_dir>/<reviewer-name>.md` only).
 
@@ -77,15 +95,15 @@ User-side fix in `~/.claude/settings.json`:
 ```json
 {
   "skillListingBudgetFraction": 0.04,
-  "skillListingMaxDescChars": 1536
+  "maxSkillDescriptionChars": 1536
 }
 ```
 
-Both keys added in CC v2.1.129+. `skillListingBudgetFraction` is a decimal fraction in `(0, 1]`. Runtime override: `SLASH_COMMAND_TOOL_CHAR_BUDGET` env var (raw chars). `skillOverrides` map (`"on" | "name-only" | "user-invocable-only" | "off"`) does **not** affect plugin-shipped skills - manage those through `/plugin`. The `0.04` (4%) value is bumped above the claudekit-cli baseline `0.03` (verified 2026-05-15) because our bilingual Russian-leading + English-triggers description format averages ~400 chars per entry vs ~250 for pure-English plugins; at 32 skills our total skill-listing token cost is ~12.8K chars and `0.03` of 200K-token Sonnet sessions truncates tail-end auto-trigger descriptions. `opus[1m]` 1M-token sessions have room at 0.03 too, but 0.04 covers both cases.
+`maxSkillDescriptionChars` and `skillListingBudgetFraction` were added in CC **v2.1.105+**. `skillListingBudgetFraction` is a decimal fraction in `(0, 1]`. Runtime override: `SLASH_COMMAND_TOOL_CHAR_BUDGET` env var (raw chars). The separate `skillOverrides` map (`"on" | "name-only" | "user-invocable-only" | "off"`) was added in **v2.1.129+** and does **not** affect plugin-shipped skills - manage those through `/plugin` instead. The `0.04` (4%) value is bumped above the claudekit-cli baseline `0.03` (verified 2026-05-15) because our bilingual Russian-leading + English-triggers description format averages ~400 chars per entry vs ~250 for pure-English plugins; at 32 skills our total skill-listing token cost is ~12.8K chars and `0.03` of 200K-token Sonnet sessions truncates tail-end auto-trigger descriptions. `opus[1m]` 1M-token sessions have room at 0.03 too, but 0.04 covers both cases.
 
 Plugin-side levers used in this repo:
-- `disable-model-invocation: true` on `skills/ry-deploy/SKILL.md` and `skills/ry-newp/SKILL.md` - slash-only, freeing budget for auto-triggered skills.
-- `allowed-tools` on 10 skills with explicit toolsets - eliminates per-call permission prompts during work without touching listing budget.
+- `disable-model-invocation: true` on **4 skills** (`skills/ry-deploy/SKILL.md`, `skills/ry-newp/SKILL.md`, `skills/ry-rules-review/SKILL.md`, `skills/ry-sec-review/SKILL.md`) - slash-only, freeing budget for auto-triggered skills.
+- `allowed-tools` on **15 skills** with explicit toolsets - eliminates per-call permission prompts during work without touching listing budget.
 
 ## Hook Events Canon
 
@@ -112,10 +130,10 @@ Patterns verified against `anthropics/claude-plugins-official` snapshot `1a2f18b
 Verified against `code.claude.com/docs/en/changelog` for v2.1.133-v2.1.142 on 2026-05-15. Current local CC: **v2.1.143** (`$(which claude) --version`).
 
 Adopted:
-- v2.1.128 - per-entry skill description cap `1,536` chars, used by all 32 skills.
-- v2.1.129 - `skillListingBudgetFraction` added in user settings (Anthropic + claudekit-cli baseline is `0.03`; this repo recommends `0.04` - see Skill Listing Budget section above for the bilingual-description rationale); `experimental.{themes,monitors}` wrapper available (we declare neither).
+- v2.1.105 - `maxSkillDescriptionChars` and `skillListingBudgetFraction` user settings (Anthropic + claudekit-cli baseline is `0.03`; this repo recommends `0.04` - see Skill Listing Budget section above for the bilingual-description rationale). Per-entry skill description cap `1,536` chars, used by all 32 skills.
 - v2.1.121 - `alwaysLoad: true` on `serena` MCP server.
-- v2.1.119 - `claude plugin tag --push` for release tagging (canonical, `<plugin>--v<version>`).
+- v2.1.118 - `claude plugin tag --push` for release tagging (canonical, `<plugin>--v<version>`).
+- v2.1.129 - `skillOverrides` map (`"on" | "name-only" | "user-invocable-only" | "off"`); does NOT apply to plugin skills - manage those through `/plugin`. `experimental.{themes,monitors}` wrapper available (we declare neither).
 - v2.1.x - `SessionStart` + `WorktreeRemove`/`WorktreeCreate` worktree workflow (added 2026-05-12): `hooks/session_start_worktree_bootstrap.sh` auto-restores agent-only files into a fresh worktree via `fullrepo_sync.py --restore`. `WorktreeCreate` is intentionally NOT used because the worktree path does not yet exist on disk when that event fires - `SessionStart` in the new worktree session is the correct injection point. `scripts/worktree_add.sh` covers the manual `git worktree add` flow with bootstrap baked in.
 
 Available, not adopted:

@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-17
-Last commit: bf19b44 docs(readme): update versions to 0.2.3 + add Support/Feedback section
+Last commit: 065d6a4 fix(security): close 6 findings from flow-security-review (F-1..F-6)
 Scope: .claude/CLAUDE.md (Engineering Conventions), AGENTS.md (Engineering Constraints), plugins/rldyour-flow/agents/flow-*-review.md, plugins/rldyour-explore/agents/ry-explore.md, plugins/rldyour-serena-mcp/agents/flow-memory-sync.md, plugins/*/skills/*/SKILL.md, plugins/*/hooks/*.sh, plugins/*/hooks/hooks.json, scripts/validate_agent_tools.py, scripts/worktree_add.sh, scripts/install-rldyour-marketplace.sh
 Area: PATTERNS
 -->
@@ -101,7 +101,7 @@ Rules:
 - Wildcards allowed only for `READ_ONLY_BY_DESIGN_MCPS` (context7, deepwiki, grep, semgrep) per `scripts/validate_agent_tools.py`.
 - `flow-memory-sync` is the **only exception** retaining `disallowedTools: [Edit, Write, NotebookEdit]` - its job requires Serena memory write tools, so a wider allowlist plus the denylist provides defence-in-depth against project-file mutation.
 - Plugin-shipped subagents silently ignore `hooks`, `mcpServers`, `permissionMode`.
-- Reviewer subagent maxTurns is ×3 of naive limit (36/42 instead of 12-14) - MCP-rich toolsets consume 5-8 turns on tool plumbing before useful work begins.
+- Reviewer subagent maxTurns is **90 (security: 100)** since 0.3.0 release. Earlier 36/42 baseline was insufficient: 3 of 6 reviewers in the 0.3.0 self-review wave hit limit during investigation before reaching the file-first write step. MCP-rich toolsets (Serena + Context7 + DeepWiki + Grep + Semgrep + WebFetch + WebSearch) consume 8-15 turns on tool plumbing; the file-first write contract itself costs 2-3 turns. 90 leaves ~70 turns of effective reasoning + writing budget. See `.claude/CLAUDE.md` Subagent Frontmatter Matrix for current values.
 
 ## Slash Command Frontmatter
 
@@ -302,6 +302,22 @@ Scope: component or module name, lowercase (e.g., `scripts`, `hooks`, `agents`, 
 Use `!` after type/scope or `BREAKING CHANGE:` footer for breaking changes.
 
 **Atomic commits**: one logical change per commit. Separate mechanical refactors from behavior changes. Separate source / docs / Serena knowledge commits when it improves history clarity.
+
+## Edit / Write Tool Hygiene
+
+Claude Code's `Edit` and `Write` tools maintain a per-session "this file has been read" state. They refuse to mutate any file that has not been `Read` since the last time the tool itself saw the file as modified, returning `"File has not been read yet. Read it first before writing to it."`. Hitting this error wastes a turn and forces a retry.
+
+Rules:
+
+- **Targeted edit**: always `Read` the file (or the relevant line range with `offset:`/`limit:`) before calling `Edit`/`Write`. Even when the content is already in conversation context (e.g. from `system-reminder claudeMd`), Edit's tracker is per-tool, not per-context.
+- **Batch update (same change in many files)**: use `sed -i` via the `Bash` tool. `sed` bypasses Edit's tracker because it does not go through Edit/Write. Canonical pattern:
+  ```bash
+  for f in plugins/rldyour-flow/agents/flow-*-review.md; do
+    sed -i 's/^maxTurns: 36$/maxTurns: 90/' "$f"
+  done
+  ```
+- **After bulk edit via sed**: subsequent `Edit` on those same files still requires a fresh `Read` because the file's mtime changed.
+- **Anti-pattern**: speculatively launching 6 parallel `Edit` calls hoping prior reads from earlier in the session still count. They do not - Edit tracks state from the last Edit/Write boundary, not from arbitrary Reads.
 
 ## Verification
 

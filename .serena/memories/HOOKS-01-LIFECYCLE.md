@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-17
-Last commit: bf19b44 docs(readme): update versions to 0.2.3 + add Support/Feedback section
+Last commit: 065d6a4 fix(security): close 6 findings from flow-security-review (F-1..F-6)
 Scope: plugins/rldyour-serena-mcp/hooks/hooks.json, plugins/rldyour-serena-mcp/hooks/*.sh, plugins/rldyour-flow/hooks/hooks.json, plugins/rldyour-flow/hooks/*.sh, scripts/smoke_hooks.sh, scripts/smoke_serena_memory_taxonomy.sh, .claude/CLAUDE.md, AGENTS.md
 Area: HOOKS
 -->
@@ -44,6 +44,7 @@ Claude Code hook lifecycle and coordination contract between Serena freshness ga
 - `stop_memory_sync.sh` includes taxonomy guidance without shell backticks in the Bash string, avoiding command-substitution side effects in advisory messages.
 - All 8 hook scripts (`plugins/rldyour-{flow,serena-mcp}/hooks/*.sh`) and 3 helper scripts (`scripts/worktree_add.sh`, `scripts/bootstrap_check.sh`, `plugins/rldyour-flow/scripts/deploy_readiness.sh`) use full strict mode: `set -euo pipefail` + `IFS=$'\n\t'` + `unset CDPATH`. Wave 2 additionally applied `IFS=$'\n\t'` + `unset CDPATH` to 14 more utility/plugin scripts: 9 in `scripts/` (smoke_hooks, smoke_fullrepo_sync, smoke_mcp_capabilities, smoke_mcp_runtime, smoke_serena_memory_taxonomy, sync_fullrepo_branch, validate_marketplace, collect_diagnostics, install_local_git_hooks) and 5 in plugins (`plugins/rldyour-flow/scripts/{detect_project_checks,git_sync_audit,local_git_ai_guard}.sh`, `plugins/rldyour-lsps/scripts/install_lsps_brew.sh`, `plugins/rldyour-serena-mcp/scripts/commit_serena_knowledge.sh`). Pattern matches gold-standard in `scripts/install-rldyour-marketplace.sh`. Verified by `bash -n` + `scripts/smoke_hooks.sh` at HEAD.
 - Wave 5 fix (D27): `scripts/smoke_bootstrap_check.sh` runtime path-a harness awk extractor was broken for one-line `step() { ...; }` function form - `in_step` flag was never reset, causing the awk to dump the entire remainder of `bootstrap_check.sh` into `TMP_GUARD`. Fixed in commit `92eb8dd` by using an inline `PRELUDE` heredoc for step()/fail() helpers and an awk range for the divergence-guard block. Verified at `scripts/smoke_bootstrap_check.sh` lines 89-114 at HEAD `334fe09`.
+- Hook `if` filter (CC v2.1.118+) added to 3 Bash lifecycle hooks in this wave (commit `5fec79a perf(hooks): scope Bash lifecycle hooks with if filters`): `PreToolUse:Bash` in `rldyour-serena-mcp/hooks/hooks.json` scoped to `Bash(git commit*) Bash(git merge*) Bash(git cherry-pick*) Bash(git rebase*) Bash(git am*)`; `PostToolUse:Bash` in same file scoped identically; `PostToolUse:Bash` in `rldyour-flow/hooks/hooks.json` scoped to `Bash(git commit*)`. Stop and SessionStart hooks carry no `if` filter (unconditional). Verified at both `hooks.json` files at HEAD `a506526`.
 
 ## Coordination Sequence
 

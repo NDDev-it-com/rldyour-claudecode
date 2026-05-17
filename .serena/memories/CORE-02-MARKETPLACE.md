@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-17
-Last commit: bf19b44 docs(readme): update versions to 0.2.3 + add Support/Feedback section
+Last commit: 065d6a4 fix(security): close 6 findings from flow-security-review (F-1..F-6)
 Scope: .claude-plugin/marketplace.json, plugins/*/.claude-plugin/plugin.json, README.md, AGENTS.md
 Area: CORE
 -->
@@ -19,20 +19,11 @@ Current business logic and architecture of the `rldyour-claude` marketplace. The
 - `README.md`: owner-facing catalog, control model, install/check commands, active per-plugin versions.
 - `AGENTS.md`: concise cross-tool project rules and boundaries.
 
-## Current State (HEAD `5bd57ae`)
+## Current State (HEAD `a506526`)
 
-- **VERSION**: `0.2.3` (release boundary, verified at `VERSION` file at HEAD `5bd57ae`).
+- **VERSION**: `0.3.0` (release boundary, verified at `VERSION` file at HEAD `a506526`).
 - **9 plugins** verified at HEAD from `.claude-plugin/marketplace.json`: `rldyour-mcps`, `rldyour-explore`, `rldyour-serena-mcp`, `rldyour-security`, `rldyour-browser`, `rldyour-design`, `rldyour-lsps`, `rldyour-flow`, `rldyour-rules`.
-- **Per-plugin versions** (verified via `python3 scripts/validate_plugin_versions.py` at HEAD `5bd57ae`):
-  - `rldyour-mcps`: `0.2.1`
-  - `rldyour-serena-mcp`: `0.2.1`
-  - `rldyour-flow`: `0.2.3` (wave-2 reviewer transport hardening + wave-3 em-dash normalization + security wave D39-D46)
-  - `rldyour-explore`: `0.2.1`
-  - `rldyour-browser`: `0.2.1`
-  - `rldyour-design`: `0.2.1`
-  - `rldyour-lsps`: `0.2.1`
-  - `rldyour-rules`: `0.2.1`
-  - `rldyour-security`: `0.2.1`
+- **Per-plugin versions** (verified via `python3 scripts/validate_plugin_versions.py` at HEAD `a506526`): all 9 plugins at `0.3.0`.
 - **Component totals**: 32 skills, 9 slash commands, 8 subagents, 8 hook scripts in 2 hook manifests, 12 plugin-owned scripts, 16 references.
 - The owner decides what is enabled. Repository docs state nothing is treated as enabled or correct unless explicitly decided by the owner.
 

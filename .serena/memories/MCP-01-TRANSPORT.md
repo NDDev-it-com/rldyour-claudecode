@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-17
-Last commit: bf19b44 docs(readme): update versions to 0.2.3 + add Support/Feedback section
+Last commit: 065d6a4 fix(security): close 6 findings from flow-security-review (F-1..F-6)
 Scope: plugins/rldyour-mcps/.mcp.json, config/mcp-runtime-versions.env, scripts/check_mcp_runtime_versions.py, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.sh, AGENTS.md
 Area: MCP
 -->
@@ -34,7 +34,8 @@ MCP transport contracts for the marketplace. `rldyour-mcps` is the only plugin a
   - `github`: `github-mcp-server stdio --toolsets=repos,issues,pull_requests,users,context`.
 - HTTP servers: `deepwiki` (`https://mcp.deepwiki.com/mcp`), `grep` (`https://mcp.grep.app`), `figma` (`https://mcp.figma.com/mcp`), `openai-docs` (`https://developers.openai.com/mcp`).
 - Required env for current transport: `CONTEXT7_API_KEY`, `GITHUB_PERSONAL_ACCESS_TOKEN`.
-- Required host binaries: `github-mcp-server` and `dart`.
+- Required host binaries: `github-mcp-server` (v1.0.4) and `dart` (Dart SDK v3.11.0, pinned as `DART_SDK_VERSION=3.11.0` in `config/mcp-runtime-versions.env` at HEAD `a506526`).
+- `scripts/check_mcp_runtime_versions.py` covers all 13 servers (11 package-pinned + 2 system-binary entries via `SYSTEM_BINARY_TO_ENV` dict at lines 44-58): `github-mcp-server` and `dart` both probed via `--version`. Verified by running the script at HEAD `a506526` (13/13 OK output).
 
 ## Contracts And Data
 

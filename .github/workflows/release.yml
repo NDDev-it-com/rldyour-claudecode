@@ -1,0 +1,142 @@
+name: release
+
+# Fully automated release on tag push. Triggers on:
+#   - `marketplace--v<X.Y.Z>` (marketplace boundary tag)
+#   - `<plugin>--v<X.Y.Z>` (per-plugin tag)
+# Both tag families are created locally by the maintainer via
+# `claude plugin tag --push` (per-plugin) or manual `git tag -s` (marketplace);
+# this workflow validates the release state and creates the GitHub Release
+# with generated notes + release-manifest.json + release-evidence.tgz.
+#
+# SHA-pinned actions per OWASP A03:2025. Refresh via scripts/refresh_actions_pins.sh.
+
+on:
+  push:
+    tags:
+      - 'marketplace--v*'
+      - 'rldyour-*--v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to dry-run validate (e.g. 0.3.0). Does not push tags or releases.'
+        required: false
+        type: string
+
+permissions: {}
+
+concurrency:
+  group: release-${{ github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Validate + publish GitHub Release
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write  # gh release create
+    steps:
+      - name: Harden runner (egress block + explicit allowlist)
+        uses: step-security/harden-runner@ab7a9404c0f3da075243ca237b5fac12c98deaa5  # v2.19.3
+        with:
+          egress-policy: block
+          allowed-endpoints: >
+            agent.api.stepsecurity.io:443
+            api.github.com:443
+            github.com:443
+            uploads.github.com:443
+            codeload.github.com:443
+            objects.githubusercontent.com:443
+            registry.npmjs.org:443
+            nodejs.org:443
+            files.pythonhosted.org:443
+            pypi.org:443
+
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+        with:
+          fetch-depth: 0  # need full history for tag verification
+
+      - name: Set up Node.js
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e  # v6.4.0
+        with:
+          node-version: 22
+
+      - name: Set up Python
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405  # v6.2.0
+        with:
+          python-version: '3.13'
+
+      - name: Install Claude Code CLI (from package.json devDependency)
+        run: |
+          set -euo pipefail
+          PINNED="$(python3 -c "import json; print(json.load(open('package.json'))['devDependencies']['@anthropic-ai/claude-code'])")"
+          npm install -g "@anthropic-ai/claude-code@${PINNED}"
+          claude --version
+
+      - name: Install Python deps for schema validation
+        run: pip install --user 'jsonschema>=4.21' 'attrs>=23.2'
+
+      - name: Validate marketplace (full harness)
+        run: bash scripts/validate_marketplace.sh
+
+      - name: Validate release state
+        run: python3 scripts/validate_release_state.py
+
+      - name: Dry-run version check (workflow_dispatch only)
+        if: github.event_name == 'workflow_dispatch' && inputs.version != ''
+        # Inputs interpolation moved to env: per OWASP A05:2025 (security review F-3).
+        # Inline ${{ inputs.version }} in `run:` would template-expand into bash
+        # source where any shell-metacharacter in the input would alter command
+        # semantics; env: passes the value as a normal shell variable so it can
+        # only be read, not parsed as code.
+        env:
+          VERSION_INPUT: ${{ inputs.version }}
+        run: |
+          set -euo pipefail
+          # Reject inputs that are not bare SemVer X.Y.Z (extra guard since
+          # VERSION_INPUT enters shell context as $VAR not template).
+          if ! printf '%s' "$VERSION_INPUT" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "Invalid VERSION_INPUT (not bare SemVer): $VERSION_INPUT" >&2
+            exit 1
+          fi
+          CURRENT="$(cat VERSION)"
+          if [ "$CURRENT" != "$VERSION_INPUT" ]; then
+            echo "VERSION file is $CURRENT but dry-run asked for $VERSION_INPUT" >&2
+            exit 1
+          fi
+          # `grep -F --` treats the argument as a fixed string and stops option
+          # parsing - safe with shell variables even after SemVer validation above.
+          if ! grep -qF -- "## [$VERSION_INPUT] - " CHANGELOG.md; then
+            echo "CHANGELOG.md missing [$VERSION_INPUT] entry" >&2
+            exit 1
+          fi
+
+      - name: Generate release manifest
+        run: |
+          mkdir -p release-evidence
+          python3 scripts/release_manifest.py > release-evidence/release-manifest.json
+          cp CHANGELOG.md release-evidence/CHANGELOG.md
+          cp VERSION release-evidence/VERSION
+          cp -r docs release-evidence/docs
+          tar -czf release-evidence.tgz release-evidence/
+
+      - name: Upload release manifest artifact
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # v4.6.2
+        with:
+          name: release-manifest-${{ github.ref_name }}
+          path: release-evidence/release-manifest.json
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Create GitHub Release (tag push only)
+        if: github.event_name == 'push'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh release create "${GITHUB_REF_NAME}" \
+            --generate-notes \
+            --verify-tag \
+            release-evidence/release-manifest.json \
+            release-evidence.tgz

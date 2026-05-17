@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-17
-Last commit: bf19b44 docs(readme): update versions to 0.2.3 + add Support/Feedback section
+Last commit: 065d6a4 fix(security): close 6 findings from flow-security-review (F-1..F-6)
 Scope: plugins/rldyour-rules/skills/quality-first-engineering/SKILL.md, plugins/rldyour-rules/skills/architecture-boundaries/SKILL.md, plugins/rldyour-rules/skills/dependency-compatibility-policy/SKILL.md, plugins/rldyour-rules/skills/implementation-discipline/SKILL.md, plugins/rldyour-rules/skills/verification-quality-gates/SKILL.md, plugins/rldyour-rules/skills/project-instructions-policy/SKILL.md, plugins/rldyour-rules/skills/ry-rules-review/SKILL.md, plugins/rldyour-rules/references/{rules-policy,quality-gates,architecture-policy,dependency-policy,project-instructions-and-adrs,sources}.md, plugins/rldyour-rules/commands/ry-rules-review.md
 Area: RULES
 -->

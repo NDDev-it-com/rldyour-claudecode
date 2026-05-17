@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/nddev-it-com/rldyour-claudecode/blob/main/config/schemas/plugin.json",
+  "title": "Claude Code Plugin Manifest",
+  "description": "Validates plugins/*/.claude-plugin/plugin.json. Per Claude Code docs the manifest is optional; only `name` is required when present. All other fields here are documented metadata or component-path overrides.",
+  "type": "object",
+  "required": ["name"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string", "format": "uri" },
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$",
+      "description": "kebab-case plugin slug; must match directory name."
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+(?:-[0-9A-Za-z.-]+)?(?:\\+[0-9A-Za-z.-]+)?$"
+    },
+    "description": { "type": "string" },
+    "author": {
+      "type": "object",
+      "required": ["name"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string" },
+        "url": { "type": "string", "format": "uri" }
+      }
+    },
+    "license": { "type": "string" },
+    "homepage": { "type": "string", "format": "uri" },
+    "repository": { "type": "string", "format": "uri" },
+    "keywords": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "dependencies": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+      "description": "List of plugin names this plugin depends on (resolved by `claude plugin install`)."
+    },
+    "skills": { "type": "array", "items": { "type": "string" } },
+    "commands": { "type": "array", "items": { "type": "string" } },
+    "agents": { "type": "array", "items": { "type": "string" } },
+    "hooks": { "type": "array", "items": { "type": "string" } },
+    "mcpServers": { "type": ["array", "object"] },
+    "lspServers": { "type": ["array", "object"] },
+    "outputStyles": { "type": "array", "items": { "type": "string" } },
+    "userConfig": { "type": "object" },
+    "channels": { "type": ["array", "object"] },
+    "experimental": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "themes": { "type": ["array", "object"] },
+        "monitors": { "type": ["array", "object"] }
+      },
+      "description": "experimental.themes and experimental.monitors are the v2.1.129+ canonical home for these features (top-level still works with a deprecation warning)."
+    }
+  }
+}

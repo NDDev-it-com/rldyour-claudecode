@@ -23,7 +23,7 @@ Skip when: question can be answered by docs or code (use `tech-research`), or it
 
 1. Frame the search query with version / date qualifiers (e.g. "May 2026", "v1.2.x")
 2. Prefer authoritative domains: vendor blogs, RFCs, security advisories, official changelogs, standards bodies
-3. Fetch top 2–3 candidates via WebFetch; capture publication dates
+3. Fetch top 2-3 candidates via WebFetch; capture publication dates
 4. Cross-reference dated info between independent sources
 5. Quote directly when the claim is non-trivial; never paraphrase as established fact
 

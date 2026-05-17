@@ -1,7 +1,9 @@
 version: 2
 
-# Dependabot keeps third-party GitHub Actions and the Claude Code npm pin
-# from drifting silently. PRs require human review (auto-merge disabled).
+# Dependabot keeps third-party GitHub Actions and the Claude Code CLI npm
+# pin from drifting silently. PRs require human review (auto-merge disabled).
+# .github/workflows/claude-cli-drift.yml provides a redundant weekly check
+# so drift surfaces even if Dependabot is delayed.
 
 updates:
   # Track all third-party GitHub Actions used in .github/workflows/*.yml.
@@ -28,3 +30,21 @@ updates:
         update-types:
           - minor
           - patch
+
+  # Track the Claude Code CLI pin in /package.json (devDependencies).
+  # Single-package ecosystem so the PR title is unambiguous; no grouping.
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: '06:00'
+      timezone: Etc/UTC
+    open-pull-requests-limit: 3
+    labels:
+      - ci
+      - dependencies
+      - claude-code
+    commit-message:
+      prefix: build
+      include: scope
