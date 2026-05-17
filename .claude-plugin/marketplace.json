@@ -7,9 +7,6 @@
     "url": "https://github.com/rldyourmnd"
   },
   "description": "Personal Claude Code plugin marketplace by rldyourmnd — SDLC flow, Serena, MCP, security, browser, design, LSP, rules. Персональный маркетплейс плагинов Claude Code: SDLC flow, Serena, MCP, безопасность, браузер, дизайн, LSP, правила.",
-  "metadata": {
-    "pluginRoot": "./plugins"
-  },
   "plugins": [
     {
       "name": "rldyour-mcps",
@@ -153,7 +150,7 @@
     {
       "name": "rldyour-flow",
       "source": "./plugins/rldyour-flow",
-      "description": "Автономный SDLC-воркфлоу: ry-init/start/newp/review/deploy + 6 reviewer subagents + post-task-sync + instruction-docs-sync. Хуки SessionStart/PreToolUse/Stop. Fullrepo branch.",
+      "description": "Автономный SDLC-воркфлоу: ry-init/start/newp/review/deploy + 6 reviewer subagents + post-task-sync + instruction-docs-sync. Хуки SessionStart/PostToolUse/Stop. Fullrepo branch.",
       "version": "0.2.3",
       "author": {
         "name": "rldyourmnd"
