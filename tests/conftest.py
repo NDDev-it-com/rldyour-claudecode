@@ -61,7 +61,8 @@ def fake_repo(tmp_path: Path) -> Path:
     (tmp_path / ".claude-plugin" / "marketplace.json").write_text(
         '{"name": "fixture-marketplace", "plugins": ['
         '{"name": "sample-plugin", "source": "./plugins/sample-plugin", "version": "0.4.0"},'
-        '{"name": "rldyour-mcps", "source": "./plugins/rldyour-mcps", "version": "0.4.0"}'
+        '{"name": "rldyour-mcps", "source": "./plugins/rldyour-mcps", "version": "0.4.0"},'
+        '{"name": "rldyour-flow", "source": "./plugins/rldyour-flow", "version": "0.4.0"}'
         ']}',
         encoding="utf-8",
     )
@@ -106,6 +107,35 @@ def fake_repo(tmp_path: Path) -> Path:
         ' "additionalProperties": false,'
         ' "properties": {"$schema": {"type": "string"}, "name": {"type": "string"},'
         ' "plugins": {"type": "array"}}}',
+        encoding="utf-8",
+    )
+
+    # text-hygiene allowlist (wave 0.4.4 externalisation) plus a hook stub
+    # matching the BIDI exempt path so test_bidi_allowlist_skips_documented_file
+    # can exercise the exemption end-to-end in fake_repo isolation.
+    (config_dir / "text-hygiene-allowlist.json").write_text(
+        '{"em_dash": [], "en_dash": [],'
+        ' "bidi": ["plugins/rldyour-flow/hooks/post_tool_use_commit_advice.sh"]}',
+        encoding="utf-8",
+    )
+    hook_dir = tmp_path / "plugins" / "rldyour-flow" / "hooks"
+    hook_dir.mkdir(parents=True)
+    # U+202E RLO embedded via Python escape so this conftest.py source stays
+    # ASCII-clean (text-hygiene scan of conftest source must not trip).
+    # Python decodes the escape at module load, write_text writes the actual
+    # BIDI char to disk; validator must exempt the written file per allowlist.
+    bidi_rlo = chr(0x202E)
+    (hook_dir / "post_tool_use_commit_advice.sh").write_text(
+        f"#!/usr/bin/env bash\n# BIDI char in regex char class: {bidi_rlo} detection target\n",
+        encoding="utf-8",
+    )
+    # plugin.json stub so validate_release_state.py (which iterates plugins/*
+    # and requires plugin.json in every subdir) does not FAIL on the new
+    # rldyour-flow stub directory.
+    flow_plugin_dir = tmp_path / "plugins" / "rldyour-flow" / ".claude-plugin"
+    flow_plugin_dir.mkdir(parents=True)
+    (flow_plugin_dir / "plugin.json").write_text(
+        '{"name": "rldyour-flow", "version": "0.4.0"}',
         encoding="utf-8",
     )
 
