@@ -6,6 +6,72 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+## [0.4.4] - 2026-05-17
+
+Fourth wave from the 2026-05-17 review wave
+(`2026-05-17T0948Z-12a2bdc`) - cosmetic polish closure. Seven items
+brought the marketplace to zero outstanding actionable findings:
+six new validator test files (+28 tests, total 70), one allowlist
+externalisation (LOW-10), four cosmetic fixes (LOW-9, INFO-2, INFO-3,
+INFO-6), and the BIDI allowlist test unskipped (INFO-4).
+
+### Added
+
+- **6 new validator test files** (`tests/test_validate_json_schemas.py`,
+  `test_validate_plugin_versions.py`, `test_validate_instruction_docs.py`,
+  `test_validate_skill_routing.py`, `test_check_mcp_runtime_versions.py`,
+  `test_probe_mcp_upstream.py`). 28 new test cases joining the existing
+  42 -> 70 total. Closes F-TEST-05 fully: all 10 validators under
+  `scripts/validate_*` plus the supporting `check_mcp_runtime_versions`,
+  `probe_mcp_upstream`, and `_mcp_parse` modules now have at minimum
+  one happy-path + one negative test. Integration tests
+  (`@pytest.mark.integration`) cover the three validators whose
+  contract depends on full repo state.
+- **`config/text-hygiene-allowlist.json`**: centralises em-dash /
+  en-dash / BIDI exemption sets. The validator now loads exemptions
+  via `load_allowlists(root)` with backward-compat fallback to
+  compiled-in defaults when the config is absent. Closes LOW-10
+  (architecture F-4): adding or moving an exempted file is now a
+  config edit, not a script edit.
+
+### Changed
+
+- **`scripts/validate_text_hygiene.py`**: gained `load_allowlists`
+  function that loads from `config/text-hygiene-allowlist.json` with
+  malformed-JSON fallback to defaults + WARN to stderr.
+  `ALLOWLIST_EM/EN/BIDI` constants renamed to `_DEFAULT_ALLOWLIST_*`
+  to signal fallback role.
+- **`scripts/validate_instruction_sync.py:45`**: `CONTRACT_BLOCK_RE`
+  gained `\s*` tolerance before closing `-->` for indented HTML-comment
+  style. Defensive change - no production block uses this form at HEAD.
+  Closes INFO-3.
+- **`.github/workflows/claude-cli-drift.yml:21-26`**: concurrency
+  group + cancel-in-progress aligned with `dependency-check.yml`
+  pattern (group includes `github.ref`, cancel-in-progress true). Both
+  weekly drift workflows now share the same lifecycle contract. Closes
+  LOW-9.
+- **`docs/adr/0003-bilingual-skill-descriptions.md:72`**: Confirmation
+  section count updated from "15 routing cases" to "19" with a note
+  that the validator auto-extends as new skills ship. Closes INFO-2.
+- **`tests/test_validate_docs_canon.py:91`**: `monkeypatch` parameter
+  gained `pytest.MonkeyPatch` type annotation for consistency with
+  `conftest.py:104`. Closes INFO-6.
+- **`tests/test_validate_text_hygiene.py`**:
+  `test_bidi_allowlist_skips_documented_file` no longer
+  `@pytest.mark.skip` - fake_repo fixture now ships the allowlist
+  config + a stub hook file with embedded U+202E via `chr(0x202E)`
+  so the test exercises the exemption path end-to-end in fake_repo
+  isolation. Closes INFO-4.
+- **`tests/conftest.py`**: fixture extended with
+  `config/text-hygiene-allowlist.json`, hook stub at
+  `plugins/rldyour-flow/hooks/post_tool_use_commit_advice.sh`, and
+  `rldyour-flow` plugin.json + marketplace entry so `validate_release_state`
+  and `validate_boundaries` keep passing against the extended layout.
+  `patch_repo_root` copy list gained 5 missing scripts
+  (`validate_instruction_docs`, `validate_skill_routing`,
+  `validate_boundaries`, `check_mcp_runtime_versions`,
+  `probe_mcp_upstream`) so the new test files can exec them.
+
 ## [0.4.3] - 2026-05-17
 
 Third wave from the 2026-05-17 review (`2026-05-17T0948Z-12a2bdc`) -
