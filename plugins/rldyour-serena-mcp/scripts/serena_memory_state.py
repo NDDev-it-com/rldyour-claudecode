@@ -8,7 +8,6 @@ import sys
 from pathlib import Path
 from typing import Any
 
-
 MEMORY_DIR = Path(".serena/memories")
 SYNC_STATE = Path(".serena/.serena_sync_state.json")
 ANALYZE_SCRIPT = Path(__file__).resolve().parent / "analyze_sync_scope.py"

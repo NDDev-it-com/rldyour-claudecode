@@ -9,9 +9,8 @@ import re
 import subprocess
 import sys
 import tempfile
+from collections.abc import Iterable
 from pathlib import Path
-from typing import Iterable
-
 
 FULLREPO_BRANCH = "fullrepo"
 DEFAULT_REMOTE = "origin"
@@ -298,10 +297,7 @@ def publish(remote: str, branch: str, dry_run: bool = False) -> None:
         return
 
     parent_args: list[str] = []
-    if expected_remote:
-        parent_args = ["-p", expected_remote]
-    else:
-        parent_args = ["-p", head]
+    parent_args = ["-p", expected_remote] if expected_remote else ["-p", head]
 
     message = (
         f"chore(fullrepo): sync {head_short}\n\n"

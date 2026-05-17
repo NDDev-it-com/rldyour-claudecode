@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-17
-Last commit: 12a2bdc chore(release): 0.4.0 polish - actuality + tests + upload-artifact v7
+Last commit: a04c6eb chore(release): bump VERSION + all 9 plugins to 0.4.2
 Scope: plugins/rldyour-security/skills/owasp-top-10-implementation/SKILL.md, plugins/rldyour-security/skills/ry-sec-review/SKILL.md, plugins/rldyour-security/commands/ry-sec-review.md, plugins/rldyour-flow/agents/flow-security-review.md, plugins/rldyour-mcps/.mcp.json (semgrep entry)
 Area: SECURITY
 -->
@@ -16,7 +16,7 @@ Security domain workflow for `rldyour-security`. Two operating modes: (1) adviso
 ## Source Of Truth
 
 - `plugins/rldyour-security/skills/owasp-top-10-implementation/SKILL.md`: implementation-time advisory.
-- `plugins/rldyour-security/skills/ry-sec-review/SKILL.md`: slash-only audit (`disable-model-invocation: true`).
+- `plugins/rldyour-security/skills/ry-sec-review/SKILL.md`: slash-only audit (`disable-model-invocation: true`). OWASP Review Coverage section (lines 64-73) uses `A01:2025` through `A10:2025` with `:2025` year suffix on all 10 entries - aligned with `owasp-top-10-implementation` SKILL, `cc-canon.json`, `threat-model.md`, and this memory as of HEAD `a04c6eb`.
 - `plugins/rldyour-security/commands/ry-sec-review.md`: slash command entry.
 - `plugins/rldyour-flow/agents/flow-security-review.md`: parallel reviewer subagent (Mythos-style, color red, maxTurns 42 with +6 turns for variant-hunt).
 - `plugins/rldyour-mcps/.mcp.json` `semgrep`: `uvx --from semgrep==1.163.0 semgrep mcp` - SAST scanner integration.

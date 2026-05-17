@@ -79,8 +79,14 @@ def fake_repo(tmp_path: Path) -> Path:
         '{"name": "rldyour-mcps", "version": "0.4.0"}',
         encoding="utf-8",
     )
+    # Add both a stdio write-capable server (serena) and an HTTP
+    # read-only-by-design server (context7) so agent-tools tests can exercise
+    # both wildcard-blocked and wildcard-passes branches of validate_agent_tools.
     (tmp_path / "plugins" / "rldyour-mcps" / ".mcp.json").write_text(
-        '{"mcpServers": {"serena": {"command": "uvx", "args": ["serena-agent==1.3.0"]}}}',
+        '{"mcpServers": {'
+        '"serena": {"command": "uvx", "args": ["serena-agent==1.3.0"]},'
+        '"context7": {"type": "http", "url": "https://example.com"}'
+        '}}',
         encoding="utf-8",
     )
 
@@ -122,9 +128,13 @@ def patch_repo_root(monkeypatch: pytest.MonkeyPatch, fake_repo: Path) -> Path:
     scripts_link = fake_repo / "scripts"
     scripts_link.mkdir(exist_ok=True)
     # Copy real scripts so __file__ inside the script resolves to fake_repo/scripts/<name>.
+    # `_mcp_parse.py` is the shared module imported by both
+    # validate_skill_allowed_tools.py and validate_agent_tools.py - copy it
+    # so the `from _mcp_parse import split_mcp_ref` resolves at test runtime.
     for name in [
         "validate_text_hygiene.py",
         "validate_skill_allowed_tools.py",
+        "validate_agent_tools.py",
         "validate_release_state.py",
         "validate_docs_canon.py",
         "validate_instruction_sync.py",
@@ -132,6 +142,7 @@ def patch_repo_root(monkeypatch: pytest.MonkeyPatch, fake_repo: Path) -> Path:
         "validate_json_schemas.py",
         "release_manifest.py",
         "validate_plugin_versions.py",
+        "_mcp_parse.py",
     ]:
         src = SCRIPTS_DIR / name
         if src.is_file():

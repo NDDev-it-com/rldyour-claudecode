@@ -6,6 +6,97 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+## [0.4.3] - 2026-05-17
+
+Third wave from the 2026-05-17 review (`2026-05-17T0948Z-12a2bdc`) -
+architectural debt closure. Eight items: shared MCP parser extraction,
+new boundary-enforcement validator (closes ADR-0006 gap), pyright +
+ruff advisory CI gates, subprocess timeouts, dead-code removal, broad
+self-skip hardening, security-critical test coverage, lint backlog
+cleared across `scripts/` + `plugins/`. The validator-layer of the
+marketplace now has 39 unit tests (up from 23 in 0.4.2) and zero
+ruff/pyright diagnostics.
+
+### Added
+
+- **`scripts/_mcp_parse.py`**: shared MCP tool reference parser. Single
+  `split_mcp_ref(ref, plugins) -> (plugin, server, tool) | None`. Used
+  by both `validate_skill_allowed_tools.py` and `validate_agent_tools.py`,
+  eliminating the divergent parsing strategies flagged by A-F-5 (one
+  used `rsplit('_', 1)`, the other longest-prefix). Closes A-LOW-6.
+- **`scripts/validate_boundaries.py`**: new structural validator
+  reading `config/marketplace-policy.json`. Enforces four invariants:
+  exactly one `.mcp.json` owned by `policy.mcp_owner`, `hooks/hooks.json`
+  set matches `policy.hook_owners` exactly, every plugin.json `name`
+  matches its directory, every plugin.json `dependencies` array equals
+  `policy.plugin_dependencies[<plugin>]`. Wired into
+  `validate_marketplace.sh` + `.github/workflows/validate.yml`. Closes
+  A-MED-3 and the ADR-0006 self-acknowledged gap.
+- **`tests/test_mcp_parse.py`** (9 tests): direct unit tests for the
+  shared `split_mcp_ref` parser - hyphen + underscore + longest-prefix
+  + rpartition-fallback + 4 malformed-input rejection cases. Closes
+  A-LOW-5 (the `test_validate_skill_allowed_tools.py` docstring
+  promised underscore-plugin coverage; the actual contract is now
+  tested at the parser layer).
+- **`tests/test_validate_agent_tools.py`** (7 tests): security-critical
+  coverage for the read-only-by-design enforcer. Builtin tools pass,
+  no-tools-block inherits default, serena wildcard blocked,
+  context7 wildcard passes, unknown server blocked, unknown plugin
+  blocked (new branch from the LOW-6 refactor), malformed ref blocked.
+  Closes A-LOW-7 / A-F-6.
+- **Ruff lint + Pyright type check advisory CI steps** in
+  `.github/workflows/validate.yml`. Both `continue-on-error: true`
+  until MED-2 graduates to hard-fail; visibility comes from the
+  workflow run summary. Closes A-MED-2 (Recommended).
+
+### Changed
+
+- **`scripts/validate_skill_allowed_tools.py`** + **`scripts/validate_agent_tools.py`**:
+  both now import `split_mcp_ref` from `_mcp_parse`. Old dead
+  `MCP_PATTERN_RE` removed (closes Q-F-2). `validate_agent_tools.py`
+  gained explicit plugin-name validation against marketplace - unknown
+  plugin refs now yield specific "unknown plugin" errors instead of
+  passing silently.
+- **`scripts/validate_release_state.py`**: `_git`, `_head_sha`,
+  `_tag_sha`, and the `release_manifest.py` subprocess call all gained
+  `timeout=30s` + `TimeoutExpired` handling. A stuck git or stuck
+  subprocess now returns a FAIL line instead of hanging until the
+  workflow-level job timeout fires. Closes Q-LOW-6.
+- **`scripts/validate_text_hygiene.py`**: self-skip changed from
+  `path.name == "validate_text_hygiene.py"` (any file with that name
+  anywhere) to `path.resolve() == Path(__file__).resolve()` (only the
+  script file itself). A future file named `validate_text_hygiene.py`
+  placed elsewhere is no longer silently exempted from scanning.
+  Closes Q-LOW-4. `EN_DASH` constant got `# noqa: RUF001` with
+  rationale since the constant IS the EN DASH detection target.
+- **`tests/conftest.py`**: fake `.mcp.json` extended with `context7`
+  HTTP server alongside the existing `serena` stdio server, allowing
+  the new agent-tools tests to exercise both write-server-blocked and
+  read-only-server-passes branches. `patch_repo_root` copy list also
+  gained `validate_agent_tools.py` + `_mcp_parse.py` so the new
+  tests can run in `fake_repo` isolation.
+- **`pyproject.toml`**: pyright `include` now covers `tests/` so the
+  test layer is type-checked alongside `scripts/` + `plugins/`.
+  `extraPaths = ["scripts"]` resolves `from _mcp_parse import ...`
+  the same way Python's runtime sys.path treatment does.
+- **`docs/adr/0006-mcp-hook-ownership-boundaries.md`**: Confirmation
+  section rewritten to cite the now-shipped `validate_boundaries.py`
+  with all four invariants enumerated. Replaces the
+  "(not yet implemented)" language from 0.3.0.
+
+### Fixed
+
+- **`plugins/rldyour-serena-mcp/scripts/analyze_sync_scope.py:285`**:
+  added `# type: ignore[operator]` for a pre-existing Pyright type
+  narrowing limitation. Construction site sets `item["count"]` to int,
+  but Pyright cannot narrow from the dict's mixed `str | int | list[str]`
+  value type. No behavior change.
+- **9 ruff auto-fixes** across `plugins/rldyour-flow/scripts/` and
+  `plugins/rldyour-serena-mcp/scripts/`: import sort, `collections.abc.Iterable`,
+  ternary expression, `return bool(...)`, tuple unpacking. Cosmetic
+  modernization to bring the lint backlog to zero before enabling the
+  MED-2 advisory CI gate.
+
 ## [0.4.2] - 2026-05-17
 
 Second wave from the 2026-05-17 review (`2026-05-17T0948Z-12a2bdc`) -

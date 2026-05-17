@@ -37,10 +37,26 @@ CHANGELOG_RELEASE_RE = re.compile(
 )
 
 
+_GIT_TIMEOUT_SEC = 30
+
+
 def _git(*args: str, cwd: Path | None = None) -> subprocess.CompletedProcess[str]:
-    return subprocess.run(
-        ["git", *args], capture_output=True, text=True, check=False, cwd=cwd
-    )
+    try:
+        return subprocess.run(
+            ["git", *args],
+            capture_output=True,
+            text=True,
+            check=False,
+            cwd=cwd,
+            timeout=_GIT_TIMEOUT_SEC,
+        )
+    except subprocess.TimeoutExpired:
+        return subprocess.CompletedProcess(
+            args=["git", *args],
+            returncode=124,
+            stdout="",
+            stderr=f"git {' '.join(args)} timed out after {_GIT_TIMEOUT_SEC}s",
+        )
 
 
 def _head_sha(cwd: Path | None = None) -> str:
@@ -137,13 +153,20 @@ def validate_release_manifest(root: Path) -> list[str]:
     script = root / "scripts" / "release_manifest.py"
     if not script.is_file():
         return ["scripts/release_manifest.py is missing"]
-    proc = subprocess.run(
-        ["python3", str(script)],
-        capture_output=True,
-        text=True,
-        check=False,
-        cwd=root,
-    )
+    try:
+        proc = subprocess.run(
+            ["python3", str(script)],
+            capture_output=True,
+            text=True,
+            check=False,
+            cwd=root,
+            timeout=_GIT_TIMEOUT_SEC,
+        )
+    except subprocess.TimeoutExpired:
+        return [
+            f"scripts/release_manifest.py timed out after {_GIT_TIMEOUT_SEC}s; "
+            f"investigate locally"
+        ]
     if proc.returncode != 0:
         return [f"scripts/release_manifest.py exited {proc.returncode}: {proc.stderr.strip()}"]
     try:

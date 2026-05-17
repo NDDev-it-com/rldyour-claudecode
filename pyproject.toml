@@ -4,7 +4,7 @@
 # infrastructure scripts under scripts/ and plugins/*/scripts/, and to
 # give Pyright a stable settings anchor.
 name = "rldyour-claudecode"
-version = "0.4.2"
+version = "0.4.3"
 description = "Personal Claude Code plugin marketplace (metadata + infrastructure scripts)"
 requires-python = ">=3.12"
 
@@ -71,10 +71,15 @@ reportMissingImports = "error"
 reportMissingTypeStubs = "none"
 reportUnusedImport = "warning"
 reportUnusedVariable = "warning"
-include = ["scripts", "plugins"]
+include = ["scripts", "plugins", "tests"]
 exclude = [
   "**/__pycache__",
   ".serena",
   ".venv",
   "node_modules",
 ]
+# `scripts/` on extraPaths so Pyright can resolve `from _mcp_parse import ...`
+# the same way Python does at runtime (script directory is auto-prepended to
+# sys.path for scripts launched as `python3 scripts/<name>.py`, and tests
+# inject sys.path.insert in conftest.py).
+extraPaths = ["scripts"]
