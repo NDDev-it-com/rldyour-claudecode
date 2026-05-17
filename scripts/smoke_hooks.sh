@@ -41,7 +41,13 @@ fail_count=0
 HOOK_SCRIPTS=$(python3 - <<'PY'
 import json, glob, re
 
+# Quality reviewer F-1 fix: hook handlers in v0.5.0 use exec-form
+# `command: "bash", args: ["${CLAUDE_PLUGIN_ROOT}/hooks/X.sh"]`. Previously
+# the discovery walked only `handler["command"]` which post-rewrite holds
+# only the literal "bash" string, silently dropping every script. Walk
+# BOTH `command` and `args` to keep shell-form and exec-form coverage.
 scripts = []
+script_re = re.compile(r"hooks/([\w._-]+\.sh)")
 for hf in glob.glob("plugins/*/hooks/hooks.json"):
     plugin_dir = hf.split("/hooks/")[0]
     data = json.load(open(hf))
@@ -50,11 +56,14 @@ for hf in glob.glob("plugins/*/hooks/hooks.json"):
             for handler in matcher_block.get("hooks", []):
                 if handler.get("type") != "command":
                     continue
-                cmd = handler.get("command", "")
-                # Extract script path: bash ${CLAUDE_PLUGIN_ROOT}/hooks/<script>.sh
-                m = re.search(r"hooks/([\w._-]+\.sh)", cmd)
-                if m:
-                    scripts.append(f"{plugin_dir}/hooks/{m.group(1)}")
+                tokens = [handler.get("command", "")] + list(handler.get("args", []))
+                for tok in tokens:
+                    if not isinstance(tok, str):
+                        continue
+                    m = script_re.search(tok)
+                    if m:
+                        scripts.append(f"{plugin_dir}/hooks/{m.group(1)}")
+                        break  # one script path per handler
 
 for s in sorted(set(scripts)):
     print(s)
