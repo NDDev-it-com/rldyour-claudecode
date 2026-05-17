@@ -157,7 +157,7 @@ Reference documents:
 
 ## Minimum Claude Code Version
 
-**v2.1.111+** for `model: opus[1m]` bracketed extended-context syntax used by `ry-explore`. Earlier versions silently ignore the bracket suffix.
+**v2.1.143+** as the project compatibility floor (matches the pinned CI version in `.github/workflows/validate.yml`). This covers every Claude Code feature used by the marketplace: `opus[1m]` bracketed extended-context syntax (v2.1.111+; `[1m]` availability remains account/plan-dependent and `/model` omits it when unavailable), `alwaysLoad: true` MCP option (v2.1.121+), `claude plugin tag --push` (v2.1.118+), hook `if` filter (v2.1.118+), `maxSkillDescriptionChars` and `skillListingBudgetFraction` user settings (v2.1.105+), `skillOverrides` (v2.1.129+; plugin skills exempt), `experimental.{themes,monitors}` wrapper (v2.1.129+).
 
 ## Support And Feedback
 
