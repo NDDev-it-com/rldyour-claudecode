@@ -37,6 +37,11 @@ PROBES: tuple[tuple[str, str, str], ...] = (
     ("CONTEXT7_MCP_VERSION", "npm", "@upstash/context7-mcp"),
     ("SHADCN_VERSION", "npm", "shadcn"),
     ("GITHUB_MCP_SERVER_VERSION", "brew", "github-mcp-server"),
+    # Dart SDK ships the `dart mcp-server` host binary; track latest stable
+    # from the official Dart archive so weekly drift checks notify on new
+    # 3.x.y releases (host binary needs `brew upgrade dart` or equivalent
+    # SDK update, then bump DART_SDK_VERSION in config/mcp-runtime-versions.env).
+    ("DART_SDK_VERSION", "dart-stable", "dart"),
 )
 
 
@@ -99,6 +104,23 @@ def latest_brew(formula: str) -> str | None:
     return None
 
 
+def latest_dart_stable(package: str) -> str | None:
+    """Latest Dart SDK stable release per https://storage.googleapis.com/dart-archive/.
+
+    The `package` argument keeps the registry function signature uniform with
+    the npm/pypi/brew probes; only the literal value "dart" is supported.
+    """
+    if package != "dart":
+        return None
+    data = fetch_json(
+        "https://storage.googleapis.com/dart-archive/channels/stable/release/latest/VERSION"
+    )
+    if data is None:
+        return None
+    version = data.get("version")
+    return str(version) if isinstance(version, str) else None
+
+
 def normalize(version: str) -> str:
     return version.lstrip("v").strip()
 
@@ -125,6 +147,8 @@ def main() -> int:
             latest = latest_pypi(package)
         elif registry == "brew":
             latest = latest_brew(package)
+        elif registry == "dart-stable":
+            latest = latest_dart_stable(package)
         else:
             print(f"SKIP {env_key}: unknown registry {registry!r}")
             continue
