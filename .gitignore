@@ -30,6 +30,10 @@ __pycache__/
 .python-version
 .venv/
 venv/
+# uv lock is generated from pyproject.toml at install time. This marketplace
+# is metadata-only (no Python package built); uv.lock has no reproducibility
+# value and would otherwise block `fullrepo_sync.py --publish` as untracked.
+uv.lock
 
 # Node
 node_modules/
