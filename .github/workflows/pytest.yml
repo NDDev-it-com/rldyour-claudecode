@@ -15,6 +15,7 @@ on:
     branches: [main]
     paths:
       - 'scripts/**'
+      - 'plugins/**'           # plugin-side scripts (e.g. serena_memory_state.py) covered by tests/
       - 'tests/**'
       - 'pyproject.toml'
       - '.github/workflows/pytest.yml'
