@@ -18,6 +18,30 @@ SERENA_KNOWLEDGE_PREFIXES = (
     ".serena/newproj/",
     ".serena/deploy/",
 )
+# Agent-instruction paths that are knowledge-equivalent: durable agent
+# guidance lives here. On projects with a `main`/`fullrepo` branch split
+# these files exist only on `fullrepo`; treating them as knowledge keeps
+# `only_knowledge_changes_since_sync` true after an agent-only wave, so
+# a `Last commit:` pinned to the main-side ancestor SHA still satisfies
+# `memory_matches_head` without needing prose mentions of the current
+# fullrepo merge HEAD (which CI verify-memory-sync.py would reject as
+# non-ancestor of main HEAD).
+AGENT_INSTRUCTION_PATHS = (
+    "AGENTS.md",
+    "REVIEW.md",
+    "CLAUDE.md",
+    "GEMINI.md",
+    "QWEN.md",
+    ".claude/",
+    ".codex/",
+    ".cursor/",
+    ".gemini/",
+    ".windsurf/",
+    ".roo/",
+    ".aider",
+    ".serena/project.yml",
+    ".serena/project.local.yml",
+)
 RUNTIME_IGNORED = {
     ".serena/.sync_marker",
     ".serena/.serena_sync_state.json",
@@ -134,7 +158,15 @@ def _analysis_from_changed_files(paths: list[str], state: dict[str, Any]) -> tup
 
 
 def _is_knowledge_path(path: str) -> bool:
-    return any(path.startswith(prefix) for prefix in SERENA_KNOWLEDGE_PREFIXES)
+    if any(path.startswith(prefix) for prefix in SERENA_KNOWLEDGE_PREFIXES):
+        return True
+    # Agent-instruction files are knowledge-equivalent: their churn on
+    # `fullrepo` after a `main`-side ancestor sync should NOT force a
+    # fresh memory bump to satisfy `memory_matches_head`.
+    return any(
+        path == ai_path or path.startswith(ai_path)
+        for ai_path in AGENT_INSTRUCTION_PATHS
+    )
 
 
 def _non_knowledge_paths(paths: list[str]) -> list[str]:
