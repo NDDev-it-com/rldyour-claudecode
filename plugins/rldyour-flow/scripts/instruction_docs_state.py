@@ -6,6 +6,7 @@ import fnmatch
 import json
 import os
 import subprocess
+import sys
 from pathlib import Path
 from typing import Any
 
@@ -144,7 +145,7 @@ def fullrepo_state(root: Path) -> dict[str, Any]:
         if not candidate.is_file():
             continue
         proc = subprocess.run(
-            ["python3", str(candidate), "--status-json"],
+            [sys.executable, str(candidate), "--status-json"],
             cwd=root,
             check=False,
             capture_output=True,
