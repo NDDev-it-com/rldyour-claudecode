@@ -69,9 +69,11 @@ jobs:
         uses: github/codeql-action/init@95e58e9a2cdfd71adc6e0353d5c52f41a045d225  # v4.35.2
         with:
           languages: ${{ matrix.language }}
-          # security-extended adds rules beyond the default set (taint flows,
-          # crypto issues, broader path-traversal coverage). Free for public repos.
-          queries: security-extended,security-and-quality
+          # `security-and-quality` is a strict superset of `security-extended`
+          # (adds maintainability checks on top of taint/crypto/path queries).
+          # Choosing the superset avoids redundant query execution. Free for
+          # public repos.
+          queries: security-and-quality
 
       - name: Perform CodeQL analysis
         uses: github/codeql-action/analyze@95e58e9a2cdfd71adc6e0353d5c52f41a045d225  # v4.35.2
