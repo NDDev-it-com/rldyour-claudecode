@@ -137,7 +137,6 @@ AGENT_INSTRUCTION_PATHS = (
     ".agents/commands/",
     ".agents/hooks/",
     ".serena/project.yml",
-    ".serena/project.local.yml",
 )
 
 RUNTIME_IGNORED = {
@@ -154,10 +153,21 @@ RUNTIME_IGNORED = {
 def is_knowledge_path(path: str) -> bool:
     if any(path.startswith(prefix) for prefix in SERENA_KNOWLEDGE_PREFIXES):
         return True
-    return any(
-        path == ai_path or path.startswith(ai_path)
-        for ai_path in AGENT_INSTRUCTION_PATHS
-    )
+    # See serena_memory_state.py:_is_knowledge_path for matching semantics
+    # (directory prefixes use startswith; exact files use equality;
+    # '.aider' is the dotfile-family prefix). Drift caught by
+    # tests/test_serena_memory_state.py::TestInlineHookCanonDrift.
+    for ai_path in AGENT_INSTRUCTION_PATHS:
+        if ai_path.endswith("/"):
+            if path.startswith(ai_path):
+                return True
+        elif ai_path == ".aider":
+            if path == ai_path or path.startswith(".aider"):
+                return True
+        else:
+            if path == ai_path:
+                return True
+    return False
 
 changed_files = analysis.get("changed_files") or []
 if not isinstance(changed_files, list):

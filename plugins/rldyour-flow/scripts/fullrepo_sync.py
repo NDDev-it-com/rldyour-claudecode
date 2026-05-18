@@ -27,6 +27,7 @@ AGENT_ONLY_PATTERNS = (
     ".windsurfrules",
     ".aider*",
     ".claude/**",
+    ".codex/**",
     ".cursor/rules/**",
     ".gemini/**",
     ".roo/**",
