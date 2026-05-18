@@ -55,8 +55,11 @@ AGENT_INSTRUCTION_PATHS = (
     ".agents/hooks/",
     # Serena project metadata (knowledge directories live in
     # SERENA_KNOWLEDGE_PREFIXES; project.yml is metadata, not knowledge).
+    # `.serena/project.local.yml` is intentionally absent: it is
+    # machine-local runtime config (negated in .git/info/exclude,
+    # listed in fullrepo_sync RUNTIME_EXCLUDE_PATTERNS) and should NOT
+    # classify as knowledge - it never reaches commits in normal flow.
     ".serena/project.yml",
-    ".serena/project.local.yml",
 )
 RUNTIME_IGNORED = {
     ".serena/.sync_marker",
@@ -179,10 +182,30 @@ def _is_knowledge_path(path: str) -> bool:
     # Agent-instruction files are knowledge-equivalent: their churn on
     # `fullrepo` after a `main`-side ancestor sync should NOT force a
     # fresh memory bump to satisfy `memory_matches_head`.
-    return any(
-        path == ai_path or path.startswith(ai_path)
-        for ai_path in AGENT_INSTRUCTION_PATHS
-    )
+    #
+    # Matching semantics (F-3 verification-review closure, 2026-05-18):
+    # - entry ending in '/' (e.g. '.claude/') is a directory prefix:
+    #   use startswith so '.claude/CLAUDE.md' matches '.claude/'.
+    # - entry not ending in '/' is treated as an exact file path
+    #   (e.g. 'AGENTS.md', '.github/copilot-instructions.md') OR a
+    #   dotfile-family prefix '.aider' covering '.aider*' files.
+    #   Use exact equality + the '.aider' special case to avoid the
+    #   false-positive class (e.g. 'AGENTS.md.bak' or
+    #   '.github/copilot-instructions.mdx' should NOT be classified
+    #   as knowledge).
+    for ai_path in AGENT_INSTRUCTION_PATHS:
+        if ai_path.endswith("/"):
+            if path.startswith(ai_path):
+                return True
+        elif ai_path == ".aider":
+            # .aider is the canonical .aider* dotfile-family prefix
+            # (.aider, .aiderignore, .aider.conf.yml, .aider.chat.history.md).
+            if path == ai_path or path.startswith(".aider"):
+                return True
+        else:
+            if path == ai_path:
+                return True
+    return False
 
 
 def _non_knowledge_paths(paths: list[str]) -> list[str]:
