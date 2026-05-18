@@ -195,12 +195,23 @@ Three boundaries exist:
 
 ## Known acceptable risks
 
-- **No GHAS (paid)**: no SARIF upload to Security tab; no Dependabot
-  security alerts at the GitHub Code Security tier. Mitigation: Semgrep +
-  gitleaks CLI; Dependabot version updates (free tier).
-- **No push protection (paid)**: secrets pushed to GitHub are not
-  rejected at the server; gitleaks + Semgrep run after the push lands.
-  Local pre-push guard is the primary defence.
+- **Code Scanning availability** (updated 2026-05-18, release 0.6.0):
+  the repository is now public. CodeQL is free for public repos per
+  GitHub billing and uploads SARIF to the Security tab via
+  `.github/workflows/codeql.yml`. Dependabot security updates are
+  enabled. The previous "no GHAS, no SARIF" framing applied to the
+  private-repo configuration that drove the original CI baseline -
+  see ADR-0008 amendment 2026-05-18. CodeQL + Semgrep + gitleaks are
+  now three complementary security workflows; CodeQL covers semantic
+  taint flows + Actions workflow analysis, Semgrep covers pattern-based
+  SAST (OSS rule packs), gitleaks covers secret scanning. The repo's
+  defence-in-depth security stack is markedly stronger than the
+  pre-public baseline.
+- **Push protection**: GitHub Secret Scanning Push Protection is
+  configurable for public repos. When enabled, secrets pushed to GitHub
+  are rejected at the server. Local pre-push guard
+  (`plugins/rldyour-flow/scripts/local_git_ai_guard.sh`) remains the
+  primary defence and runs before any server-side check.
 - **fullrepo `--force-with-lease`**: intentional per ADR-0001. Cannot
   share `main`'s no-force-push rule.
 
