@@ -29,13 +29,22 @@ concurrency:
 
 jobs:
   pytest:
-    name: pytest scripts/validate_*
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
+    name: pytest (${{ matrix.os }} / py${{ matrix.python-version }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
     permissions:
       contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        # Matrix coverage: Linux (canonical CI) + macOS (catches BSD vs GNU
+        # path/encoding/regex differences). Public repos get unlimited Actions
+        # minutes per GitHub billing, so macOS coverage is free here.
+        os: [ubuntu-latest, macos-latest]
+        python-version: ['3.13']
     steps:
       - name: Harden runner (egress block + explicit allowlist)
+        if: runner.os == 'Linux'  # harden-runner is Linux-only (per ADR-0010)
         uses: step-security/harden-runner@ab7a9404c0f3da075243ca237b5fac12c98deaa5  # v2.19.3
         with:
           egress-policy: block
@@ -50,11 +59,13 @@ jobs:
 
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+        with:
+          persist-credentials: false
 
-      - name: Set up Python
+      - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405  # v6.2.0
         with:
-          python-version: '3.13'
+          python-version: ${{ matrix.python-version }}
           cache: 'pip'
 
       - name: Install test dependencies
