@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-17
-Last commit: b4e63ec docs(security): clarify Secret Scanning is intentionally disabled
+Last commit: 66ef8f4 chore(release): bump VERSION + 9 plugins to 0.6.1
 Scope: plugins/rldyour-rules/skills/quality-first-engineering/SKILL.md, plugins/rldyour-rules/skills/architecture-boundaries/SKILL.md, plugins/rldyour-rules/skills/dependency-compatibility-policy/SKILL.md, plugins/rldyour-rules/skills/implementation-discipline/SKILL.md, plugins/rldyour-rules/skills/verification-quality-gates/SKILL.md, plugins/rldyour-rules/references/rules-policy.md, plugins/rldyour-rules/references/quality-gates.md
 Area: PHILOSOPHY
 -->

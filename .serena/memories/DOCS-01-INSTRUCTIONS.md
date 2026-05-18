@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-18
-Last commit: b4e63ec docs(security): clarify Secret Scanning is intentionally disabled
+Last commit: 66ef8f4 chore(release): bump VERSION + 9 plugins to 0.6.1
 Scope: AGENTS.md, .claude/CLAUDE.md, plugins/rldyour-rules/skills/project-instructions-policy/SKILL.md, plugins/rldyour-flow/scripts/instruction_docs_state.py, scripts/validate_instruction_docs.py, plugins/rldyour-serena-mcp/scripts/analyze_sync_scope.py
 Area: DOCS
 -->

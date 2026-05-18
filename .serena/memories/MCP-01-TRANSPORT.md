@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-17
-Last commit: b4e63ec docs(security): clarify Secret Scanning is intentionally disabled
+Last commit: 66ef8f4 chore(release): bump VERSION + 9 plugins to 0.6.1
 Scope: plugins/rldyour-mcps/.mcp.json, config/mcp-runtime-versions.env, scripts/check_mcp_runtime_versions.py, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.sh, AGENTS.md
 Area: MCP
 -->

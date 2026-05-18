@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-18
-Last commit: b4e63ec docs(security): clarify Secret Scanning is intentionally disabled
+Last commit: 66ef8f4 chore(release): bump VERSION + 9 plugins to 0.6.1
 Scope: VERSION, CHANGELOG.md, README.md, .claude-plugin/marketplace.json, plugins/*/.claude-plugin/plugin.json, .github/workflows/validate.yml, .github/workflows/dependency-check.yml, .github/workflows/semgrep.yml, .github/workflows/actionlint.yml, .github/dependabot.yml, scripts/validate_marketplace.sh, scripts/validate_plugin_versions.py, scripts/validate_boundaries.py, scripts/_mcp_parse.py, scripts/smoke_serena_memory_taxonomy.sh, docs/release-process.md, docs/adr/0006-mcp-hook-ownership-boundaries.md, pyproject.toml
 Area: RELEASE
 -->

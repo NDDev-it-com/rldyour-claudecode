@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-17
-Last commit: b4e63ec docs(security): clarify Secret Scanning is intentionally disabled
+Last commit: 66ef8f4 chore(release): bump VERSION + 9 plugins to 0.6.1
 Scope: plugins/rldyour-security/skills/owasp-top-10-implementation/SKILL.md, plugins/rldyour-security/skills/ry-sec-review/SKILL.md, plugins/rldyour-security/commands/ry-sec-review.md, plugins/rldyour-flow/agents/flow-security-review.md, plugins/rldyour-mcps/.mcp.json (semgrep entry)
 Area: SECURITY
 -->

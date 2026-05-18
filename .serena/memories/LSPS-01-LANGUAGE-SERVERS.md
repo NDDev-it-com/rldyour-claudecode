@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-17
-Last commit: b4e63ec docs(security): clarify Secret Scanning is intentionally disabled
+Last commit: 66ef8f4 chore(release): bump VERSION + 9 plugins to 0.6.1
 Scope: plugins/rldyour-lsps/.lsp.json, plugins/rldyour-lsps/skills/lsp-routing/SKILL.md, plugins/rldyour-lsps/skills/lsp-health-check/SKILL.md, plugins/rldyour-lsps/skills/lsp-setup/SKILL.md, plugins/rldyour-lsps/skills/serena-lsp-integration/SKILL.md, plugins/rldyour-lsps/references/lsp-server-matrix.md, plugins/rldyour-lsps/references/install-profiles.md, plugins/rldyour-lsps/references/serena-lsp-integration.md, plugins/rldyour-lsps/scripts/check_lsps.sh, plugins/rldyour-lsps/scripts/install_lsps_brew.sh
 Area: LSPS
 -->

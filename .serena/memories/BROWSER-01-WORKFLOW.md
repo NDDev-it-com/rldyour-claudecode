@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-17
-Last commit: b4e63ec docs(security): clarify Secret Scanning is intentionally disabled
+Last commit: 66ef8f4 chore(release): bump VERSION + 9 plugins to 0.6.1
 Scope: plugins/rldyour-browser/skills/browser-tool-routing/SKILL.md, plugins/rldyour-browser/skills/browser-validation/SKILL.md, plugins/rldyour-browser/skills/browser-debug/SKILL.md, plugins/rldyour-mcps/.mcp.json (playwright + chrome-devtools entries)
 Area: BROWSER
 -->

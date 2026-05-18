@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-17
-Last commit: b4e63ec docs(security): clarify Secret Scanning is intentionally disabled
+Last commit: 66ef8f4 chore(release): bump VERSION + 9 plugins to 0.6.1
 Scope: plugins/rldyour-explore/skills/tech-research/SKILL.md, plugins/rldyour-explore/skills/web-research/SKILL.md, plugins/rldyour-explore/agents/ry-explore.md, plugins/rldyour-explore/commands/ry-explore.md, plugins/rldyour-mcps/.mcp.json (context7 + deepwiki + grep entries)
 Area: EXPLORE
 -->
