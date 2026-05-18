@@ -105,7 +105,13 @@ PY
 TMP_ROOT=$(mktemp -d)
 trap 'rm -rf "$TMP_ROOT"' EXIT
 
-step "agent-instruction commits require sync"
+step "agent-instruction commits are knowledge-equivalent (ADR-0011)"
+# Post-ADR-0011 invariant (commit febf45f, 2026-05-18): AGENTS.md and other
+# agent-instruction files in AGENT_INSTRUCTION_PATHS classify as knowledge.
+# A commit touching ONLY AGENTS.md must produce required=False and an empty
+# non_knowledge_changed_files list. This closes the structural conflict
+# between project-side CI ancestor-check gates and direct-head-mention
+# freshness hooks documented in docs/adr/0011.
 MARK_REPO="$TMP_ROOT/mark"
 mkdir "$MARK_REPO"
 cd "$MARK_REPO"
@@ -127,10 +133,43 @@ assert_json <<'PY'
 import json
 payload = json.load(open(".serena/.serena_sync_state.json", encoding="utf-8"))
 targets = {item["path"] for item in payload["analysis"]["memory_targets"]}
-assert payload["required"] is True, payload
-assert "AGENTS.md" in payload["non_knowledge_changed_files"], payload
+# Post-ADR-0011: AGENTS.md is knowledge-equivalent; required must be False,
+# non_knowledge_changed_files must be empty for an agent-instruction-only
+# commit. The analysis taxonomy still reports the change so memory writers
+# can still target CLAUDECODE/DOCS/TECHDEBT memories on demand.
+assert payload["required"] is False, payload
+assert "AGENTS.md" not in payload["non_knowledge_changed_files"], payload
+assert payload["non_knowledge_changed_files"] == [], payload
 assert {"DOCS-01-INSTRUCTIONS.md", "TECHDEBT-01-NOW.md", "CLAUDECODE-01-PLUGIN-CANON.md"} <= targets, targets
-print("OK agent instruction marker")
+print("OK agent-instruction-only commit is knowledge-equivalent (required=False)")
+PY
+
+step "product-code commits still require sync (negative case)"
+# Companion invariant: a commit touching real product code MUST still set
+# required=True. This preserves the original sync-when-needed semantic.
+PROD_REPO="$TMP_ROOT/prod"
+mkdir "$PROD_REPO"
+cd "$PROD_REPO"
+git init -q
+printf 'base\n' > README.md
+git add README.md
+git_commit "init"
+PRE_HEAD_PROD=$(git rev-parse HEAD)
+mkdir -p .serena src
+printf '%s\n' "$PRE_HEAD_PROD" > .serena/.auto_sync_head
+printf 'def hello(): return 42\n' > src/main.py
+git add src/main.py
+git_commit "feat: hello"
+printf '{"tool_name":"Bash","tool_input":{"command":"git commit -m feat"}}' | bash "$MARK_HOOK" >/dev/null
+if [ ! -f .serena/.serena_sync_state.json ]; then
+  fail "mark hook did not write .serena/.serena_sync_state.json for product commit"
+fi
+assert_json <<'PY'
+import json
+payload = json.load(open(".serena/.serena_sync_state.json", encoding="utf-8"))
+assert payload["required"] is True, payload
+assert "src/main.py" in payload["non_knowledge_changed_files"], payload
+print("OK product-code commit still requires sync (required=True)")
 PY
 
 step "recursive memory state scan"
@@ -185,9 +224,16 @@ Area: CORE
 
 # CORE-01-INDEX
 EOF
+# Post-ADR-0011: agent-instruction commits no longer trigger stale state
+# (knowledge-equivalent). To exercise the stale-advisory path, commit BOTH
+# a real product-code file (src/main.py - forces required=True / stale)
+# AND AGENTS.md (so the analyzer still emits the DOCS memory target the
+# advisory grep below checks for). Mixed waves are the realistic case.
+mkdir -p src
+printf 'def hello(): return 42\n' > src/main.py
 printf '# Agent docs\n' > AGENTS.md
-git add AGENTS.md
-git_commit "docs"
+git add src/main.py AGENTS.md
+git_commit "feat: hello + docs"
 set +e
 # Close stdin explicitly: stop_memory_sync.sh reads hook input via `cat`
 # (line 35); without </dev/null the harness would block waiting for input.
