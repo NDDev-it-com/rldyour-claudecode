@@ -21,6 +21,9 @@ git clone https://github.com/NDDev-it-com/rldyour-claudecode.git
 cd rldyour-claudecode
 bash scripts/install-rldyour-marketplace.sh
 
+# Required pre-flight check for env vars (bootstrap_check.sh, not boostrap):
+bash scripts/bootstrap_check.sh
+
 # Run the full validation harness before submitting any change:
 bash scripts/validate_marketplace.sh
 
@@ -59,8 +62,8 @@ PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 python3 -m pytest tests/ -m "not integration"
 
 ### Code style
 
-- See `~/.claude/CLAUDE.md` (this repository's owner uses it for global
-  style; deltas live in `.claude/CLAUDE.md` here).
+- See `.claude/CLAUDE.md` for project-local Claude Code style and
+  invariants (deep memory, hook canon, subagent matrix).
 - Russian for user-facing prose, English for code/docs/commits/comments.
 - No `latest` pins; every dependency has an explicit version (npm @ tag,
   uvx `--from package==version`, container digest).
