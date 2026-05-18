@@ -6,6 +6,76 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+## [0.5.2] - 2026-05-18
+
+**Hook freshness invariants for branch-split projects.** Closes a structural
+conflict surfaced in the `almaty-libraries` Claude Code session
+on 2026-05-18 between project-side CI gates (ancestor-of-main check) and
+the local `commit_serena_knowledge.sh` hook (direct-head-mention check)
+on `main + fullrepo` branch-split repositories.
+
+Also hardens all 9 hook scripts against transient `python3` PATH/symlink
+failures (canonical defensive resolver pattern), and closes the 9-path
+gap left by the incomplete commit `4dcc1d1` (`AGENT_INSTRUCTION_PATHS`
+now mirrors the full `.git/info/exclude` agent-only block).
+
+### Added
+
+- **`docs/adr/0011-agent-instruction-knowledge-equivalence.md`** (MADR
+  4.0.0): records the decision to treat agent-instruction files
+  (`AGENTS.md`, `.claude/CLAUDE.md`, `REVIEW.md`, IDE/agent roots,
+  `.github/copilot-instructions.md`, `.agents/{skills,commands,hooks}/`,
+  `.serena/project.yml`) as knowledge-equivalent for
+  `memory_matches_head`. Resolves the structural conflict between
+  branch-split CI ancestor-check gates and direct-head-mention hooks.
+- **`tests/test_serena_memory_state.py`** (49 tests): covers
+  `SERENA_KNOWLEDGE_PREFIXES`, full `AGENT_INSTRUCTION_PATHS` canon,
+  negative classification for real product code, parity with
+  `.git/info/exclude` agent-only block (semantic match: broader-OK),
+  and drift detection between `serena_memory_state.AGENT_INSTRUCTION_PATHS`
+  and the inline mirror in `mark_sync_required.sh`. New file.
+- **Defensive `PYTHON_BIN` resolver block** in all 9 hook scripts
+  (`plugins/rldyour-{serena-mcp,flow}/hooks/*.sh`). Canonical pattern
+  from tw93/Mole, rsyslog, dmauser/opnazure: resolve `command -v python3`
+  with fallback to `command -v python`, exit 0 if unavailable. Eliminates
+  the transient failure class observed on Python 3.14 user environments
+  with `uv`-managed symlinks (`/home/$USER/.local/bin/python3` symlink
+  can be broken mid-upgrade; sanitized subprocess PATH may omit
+  `~/.local/bin`).
+
+### Changed
+
+- **`plugins/rldyour-serena-mcp/scripts/serena_memory_state.py`**:
+  `AGENT_INSTRUCTION_PATHS` extended from 14 to 23 paths to mirror the
+  full canonical `.git/info/exclude` "rldyour fullrepo agent-only files"
+  block. Added: `.cursorrules`, `.windsurfrules`, `.openhands/`,
+  `.github/copilot-instructions.md`, `.github/instructions/`,
+  `.github/prompts/`, `.agents/skills/`, `.agents/commands/`,
+  `.agents/hooks/`. Closes the gap left by commit `4dcc1d1` (first
+  incomplete attempt added 14 paths but missed 9 entries from the
+  exclude block). See ADR-0011 for full rationale.
+- **`plugins/rldyour-serena-mcp/hooks/mark_sync_required.sh`**: inline
+  Python heredoc gained `AGENT_INSTRUCTION_PATHS` mirror (separate
+  subprocess cannot import the plugin module). `is_knowledge_path()`
+  now combines `SERENA_KNOWLEDGE_PREFIXES` + `AGENT_INSTRUCTION_PATHS`.
+  Drift between the two canons is enforced by
+  `tests/test_serena_memory_state.py::TestInlineHookCanonDrift`.
+- **All 9 hook scripts** (`plugins/rldyour-{serena-mcp,flow}/hooks/*.sh`)
+  replace bare `python3` invocations with `"${PYTHON_BIN}"` (49
+  replacements total) for defensive resolution. Each script preserves
+  its existing exit semantics (Stop hooks still `exit 2` to block;
+  advisory hooks still `exit 0`).
+
+### Notes
+
+- This wave does NOT add path canon to a runtime config file. Decision
+  deferred to a future wave when a second consumer of
+  `AGENT_INSTRUCTION_PATHS` emerges beyond `serena_memory_state.py`
+  and `mark_sync_required.sh` (ADR-0011 Open Questions).
+- This wave does NOT update memories directly. Memory sync runs through
+  the `flow-memory-sync` subagent after the reviewer phase, per the
+  canonical `ry-start` lifecycle (skill body is the source of truth).
+
 ## [0.5.1] - 2026-05-17
 
 Patch-level **hardening wave** that closes the 13 deferred low/medium
@@ -1687,7 +1757,8 @@ Release boundary cut after the 2026-05-08..2026-05-12 wave of best-practice, MCP
   shell syntax checks, frontmatter presence verification on all skills,
   agents, and commands.
 
-[Unreleased]: https://github.com/NDDev-it-com/rldyour-claudecode/compare/marketplace--v0.4.0...HEAD
+[Unreleased]: https://github.com/NDDev-it-com/rldyour-claudecode/compare/marketplace--v0.5.2...HEAD
+[0.5.2]: https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/marketplace--v0.5.2
 [0.4.0]: https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/marketplace--v0.4.0
 [0.3.0]: https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/marketplace--v0.3.0
 [0.2.3]: https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/marketplace--v0.2.3
