@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-17
-Last commit: 3069075 fix(validators): bash 3.2 heredoc compat for reviewer contracts
+Last updated: 2026-05-18
+Last commit: b4e63ec docs(security): clarify Secret Scanning is intentionally disabled
 Scope: .claude-plugin/marketplace.json, plugins/*/.claude-plugin/plugin.json, README.md, AGENTS.md
 Area: CORE
 -->
@@ -19,13 +19,15 @@ Current business logic and architecture of the `rldyour-claude` marketplace. The
 - `README.md`: owner-facing catalog, control model, install/check commands, active per-plugin versions.
 - `AGENTS.md`: concise cross-tool project rules and boundaries.
 
-## Current State (HEAD `7f29df4`)
+## Current State (HEAD `b4e63ec`)
 
-- **VERSION**: `0.5.1` (release boundary, verified at `VERSION` file at HEAD `7effaa8`).
+- **VERSION**: `0.6.0` (release boundary, verified at `VERSION` file at HEAD `d89d274`).
+- **Repository visibility**: **public** as of 0.6.0 wave. Toggled to public on GitHub; CodeQL is now free (ADR-0008 amendment 2026-05-18).
 - **9 plugins** verified at HEAD from `.claude-plugin/marketplace.json`: `rldyour-mcps`, `rldyour-explore`, `rldyour-serena-mcp`, `rldyour-security`, `rldyour-browser`, `rldyour-design`, `rldyour-lsps`, `rldyour-flow`, `rldyour-rules`.
-- **Per-plugin versions** (verified via `python3 scripts/validate_plugin_versions.py` at HEAD `7effaa8`): all 9 plugins at `0.5.1`.
+- **Per-plugin versions** (verified via `python3 scripts/validate_plugin_versions.py` at HEAD `b4e63ec`): all 9 plugins at `0.6.0`.
 - **Component totals**: 32 skills, 9 slash commands, 8 subagents, 9 hook scripts in 2 hook manifests, 12 plugin-owned scripts, 16 references.
-- **ADR count**: 10 (docs/adr/0001 through 0010 + 0000-template + README; ADR-0010 macOS egress trust gap added at HEAD `7f29df4`).
+- **ADR count**: 11 (docs/adr/0001 through 0011 + 0000-template + README; ADR-0011 agent-instruction-knowledge-equivalence added at HEAD `da432c6`). Verified at `docs/adr/` listing at HEAD `b4e63ec`.
+- **`marketplace.json` `owner.email` field removed** at HEAD `cbe4595` (chore: remove owner email field). `owner` object retains `name` and `url`. Verified at `.claude-plugin/marketplace.json` at HEAD `b4e63ec`.
 - The owner decides what is enabled. Repository docs state nothing is treated as enabled or correct unless explicitly decided by the owner.
 
 ## Plugin Boundaries + Domain Memory Pointers

@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-18
-Last commit: da432c6 docs(changelog): record reviewer-wave closures in [0.5.2]
+Last commit: b4e63ec docs(security): clarify Secret Scanning is intentionally disabled
 Scope: .claude/CLAUDE.md (Engineering Conventions), AGENTS.md (Engineering Constraints), plugins/rldyour-flow/agents/flow-*-review.md, plugins/rldyour-explore/agents/ry-explore.md, plugins/rldyour-serena-mcp/agents/flow-memory-sync.md, plugins/*/skills/*/SKILL.md, plugins/*/hooks/*.sh, plugins/*/hooks/hooks.json, scripts/validate_agent_tools.py, scripts/worktree_add.sh, scripts/install-rldyour-marketplace.sh
 Area: PATTERNS
 -->
@@ -125,6 +125,24 @@ Rules:
 - Bare `model:` is silently ignored without `context: fork`. Pair them or delegate via `agent:`.
 - Slash commands reference internal files via `${CLAUDE_PLUGIN_ROOT}/scripts/...` and `${CLAUDE_PLUGIN_ROOT}/references/...`.
 - Cross-plugin references use `${CLAUDE_PROJECT_DIR}` (hooks only) or `$(git rev-parse --show-toplevel)` (skill body invocation context).
+
+## Python Subprocess Pattern For Python Modules
+
+Python scripts that internally spawn subprocesses to call other Python scripts must use `sys.executable` instead of a bare `"python3"` string (0.6.0 wave, commits `c432f54`, `4f66127`, D84):
+
+```python
+import sys, subprocess
+result = subprocess.run(
+    [sys.executable, str(script_path), *args],
+    ...
+)
+```
+
+Rules:
+- **`sys.executable` ensures subprocess uses the same Python interpreter** that launched the parent process. Bare `"python3"` may resolve to a different interpreter (e.g., system Python vs uv-managed venv).
+- Apply to all `subprocess.run/Popen/check_output` calls inside `.py` scripts that spawn other `.py` scripts.
+- Hook scripts use the `PYTHON_BIN` resolver pattern (below) which serves the same intent for shell-launched Python.
+- Applies to: `scripts/validate_release_state.py`, `plugins/rldyour-flow/scripts/flow_post_task_state.py`, `plugins/rldyour-flow/scripts/instruction_docs_state.py`, `plugins/rldyour-serena-mcp/scripts/serena_memory_state.py`, `scripts/smoke_serena_memory_taxonomy.sh`. Verified at respective files at HEAD `b4e63ec`.
 
 ## Hook Script Python Resolver
 

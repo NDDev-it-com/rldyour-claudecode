@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-17
-Last commit: 6f07fe8 chore(release): bump VERSION + all 9 plugins to 0.4.4
+Last updated: 2026-05-18
+Last commit: b4e63ec docs(security): clarify Secret Scanning is intentionally disabled
 Scope: AGENTS.md, .claude/CLAUDE.md, plugins/rldyour-rules/skills/project-instructions-policy/SKILL.md, plugins/rldyour-flow/scripts/instruction_docs_state.py, scripts/validate_instruction_docs.py, plugins/rldyour-serena-mcp/scripts/analyze_sync_scope.py
 Area: DOCS
 -->
@@ -30,6 +30,8 @@ Durable instruction-file policy for the repository: what belongs in `AGENTS.md`,
 - Both `AGENTS.md` and `.claude/CLAUDE.md` are agent-only in this fullrepo-managed repository and are excluded from `main` through `.git/info/exclude`.
 - Current docs include the numbered Serena memory contract: `CORE-01-INDEX.md` is the memory map; topic files use `AREA-01-SLUG.md`.
 - `config/REVIEW.md.template` (68 lines) exists at HEAD `00d3f82` - template for project-level `REVIEW.md`. Sections: Always Check, Architecture, Quality, Consistency, Tests, Security, Skip, Notes. Downstream projects copy to project root as `REVIEW.md`; reviewer agents (`flow-*-review`, `ry-rules-review`, `ry-sec-review`) auto-discover it. Verified at `config/REVIEW.md.template` at HEAD `00d3f82`.
+- **Public-readiness community docs (0.6.0, commit `ad833b9`, follow-up `332e0e7`)**: `SECURITY.md`, `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md` added at repo root. `.github/ISSUE_TEMPLATE/bug_report.yml`, `.github/ISSUE_TEMPLATE/feature_request.yml`, `.github/ISSUE_TEMPLATE/config.yml`, `.github/PULL_REQUEST_TEMPLATE.md` added. Verified at listed files at HEAD `b4e63ec`. SECURITY.md and CONTRIBUTING.md are English-only public-facing community policy files.
+- **ADR count at HEAD**: 11 ADRs (docs/adr/0001 through 0011 + 0000-template + README). ADR-0011 added in 0.5.2 wave (`da432c6`); README ADR count updated to 11 in 0.6.0 wave (`332e0e7`). Verified at `docs/adr/` listing at HEAD `b4e63ec`.
 - `AGENTS.md` routes memory writes through `flow-memory-sync` when Stop/post-task sync requires it and through `serena-memory-sync` as a manual/fallback workflow.
 - Instruction-only commits are sync-relevant. They are not treated as knowledge-only no-ops by `mark_sync_required.sh` or `serena_memory_state.py`.
 

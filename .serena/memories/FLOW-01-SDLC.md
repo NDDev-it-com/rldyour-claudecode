@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-17
-Last commit: 12a2bdc chore(release): 0.4.0 polish - actuality + tests + upload-artifact v7
+Last commit: b4e63ec docs(security): clarify Secret Scanning is intentionally disabled
 Scope: plugins/rldyour-flow/**, scripts/worktree_add.sh, AGENTS.md, .claude/CLAUDE.md, plugins/rldyour-flow/scripts/fullrepo_sync.py
 Area: FLOW
 -->

@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-17
-Last commit: a04c6eb chore(release): bump VERSION + all 9 plugins to 0.4.2
+Last commit: b4e63ec docs(security): clarify Secret Scanning is intentionally disabled
 Scope: plugins/rldyour-security/skills/owasp-top-10-implementation/SKILL.md, plugins/rldyour-security/skills/ry-sec-review/SKILL.md, plugins/rldyour-security/commands/ry-sec-review.md, plugins/rldyour-flow/agents/flow-security-review.md, plugins/rldyour-mcps/.mcp.json (semgrep entry)
 Area: SECURITY
 -->
@@ -137,6 +137,28 @@ Both use same OWASP coverage, same finding format, same severity guidance, same 
 - OWASP Top 10 revision update: change `OWASP Top 10 2025` references throughout both skill bodies + this memory.
 - Bump Semgrep MCP version: update `plugins/rldyour-mcps/.mcp.json` + `config/mcp-runtime-versions.env` + run `bash scripts/smoke_mcp_capabilities.sh --server semgrep`.
 - Add new OWASP category coverage: update both `owasp-top-10-implementation` checklist + `ry-sec-review` OWASP Review Coverage section.
+
+## Public-repo defensive stack (since 0.6.0)
+
+Three complementary security workflows form the defence-in-depth layer
+(`docs/adr/0008-ci-baseline-without-paid-addons.md` amendment 2026-05-18):
+
+- **CodeQL** (`.github/workflows/codeql.yml`): semantic taint flow analysis
+  for `python` + `actions` languages, `security-and-quality` query pack,
+  free for public repos. SARIF results upload to the GitHub Security tab.
+- **Semgrep OSS** (`.github/workflows/semgrep.yml`): pattern-based SAST
+  via 6 OSS rule packs (`p/python`, `p/github-actions`, `p/security-audit`,
+  `p/secrets`, `p/owasp-top-ten`, `p/ci`). Container digest-pinned
+  `semgrep/semgrep:1.163.0`.
+- **gitleaks** (`.github/workflows/gitleaks.yml`): secret scanner runs on
+  push to main, every PR, and a weekly schedule (Tue 06:00 UTC). Full
+  git-history scan via `fetch-depth: 0`. Container digest-pinned.
+
+**GitHub Secret Scanning + Push Protection are intentionally NOT enabled**
+- paid-tier features blocked by organization enterprise policy. The
+workflow-layer scanners + local pre-push guard
+(`plugins/rldyour-flow/scripts/local_git_ai_guard.sh`) deliver the same
+secret-scan risk-class coverage without the paid feature.
 
 ## Verification
 
