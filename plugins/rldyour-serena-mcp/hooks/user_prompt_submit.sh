@@ -28,7 +28,17 @@ fi
 
 INPUT=$(cat 2>/dev/null || true)
 
-RLDYOUR_PROMPT_RAW="$INPUT" python3 <<'PY'
+# Defensive python3 resolution: subprocess shells (e.g. Claude Code hook runner)
+# may have a sanitized PATH that omits ~/.local/bin, and `uv`-managed Python
+# symlinks can be transiently broken during interpreter upgrades. Resolve once
+# and exit 0 if no working interpreter exists - this hook is advisory, never
+# blocking. Canonical pattern (tw93/Mole, rsyslog, dmauser/opnazure).
+PYTHON_BIN="${PYTHON_BIN:-$(command -v python3 2>/dev/null || command -v python 2>/dev/null || true)}"
+if [ -z "${PYTHON_BIN}" ] || [ ! -x "${PYTHON_BIN}" ]; then
+  exit 0
+fi
+
+RLDYOUR_PROMPT_RAW="$INPUT" "${PYTHON_BIN}" <<'PY'
 import json
 import os
 import re

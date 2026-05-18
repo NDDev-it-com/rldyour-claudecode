@@ -18,6 +18,16 @@ set -euo pipefail
 IFS=$'\n\t'
 unset CDPATH
 
+# Defensive python3 resolution: subprocess shells (e.g. Claude Code hook runner)
+# may have a sanitized PATH that omits ~/.local/bin, and uv-managed Python
+# symlinks can be transiently broken during interpreter upgrades. Resolve once
+# and exit 0 if no working interpreter exists - hooks must stay non-blocking
+# when Python is unavailable. Canonical pattern (tw93/Mole, rsyslog).
+PYTHON_BIN="${PYTHON_BIN:-$(command -v python3 2>/dev/null || command -v python 2>/dev/null || true)}"
+if [ -z "${PYTHON_BIN}" ] || [ ! -x "${PYTHON_BIN}" ]; then
+  exit 0
+fi
+
 if [ "${RLDYOUR_SKIP_CI_ADVISORY:-0}" = "1" ]; then
   exit 0
 fi
@@ -25,7 +35,7 @@ fi
 INPUT=$(cat 2>/dev/null || true)
 
 # Parse the Bash command being executed from the hook input payload.
-COMMAND=$(RLDYOUR_HOOK_INPUT="$INPUT" python3 <<'PY' 2>/dev/null || true
+COMMAND=$(RLDYOUR_HOOK_INPUT="$INPUT" "${PYTHON_BIN}" <<'PY' 2>/dev/null || true
 import json
 import os
 import sys
