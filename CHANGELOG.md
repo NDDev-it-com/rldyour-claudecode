@@ -66,6 +66,49 @@ now mirrors the full `.git/info/exclude` agent-only block).
   its existing exit semantics (Stop hooks still `exit 2` to block;
   advisory hooks still `exit 0`).
 
+### Reviewer-wave closures (review run `2026-05-18T1238Z-027b6f9`)
+
+Six parallel reviewer subagents (`flow-{architecture,quality,consistency,
+integration,verification,security}-review`) ran against the initial
+5-commit wave (febf45f..027b6f9) and surfaced 1 critical + 1 high + 4
+medium findings. Closed in 3 follow-up commits:
+
+- **F-1 CRITICAL (verification, conf 99)**: `smoke_serena_memory_taxonomy.sh`
+  "agent-instruction commits require sync" step was written for the
+  pre-ADR-0011 contract and asserted the inverted invariant after the
+  classifier change - `validate_marketplace.sh` exited 1. Rewritten in
+  commit `779350a` to assert the new invariant (`required=False` for
+  agent-instruction-only wave) plus a companion negative case (product-
+  code commit still requires sync). Stop-hook-stale fixture now commits
+  both `src/main.py` (forces stale) AND `AGENTS.md` (so analyzer still
+  emits the DOCS memory target the advisory checks for).
+- **F-2 HIGH (verification, conf 95)**: `.github/workflows/pytest.yml`
+  `paths:` trigger lacked `plugins/**`, so plugin-side script changes
+  bypassed pytest CI silently. Added in commit `1be98e0`.
+- **F-3 MEDIUM (verification, conf 85)**: `_is_knowledge_path()` used
+  `startswith` for all `AGENT_INSTRUCTION_PATHS` entries, producing
+  false-positive prefix matches (`AGENTS.md.bak`,
+  `.github/copilot-instructions.mdx`). Fixed in `03afa2f` by separating
+  semantics: directory entries (ending in `/`) use `startswith`; exact-
+  file entries use `==`; `.aider` is a dotfile-family special case.
+  Inline mirror in `mark_sync_required.sh` updated to match. Regression
+  tests added in `1be98e0` (7 new `test_exact_file_entries_no_false_
+  positive_prefix` cases).
+- **F-1 MEDIUM (integration, conf 85) + F-7 LOW (architecture, conf 88)**:
+  `.codex/` was in `AGENT_INSTRUCTION_PATHS` but missing from
+  `fullrepo_sync.AGENT_ONLY_PATTERNS` and `.git/info/exclude` - a
+  three-way inconsistency for a path family used by the `rldyour-codex`
+  plugin. Added `.codex/**` to both lists in `03afa2f`.
+- **F-8 INFO (architecture, conf 80) + F-2 LOW (integration)**:
+  `.serena/project.local.yml` was classified as knowledge-equivalent but
+  is `!`-negated in `.git/info/exclude` and listed in
+  `fullrepo_sync.RUNTIME_EXCLUDE_PATTERNS` - it never reaches commits in
+  normal flow. Removed from `AGENT_INSTRUCTION_PATHS` in `03afa2f`.
+
+Test count: 124 → 131 passing (7 new F-3 regression tests). All
+reviewer LOW/INFO findings retained as deferred (documented in
+`.serena/reviews/2026-05-18T1238Z-027b6f9/*.md`).
+
 ### Notes
 
 - This wave does NOT add path canon to a runtime config file. Decision
