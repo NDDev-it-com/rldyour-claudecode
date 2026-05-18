@@ -48,7 +48,7 @@ analyzer = sys.argv[1]
 
 
 def analyze(*paths: str) -> dict:
-    args = ["python3", analyzer]
+    args = [sys.executable, analyzer]
     for path in paths:
         args.extend(["--path", path])
     proc = subprocess.run(args, check=True, capture_output=True, text=True)

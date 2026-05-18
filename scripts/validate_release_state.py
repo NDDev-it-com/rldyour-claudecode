@@ -155,7 +155,7 @@ def validate_release_manifest(root: Path) -> list[str]:
         return ["scripts/release_manifest.py is missing"]
     try:
         proc = subprocess.run(
-            ["python3", str(script)],
+            [sys.executable, str(script)],
             capture_output=True,
             text=True,
             check=False,
