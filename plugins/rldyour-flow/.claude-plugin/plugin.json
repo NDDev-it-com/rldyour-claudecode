@@ -1,8 +1,8 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "rldyour-flow",
-  "version": "0.5.1",
-  "description": "\u0410\u0432\u0442\u043e\u043d\u043e\u043c\u043d\u044b\u0439 SDLC-\u0432\u043e\u0440\u043a\u0444\u043b\u043e\u0443 \u0434\u043b\u044f Claude Code: ry-init, ry-start, ry-newp, ry-review, ry-deploy + 6 reviewer subagents (architecture/quality/consistency/integration/verification/security) + flow-post-task-sync + instruction-docs-sync. SessionStart/PostToolUse/Stop \u0445\u0443\u043a\u0438 advisory + non-blocking. Fullrepo branch \u0434\u043b\u044f agent-only \u0444\u0430\u0439\u043b\u043e\u0432.",
+  "version": "0.5.2",
+  "description": "Автономный SDLC-воркфлоу для Claude Code: ry-init, ry-start, ry-newp, ry-review, ry-deploy + 6 reviewer subagents (architecture/quality/consistency/integration/verification/security) + flow-post-task-sync + instruction-docs-sync. SessionStart/PostToolUse/Stop хуки advisory + non-blocking. Fullrepo branch для agent-only файлов.",
   "author": {
     "name": "rldyourmnd",
     "url": "https://github.com/rldyourmnd"

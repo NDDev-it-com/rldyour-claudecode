@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-17
-Last commit: 1937f65 docs(adr-0010): macOS egress trust gap accepted
+Last commit: 3069075 fix(validators): bash 3.2 heredoc compat for reviewer contracts
 Scope: .claude-plugin/marketplace.json, plugins/*/.claude-plugin/plugin.json, README.md, AGENTS.md
 Area: CORE
 -->

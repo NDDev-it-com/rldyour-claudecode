@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-17
-Last commit: 924256c chore(release): bump VERSION + all 9 plugins to 0.4.3
+Last updated: 2026-05-18
+Last commit: da432c6 docs(changelog): record reviewer-wave closures in [0.5.2]
 Scope: .claude/CLAUDE.md (Engineering Conventions), AGENTS.md (Engineering Constraints), plugins/rldyour-flow/agents/flow-*-review.md, plugins/rldyour-explore/agents/ry-explore.md, plugins/rldyour-serena-mcp/agents/flow-memory-sync.md, plugins/*/skills/*/SKILL.md, plugins/*/hooks/*.sh, plugins/*/hooks/hooks.json, scripts/validate_agent_tools.py, scripts/worktree_add.sh, scripts/install-rldyour-marketplace.sh
 Area: PATTERNS
 -->
@@ -125,6 +125,24 @@ Rules:
 - Bare `model:` is silently ignored without `context: fork`. Pair them or delegate via `agent:`.
 - Slash commands reference internal files via `${CLAUDE_PLUGIN_ROOT}/scripts/...` and `${CLAUDE_PLUGIN_ROOT}/references/...`.
 - Cross-plugin references use `${CLAUDE_PROJECT_DIR}` (hooks only) or `$(git rev-parse --show-toplevel)` (skill body invocation context).
+
+## Hook Script Python Resolver
+
+All 9 hook scripts (`plugins/rldyour-{serena-mcp,flow}/hooks/*.sh`) use this canonical defensive resolver block immediately after `set -euo pipefail` and the comment header (0.5.2, commit `10c8f06`, 49 replacements):
+
+```bash
+PYTHON_BIN="${PYTHON_BIN:-$(command -v python3 2>/dev/null || command -v python 2>/dev/null || true)}"
+if [ -z "${PYTHON_BIN}" ] || [ ! -x "${PYTHON_BIN}" ]; then
+  exit 0
+fi
+```
+
+Rules:
+- **PYTHON_BIN missing → exit 0** for all hooks (non-blocking invariant). Python unavailability must never permanently block sessions.
+- **Exit semantics preserved**: Stop hooks still `exit 2` after their own gate logic when Python IS available; the resolver only short-circuits when Python is completely absent.
+- Pattern from tw73/Mole, rsyslog, dmauser/opnazure. Rationale: sanitized subprocess PATH (hook runner) may omit `~/.local/bin`; uv-managed Python 3.14 symlinks can be transiently broken during interpreter upgrades.
+- All subsequent `python3` calls in hook bodies use `"${PYTHON_BIN}"` (not bare `python3`).
+- Enforced by `bash -n plugins/rldyour-{serena-mcp,flow}/hooks/*.sh` syntax check.
 
 ## Hook Script (Bash)
 

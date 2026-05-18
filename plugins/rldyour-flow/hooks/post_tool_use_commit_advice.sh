@@ -3,6 +3,16 @@ set -euo pipefail
 IFS=$'\n\t'
 unset CDPATH
 
+# Defensive python3 resolution: subprocess shells (e.g. Claude Code hook runner)
+# may have a sanitized PATH that omits ~/.local/bin, and uv-managed Python
+# symlinks can be transiently broken during interpreter upgrades. Resolve once
+# and exit 0 if no working interpreter exists - hooks must stay non-blocking
+# when Python is unavailable. Canonical pattern (tw93/Mole, rsyslog).
+PYTHON_BIN="${PYTHON_BIN:-$(command -v python3 2>/dev/null || command -v python 2>/dev/null || true)}"
+if [ -z "${PYTHON_BIN}" ] || [ ! -x "${PYTHON_BIN}" ]; then
+  exit 0
+fi
+
 if [ "${RLDYOUR_SKIP_FLOW_COMMIT_ADVICE:-0}" = "1" ]; then
   exit 0
 fi
@@ -12,7 +22,7 @@ if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
 fi
 
 INPUT=$(cat 2>/dev/null || true)
-COMMAND=$(printf "%s" "$INPUT" | python3 -c '
+COMMAND=$(printf "%s" "$INPUT" | "${PYTHON_BIN}" -c '
 import json
 import sys
 
@@ -44,7 +54,7 @@ if [ -z "$HEAD_SHA" ] || [ -z "$SUBJECT" ]; then
   exit 0
 fi
 
-WARNINGS=$(python3 - "$HEAD_SHA" "$SUBJECT" "$FILES" <<'PY'
+WARNINGS=$("${PYTHON_BIN}" - "$HEAD_SHA" "$SUBJECT" "$FILES" <<'PY'
 import re
 import sys
 
@@ -202,7 +212,7 @@ if [ -z "$WARNINGS" ]; then
   exit 0
 fi
 
-python3 - "$WARNINGS" <<'PY'
+"${PYTHON_BIN}" - "$WARNINGS" <<'PY'
 import json
 import sys
 

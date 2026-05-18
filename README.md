@@ -23,15 +23,15 @@ Main principle: nothing is treated as enabled or correct unless the owner explic
 
 | Plugin | Version | Skills | Commands | Agents | Hooks | Scripts | References | MCP | LSP |
 |---|---|---|---|---|---|---|---|---|---|
-| `rldyour-mcps` | `0.5.1` | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 0 |
-| `rldyour-explore` | `0.5.1` | 2 | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| `rldyour-serena-mcp` | `0.5.1` | 2 | 0 | 1 | 4 | 3 | 0 | 0 | 0 |
-| `rldyour-security` | `0.5.1` | 2 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| `rldyour-browser` | `0.5.1` | 3 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| `rldyour-design` | `0.5.1` | 5 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| `rldyour-lsps` | `0.5.1` | 4 | 0 | 0 | 0 | 2 | 3 | 0 | 1 |
-| `rldyour-flow` | `0.5.1` | 7 | 5 | 6 | 5 | 7 | 7 | 0 | 0 |
-| `rldyour-rules` | `0.5.1` | 7 | 1 | 0 | 0 | 0 | 6 | 0 | 0 |
+| `rldyour-mcps` | `0.5.2` | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 0 |
+| `rldyour-explore` | `0.5.2` | 2 | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
+| `rldyour-serena-mcp` | `0.5.2` | 2 | 0 | 1 | 4 | 3 | 0 | 0 | 0 |
+| `rldyour-security` | `0.5.2` | 2 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
+| `rldyour-browser` | `0.5.2` | 3 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| `rldyour-design` | `0.5.2` | 5 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
+| `rldyour-lsps` | `0.5.2` | 4 | 0 | 0 | 0 | 2 | 3 | 0 | 1 |
+| `rldyour-flow` | `0.5.2` | 7 | 5 | 6 | 5 | 7 | 7 | 0 | 0 |
+| `rldyour-rules` | `0.5.2` | 7 | 1 | 0 | 0 | 0 | 6 | 0 | 0 |
 
 <!-- inventory:end -->
 

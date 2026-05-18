@@ -18,6 +18,49 @@ SERENA_KNOWLEDGE_PREFIXES = (
     ".serena/newproj/",
     ".serena/deploy/",
 )
+# Agent-instruction paths that are knowledge-equivalent: durable agent
+# guidance lives here. On projects with a `main`/`fullrepo` branch split
+# these files exist only on `fullrepo`; treating them as knowledge keeps
+# `only_knowledge_changes_since_sync` true after an agent-only wave, so
+# a `Last commit:` pinned to the main-side ancestor SHA still satisfies
+# `memory_matches_head` without needing prose mentions of the current
+# fullrepo merge HEAD (which CI verify-memory-sync.py would reject as
+# non-ancestor of main HEAD).
+AGENT_INSTRUCTION_PATHS = (
+    # Root-level instruction files (canonical per .git/info/exclude
+    # "rldyour fullrepo agent-only files" block).
+    "AGENTS.md",
+    "CLAUDE.md",
+    "REVIEW.md",
+    "GEMINI.md",
+    "QWEN.md",
+    ".cursorrules",
+    ".windsurfrules",
+    ".aider",  # prefix-match: .aider, .aider.conf.yml, .aiderignore, .aider.chat.history.md
+    # IDE / agent root directories.
+    ".claude/",
+    ".codex/",
+    ".cursor/",
+    ".gemini/",
+    ".windsurf/",
+    ".roo/",
+    ".openhands/",
+    # GitHub agent paths (Copilot instructions, prompts, agent-shared files).
+    ".github/copilot-instructions.md",
+    ".github/instructions/",
+    ".github/prompts/",
+    # .agents/ tool-shared paths (cross-vendor agent skills/commands/hooks).
+    ".agents/skills/",
+    ".agents/commands/",
+    ".agents/hooks/",
+    # Serena project metadata (knowledge directories live in
+    # SERENA_KNOWLEDGE_PREFIXES; project.yml is metadata, not knowledge).
+    # `.serena/project.local.yml` is intentionally absent: it is
+    # machine-local runtime config (negated in .git/info/exclude,
+    # listed in fullrepo_sync RUNTIME_EXCLUDE_PATTERNS) and should NOT
+    # classify as knowledge - it never reaches commits in normal flow.
+    ".serena/project.yml",
+)
 RUNTIME_IGNORED = {
     ".serena/.sync_marker",
     ".serena/.serena_sync_state.json",
@@ -134,7 +177,35 @@ def _analysis_from_changed_files(paths: list[str], state: dict[str, Any]) -> tup
 
 
 def _is_knowledge_path(path: str) -> bool:
-    return any(path.startswith(prefix) for prefix in SERENA_KNOWLEDGE_PREFIXES)
+    if any(path.startswith(prefix) for prefix in SERENA_KNOWLEDGE_PREFIXES):
+        return True
+    # Agent-instruction files are knowledge-equivalent: their churn on
+    # `fullrepo` after a `main`-side ancestor sync should NOT force a
+    # fresh memory bump to satisfy `memory_matches_head`.
+    #
+    # Matching semantics (F-3 verification-review closure, 2026-05-18):
+    # - entry ending in '/' (e.g. '.claude/') is a directory prefix:
+    #   use startswith so '.claude/CLAUDE.md' matches '.claude/'.
+    # - entry not ending in '/' is treated as an exact file path
+    #   (e.g. 'AGENTS.md', '.github/copilot-instructions.md') OR a
+    #   dotfile-family prefix '.aider' covering '.aider*' files.
+    #   Use exact equality + the '.aider' special case to avoid the
+    #   false-positive class (e.g. 'AGENTS.md.bak' or
+    #   '.github/copilot-instructions.mdx' should NOT be classified
+    #   as knowledge).
+    for ai_path in AGENT_INSTRUCTION_PATHS:
+        if ai_path.endswith("/"):
+            if path.startswith(ai_path):
+                return True
+        elif ai_path == ".aider":
+            # .aider is the canonical .aider* dotfile-family prefix
+            # (.aider, .aiderignore, .aider.conf.yml, .aider.chat.history.md).
+            if path == ai_path or path.startswith(".aider"):
+                return True
+        else:
+            if path == ai_path:
+                return True
+    return False
 
 
 def _non_knowledge_paths(paths: list[str]) -> list[str]:

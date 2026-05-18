@@ -16,6 +16,16 @@ set -euo pipefail
 IFS=$'\n\t'
 unset CDPATH
 
+# Defensive python3 resolution: subprocess shells (e.g. Claude Code hook runner)
+# may have a sanitized PATH that omits ~/.local/bin, and uv-managed Python
+# symlinks can be transiently broken during interpreter upgrades. Resolve once
+# and exit 0 if no working interpreter exists - hooks must stay non-blocking
+# when Python is unavailable. Canonical pattern (tw93/Mole, rsyslog).
+PYTHON_BIN="${PYTHON_BIN:-$(command -v python3 2>/dev/null || command -v python 2>/dev/null || true)}"
+if [ -z "${PYTHON_BIN}" ] || [ ! -x "${PYTHON_BIN}" ]; then
+  exit 0
+fi
+
 if [ "${RLDYOUR_SKIP_STOP_GATES:-0}" = "1" ] || [ "${RLDYOUR_SKIP_SERENA_SYNC:-0}" = "1" ]; then
   exit 0
 fi
@@ -38,15 +48,15 @@ if [ ! -f "$STATE_SCRIPT" ]; then
   exit 0
 fi
 
-STATE_JSON=$(python3 "$STATE_SCRIPT" 2>/dev/null || true)
+STATE_JSON=$("${PYTHON_BIN}" "$STATE_SCRIPT" 2>/dev/null || true)
 if [ -z "$STATE_JSON" ]; then
   exit 0
 fi
 
-IS_CURRENT=$(printf "%s" "$STATE_JSON" | python3 -c 'import json,sys; print("true" if json.load(sys.stdin).get("is_current") else "false")' 2>/dev/null || echo "false")
-HEAD_SHA=$(printf "%s" "$STATE_JSON" | python3 -c 'import json,sys; print(json.load(sys.stdin).get("head_sha", ""))' 2>/dev/null || true)
-NEWEST_SHA=$(printf "%s" "$STATE_JSON" | python3 -c 'import json,sys; print(json.load(sys.stdin).get("newest_synced_sha", ""))' 2>/dev/null || true)
-ANALYSIS_SOURCE=$(printf "%s" "$STATE_JSON" | python3 -c 'import json,sys; print(json.load(sys.stdin).get("analysis_source", "none"))' 2>/dev/null || echo "none")
+IS_CURRENT=$(printf "%s" "$STATE_JSON" | "${PYTHON_BIN}" -c 'import json,sys; print("true" if json.load(sys.stdin).get("is_current") else "false")' 2>/dev/null || echo "false")
+HEAD_SHA=$(printf "%s" "$STATE_JSON" | "${PYTHON_BIN}" -c 'import json,sys; print(json.load(sys.stdin).get("head_sha", ""))' 2>/dev/null || true)
+NEWEST_SHA=$(printf "%s" "$STATE_JSON" | "${PYTHON_BIN}" -c 'import json,sys; print(json.load(sys.stdin).get("newest_synced_sha", ""))' 2>/dev/null || true)
+ANALYSIS_SOURCE=$(printf "%s" "$STATE_JSON" | "${PYTHON_BIN}" -c 'import json,sys; print(json.load(sys.stdin).get("analysis_source", "none"))' 2>/dev/null || echo "none")
 
 if [ "$IS_CURRENT" = "true" ]; then
   rm -f "$SYNC_MARKER" .serena/.serena_sync_state.json
@@ -57,7 +67,7 @@ if [ -z "$HEAD_SHA" ]; then
   exit 0
 fi
 
-STOP_HOOK_ACTIVE=$(printf "%s" "$HOOK_INPUT" | python3 -c '
+STOP_HOOK_ACTIVE=$(printf "%s" "$HOOK_INPUT" | "${PYTHON_BIN}" -c '
 import json
 import sys
 
@@ -83,7 +93,7 @@ if [ -n "$NEWEST_SHA" ]; then
   COMMITS=$(git log --oneline "${NEWEST_SHA}..HEAD" 2>/dev/null || echo "(unable to compute commit range)")
 fi
 
-NON_KNOWLEDGE_FILES=$(printf "%s" "$STATE_JSON" | python3 -c '
+NON_KNOWLEDGE_FILES=$(printf "%s" "$STATE_JSON" | "${PYTHON_BIN}" -c '
 import json
 import sys
 
@@ -96,7 +106,7 @@ if not files:
 print("\n".join(str(item) for item in files))
 ' 2>/dev/null || true)
 
-SYNC_CONTEXT=$(printf "%s" "$STATE_JSON" | python3 -c '
+SYNC_CONTEXT=$(printf "%s" "$STATE_JSON" | "${PYTHON_BIN}" -c '
 import json
 import sys
 

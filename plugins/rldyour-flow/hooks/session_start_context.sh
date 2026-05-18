@@ -3,6 +3,16 @@ set -euo pipefail
 IFS=$'\n\t'
 unset CDPATH
 
+# Defensive python3 resolution: subprocess shells (e.g. Claude Code hook runner)
+# may have a sanitized PATH that omits ~/.local/bin, and uv-managed Python
+# symlinks can be transiently broken during interpreter upgrades. Resolve once
+# and exit 0 if no working interpreter exists - hooks must stay non-blocking
+# when Python is unavailable. Canonical pattern (tw93/Mole, rsyslog).
+PYTHON_BIN="${PYTHON_BIN:-$(command -v python3 2>/dev/null || command -v python 2>/dev/null || true)}"
+if [ -z "${PYTHON_BIN}" ] || [ ! -x "${PYTHON_BIN}" ]; then
+  exit 0
+fi
+
 if [ "${RLDYOUR_SKIP_FLOW_SESSION_CONTEXT:-0}" = "1" ]; then
   exit 0
 fi
@@ -23,12 +33,12 @@ if [ ! -f "$STATE_SCRIPT" ]; then
   exit 0
 fi
 
-STATE_JSON=$(python3 "$STATE_SCRIPT" 2>/dev/null || true)
+STATE_JSON=$("${PYTHON_BIN}" "$STATE_SCRIPT" 2>/dev/null || true)
 if [ -z "$STATE_JSON" ]; then
   exit 0
 fi
 
-SOURCE=$(printf "%s" "$HOOK_INPUT" | python3 -c '
+SOURCE=$(printf "%s" "$HOOK_INPUT" | "${PYTHON_BIN}" -c '
 import json
 import sys
 
@@ -41,7 +51,7 @@ source = payload.get("source", "unknown")
 print(source if isinstance(source, str) else "unknown")
 ' 2>/dev/null || echo "unknown")
 
-CONTEXT=$(python3 - "$ROOT" "$SOURCE" "$STATE_JSON" <<'PY'
+CONTEXT=$("${PYTHON_BIN}" - "$ROOT" "$SOURCE" "$STATE_JSON" <<'PY'
 import json
 import sys
 
@@ -155,7 +165,7 @@ if [ -z "$CONTEXT" ]; then
   exit 0
 fi
 
-python3 - "$CONTEXT" <<'PY'
+"${PYTHON_BIN}" - "$CONTEXT" <<'PY'
 import json
 import sys
 
