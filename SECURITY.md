@@ -9,8 +9,8 @@ tag aligned with the marketplace boundary.
 
 | Version | Supported |
 |---------|-----------|
-| Latest `marketplace--v0.6.x` | ✅ |
-| Earlier minor / patch | ❌ |
+| Latest `marketplace--v0.6.x` | yes |
+| Earlier minor / patch | no |
 
 When a security issue lands, the wave bumps every plugin to the same
 patch release (see `docs/release-process.md` and ADR-0009 for the
@@ -61,7 +61,9 @@ threat model focuses on:
 ## Defensive Tooling
 
 - **gitleaks** (`.github/workflows/gitleaks.yml`): secret scanner runs on
-  every push to `main` and every PR. Full-history scan on schedule.
+  every push to `main`, every PR, and a weekly schedule (Tue 06:00 UTC).
+  Full git-history scan via `fetch-depth: 0` checkout. Container pinned
+  by digest.
 - **Semgrep** (`.github/workflows/semgrep.yml`): SAST with OWASP Top 10
   + secrets + GitHub Actions rule packs, container pinned by digest.
 - **CodeQL** (`.github/workflows/codeql.yml`): semantic analysis for

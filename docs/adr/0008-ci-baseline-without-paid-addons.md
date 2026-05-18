@@ -99,3 +99,29 @@ Cross-cutting:
 - Related: ADR-0009 (release tag convention).
 - Future option: if the project upgrades to GHEC + GHAS, migrate Semgrep
   to SARIF upload + CodeQL companion; add push protection.
+
+## Amendment 2026-05-18 (release 0.6.0): public repository unlocks CodeQL
+
+Decision: when the repository visibility toggles to **public** (release
+0.6.0 public-readiness wave), CodeQL becomes free per GitHub billing -
+the GHAS paywall does NOT apply to public repositories. The "no CodeQL,
+no SARIF upload" framing in this ADR was correct for the private-repo
+configuration that originally drove it; on public repos, CodeQL is
+available at no cost and SARIF results upload to the Security tab.
+
+Action taken in release 0.6.0:
+
+- **Added** `.github/workflows/codeql.yml` running CodeQL on `python`
+  and `actions` language matrix with `security-and-quality` query pack.
+- **Retained** Semgrep OSS, gitleaks, harden-runner, SHA pins,
+  `permissions: {}` baseline: CodeQL is additive, not a replacement.
+  Defence in depth via three complementary security workflows
+  (CodeQL = semantic, Semgrep = pattern SAST, gitleaks = secret scan)
+  is the new public-repo baseline.
+- **Threat-model document update**: `docs/security/threat-model.md`
+  Section 4 to reflect CodeQL availability and add reference to
+  ADR-0008 amendment.
+
+The original decision (no paid add-ons, no GHAS) still applies for
+contributors who fork this repository into a private repository -
+they will need to disable CodeQL or accept the GHAS billing surface.

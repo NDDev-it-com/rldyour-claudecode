@@ -14,6 +14,11 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  schedule:
+    # Weekly background scan catches secrets that slipped through PR-time
+    # scans (e.g., on protected branches where rules differ, or if a future
+    # `paths:` filter is added). Cron is off-peak (Tue 06:00 UTC).
+    - cron: '0 6 * * 2'
   workflow_dispatch:
 
 permissions: {}
