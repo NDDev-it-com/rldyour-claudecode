@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-18
-Last commit: 38a0da4 ci(validate): allow MCP HTTP endpoints in harden-runner egress
+Last commit: a413172 ci(actionlint): allow release-assets.githubusercontent.com egress
 Scope: .serena/memories/**, plugins/rldyour-serena-mcp/scripts/analyze_sync_scope.py, plugins/rldyour-serena-mcp/skills/serena-memory-sync/SKILL.md, plugins/rldyour-serena-mcp/agents/flow-memory-sync.md, scripts/smoke_serena_memory_taxonomy.sh, AGENTS.md, .claude/CLAUDE.md
 Area: CORE
 -->
