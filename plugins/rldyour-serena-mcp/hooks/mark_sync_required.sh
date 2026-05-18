@@ -3,8 +3,18 @@ set -euo pipefail
 IFS=$'\n\t'
 unset CDPATH
 
+# Defensive python3 resolution: subprocess shells (e.g. Claude Code hook runner)
+# may have a sanitized PATH that omits ~/.local/bin, and uv-managed Python
+# symlinks can be transiently broken during interpreter upgrades. Resolve once
+# and exit 0 if no working interpreter exists - hooks must stay non-blocking
+# when Python is unavailable. Canonical pattern (tw93/Mole, rsyslog).
+PYTHON_BIN="${PYTHON_BIN:-$(command -v python3 2>/dev/null || command -v python 2>/dev/null || true)}"
+if [ -z "${PYTHON_BIN}" ] || [ ! -x "${PYTHON_BIN}" ]; then
+  exit 0
+fi
+
 emit_additional_context() {
-  python3 - "$1" <<'PY'
+  "${PYTHON_BIN}" - "$1" <<'PY'
 import json
 import sys
 
@@ -44,7 +54,7 @@ cleanup() {
 trap cleanup EXIT
 
 INPUT=$(cat 2>/dev/null || true)
-COMMAND=$(printf "%s" "$INPUT" | python3 -c '
+COMMAND=$(printf "%s" "$INPUT" | "${PYTHON_BIN}" -c '
 import json
 import sys
 
@@ -73,12 +83,12 @@ if [ -z "$PRE_HEAD" ] || [ -z "$CUR_HEAD" ] || [ "$PRE_HEAD" = "$CUR_HEAD" ]; th
 fi
 
 ANALYSIS_FILE="$(mktemp)"
-if ! python3 "$PLUGIN_DIR/scripts/analyze_sync_scope.py" --from-ref "$PRE_HEAD" --to-ref "$CUR_HEAD" >"$ANALYSIS_FILE" 2>/dev/null; then
+if ! "${PYTHON_BIN}" "$PLUGIN_DIR/scripts/analyze_sync_scope.py" --from-ref "$PRE_HEAD" --to-ref "$CUR_HEAD" >"$ANALYSIS_FILE" 2>/dev/null; then
   printf '{}\n' >"$ANALYSIS_FILE"
 fi
 
 mkdir -p .serena
-python3 - "$PRE_HEAD" "$CUR_HEAD" "$CUR_HEAD_SHORT" "$ANALYSIS_FILE" <<'PY'
+"${PYTHON_BIN}" - "$PRE_HEAD" "$CUR_HEAD" "$CUR_HEAD_SHORT" "$ANALYSIS_FILE" <<'PY'
 import json
 import subprocess
 import sys
@@ -100,6 +110,36 @@ SERENA_KNOWLEDGE_PREFIXES = (
     ".serena/deploy/",
 )
 
+# Mirror of serena_memory_state.AGENT_INSTRUCTION_PATHS. Kept inline because
+# this hook runs in a separate Python heredoc subprocess without import access
+# to the plugin scripts. Drift between the two definitions is asserted by
+# `tests/test_serena_memory_state.py::test_inline_hook_path_canon_matches`.
+AGENT_INSTRUCTION_PATHS = (
+    "AGENTS.md",
+    "CLAUDE.md",
+    "REVIEW.md",
+    "GEMINI.md",
+    "QWEN.md",
+    ".cursorrules",
+    ".windsurfrules",
+    ".aider",
+    ".claude/",
+    ".codex/",
+    ".cursor/",
+    ".gemini/",
+    ".windsurf/",
+    ".roo/",
+    ".openhands/",
+    ".github/copilot-instructions.md",
+    ".github/instructions/",
+    ".github/prompts/",
+    ".agents/skills/",
+    ".agents/commands/",
+    ".agents/hooks/",
+    ".serena/project.yml",
+    ".serena/project.local.yml",
+)
+
 RUNTIME_IGNORED = {
     ".serena/.sync_marker",
     ".serena/.serena_sync_state.json",
@@ -112,7 +152,12 @@ RUNTIME_IGNORED = {
 
 
 def is_knowledge_path(path: str) -> bool:
-    return any(path.startswith(prefix) for prefix in SERENA_KNOWLEDGE_PREFIXES)
+    if any(path.startswith(prefix) for prefix in SERENA_KNOWLEDGE_PREFIXES):
+        return True
+    return any(
+        path == ai_path or path.startswith(ai_path)
+        for ai_path in AGENT_INSTRUCTION_PATHS
+    )
 
 changed_files = analysis.get("changed_files") or []
 if not isinstance(changed_files, list):
@@ -154,7 +199,7 @@ Path(".serena/.serena_sync_state.json").write_text(
 )
 PY
 
-HEAD_NON_KNOWLEDGE=$(python3 - <<'PY'
+HEAD_NON_KNOWLEDGE=$("${PYTHON_BIN}" - <<'PY'
 import json
 try:
     payload = json.loads(open(".serena/.serena_sync_state.json", "r", encoding="utf-8").read())

@@ -27,18 +27,34 @@ SERENA_KNOWLEDGE_PREFIXES = (
 # fullrepo merge HEAD (which CI verify-memory-sync.py would reject as
 # non-ancestor of main HEAD).
 AGENT_INSTRUCTION_PATHS = (
+    # Root-level instruction files (canonical per .git/info/exclude
+    # "rldyour fullrepo agent-only files" block).
     "AGENTS.md",
-    "REVIEW.md",
     "CLAUDE.md",
+    "REVIEW.md",
     "GEMINI.md",
     "QWEN.md",
+    ".cursorrules",
+    ".windsurfrules",
+    ".aider",  # prefix-match: .aider, .aider.conf.yml, .aiderignore, .aider.chat.history.md
+    # IDE / agent root directories.
     ".claude/",
     ".codex/",
     ".cursor/",
     ".gemini/",
     ".windsurf/",
     ".roo/",
-    ".aider",
+    ".openhands/",
+    # GitHub agent paths (Copilot instructions, prompts, agent-shared files).
+    ".github/copilot-instructions.md",
+    ".github/instructions/",
+    ".github/prompts/",
+    # .agents/ tool-shared paths (cross-vendor agent skills/commands/hooks).
+    ".agents/skills/",
+    ".agents/commands/",
+    ".agents/hooks/",
+    # Serena project metadata (knowledge directories live in
+    # SERENA_KNOWLEDGE_PREFIXES; project.yml is metadata, not knowledge).
     ".serena/project.yml",
     ".serena/project.local.yml",
 )
