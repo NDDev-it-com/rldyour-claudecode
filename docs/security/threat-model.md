@@ -207,11 +207,14 @@ Three boundaries exist:
   SAST (OSS rule packs), gitleaks covers secret scanning. The repo's
   defence-in-depth security stack is markedly stronger than the
   pre-public baseline.
-- **Push protection**: GitHub Secret Scanning Push Protection is
-  configurable for public repos. When enabled, secrets pushed to GitHub
-  are rejected at the server. Local pre-push guard
-  (`plugins/rldyour-flow/scripts/local_git_ai_guard.sh`) remains the
-  primary defence and runs before any server-side check.
+- **No GitHub-native secret scanning / push protection**: organization
+  enterprise policy intentionally keeps these features disabled
+  (paid-tier add-on at the enterprise plan). Secret-scan coverage is
+  delivered exclusively through the workflow layer (gitleaks weekly +
+  on push/PR + Semgrep `p/secrets` rule pack) and through the local
+  pre-push guard (`plugins/rldyour-flow/scripts/local_git_ai_guard.sh`).
+  No server-side secret reject; if a secret is pushed, gitleaks catches
+  it post-push and the maintainer rotates.
 - **fullrepo `--force-with-lease`**: intentional per ADR-0001. Cannot
   share `main`'s no-force-push rule.
 
