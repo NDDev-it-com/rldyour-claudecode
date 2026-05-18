@@ -153,17 +153,16 @@ class TestAgentInstructionPaths:
     def test_dot_agents_paths(self, state_module, path):
         assert state_module._is_knowledge_path(path)
 
-    @pytest.mark.parametrize(
-        "path",
-        [
-            ".serena/project.yml",
-            ".serena/project.local.yml",
-        ],
-    )
-    def test_serena_metadata_files(self, state_module, path):
-        """`.serena/project.yml` is metadata, not knowledge directory, but is
+    def test_serena_project_yml_is_metadata_knowledge(self, state_module):
+        """`.serena/project.yml` is metadata, not a knowledge directory, but is
         still agent-instruction-equivalent (lives only on fullrepo branch)."""
-        assert state_module._is_knowledge_path(path)
+        assert state_module._is_knowledge_path(".serena/project.yml")
+
+    def test_serena_project_local_yml_not_knowledge(self, state_module):
+        """`.serena/project.local.yml` is machine-local runtime config
+        (negated in `.git/info/exclude`, in `fullrepo_sync.RUNTIME_EXCLUDE_PATTERNS`).
+        It must NOT classify as knowledge - it never reaches commits."""
+        assert not state_module._is_knowledge_path(".serena/project.local.yml")
 
 
 class TestNotKnowledgePaths:
@@ -189,6 +188,29 @@ class TestNotKnowledgePaths:
     def test_real_code_paths_not_knowledge(self, state_module, path):
         assert not state_module._is_knowledge_path(path), (
             f"{path} should NOT be classified as knowledge"
+        )
+
+    @pytest.mark.parametrize(
+        "path",
+        [
+            # F-3 verification-review closure: exact-file entries must NOT
+            # produce false-positive prefix matches. AGENTS.md.bak or a
+            # .mdx Copilot variant are NOT canonical agent-instruction.
+            "AGENTS.md.bak",
+            "AGENTS.mdconfig",
+            "CLAUDE.md.old",
+            ".github/copilot-instructions.mdx",
+            ".github/copilot-instructions.md.backup",
+            # .serena/reviews/ and .serena/diagnostics/ are runtime artefacts
+            # (negated in .git/info/exclude) and should NOT be knowledge.
+            ".serena/reviews/2026-05-18T1238Z-027b6f9/foo.md",
+            ".serena/diagnostics/foo.log",
+        ],
+    )
+    def test_exact_file_entries_no_false_positive_prefix(self, state_module, path):
+        """F-3 closure: AGENTS.md.bak must NOT match AGENTS.md via startswith."""
+        assert not state_module._is_knowledge_path(path), (
+            f"{path} produced false-positive prefix match for an exact-file entry"
         )
 
 
@@ -246,18 +268,22 @@ class TestExcludeBlockParity:
 
     def test_no_missing_agent_paths(self, state_module):
         """Every agent-only path in .git/info/exclude must be recognised as
-        knowledge. Semantic match: exclude `.cursor/rules` is covered by
-        canon `.cursor/` (we're broader by design)."""
+        knowledge. Probe each entry with both an exact form and a
+        directory form so the parity check works for exact-file entries
+        (`AGENTS.md`), dotfile-family roots (`.aider*`), and directory
+        prefixes (`.claude/**`) alike."""
         exclude_paths = self._extract_exclude_paths()
-        # Probe each exclude path with a synthetic file under it; if
-        # _is_knowledge_path() returns True the canon covers it.
         missing = []
         for excl in exclude_paths:
-            probe = excl if excl.endswith(".md") or excl.endswith(".yml") else f"{excl}/dummy.md"
-            if not state_module._is_knowledge_path(probe):
-                # Special case: bare `.aider` prefix-match handles dotfile families.
-                if excl.startswith(".aider") and state_module._is_knowledge_path(".aider.test"):
-                    continue
+            if excl.startswith(".aider"):
+                probes = [".aider", ".aider.test", ".aider.conf.yml"]
+            else:
+                # Probe BOTH the bare entry (covers exact-file canon like
+                # AGENTS.md and .cursorrules) AND a synthetic sub-path
+                # (covers directory-prefix canon like .claude/ which lives
+                # in canon with trailing slash). One must match.
+                probes = [excl, f"{excl}/dummy.md"]
+            if not any(state_module._is_knowledge_path(p) for p in probes):
                 missing.append(excl)
         assert not missing, (
             f"Agent-only paths from .git/info/exclude not covered "
