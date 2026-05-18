@@ -1,0 +1,107 @@
+name: Bug report
+description: File a bug report with concrete repro and evidence.
+title: "[bug] "
+labels: ["bug", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug. Please fill in
+        the sections below with concrete repro evidence. Reports that
+        lack a clear repro path are likely to be closed without action.
+
+        For security issues, do NOT open a public Issue. Instead, open a
+        private Security Advisory: https://github.com/NDDev-it-com/rldyour-claudecode/security/advisories/new
+
+  - type: input
+    id: version
+    attributes:
+      label: Marketplace version
+      description: Output of `cat VERSION` or the `marketplace--v<X.Y.Z>` tag in use.
+      placeholder: "0.6.0"
+    validations:
+      required: true
+
+  - type: input
+    id: plugin
+    attributes:
+      label: Affected plugin
+      description: Which `rldyour-*` plugin (or `marketplace` if cross-cutting)?
+      placeholder: "rldyour-flow"
+    validations:
+      required: true
+
+  - type: input
+    id: claude-code
+    attributes:
+      label: Claude Code CLI version
+      description: Output of `claude --version`. Minimum supported is in `config/mcp-runtime-versions.env::CLAUDE_CODE_MIN_VERSION`.
+      placeholder: "2.1.143"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating system
+      options:
+        - Ubuntu / Debian / other Linux
+        - macOS (Apple Silicon)
+        - macOS (Intel)
+        - Other (please describe in repro)
+    validations:
+      required: true
+
+  - type: textarea
+    id: repro
+    attributes:
+      label: Reproduction steps
+      description: Exact commands that reproduce the issue. Start from a clean checkout.
+      placeholder: |
+        1. git clone https://github.com/NDDev-it-com/rldyour-claudecode.git
+        2. cd rldyour-claudecode
+        3. bash scripts/install-rldyour-marketplace.sh
+        4. claude  # then type: /rldyour-flow:ry-init
+        5. ...
+      render: bash
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: What did you expect to happen?
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: What happened instead? Include exit codes, stderr, hook output verbatim.
+    validations:
+      required: true
+
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: |
+        Logs, screenshots, output of relevant diagnostic commands:
+        - `python3 plugins/rldyour-flow/scripts/flow_post_task_state.py`
+        - `python3 plugins/rldyour-serena-mcp/scripts/serena_memory_state.py`
+        - `bash scripts/validate_marketplace.sh 2>&1 | tail -50`
+      render: text
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Pre-flight checklist
+      options:
+        - label: I searched existing Issues for duplicates.
+          required: true
+        - label: I have NOT included any tokens, secrets, or PII in this report.
+          required: true
+        - label: This is not a security issue. (Security issues go to private Security Advisories.)
+          required: true

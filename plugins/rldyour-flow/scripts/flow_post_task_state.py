@@ -5,6 +5,7 @@ import hashlib
 import json
 import os
 import subprocess
+import sys
 from pathlib import Path
 from typing import Any
 
@@ -191,7 +192,7 @@ def _serena_current() -> tuple[bool, dict[str, Any]]:
     candidate = _resolve_sibling_plugin_script("rldyour-serena-mcp", "scripts/serena_memory_state.py")
     if candidate is None:
         return True, {}
-    proc = subprocess.run(["python3", str(candidate)], check=False, capture_output=True, text=True)
+    proc = subprocess.run([sys.executable, str(candidate)], check=False, capture_output=True, text=True)
     if proc.returncode != 0 or not proc.stdout.strip():
         return True, {}
     try:
@@ -219,7 +220,7 @@ def _fullrepo_state() -> dict[str, Any]:
     if candidate is None:
         return {}
     proc = subprocess.run(
-        ["python3", str(candidate), "--status-json"],
+        [sys.executable, str(candidate), "--status-json"],
         check=False,
         capture_output=True,
         text=True,
@@ -238,7 +239,7 @@ def _instruction_docs_state() -> dict[str, Any]:
     if candidate is None:
         return {}
     proc = subprocess.run(
-        ["python3", str(candidate), "--json"],
+        [sys.executable, str(candidate), "--json"],
         check=False,
         capture_output=True,
         text=True,

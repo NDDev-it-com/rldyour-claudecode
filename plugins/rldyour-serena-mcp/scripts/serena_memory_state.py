@@ -108,8 +108,7 @@ def _analysis_from_ref_range(from_ref: str, to_ref: str) -> dict[str, Any] | Non
         return None
 
     proc = subprocess.run(
-        [
-            "python3",
+        [sys.executable,
             str(ANALYZE_SCRIPT),
             "--from-ref",
             from_ref,
@@ -159,7 +158,7 @@ def _analysis_from_changed_files(paths: list[str], state: dict[str, Any]) -> tup
 
     if paths and ANALYZE_SCRIPT.is_file():
         proc = subprocess.run(
-            ["python3", str(ANALYZE_SCRIPT), "--stdin"],
+            [sys.executable, str(ANALYZE_SCRIPT), "--stdin"],
             input="\n".join(paths) + "\n",
             text=True,
             check=False,

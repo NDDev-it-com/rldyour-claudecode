@@ -1,0 +1,67 @@
+name: Feature request
+description: Propose a new plugin component or workflow.
+title: "[feat] "
+labels: ["enhancement", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This is a personal marketplace by `rldyourmnd`. Feature requests
+        that fit the existing plugin boundaries
+        (`config/marketplace-policy.json`) are welcome. Catch-all
+        helpers, third-party plugins outside `rldyour-*` namespace, and
+        architecture rewrites without an ADR are out of scope.
+
+        If you want a workflow this marketplace does not provide,
+        consider forking.
+
+  - type: textarea
+    id: use-case
+    attributes:
+      label: Use case
+      description: What real-world task does this feature unblock? Concrete examples beat abstract ideas.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: What would you change in the codebase? Reference specific plugin / skill / hook / script.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: What other approaches did you evaluate? Why are they worse?
+
+  - type: dropdown
+    id: domain
+    attributes:
+      label: Plugin domain
+      description: Which plugin owns this work? See README for the dependency graph.
+      options:
+        - rldyour-mcps (MCP transport)
+        - rldyour-serena-mcp (Serena memory sync)
+        - rldyour-flow (SDLC orchestration)
+        - rldyour-explore (research)
+        - rldyour-security (defensive security)
+        - rldyour-browser (browser validation/debug)
+        - rldyour-design (Figma → tokens → FSD)
+        - rldyour-lsps (LSP routing)
+        - rldyour-rules (rule areas)
+        - Cross-cutting / new domain (please justify in proposal)
+
+  - type: checkboxes
+    id: alignment
+    attributes:
+      label: Alignment checklist
+      options:
+        - label: This fits one plugin domain - it does not require a new catch-all helper.
+          required: true
+        - label: I read `CONTRIBUTING.md` "What does NOT fit" section.
+          required: true
+        - label: If this is a breaking change, I will accept it requires an ADR before merge.
+          required: true

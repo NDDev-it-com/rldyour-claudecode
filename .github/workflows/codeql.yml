@@ -1,0 +1,81 @@
+name: codeql
+
+# Semantic security analysis for Python (validators in scripts/ + plugins/*/scripts/)
+# and GitHub Actions workflows themselves. CodeQL is free for public repositories.
+#
+# Coverage:
+#   - python      → scripts/*.py + plugins/*/scripts/*.py + tests/*.py
+#   - actions     → .github/workflows/*.yml (workflow YAML analysis)
+#
+# Why two languages: Python catches injection/path-traversal/unsafe-eval; the
+# actions analyzer catches workflow-permission overreach, untrusted input usage,
+# tag-vs-SHA pinning gaps, secret exposure in run blocks. Both languages run as
+# separate matrix entries so failure of one does not block the other.
+#
+# SHA-pinned actions per OWASP A03:2025. CodeQL action pinned via 4.35.2 tag.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    # Weekly background scan to surface drift even when no PR opens.
+    - cron: '15 6 * * 2'  # Tuesday 06:15 UTC, off-peak
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  analyze:
+    name: analyze (${{ matrix.language }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      security-events: write    # required by codeql-action/analyze to upload SARIF
+      actions: read             # required by codeql-action/init for `actions` language
+
+    strategy:
+      fail-fast: false
+      matrix:
+        language: ['python', 'actions']
+
+    steps:
+      - name: Harden runner (egress block + explicit allowlist)
+        uses: step-security/harden-runner@ab7a9404c0f3da075243ca237b5fac12c98deaa5  # v2.19.3
+        with:
+          egress-policy: block
+          allowed-endpoints: >
+            agent.api.stepsecurity.io:443
+            api.github.com:443
+            github.com:443
+            codeload.github.com:443
+            objects.githubusercontent.com:443
+            uploads.github.com:443
+            files.pythonhosted.org:443
+            pypi.org:443
+
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Initialize CodeQL (${{ matrix.language }})
+        uses: github/codeql-action/init@95e58e9a2cdfd71adc6e0353d5c52f41a045d225  # v4.35.2
+        with:
+          languages: ${{ matrix.language }}
+          # `security-and-quality` is a strict superset of `security-extended`
+          # (adds maintainability checks on top of taint/crypto/path queries).
+          # Choosing the superset avoids redundant query execution. Free for
+          # public repos.
+          queries: security-and-quality
+
+      - name: Perform CodeQL analysis
+        uses: github/codeql-action/analyze@95e58e9a2cdfd71adc6e0353d5c52f41a045d225  # v4.35.2
+        with:
+          category: "/language:${{ matrix.language }}"
