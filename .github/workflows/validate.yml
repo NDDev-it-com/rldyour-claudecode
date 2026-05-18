@@ -107,6 +107,10 @@ jobs:
             nodejs.org:443
             files.pythonhosted.org:443
             pypi.org:443
+            mcp.deepwiki.com:443
+            mcp.grep.app:443
+            mcp.figma.com:443
+            developers.openai.com:443
 
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
