@@ -6,6 +6,69 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+## [0.6.1] - 2026-05-18
+
+**Post-public-toggle stabilisation patch.** The repository visibility
+toggle to public surfaced CI configuration drift that did not show up
+on the private runner. This patch closes the 4 remaining reviewer-wave
+follow-ups, fixes 2 harden-runner egress allowlist gaps that broke CI
+on the first public push, and clarifies that GitHub Secret Scanning +
+Push Protection are intentionally disabled (paid-tier feature blocked
+by organization enterprise policy - not a future TODO).
+
+No behavior changes to plugins; no API changes; PATCH bump per
+Keep a Changelog.
+
+### Changed
+
+- **`.github/workflows/validate.yml`** harden-runner allowed-endpoints
+  list gained 4 entries for the HTTP MCP endpoints that
+  `scripts/smoke_mcp_runtime.sh` HTTP-preflights: `mcp.deepwiki.com:443`,
+  `mcp.grep.app:443`, `mcp.figma.com:443`, `developers.openai.com:443`.
+  Drift between `.mcp.json` and the allowlist would now surface as CI
+  failure - intentional. Closes the first-public-push regression where
+  the MCP smoke step failed with `errno 111 Connection refused`.
+- **`.github/workflows/actionlint.yml`** harden-runner allowed-endpoints
+  list gained `release-assets.githubusercontent.com:443`. The actionlint
+  download step pulls the pinned binary from GitHub's release-asset CDN;
+  the egress block rejected the connection with `curl exit 7`. Closes
+  the first-public-push regression.
+- **`docs/security/threat-model.md`** "Known acceptable risks" section
+  rewritten: the prior "Push protection: configurable for public repos"
+  wording incorrectly implied future enablement. GitHub Secret Scanning
+  and Push Protection are paid-tier features intentionally kept disabled
+  by organization enterprise policy. Workflow-layer scanners
+  (gitleaks weekly + push/PR, Semgrep `p/secrets`, CodeQL, local
+  pre-push guard) deliver equivalent secret-scan risk-class coverage
+  without the paid-feature unlock.
+- **`docs/adr/0008-ci-baseline-without-paid-addons.md`** "Bad: no GHAS
+  push protection" entry rewritten with the same accept-risk framing.
+  Removed "Future option: add push protection" line (the org policy is
+  durable, not a future TODO).
+- **`docs/security/threat-model.md`** "No GHAS (paid)" section updated
+  to reflect public-repo CodeQL availability (ADR-0008 amendment from
+  the 0.6.0 wave).
+- **`.github/workflows/semgrep.yml`** header comment block updated:
+  "Replaces CodeQL because GHAS is not enabled" replaced with
+  "Complements (does NOT replace) CodeQL" - the public-repo toggle
+  unlocked CodeQL at zero cost; CodeQL + Semgrep + gitleaks are now
+  three complementary security workflows running on every push/PR.
+- **`scripts/validate_release_state.py:158`** + **`scripts/smoke_serena_memory_taxonomy.sh:51`**:
+  hardcoded `"python3"` replaced with `sys.executable` in subprocess
+  calls. Closes the 2 sites that commit `c432f54` (0.6.0 wave) missed.
+
+### Notes
+
+- This patch does NOT change any plugin behavior, contract, or API.
+  All 9 plugin runtime files (skills, agents, hooks, commands, scripts)
+  unchanged from 0.6.0. Version bump is per the owner-set rule
+  (any wave touching marketplace/CI/docs bumps all 9 plugins +
+  marketplace VERSION together; 2026-05-17 owner clarification in
+  `[[RELEASE-01-VALIDATION]]` memory).
+- All 18 Serena memories synced to HEAD via mixed flow-memory-sync
+  subagent run + direct edit_memory calls for the metadata-only bumps.
+  Memory taxonomy + agent-only-files invariants per ADR-0011 unchanged.
+
 ## [0.6.0] - 2026-05-18
 
 **Public-readiness wave.** Removes personal contact email from the
@@ -1899,7 +1962,8 @@ Release boundary cut after the 2026-05-08..2026-05-12 wave of best-practice, MCP
   shell syntax checks, frontmatter presence verification on all skills,
   agents, and commands.
 
-[Unreleased]: https://github.com/NDDev-it-com/rldyour-claudecode/compare/marketplace--v0.6.0...HEAD
+[Unreleased]: https://github.com/NDDev-it-com/rldyour-claudecode/compare/marketplace--v0.6.1...HEAD
+[0.6.1]: https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/marketplace--v0.6.1
 [0.6.0]: https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/marketplace--v0.6.0
 [0.5.2]: https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/marketplace--v0.5.2
 [0.4.0]: https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/marketplace--v0.4.0
