@@ -81,9 +81,11 @@ Cross-cutting:
   surface before tag push.
 - Bad: GHAS Dependabot security alerts not available; relying on
   Dependabot version-update PRs (free tier) for dependency drift.
-- Bad: no GHAS push protection on the repo. Mitigation: local pre-push
-  guard (`plugins/rldyour-flow/scripts/local_git_ai_guard.sh`) scans for
-  secrets before push.
+- Bad: no GitHub-native Secret Scanning / Push Protection on the repo
+  (organization enterprise policy intentionally keeps these paid-tier
+  features disabled). Mitigation: gitleaks workflow (full-history scan
+  on push, PR, and weekly schedule) + Semgrep `p/secrets` rule pack +
+  local pre-push guard (`plugins/rldyour-flow/scripts/local_git_ai_guard.sh`).
 
 ## Confirmation
 
@@ -97,8 +99,10 @@ Cross-cutting:
 ## More Information
 
 - Related: ADR-0009 (release tag convention).
-- Future option: if the project upgrades to GHEC + GHAS, migrate Semgrep
-  to SARIF upload + CodeQL companion; add push protection.
+- GitHub-native Secret Scanning + Push Protection: paid-tier add-on,
+  enterprise policy keeps them disabled. Workflow-layer secret scan
+  (gitleaks + Semgrep `p/secrets`) covers the same risk class without
+  the org-policy unlock.
 
 ## Amendment 2026-05-18 (release 0.6.0): public repository unlocks CodeQL
 
