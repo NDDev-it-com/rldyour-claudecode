@@ -6,6 +6,105 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-05-18
+
+**Public-readiness wave.** Removes personal contact email from the
+marketplace manifest, adds open-source-standard public-readiness assets
+(SECURITY.md / CONTRIBUTING.md / CODE_OF_CONDUCT.md / Issue + PR
+templates), expands the per-PR CI matrix to Ubuntu + macOS for pytest
+and validate harnesses, adds CodeQL semantic analysis for Python +
+GitHub Actions, and closes the remaining `python3` hardcode finding
+from the 0.5.2 reviewer wave (F-3 security INFO / F-6 consistency INFO).
+
+This is the first release intended for public visibility on GitHub.
+gitleaks scan over all 270 commits found zero secrets; manual sweep
+confirmed no `/home/<user>` literals, no internal IPs, no Bearer
+tokens, no API keys in any tracked file across the full history.
+
+### Added
+
+- **`SECURITY.md`**: vulnerability disclosure policy via private
+  GitHub Security Advisories; supported-versions table tied to the
+  `marketplace--v<X.Y.Z>` tag; threat model focused on prompt injection
+  via hook output, supply-chain integrity, branch-boundary leakage,
+  and hook freshness invariants (ADR-0011). Documents the defensive
+  tooling stack (gitleaks, Semgrep, CodeQL, Dependabot, harden-runner)
+  and what counts vs does NOT count as a security issue.
+- **`CONTRIBUTING.md`**: quick-start install + `validate_marketplace.sh`
+  gate + Conventional Commits v1.0.0 enforcement; "what fits" vs
+  "what does NOT fit" sections aligned with the personal-marketplace
+  scope; branch policy (main + fullrepo) and version-bump rule
+  (owner-set 2026-05-17) documented for contributors.
+- **`CODE_OF_CONDUCT.md`**: Contributor Covenant 2.1 verbatim adoption.
+  Reporting channel routed through GitHub Security Advisories (same
+  private channel as security disclosure).
+- **`.github/ISSUE_TEMPLATE/bug_report.yml`**: structured bug intake
+  with required fields (marketplace version, affected plugin, Claude
+  Code CLI version, OS, repro steps, expected/actual, evidence). Built
+  with GitHub Forms schema for input validation.
+- **`.github/ISSUE_TEMPLATE/feature_request.yml`**: structured feature
+  intake with use-case + alternatives + plugin-domain dropdown +
+  alignment checklist gating boundary-respecting proposals.
+- **`.github/ISSUE_TEMPLATE/config.yml`**: disables blank Issues,
+  routes security reports to private advisories and discussions to
+  GitHub Discussions.
+- **`.github/PULL_REQUEST_TEMPLATE.md`**: pre-flight checklist
+  enforcing Conventional Commits, atomic commits, validator pass,
+  ADR for breaking changes, CHANGELOG entry, version bump, no
+  secrets/tokens/PII, no `latest` pins, agent-only-files-on-fullrepo.
+- **`.github/workflows/codeql.yml`**: semantic security analysis for
+  `python` + `actions` (workflow YAML) languages. Free for public
+  repositories. `security-extended` + `security-and-quality` query
+  packs enabled; SARIF results upload to the Security tab.
+  SHA-pinned to `github/codeql-action@95e58e9a...` (v4.35.2).
+
+### Changed
+
+- **`.claude-plugin/marketplace.json`** owner block: removed `email`
+  field (`danilsilantyevnewlife+claude@gmail.com`). The marketplace
+  schema (`config/schemas/marketplace.json`) does NOT require owner
+  email; the `url` field (https://github.com/rldyourmnd) is sufficient
+  contact attribution. Public preparation: removes personal contact
+  data from the marketplace manifest before public visibility toggle.
+- **`.github/workflows/pytest.yml`** matrix expansion: `runs-on:
+  ${{ matrix.os }}` with `[ubuntu-latest, macos-latest]` strategy.
+  Pytest now runs on both platforms on every push to main + every PR
+  + workflow_dispatch. macOS coverage catches BSD vs GNU encoding /
+  path / regex edge cases. Harden-runner remains Linux-only per
+  ADR-0010 (macOS upstream limitation). Timeout raised 5 → 10 min
+  to accommodate slower macOS runners. `persist-credentials: false`
+  on checkout per OWASP A07 hardening.
+- **`.github/workflows/validate.yml`** `syntax-checks` job matrix
+  expansion: same Ubuntu + macOS strategy. Catches bash 3.2 vs 5.x
+  compatibility issues, sed -i / find / readlink / awk userland
+  differences. Timeout raised 8 → 12 min. `validate-marketplace`
+  job (Claude CLI plugin validate) stays Ubuntu-only - no userland
+  divergence in `claude plugin validate` execution path.
+- **`plugins/rldyour-flow/scripts/flow_post_task_state.py`** +
+  **`plugins/rldyour-flow/scripts/instruction_docs_state.py`** +
+  **`plugins/rldyour-serena-mcp/scripts/serena_memory_state.py`**:
+  4 hardcoded `["python3", str(candidate), ...]` subprocess strings
+  replaced with `[sys.executable, str(candidate), ...]`. Closes F-3
+  security INFO + F-6 consistency INFO from review wave 2026-05-18T1238Z
+  (hook layer used defensive `PYTHON_BIN` resolver; Python module
+  internal subprocesses inherited the same intent but used hardcoded
+  string). Now consistent across both layers.
+
+### Notes
+
+- Git history (270 commits authored by Danil Silantyev
+  <danilsilantyevwork@gmail.com>) is intentionally NOT rewritten.
+  Canonical open-source attribution; rewriting would invalidate all
+  10 release tags from 0.5.2, break clone state for any existing
+  downstream user, and offers no privacy benefit (the author identity
+  is already known via the GitHub profile URL in the marketplace
+  manifest). Future commits MAY use a noreply email at the author's
+  discretion; existing history stays as canonical attribution.
+- This release does NOT toggle GitHub repository visibility. The
+  visibility change is a separate, explicit, user-authorized operation
+  via `gh repo edit --visibility public` after this CHANGELOG entry
+  ships and reviewers have confirmed public-readiness.
+
 ## [0.5.2] - 2026-05-18
 
 **Hook freshness invariants for branch-split projects.** Closes a structural
@@ -1800,7 +1899,8 @@ Release boundary cut after the 2026-05-08..2026-05-12 wave of best-practice, MCP
   shell syntax checks, frontmatter presence verification on all skills,
   agents, and commands.
 
-[Unreleased]: https://github.com/NDDev-it-com/rldyour-claudecode/compare/marketplace--v0.5.2...HEAD
+[Unreleased]: https://github.com/NDDev-it-com/rldyour-claudecode/compare/marketplace--v0.6.0...HEAD
+[0.6.0]: https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/marketplace--v0.6.0
 [0.5.2]: https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/marketplace--v0.5.2
 [0.4.0]: https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/marketplace--v0.4.0
 [0.3.0]: https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/marketplace--v0.3.0
