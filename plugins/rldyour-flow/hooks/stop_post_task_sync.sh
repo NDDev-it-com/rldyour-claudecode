@@ -18,6 +18,16 @@ set -euo pipefail
 IFS=$'\n\t'
 unset CDPATH
 
+# Defensive python3 resolution: subprocess shells (e.g. Claude Code hook runner)
+# may have a sanitized PATH that omits ~/.local/bin, and uv-managed Python
+# symlinks can be transiently broken during interpreter upgrades. Resolve once
+# and exit 0 if no working interpreter exists - hooks must stay non-blocking
+# when Python is unavailable. Canonical pattern (tw93/Mole, rsyslog).
+PYTHON_BIN="${PYTHON_BIN:-$(command -v python3 2>/dev/null || command -v python 2>/dev/null || true)}"
+if [ -z "${PYTHON_BIN}" ] || [ ! -x "${PYTHON_BIN}" ]; then
+  exit 0
+fi
+
 if [ "${RLDYOUR_SKIP_STOP_GATES:-0}" = "1" ] || [ "${RLDYOUR_SKIP_FLOW_SYNC:-0}" = "1" ]; then
   exit 0
 fi
@@ -39,15 +49,15 @@ if [ ! -f "$STATE_SCRIPT" ]; then
   exit 0
 fi
 
-STATE_JSON=$(python3 "$STATE_SCRIPT" 2>/dev/null || true)
+STATE_JSON=$("${PYTHON_BIN}" "$STATE_SCRIPT" 2>/dev/null || true)
 if [ -z "$STATE_JSON" ]; then
   exit 0
 fi
 
-SERENA_CURRENT=$(printf "%s" "$STATE_JSON" | python3 -c 'import json,sys; print("true" if json.load(sys.stdin).get("serena_current") else "false")' 2>/dev/null || echo "true")
-NEEDS_SYNC=$(printf "%s" "$STATE_JSON" | python3 -c 'import json,sys; print("true" if json.load(sys.stdin).get("needs_flow_sync") else "false")' 2>/dev/null || echo "false")
-FINGERPRINT=$(printf "%s" "$STATE_JSON" | python3 -c 'import json,sys; print(json.load(sys.stdin).get("fingerprint", ""))' 2>/dev/null || true)
-HEAD_SHA=$(printf "%s" "$STATE_JSON" | python3 -c 'import json,sys; print(json.load(sys.stdin).get("head_sha", ""))' 2>/dev/null || true)
+SERENA_CURRENT=$(printf "%s" "$STATE_JSON" | "${PYTHON_BIN}" -c 'import json,sys; print("true" if json.load(sys.stdin).get("serena_current") else "false")' 2>/dev/null || echo "true")
+NEEDS_SYNC=$(printf "%s" "$STATE_JSON" | "${PYTHON_BIN}" -c 'import json,sys; print("true" if json.load(sys.stdin).get("needs_flow_sync") else "false")' 2>/dev/null || echo "false")
+FINGERPRINT=$(printf "%s" "$STATE_JSON" | "${PYTHON_BIN}" -c 'import json,sys; print(json.load(sys.stdin).get("fingerprint", ""))' 2>/dev/null || true)
+HEAD_SHA=$(printf "%s" "$STATE_JSON" | "${PYTHON_BIN}" -c 'import json,sys; print(json.load(sys.stdin).get("head_sha", ""))' 2>/dev/null || true)
 
 # Serena owns memory freshness. Flow waits for Serena Stop hook to finish first.
 if [ "$SERENA_CURRENT" != "true" ]; then
@@ -59,7 +69,7 @@ if [ "$NEEDS_SYNC" != "true" ] || [ -z "$FINGERPRINT" ]; then
   exit 0
 fi
 
-STOP_HOOK_ACTIVE=$(printf "%s" "$HOOK_INPUT" | python3 -c '
+STOP_HOOK_ACTIVE=$(printf "%s" "$HOOK_INPUT" | "${PYTHON_BIN}" -c '
 import json
 import sys
 
@@ -79,7 +89,7 @@ mkdir -p .serena
 printf "%s\n" "$FINGERPRINT" > "$SYNC_MARKER"
 printf "%s" "$STATE_JSON" > .serena/.flow_post_task_state.json
 
-SUMMARY=$(printf "%s" "$STATE_JSON" | python3 -c '
+SUMMARY=$(printf "%s" "$STATE_JSON" | "${PYTHON_BIN}" -c '
 import json
 import sys
 

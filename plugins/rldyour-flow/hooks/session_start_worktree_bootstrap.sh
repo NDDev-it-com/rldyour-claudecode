@@ -20,6 +20,16 @@ set -euo pipefail
 IFS=$'\n\t'
 unset CDPATH
 
+# Defensive python3 resolution: subprocess shells (e.g. Claude Code hook runner)
+# may have a sanitized PATH that omits ~/.local/bin, and uv-managed Python
+# symlinks can be transiently broken during interpreter upgrades. Resolve once
+# and exit 0 if no working interpreter exists - hooks must stay non-blocking
+# when Python is unavailable. Canonical pattern (tw93/Mole, rsyslog).
+PYTHON_BIN="${PYTHON_BIN:-$(command -v python3 2>/dev/null || command -v python 2>/dev/null || true)}"
+if [ -z "${PYTHON_BIN}" ] || [ ! -x "${PYTHON_BIN}" ]; then
+  exit 0
+fi
+
 if [ "${RLDYOUR_SKIP_WORKTREE_BOOTSTRAP:-0}" = "1" ]; then
   exit 0
 fi
@@ -56,12 +66,12 @@ fi
 
 # Verify origin/fullrepo actually exists before attempting --restore so we
 # don't emit confusing "no fullrepo" errors in a brand-new repo.
-STATUS_JSON=$(python3 "$FULLREPO_SCRIPT" --status-json 2>/dev/null || true)
+STATUS_JSON=$("${PYTHON_BIN}" "$FULLREPO_SCRIPT" --status-json 2>/dev/null || true)
 if [ -z "$STATUS_JSON" ]; then
   exit 0
 fi
 
-remote_present=$(printf "%s" "$STATUS_JSON" | python3 -c '
+remote_present=$(printf "%s" "$STATUS_JSON" | "${PYTHON_BIN}" -c '
 import json, sys
 try:
     s = json.load(sys.stdin)
@@ -77,11 +87,11 @@ if [ "$remote_present" != "true" ]; then
 fi
 
 # Run --restore, capture stdout for the advisory context.
-RESTORE_OUT=$(python3 "$FULLREPO_SCRIPT" --restore 2>&1 || true)
+RESTORE_OUT=$("${PYTHON_BIN}" "$FULLREPO_SCRIPT" --restore 2>&1 || true)
 
 # Compose advisory context. We emit JSON so the new session sees a clean
 # "this worktree was auto-bootstrapped" notice in additionalContext.
-python3 - "$ROOT" "$RESTORE_OUT" <<'PY'
+"${PYTHON_BIN}" - "$ROOT" "$RESTORE_OUT" <<'PY'
 import json
 import sys
 
