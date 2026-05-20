@@ -90,6 +90,15 @@ def _stdout(*args: str, check: bool = True, env: dict[str, str] | None = None) -
     return _git(*args, check=check, env=env).stdout.strip()
 
 
+def git_identity_env() -> dict[str, str]:
+    env = os.environ.copy()
+    env.setdefault("GIT_AUTHOR_NAME", "Danil Silantyev")
+    env.setdefault("GIT_AUTHOR_EMAIL", "rldyourmnd@users.noreply.github.com")
+    env.setdefault("GIT_COMMITTER_NAME", "Danil Silantyev")
+    env.setdefault("GIT_COMMITTER_EMAIL", "rldyourmnd@users.noreply.github.com")
+    return env
+
+
 def repo_root() -> Path:
     proc = _git("rev-parse", "--show-toplevel", check=False)
     if proc.returncode != 0:
@@ -207,8 +216,16 @@ def remote_branch_sha(remote: str, branch: str) -> str:
     return raw.split()[0]
 
 
+def remote_configured(remote: str) -> bool:
+    return _git("remote", "get-url", remote, check=False).returncode == 0
+
+
 def local_ref_sha(ref: str) -> str:
     return _stdout("rev-parse", "--verify", "--quiet", f"{ref}^{{commit}}", check=False)
+
+
+def ref_tree_sha(ref: str) -> str:
+    return _stdout("rev-parse", "--verify", "--quiet", f"{ref}^{{tree}}", check=False)
 
 
 def fetch_fullrepo(remote: str, branch: str) -> bool:
@@ -306,7 +323,7 @@ def publish(remote: str, branch: str, dry_run: bool = False) -> None:
         f"Base-branch-head: {head}\n"
         f"Agent-only-files: {len(agent_paths)}\n"
     )
-    commit = _stdout("commit-tree", tree, *parent_args, "-m", message)
+    commit = _stdout("commit-tree", tree, *parent_args, "-m", message, env=git_identity_env())
 
     if dry_run:
         print(f"dry-run: would update refs/heads/{branch} to {commit[:12]}")
@@ -386,21 +403,36 @@ def bootstrap_init(remote: str, branch: str, dry_run: bool = False) -> None:
 
 def status(remote: str, branch: str) -> dict[str, object]:
     root = repo_root()
+    has_remote = remote_configured(remote)
     remote_sha = remote_branch_sha(remote, branch)
     local_sha = local_ref_sha(f"refs/heads/{branch}")
+    remote_ref = f"refs/remotes/{remote}/{branch}"
+    remote_tree = ""
+    if remote_sha and fetch_fullrepo(remote, branch):
+        remote_tree = ref_tree_sha(remote_ref)
+    local_tree = ref_tree_sha(f"refs/heads/{branch}") if local_sha else ""
+    expected_tree, agent_paths = build_fullrepo_tree(root)
+    comparison_tree = remote_tree or local_tree
     return {
         "is_git_repo": True,
         "root": str(root),
         "branch": _stdout("branch", "--show-current", check=False) or "detached",
         "head": _stdout("rev-parse", "--short=12", "HEAD", check=False),
         "remote": remote,
+        "remote_configured": has_remote,
         "fullrepo_branch": branch,
+        "network_checked": True,
         "remote_fullrepo_exists": bool(remote_sha),
         "remote_fullrepo_sha": remote_sha[:12] if remote_sha else "",
+        "remote_fullrepo_tree": remote_tree,
         "local_fullrepo_sha": local_sha[:12] if local_sha else "",
+        "local_fullrepo_tree": local_tree,
+        "expected_fullrepo_tree": expected_tree,
+        "fullrepo_matches_worktree": bool(comparison_tree and comparison_tree == expected_tree),
+        "local_fullrepo_matches_worktree": bool(local_tree and local_tree == expected_tree),
         "exclude_installed": exclude_installed(),
         "tracked_agent_paths": tracked_agent_paths_in_index(),
-        "worktree_agent_paths": iter_worktree_agent_files(root),
+        "worktree_agent_paths": agent_paths,
         "dirty_non_agent_paths": dirty_non_agent_paths(),
     }
 

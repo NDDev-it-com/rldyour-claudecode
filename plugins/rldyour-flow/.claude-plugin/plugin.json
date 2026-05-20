@@ -4,12 +4,12 @@
   "version": "0.6.3",
   "description": "Автономный SDLC-воркфлоу для Claude Code: ry-init, ry-start, ry-newp, ry-review, ry-deploy, ry-sync + 6 reviewer subagents (architecture/quality/consistency/integration/verification/security) + flow-post-task-sync + instruction-docs-sync. SessionStart/PreToolUse/PostToolUse/Stop хуки advisory + non-blocking. Fullrepo branch для agent-only файлов.",
   "author": {
-    "name": "rldyourmnd",
+    "name": "Danil Silantyev (github:rldyourmnd), CEO & Engineer NDDev",
     "url": "https://github.com/rldyourmnd"
   },
-  "license": "MIT",
-  "homepage": "https://github.com/nddev-it-com/rldyour-claudecode/tree/main/plugins/rldyour-flow",
-  "repository": "https://github.com/nddev-it-com/rldyour-claudecode",
+  "license": "AGPL-3.0-or-later",
+  "homepage": "https://github.com/NDDev-it-com/rldyour-claudecode/tree/main/plugins/rldyour-flow",
+  "repository": "https://github.com/NDDev-it-com/rldyour-claudecode",
   "keywords": [
     "sdlc",
     "workflow",

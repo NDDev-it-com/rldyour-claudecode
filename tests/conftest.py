@@ -42,11 +42,17 @@ def fake_repo(tmp_path: Path) -> Path:
     (tmp_path / "VERSION").write_text("0.4.0\n", encoding="utf-8")
     (tmp_path / "package.json").write_text(
         '{"name": "fixture-marketplace", "version": "0.4.0", '
+        '"license": "AGPL-3.0-or-later", '
+        '"author": {"name": "Danil Silantyev (github:rldyourmnd), CEO & Engineer NDDev"}, '
         '"devDependencies": {"@anthropic-ai/claude-code": "2.1.145"}}',
         encoding="utf-8",
     )
     (tmp_path / "pyproject.toml").write_text(
-        '[project]\nname = "fixture-marketplace"\nversion = "0.4.0"\n',
+        '[project]\n'
+        'name = "fixture-marketplace"\n'
+        'version = "0.4.0"\n'
+        'license = "AGPL-3.0-or-later"\n'
+        'authors = [{ name = "Danil Silantyev", email = "rldyourmnd@users.noreply.github.com" }]\n',
         encoding="utf-8",
     )
     (tmp_path / "CHANGELOG.md").write_text(
@@ -69,9 +75,15 @@ def fake_repo(tmp_path: Path) -> Path:
     (tmp_path / ".claude-plugin").mkdir()
     (tmp_path / ".claude-plugin" / "marketplace.json").write_text(
         '{"name": "fixture-marketplace", "plugins": ['
-        '{"name": "sample-plugin", "source": "./plugins/sample-plugin", "version": "0.4.0"},'
-        '{"name": "rldyour-mcps", "source": "./plugins/rldyour-mcps", "version": "0.4.0"},'
-        '{"name": "rldyour-flow", "source": "./plugins/rldyour-flow", "version": "0.4.0"}'
+        '{"name": "sample-plugin", "source": "./plugins/sample-plugin", "version": "0.4.0",'
+        '"license": "AGPL-3.0-or-later",'
+        '"author": {"name": "Danil Silantyev (github:rldyourmnd), CEO & Engineer NDDev"}},'
+        '{"name": "rldyour-mcps", "source": "./plugins/rldyour-mcps", "version": "0.4.0",'
+        '"license": "AGPL-3.0-or-later",'
+        '"author": {"name": "Danil Silantyev (github:rldyourmnd), CEO & Engineer NDDev"}},'
+        '{"name": "rldyour-flow", "source": "./plugins/rldyour-flow", "version": "0.4.0",'
+        '"license": "AGPL-3.0-or-later",'
+        '"author": {"name": "Danil Silantyev (github:rldyourmnd), CEO & Engineer NDDev"}}'
         ']}',
         encoding="utf-8",
     )
@@ -79,14 +91,18 @@ def fake_repo(tmp_path: Path) -> Path:
     plugin_dir = tmp_path / "plugins" / "sample-plugin" / ".claude-plugin"
     plugin_dir.mkdir(parents=True)
     (plugin_dir / "plugin.json").write_text(
-        '{"name": "sample-plugin", "version": "0.4.0"}',
+        '{"name": "sample-plugin", "version": "0.4.0",'
+        '"license": "AGPL-3.0-or-later",'
+        '"author": {"name": "Danil Silantyev (github:rldyourmnd), CEO & Engineer NDDev"}}',
         encoding="utf-8",
     )
 
     mcps_plugin_dir = tmp_path / "plugins" / "rldyour-mcps" / ".claude-plugin"
     mcps_plugin_dir.mkdir(parents=True)
     (mcps_plugin_dir / "plugin.json").write_text(
-        '{"name": "rldyour-mcps", "version": "0.4.0"}',
+        '{"name": "rldyour-mcps", "version": "0.4.0",'
+        '"license": "AGPL-3.0-or-later",'
+        '"author": {"name": "Danil Silantyev (github:rldyourmnd), CEO & Engineer NDDev"}}',
         encoding="utf-8",
     )
     # Add both a stdio write-capable server (serena) and an HTTP
@@ -144,7 +160,9 @@ def fake_repo(tmp_path: Path) -> Path:
     flow_plugin_dir = tmp_path / "plugins" / "rldyour-flow" / ".claude-plugin"
     flow_plugin_dir.mkdir(parents=True)
     (flow_plugin_dir / "plugin.json").write_text(
-        '{"name": "rldyour-flow", "version": "0.4.0"}',
+        '{"name": "rldyour-flow", "version": "0.4.0",'
+        '"license": "AGPL-3.0-or-later",'
+        '"author": {"name": "Danil Silantyev (github:rldyourmnd), CEO & Engineer NDDev"}}',
         encoding="utf-8",
     )
     flow_scripts_dir = tmp_path / "plugins" / "rldyour-flow" / "scripts"

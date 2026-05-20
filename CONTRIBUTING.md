@@ -1,10 +1,10 @@
 # Contributing
 
 Thanks for your interest in `rldyour-claudecode`. This is a personal
-Claude Code plugin marketplace by `rldyourmnd`; PRs and Issues are
-welcome, but the bar is "consistency with the existing architecture
-and quality-first invariants" - drive-by patches that don't fit the
-philosophy will be redirected or closed.
+Claude Code plugin marketplace by Danil Silantyev (github:rldyourmnd),
+CEO & Engineer NDDev; PRs and Issues are welcome, but the bar is
+"consistency with the existing architecture and quality-first invariants" -
+drive-by patches that don't fit the philosophy will be redirected or closed.
 
 If you want a workflow without these constraints, **fork and tailor**.
 That's the canonical way to extend this marketplace.
@@ -138,7 +138,7 @@ When a PR lands:
 ## License
 
 By contributing, you agree your contributions are licensed under the
-[MIT License](./LICENSE).
+[GNU Affero General Public License v3.0 or later](./LICENSE).
 
 ## Code of Conduct
 
