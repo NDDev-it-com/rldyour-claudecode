@@ -116,6 +116,10 @@ else
   echo "SKIP scripts/validate_boundaries.py not yet present"
 fi
 
+step "Cross-tool rldyour contract"
+python3 scripts/validate_contract.py
+python3 scripts/generate_contract_matrix.py --check
+
 step "Instruction docs presence"
 if [ -f scripts/validate_instruction_docs.py ]; then
   python3 scripts/validate_instruction_docs.py --require-agent-docs
