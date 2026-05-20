@@ -73,10 +73,10 @@ class TestEnvLoader:
 
 class TestExtractVersion:
     def test_finds_prefix_in_args_list(self) -> None:
-        args = ["uvx", "serena-agent==1.3.0", "--something"]
+        args = ["uvx", "serena-agent==1.5.1", "--something"]
         assert (
             check_mcp_runtime_versions.extract_version(args, "serena-agent==")
-            == "1.3.0"
+            == "1.5.1"
         )
 
     def test_returns_none_when_prefix_missing(self) -> None:

@@ -78,6 +78,7 @@ else
     ".cursorrules"
     ".windsurfrules"
     ".claude"
+    ".codex"
     ".cursor/rules"
     ".gemini"
     ".roo"

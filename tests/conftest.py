@@ -40,6 +40,15 @@ def fake_repo(tmp_path: Path) -> Path:
         config/schemas/marketplace.json  (minimal schema)
     """
     (tmp_path / "VERSION").write_text("0.4.0\n", encoding="utf-8")
+    (tmp_path / "package.json").write_text(
+        '{"name": "fixture-marketplace", "version": "0.4.0", '
+        '"devDependencies": {"@anthropic-ai/claude-code": "2.1.145"}}',
+        encoding="utf-8",
+    )
+    (tmp_path / "pyproject.toml").write_text(
+        '[project]\nname = "fixture-marketplace"\nversion = "0.4.0"\n',
+        encoding="utf-8",
+    )
     (tmp_path / "CHANGELOG.md").write_text(
         "# Changelog\n\n## [Unreleased]\n\n## [0.4.0] - 2026-05-17\n\nTest fixture.\n",
         encoding="utf-8",
@@ -85,7 +94,7 @@ def fake_repo(tmp_path: Path) -> Path:
     # both wildcard-blocked and wildcard-passes branches of validate_agent_tools.
     (tmp_path / "plugins" / "rldyour-mcps" / ".mcp.json").write_text(
         '{"mcpServers": {'
-        '"serena": {"command": "uvx", "args": ["serena-agent==1.3.0"]},'
+        '"serena": {"command": "uvx", "args": ["serena-agent==1.5.1"]},'
         '"context7": {"type": "http", "url": "https://example.com"}'
         '}}',
         encoding="utf-8",
@@ -136,6 +145,25 @@ def fake_repo(tmp_path: Path) -> Path:
     flow_plugin_dir.mkdir(parents=True)
     (flow_plugin_dir / "plugin.json").write_text(
         '{"name": "rldyour-flow", "version": "0.4.0"}',
+        encoding="utf-8",
+    )
+    flow_scripts_dir = tmp_path / "plugins" / "rldyour-flow" / "scripts"
+    flow_scripts_dir.mkdir(parents=True)
+    (flow_scripts_dir / "fullrepo_sync.py").write_text(
+        'AGENT_ONLY_PATTERNS = ("AGENTS.md", ".codex/**")\n'
+        'RUNTIME_EXCLUDE_PATTERNS = (".serena/.gitignore",)\n',
+        encoding="utf-8",
+    )
+    (config_dir / "marketplace-policy.json").write_text(
+        '{'
+        '"mcp_owner": "rldyour-mcps",'
+        '"hook_owners": [],'
+        '"plugin_dependencies": {'
+        '"sample-plugin": [], "rldyour-mcps": [], "rldyour-flow": []'
+        '},'
+        '"agent_only_path_globs": ["AGENTS.md", ".codex/**"],'
+        '"runtime_exclude_globs": [".serena/.gitignore"]'
+        '}',
         encoding="utf-8",
     )
 
