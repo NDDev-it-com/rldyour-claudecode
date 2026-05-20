@@ -273,9 +273,18 @@ def state() -> dict[str, Any]:
     worktree_agent_paths = fullrepo_state.get("worktree_agent_paths")
     if not isinstance(worktree_agent_paths, list):
         worktree_agent_paths = []
+    network_checked = bool(fullrepo_state.get("network_checked", True))
+    remote_configured = bool(fullrepo_state.get("remote_configured", True))
+    remote_missing_attention = bool(
+        worktree_agent_paths
+        and network_checked
+        and remote_configured
+        and not bool(fullrepo_state.get("remote_fullrepo_exists", False))
+    )
     fullrepo_needs_attention = bool(fullrepo_state) and (
         not bool(fullrepo_state.get("exclude_installed", True))
-        or (bool(worktree_agent_paths) and not bool(fullrepo_state.get("remote_fullrepo_exists", False)))
+        or remote_missing_attention
+        or (bool(worktree_agent_paths) and not bool(fullrepo_state.get("fullrepo_matches_worktree", True)))
     )
 
     needs_flow_sync = serena_current and bool(

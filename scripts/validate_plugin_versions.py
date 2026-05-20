@@ -19,6 +19,10 @@ import sys
 from pathlib import Path
 
 
+EXPECTED_LICENSE = "AGPL-3.0-or-later"
+EXPECTED_AUTHOR = "Danil Silantyev (github:rldyourmnd), CEO & Engineer NDDev"
+
+
 def main() -> int:
     root = Path(__file__).resolve().parent.parent
     marketplace_path = root / ".claude-plugin" / "marketplace.json"
@@ -85,6 +89,36 @@ def main() -> int:
                 f"Per docs, plugin.json wins; align both or drop marketplace 'version'.",
                 file=sys.stderr,
             )
+            fail = 1
+            continue
+
+        if entry.get("license") != EXPECTED_LICENSE:
+            print(
+                f"FAIL {name}: marketplace license {entry.get('license')!r} "
+                f"must be {EXPECTED_LICENSE!r}",
+                file=sys.stderr,
+            )
+            fail = 1
+            continue
+
+        entry_author = entry.get("author")
+        if not isinstance(entry_author, dict) or entry_author.get("name") != EXPECTED_AUTHOR:
+            print(f"FAIL {name}: marketplace author must be {EXPECTED_AUTHOR!r}", file=sys.stderr)
+            fail = 1
+            continue
+
+        if plugin_data.get("license") != EXPECTED_LICENSE:
+            print(
+                f"FAIL {name}: plugin.json license {plugin_data.get('license')!r} "
+                f"must be {EXPECTED_LICENSE!r}",
+                file=sys.stderr,
+            )
+            fail = 1
+            continue
+
+        plugin_author = plugin_data.get("author")
+        if not isinstance(plugin_author, dict) or plugin_author.get("name") != EXPECTED_AUTHOR:
+            print(f"FAIL {name}: plugin.json author must be {EXPECTED_AUTHOR!r}", file=sys.stderr)
             fail = 1
             continue
 

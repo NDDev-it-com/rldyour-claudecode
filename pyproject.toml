@@ -7,6 +7,14 @@ name = "rldyour-claudecode"
 version = "0.6.3"
 description = "Personal Claude Code plugin marketplace (metadata + infrastructure scripts)"
 requires-python = ">=3.12"
+license = "AGPL-3.0-or-later"
+license-files = ["LICENSE"]
+authors = [
+  { name = "Danil Silantyev", email = "rldyourmnd@users.noreply.github.com" },
+]
+maintainers = [
+  { name = "Danil Silantyev", email = "rldyourmnd@users.noreply.github.com" },
+]
 
 [tool.ruff]
 # Ruff is fast (Rust-backed). Run via `ruff check scripts/`. Wired into CI as
