@@ -1,8 +1,10 @@
 # GitHub Actions Workflows
 
-Eleven workflows split into three classes by trigger policy. This split keeps
-the GHEC monthly-minutes budget predictable and separates "repo is broken"
-signals from "upstream published an update" signals.
+Eleven workflows split into three classes by trigger policy. The repository is
+public, so standard GitHub-hosted runners do not consume the organization's
+paid private-repository Actions minutes. The split still keeps CI signal clear:
+required gates prove the repo is valid, while advisory gates surface upstream
+drift separately.
 
 ## Required PR gates (run on every push to `main` and every PR)
 
@@ -41,24 +43,27 @@ blocker.
 | --- | --- | --- |
 | `release.yml` | tag push matching `marketplace--v*` or `rldyour-*--v*`, or `workflow_dispatch` | Validate release state + run full marketplace harness + emit `release-manifest.json` + create GitHub Release with evidence artefact. |
 
-## Cost policy (GitHub Enterprise Cloud)
+## Cost policy (public repository)
 
-GitHub-hosted runner minute multipliers: Linux 1x, Windows 2x, **macOS 10x**.
-GHEC plan ships 50,000 included minutes/month; private repo Actions usage is
-billed to the owner.
+Public repositories using standard GitHub-hosted runners are free under GitHub
+Actions billing. Keep this repository public and avoid larger/self-hosted
+runners to preserve the zero-paid-minutes adapter policy.
 
-To stay under budget:
-- macOS runs only in `cross-platform.yml`, triggered only by the Sunday schedule
-  or explicit `gh workflow run cross-platform.yml`. The default PR experience
-  uses Ubuntu only. (Architecture F-3 closure: the prior `pull_request:
-  types: [labeled]` trigger was removed in 0.5.1 because it created
-  skipped-run noise on every unrelated label add; manual operator gestures
-  remain available via `gh workflow run`.)
+To keep runs useful and lightweight:
+- macOS runs only in `cross-platform.yml`, triggered by the Sunday schedule or
+  explicit `gh workflow run cross-platform.yml`. The default PR experience uses
+  Ubuntu only. (Architecture F-3 closure: the prior `pull_request:
+  types: [labeled]` trigger was removed in 0.5.1 because it created skipped-run
+  noise on every unrelated label add; manual operator gestures remain available
+  via `gh workflow run`.)
 - `concurrency:` blocks cancel redundant runs on the same ref.
 - PATH-filtered triggers (`actionlint` on `.github/**`, `pytest` on
   `scripts/`/`tests/`) avoid running jobs for irrelevant changes.
 - Advisory workflows are scheduled off-peak (Sun/Mon early UTC) to spread
   API quota usage.
+
+Private forks must review this workflow set before enabling Actions because
+private-repository minutes and storage are billed to the repository owner.
 
 ## Hardening (every workflow)
 
