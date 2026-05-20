@@ -1,6 +1,6 @@
 # GitHub Actions Workflows
 
-Ten workflows split into three classes by trigger policy. This split keeps
+Eleven workflows split into three classes by trigger policy. This split keeps
 the GHEC monthly-minutes budget predictable and separates "repo is broken"
 signals from "upstream published an update" signals.
 
@@ -10,11 +10,12 @@ These workflows must be green before any merge.
 
 | Workflow | Job | Purpose |
 | --- | --- | --- |
-| `validate.yml` | `validate-marketplace`, `syntax-checks` | `claude plugin validate` + JSON schemas + Python AST + bash -n + frontmatter + plugin-version parity + ownership boundaries + agent tools + reviewer contracts + hook lifecycle smoke + docs canon + sync_contract drift + release state + inventory freshness + MCP runtime drift + smoke_mcp_runtime |
+| `validate.yml` | `validate-marketplace`, `syntax-checks` | `claude plugin validate` + JSON schemas + Python AST + bash -n + frontmatter + plugin-version parity + ownership boundaries + cross-tool contract + agent tools + reviewer contracts + hook lifecycle smoke + docs canon + sync_contract drift + release state + inventory freshness + MCP runtime drift + smoke_mcp_runtime |
 | `pytest.yml` | `pytest` | Unit tests under `tests/` with `-m "not integration"`. Live network probes run in `dependency-check.yml`. |
 | `gitleaks.yml` | `gitleaks` | Defense-in-depth secret scanning. |
 | `semgrep.yml` | `semgrep` | SAST via OSS rule packs. |
 | `codeql.yml` | `analyze` | CodeQL semantic analysis for Python and GitHub Actions. |
+| `dependency-review.yml` | `dependency-review` | Pull-request dependency diff review, failing on moderate-or-higher advisories. |
 | `actionlint.yml` | `actionlint` | Workflow YAML syntax + expression lint. PATH-filtered to `.github/workflows/**`. |
 
 Branch protection on `main` should require these (and only these) status checks.
