@@ -33,7 +33,7 @@ from pathlib import Path
 
 from _mcp_parse import split_mcp_ref
 
-# Built-in tool names supported by Claude Code (verified against v2.1.142 docs).
+# Built-in tool names supported by Claude Code (verified against v2.1.145 docs).
 # Source: code.claude.com/docs/en/sub-agents + plugin-shipped agents canonical examples.
 KNOWN_BUILTIN_TOOLS: frozenset[str] = frozenset(
     {

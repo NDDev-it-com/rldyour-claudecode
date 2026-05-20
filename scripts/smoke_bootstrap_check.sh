@@ -68,23 +68,44 @@ grep -q "for aider_path in \.aider\*" "$GUARD_FILE" \
   || fail ".aider* glob expansion loop missing"
 echo "OK .aider* expansion present"
 
-step "AGENT_ONLY_PATHS bash ⊆ AGENT_ONLY_PATTERNS python (count drift)"
-# shellcheck disable=SC2016 # the awk and grep patterns are intentional literals
-BASH_COUNT=$(awk '/AGENT_ONLY_PATHS=\(/,/^  \)$/' "$GUARD_FILE" | grep -c '^[[:space:]]*"' || true)
-# shellcheck disable=SC2016
-PY_COUNT=$(awk '/AGENT_ONLY_PATTERNS = \(/,/^\)$/' plugins/rldyour-flow/scripts/fullrepo_sync.py \
-  | grep -c '^[[:space:]]*"' || true)
-if [ "$BASH_COUNT" -lt 20 ] || [ "$PY_COUNT" -lt 20 ]; then
-  fail "agent-only path arrays look truncated (bash=$BASH_COUNT, py=$PY_COUNT)"
-fi
-# Bash array is allowed to be slightly smaller because `.aider*` is expanded at
-# runtime instead of stored as a glob. Tolerance: BASH within 5 of PY.
-DRIFT=$(( PY_COUNT - BASH_COUNT ))
-DRIFT_ABS=${DRIFT#-}
-if [ "$DRIFT_ABS" -gt 5 ]; then
-  fail "agent-only path count drift too large (bash=$BASH_COUNT vs py=$PY_COUNT, drift=$DRIFT)"
-fi
-echo "OK path arrays in sync (bash=$BASH_COUNT, py=$PY_COUNT, drift=$DRIFT)"
+step "AGENT_ONLY_PATHS bash mirrors AGENT_ONLY_PATTERNS python"
+python3 - <<'PY' || fail "AGENT_ONLY_PATHS drift from fullrepo_sync.AGENT_ONLY_PATTERNS"
+import re
+import sys
+from pathlib import Path
+
+guard = Path("scripts/bootstrap_check.sh").read_text(encoding="utf-8")
+sync = Path("plugins/rldyour-flow/scripts/fullrepo_sync.py").read_text(encoding="utf-8")
+
+bash_match = re.search(r"AGENT_ONLY_PATHS=\(\n(.*?)\n  \)", guard, re.DOTALL)
+py_match = re.search(r"AGENT_ONLY_PATTERNS = \(\n(.*?)\n\)", sync, re.DOTALL)
+if not bash_match or not py_match:
+    print("missing AGENT_ONLY_PATHS or AGENT_ONLY_PATTERNS block", file=sys.stderr)
+    raise SystemExit(1)
+
+bash_paths = set(re.findall(r'^\s*"([^"]+)"', bash_match.group(1), re.MULTILINE))
+py_patterns = set(re.findall(r'^\s*"([^"]+)"', py_match.group(1), re.MULTILINE))
+
+def normalize(pattern: str) -> str | None:
+    if pattern == ".aider*":
+        # bootstrap_check.sh expands this glob at runtime when matching files exist.
+        return None
+    if pattern.endswith("/**"):
+        return pattern[:-3]
+    return pattern
+
+py_paths = {p for item in py_patterns if (p := normalize(item)) is not None}
+missing = sorted(py_paths - bash_paths)
+extra = sorted(bash_paths - py_paths)
+if missing or extra:
+    if missing:
+        print(f"missing in bootstrap_check.sh: {missing}", file=sys.stderr)
+    if extra:
+        print(f"extra in bootstrap_check.sh: {extra}", file=sys.stderr)
+    raise SystemExit(1)
+
+print(f"OK exact static mirror: {len(bash_paths)} bash roots, {len(py_patterns)} python patterns")
+PY
 
 step "runtime path (a): extracted guard block honors RLDYOUR_FORCE_BOOTSTRAP=1"
 TMP_GUARD=$(mktemp /tmp/smoke_bootstrap_guard.XXXXXX.sh)
