@@ -5,9 +5,10 @@ name: cross-platform
 # (Ubuntu) and BSD userland (macOS), since `sed -i`, `find`, `date`,
 # `readlink` differ between the two.
 #
-# COST POLICY: macOS runners cost 10x Linux on GitHub-hosted runners. To stay
-# within the GitHub Enterprise Cloud monthly minutes budget, this workflow
-# runs ONLY on:
+# COST POLICY: this public repository uses standard GitHub-hosted runners, so
+# adapter CI does not consume paid private-repository Actions minutes. The
+# macOS matrix remains manual/scheduled to keep signal focused and queue noise
+# low. This workflow runs ONLY on:
 #   - manual `workflow_dispatch` (operator request)
 #   - weekly schedule (Sunday 04:00 UTC, off-peak)
 #   - PR labelled `cross-platform` (opt-in only - not automatic on every PR)
@@ -21,7 +22,7 @@ on:
   # Schedule first per .github/workflows/README.md advisory ordering
   # convention (consistency F-8 closure).
   schedule:
-    - cron: '0 4 * * 0'  # Sunday 04:00 UTC, off-peak (lowest GHEC minute pressure)
+    - cron: '0 4 * * 0'  # Sunday 04:00 UTC, off-peak advisory scan
   workflow_dispatch:
   # Architecture F-3 closure: removed `pull_request: types: [labeled]` trigger.
   # It fired on ANY label add (skipped at job level via the `if:` condition,
