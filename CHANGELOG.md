@@ -6,6 +6,42 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+## [0.6.3] - 2026-05-21
+
+**Cross-tool contract hardening.** This patch closes the remaining audit gap
+that was not local to Claude Code runtime behavior: the shared rldyour system
+now has a machine-readable business contract and generated matrix mapping the
+canonical domains, public flows, skills, agent roles, hook lifecycle, and CI
+baseline across Claude Code, Codex, and OpenCode.
+
+### Added
+
+- **`config/rldyour-contract.json`** as the canonical cross-tool contract for
+  the nine shared domains, 10 public flows, 32 Claude skills, 8 agent roles,
+  9 lifecycle hook scripts, and unified CI baseline.
+- **`scripts/validate_contract.py`** local adapter gate. It proves the Claude
+  Code implementation against real marketplace plugins, skill files, slash
+  command files, agent files, hook manifests, hook scripts, and workflow/script
+  paths, while requiring Codex/OpenCode adapter mappings to be explicit.
+- **`scripts/generate_contract_matrix.py`** and generated
+  **`docs/contract-matrix.md`** so humans review the same contract that CI
+  validates.
+- **`tests/test_validate_contract.py`** coverage for valid contracts, missing
+  Claude skill paths, hook manifest/script drift, and generated matrix
+  freshness.
+- **`.github/workflows/dependency-review.yml`** as a required PR dependency
+  diff review gate, pinned to `actions/dependency-review-action` v4.9.0 by
+  commit SHA and guarded by harden-runner egress allowlisting.
+
+### Changed
+
+- Marketplace `VERSION`, all 9 plugin versions, root `package.json.version`,
+  and `pyproject.toml [project].version` bumped to `0.6.3`.
+- `scripts/validate_marketplace.sh` and `.github/workflows/validate.yml` now
+  run `validate_contract.py` and `generate_contract_matrix.py --check`.
+- README, workflow inventory, `AGENTS.md`, and `.claude/CLAUDE.md` now point
+  at the contract/matrix as the source of truth for cross-tool parity.
+
 ## [0.6.2] - 2026-05-20
 
 **Claude Code 2.1.145 and release-hygiene hardening.** This patch turns the
@@ -2021,7 +2057,8 @@ Release boundary cut after the 2026-05-08..2026-05-12 wave of best-practice, MCP
   shell syntax checks, frontmatter presence verification on all skills,
   agents, and commands.
 
-[Unreleased]: https://github.com/NDDev-it-com/rldyour-claudecode/compare/marketplace--v0.6.2...HEAD
+[Unreleased]: https://github.com/NDDev-it-com/rldyour-claudecode/compare/marketplace--v0.6.3...HEAD
+[0.6.3]: https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/marketplace--v0.6.3
 [0.6.2]: https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/marketplace--v0.6.2
 [0.6.1]: https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/marketplace--v0.6.1
 [0.6.0]: https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/marketplace--v0.6.0

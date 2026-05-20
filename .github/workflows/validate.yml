@@ -224,6 +224,12 @@ jobs:
       - name: Plugin ownership boundaries (mcp_owner + hook_owners + deps)
         run: python3 scripts/validate_boundaries.py
 
+      - name: Cross-tool rldyour contract
+        run: |
+          set -euo pipefail
+          python3 scripts/validate_contract.py
+          python3 scripts/generate_contract_matrix.py --check
+
       - name: Ruff lint (advisory)
         # Advisory until MED-2 graduates to hard-fail. Wave 0.4.3 cleared the
         # backlog so this starts at zero violations across scripts/ + plugins/.
