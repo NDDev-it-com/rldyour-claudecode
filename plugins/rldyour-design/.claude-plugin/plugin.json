@@ -4,12 +4,12 @@
   "version": "0.6.3",
   "description": "Дизайн-воркфлоу для Claude Code: Figma → код, централизованные токены (W3C DTCG/Tailwind v4), строгий FSD, shadcn/ui, ReactBits + браузер-валидация. Skills-only - MCP-транспорт (Figma, shadcn, Playwright, Chrome DevTools) берётся из rldyour-mcps.",
   "author": {
-    "name": "rldyourmnd",
+    "name": "Danil Silantyev (github:rldyourmnd), CEO & Engineer NDDev",
     "url": "https://github.com/rldyourmnd"
   },
-  "license": "MIT",
-  "homepage": "https://github.com/nddev-it-com/rldyour-claudecode/tree/main/plugins/rldyour-design",
-  "repository": "https://github.com/nddev-it-com/rldyour-claudecode",
+  "license": "AGPL-3.0-or-later",
+  "homepage": "https://github.com/NDDev-it-com/rldyour-claudecode/tree/main/plugins/rldyour-design",
+  "repository": "https://github.com/NDDev-it-com/rldyour-claudecode",
   "keywords": [
     "design",
     "figma",
