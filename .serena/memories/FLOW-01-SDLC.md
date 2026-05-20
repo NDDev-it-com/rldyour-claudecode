@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-17
-Last commit: 66ef8f4 chore(release): bump VERSION + 9 plugins to 0.6.1
+Last updated: 2026-05-20
+Last commit: 75c26e8 chore(release): prepare marketplace 0.6.2
 Scope: plugins/rldyour-flow/**, scripts/worktree_add.sh, AGENTS.md, .claude/CLAUDE.md, plugins/rldyour-flow/scripts/fullrepo_sync.py
 Area: FLOW
 -->
@@ -16,6 +16,7 @@ rldyour-flow orchestration contracts for init/start/review/deploy workflows, rev
 - `plugins/rldyour-flow/skills/ry-init/SKILL.md`: scoped read-only context discovery.
 - `plugins/rldyour-flow/skills/ry-start/SKILL.md`: full task lifecycle and reviewer phase.
 - `plugins/rldyour-flow/skills/flow-post-task-sync/SKILL.md`: final checks/git/fullrepo synchronization.
+- `plugins/rldyour-flow/commands/ry-sync.md`: public slash-command wrapper for `flow-post-task-sync`.
 - `plugins/rldyour-flow/references/context-sufficiency-gate.md`: evidence gate before editing.
 - `plugins/rldyour-flow/scripts/fullrepo_sync.py`: agent-only branch restore/publish/migrate policy.
 - `scripts/worktree_add.sh`: one-step worktree creation plus fullrepo restore.
@@ -26,15 +27,16 @@ rldyour-flow orchestration contracts for init/start/review/deploy workflows, rev
 - `ry-init` is read-only for memories by default. It may report memory candidates but must not write `.serena` unless explicitly requested or a stale-memory gate requires it.
 - `ry-start` lifecycle: init/context, research, plan, implement, verify, reviewer phase when applicable, and post-task sync.
 - `flow-post-task-sync` finalizes by refreshing memories/docs, running checks, committing/pushing normal branch changes, publishing `fullrepo`, and cleaning safe merged branches/worktrees. Step 1 (Serena memory freshness check) uses `python3 "$(git rev-parse --show-toplevel)"/plugins/rldyour-serena-mcp/scripts/serena_memory_state.py` - cwd-independent path required because the skill lives in `rldyour-flow` but the script is in `rldyour-serena-mcp`; `${CLAUDE_PLUGIN_ROOT}` is the wrong root here and `${CLAUDE_PROJECT_DIR}` is documented only for hook commands and stdio MCP env. Verified at `plugins/rldyour-flow/skills/flow-post-task-sync/SKILL.md` line 19 at HEAD.
+- `/rldyour-flow:ry-sync` delegates to `flow-post-task-sync` and owns no separate workflow body. It exists so users can invoke final synchronization explicitly while keeping the skill as the single source of truth. Verified at `plugins/rldyour-flow/commands/ry-sync.md` and `scripts/validate_command_skill_drift.py` at HEAD `75c26e8`.
 - Reviewer agents live in `plugins/rldyour-flow/agents/flow-*-review.md`; they are read-only and use an explicit `tools:` allowlist containing built-in read tools (`Read`, `Grep`, `Glob`, `Bash`) plus an explicit 14-tool read-only Serena subset and MCP wildcards for context7/deepwiki/grep. `flow-security-review` additionally allows `WebFetch`, `WebSearch`, and `mcp__plugin_rldyour-mcps_semgrep__*`. The previous `disallowedTools: [Edit, Write, NotebookEdit]` denylist is removed from reviewer agents; `flow-memory-sync` is the only agent retaining it as defence-in-depth (verified at `plugins/rldyour-flow/agents/flow-architecture-review.md` HEAD). Reviewer contracts now require `run_id = <UTC-ISO-compact>-<git-short-sha>` and `.serena/reviews/<run_id>/` report directories.
 - `reviewer-protocol.md` is the shared contract for subagent result transport: full reports are written to `<report_dir>/<reviewer-name>.md` with heredoc marker `RLDYOUR_REPORT_EOF`, and parent summaries include count + capped one-liner findings with `info` severity support; 6-track output is compacted to prevent Claude Code parent-context overflow. The **Output Transport** section of `plugins/rldyour-flow/references/reviewer-protocol.md` is the authoritative reference for run_id format, report directory layout, reviewer write contract, compact summary structure (cap 30 entries, 4 KB limit), and orchestrator read contract.
 - `ry-start` and `ry-review` must read each full report file for every `critical` and `high` finding before disposition because `flow-security-review` carries `Category`, `Attack path`, and `Verification` fields only in the report body.
-- Fullrepo-managed repositories keep agent-only files out of `main` and publish them to `origin/fullrepo`.
+- Fullrepo-managed repositories keep agent-only files out of `main` and publish them to `origin/fullrepo`. `scripts/bootstrap_check.sh` now includes `.codex` in the pre-bootstrap divergence guard, and `scripts/smoke_bootstrap_check.sh` verifies exact static parity between the Bash `AGENT_ONLY_PATHS` roots and `fullrepo_sync.AGENT_ONLY_PATTERNS`.
 
 ## Fullrepo Contract
 
-- Agent-only paths include `AGENTS.md`, `.claude/**`, root `CLAUDE.md`, `REVIEW.md`, `.serena/project.yml`, `.serena/memories/**`, `.serena/plans/**`, `.serena/research/**`, `.agents/**`, `.cursor/rules/**`, `.github/instructions/**`, `.github/prompts/**`, and similar AI context files.
-- `fullrepo_sync.py` runtime exclude set includes `.serena/diagnostics/**` and `.serena/reviews/**` to prevent runtime review artifacts from affecting artifact policy for restore/publish operations.
+- Agent-only paths include `AGENTS.md`, `.claude/**`, `.codex/**`, root `CLAUDE.md`, `REVIEW.md`, `GEMINI.md`, `QWEN.md`, `.cursorrules`, `.windsurfrules`, `.serena/project.yml`, `.serena/memories/**`, `.serena/plans/**`, `.serena/research/**`, `.agents/**`, `.cursor/rules/**`, `.github/instructions/**`, `.github/prompts/**`, and similar AI context files.
+- `fullrepo_sync.py` runtime exclude set includes `.serena/diagnostics/**`, `.serena/reviews/**`, `.serena/project.local.yml`, and `.serena/.bootstrap_overrides.log` to prevent runtime review artifacts, local Serena config, and bootstrap override audit logs from affecting restore/publish operations.
 - `fullrepo_sync.py --bootstrap-init`: installs excludes, restores remote `fullrepo`, publishes first snapshot when missing, and migrates tracked agent-only files out of the normal branch index.
 - `fullrepo_sync.py --restore`: fetches/restores agent-only files and installs excludes; no publish.
 - `fullrepo_sync.py --publish`: regenerates `fullrepo` snapshot with `--force-with-lease`.

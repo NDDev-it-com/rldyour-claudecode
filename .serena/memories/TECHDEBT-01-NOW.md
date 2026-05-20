@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-18
-Last commit: 66ef8f4 chore(release): bump VERSION + 9 plugins to 0.6.1
+Last updated: 2026-05-20
+Last commit: 75c26e8 chore(release): prepare marketplace 0.6.2
 Scope: Serena memory sync, hook gates, fullrepo lifecycle, MCP pins, validation harness, current implementation risks
 Area: TECHDEBT
 -->
@@ -156,6 +156,7 @@ Open technical debt, implementation mistakes already fixed, and anti-regression 
 - D84. CI matrix Ubuntu + macOS + `sys.executable` migration (commits `7457a21 ci(matrix)`, `c432f54 fix(scripts)`, `4f66127 fix(public-readiness)`): (1) pytest.yml and validate.yml syntax-checks both expanded to `os: [ubuntu-latest, macos-latest]` matrix; (2) 5 sites migrated from `["python3", ...]` subprocess calls to `[sys.executable, ...]`: `scripts/validate_release_state.py:158`, `plugins/rldyour-flow/scripts/flow_post_task_state.py` (3 sites), `plugins/rldyour-flow/scripts/instruction_docs_state.py`, `plugins/rldyour-serena-mcp/scripts/serena_memory_state.py` (2 sites), `scripts/smoke_serena_memory_taxonomy.sh`. Verified via grep at HEAD `b4e63ec`.
 - D85. VERSION + all 9 plugins bumped to 0.6.0 (commit `d89d274 chore(release)`): `VERSION` changed from `0.5.2` to `0.6.0`. All 9 plugin.json and marketplace.json entries updated to `0.6.0`. Tags planned: `marketplace--v0.6.0` + 9 `<plugin>--v0.6.0`. Verified at `VERSION` (`0.6.0`) and `python3 scripts/validate_plugin_versions.py` at HEAD `d89d274`.
 - D86. Secret Scanning + Push Protection intentionally disabled clarified (commit `b4e63ec docs(security)`): `docs/security/threat-model.md` lines 210-218 and `docs/adr/0008` amended to document that GitHub Secret Scanning + Push Protection are intentionally disabled because org enterprise policy keeps them off (paid-tier feature blocked by enterprise plan - NOT planned for enablement). Coverage delivered through workflow-layer gitleaks + Semgrep `p/secrets` + local pre-push guard. Verified at `docs/security/threat-model.md:210-218` and `docs/adr/0008-ci-baseline-without-paid-addons.md` at HEAD `b4e63ec`.
+- D87. 0.6.2 release-prep hardening (commit `75c26e8 chore(release)`): `validate_boundaries.py` now enforces `config/marketplace-policy.json` parity for `agent_only_path_globs` and `runtime_exclude_globs` against `fullrepo_sync.py`; `scripts/smoke_bootstrap_check.sh` verifies exact static parity between Bash bootstrap roots and Python fullrepo patterns; `.codex` was added to the bootstrap divergence guard; `.serena/.bootstrap_overrides.log` was added to runtime excludes; `/rldyour-flow:ry-sync` delegates to `flow-post-task-sync`; MCP pins updated to Serena 1.5.1, Chrome DevTools MCP 1.0.1, GitHub MCP host binary 1.0.5; release metadata parity now covers `package.json`, `pyproject.toml`, and release manifest marketplace version. Verified with `bash scripts/validate_marketplace.sh`, full pytest, Ruff, Pyright, and `git diff --check` at HEAD `75c26e8`.
 
 ## Error Patterns To Avoid
 

@@ -156,8 +156,8 @@ def _resolve_sibling_plugin_script(plugin: str, relative: str) -> Path | None:
 
     Co-location assumption (closure of architecture F-4, info 90, from review
     wave `2026-05-16T1859Z-61b913d`): `rldyour-flow` and the named sibling
-    plugin are expected to live inside the same marketplace `pluginRoot:
-    ./plugins`. Both lookup paths reflect this:
+    plugin are expected to live inside the same marketplace repo under
+    per-entry relative sources (`./plugins/<name>`). Both lookup paths reflect this:
 
       1. `plugins/<plugin>/<relative>` - resolves when the script runs with
          cwd == repo root (the standard invocation pattern through
@@ -165,7 +165,7 @@ def _resolve_sibling_plugin_script(plugin: str, relative: str) -> Path | None:
          --show-toplevel)"`).
       2. `${CLAUDE_PLUGIN_ROOT}/../<plugin>/<relative>` - fallback when
          Claude Code injects `CLAUDE_PLUGIN_ROOT` pointing at the calling
-         plugin's root; `..` walks back to the marketplace `pluginRoot`.
+         plugin's root; `..` walks back to the shared `plugins/` parent.
 
     Neither path declares an explicit plugin dependency, which is intentional:
     the marketplace ships all nine plugins together. If `rldyour-flow` is

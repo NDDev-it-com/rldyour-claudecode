@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-18
-Last commit: 66ef8f4 chore(release): bump VERSION + 9 plugins to 0.6.1
+Last updated: 2026-05-20
+Last commit: 75c26e8 chore(release): prepare marketplace 0.6.2
 Scope: .claude-plugin/marketplace.json, plugins/*/.claude-plugin/plugin.json, README.md, AGENTS.md
 Area: CORE
 -->
@@ -9,23 +9,23 @@ Area: CORE
 
 ## Purpose
 
-Current business logic and architecture of the `rldyour-claude` marketplace. The repo is a controlled personal Claude Code plugin marketplace, **not** runtime application code and **not** a generic preset. It distributes the Claude Code settings, skills, agents, hooks, scripts, and references that encode the owner's quality-first development style ([[PHILOSOPHY-01-QUALITY-FIRST]]).
+Current business logic and architecture of the `rldyour-claudecode` marketplace. The repo is a controlled personal Claude Code plugin marketplace, **not** runtime application code and **not** a generic preset. It distributes the Claude Code settings, skills, agents, hooks, scripts, and references that encode the owner's quality-first development style ([[PHILOSOPHY-01-QUALITY-FIRST]]).
 
 ## Source Of Truth
 
-- `.claude-plugin/marketplace.json`: marketplace manifest with `pluginRoot: ./plugins` and nine first-party plugin entries.
+- `.claude-plugin/marketplace.json`: marketplace manifest with per-entry relative sources (`source: "./plugins/<name>"`) and nine first-party plugin entries.
 - `plugins/<plugin>/.claude-plugin/plugin.json`: per-plugin manifest and dependency declaration.
 - `VERSION`: marketplace release boundary.
 - `README.md`: owner-facing catalog, control model, install/check commands, active per-plugin versions.
 - `AGENTS.md`: concise cross-tool project rules and boundaries.
 
-## Current State (HEAD `b4e63ec`)
+## Current State (HEAD `75c26e8`)
 
-- **VERSION**: `0.6.0` (release boundary, verified at `VERSION` file at HEAD `d89d274`).
+- **VERSION**: `0.6.2` (release boundary, verified at `VERSION` file at HEAD `75c26e8`).
 - **Repository visibility**: **public** as of 0.6.0 wave. Toggled to public on GitHub; CodeQL is now free (ADR-0008 amendment 2026-05-18).
 - **9 plugins** verified at HEAD from `.claude-plugin/marketplace.json`: `rldyour-mcps`, `rldyour-explore`, `rldyour-serena-mcp`, `rldyour-security`, `rldyour-browser`, `rldyour-design`, `rldyour-lsps`, `rldyour-flow`, `rldyour-rules`.
-- **Per-plugin versions** (verified via `python3 scripts/validate_plugin_versions.py` at HEAD `b4e63ec`): all 9 plugins at `0.6.0`.
-- **Component totals**: 32 skills, 9 slash commands, 8 subagents, 9 hook scripts in 2 hook manifests, 12 plugin-owned scripts, 16 references.
+- **Per-plugin versions** (verified via `bash scripts/validate_marketplace.sh` at HEAD `75c26e8`): all 9 plugins at `0.6.2`.
+- **Component totals**: 32 skills, 10 slash commands, 8 subagents, 9 hook scripts in 2 hook manifests, 12 plugin-owned scripts, 16 references.
 - **ADR count**: 11 (docs/adr/0001 through 0011 + 0000-template + README; ADR-0011 agent-instruction-knowledge-equivalence added at HEAD `da432c6`). Verified at `docs/adr/` listing at HEAD `b4e63ec`.
 - **`marketplace.json` `owner.email` field removed** at HEAD `cbe4595` (chore: remove owner email field). `owner` object retains `name` and `url`. Verified at `.claude-plugin/marketplace.json` at HEAD `b4e63ec`.
 - The owner decides what is enabled. Repository docs state nothing is treated as enabled or correct unless explicitly decided by the owner.
@@ -36,7 +36,7 @@ Current business logic and architecture of the `rldyour-claude` marketplace. The
 |---|---|---|---|---|
 | `rldyour-mcps` | Transport - 13 pinned MCP servers | 0 skills, 0 cmds, 0 agents, 0 hooks, `.mcp.json` | No | [[MCP-01-TRANSPORT]] |
 | `rldyour-serena-mcp` | Serena-first code workflow + fact-only memory sync | 2 skills, 0 cmds, 1 agent, 4 hooks, 3 scripts | **Yes** | [[SERENA-01-MEMORY-SYNC]] + [[HOOKS-01-LIFECYCLE]] |
-| `rldyour-flow` | SDLC orchestration + 6 reviewer subagents + fullrepo/worktree | 7 skills, 5 cmds, 6 agents, 5 hooks, 7 scripts, 7 references | **Yes** | [[FLOW-01-SDLC]] + [[HOOKS-01-LIFECYCLE]] |
+| `rldyour-flow` | SDLC orchestration + 6 reviewer subagents + fullrepo/worktree | 7 skills, 6 cmds, 6 agents, 5 hooks, 7 scripts, 7 references | **Yes** | [[FLOW-01-SDLC]] + [[HOOKS-01-LIFECYCLE]] |
 | `rldyour-explore` | Deep research (tech + web + `ry-explore` opus[1m]) | 2 skills, 1 cmd, 1 agent, 0 hooks | No | [[EXPLORE-01-RESEARCH]] |
 | `rldyour-security` | OWASP Top 10 2025 + Mythos-style `ry-sec-review` | 2 skills, 1 cmd, 0 agents, 0 hooks | No | [[SECURITY-01-OWASP]] |
 | `rldyour-browser` | Playwright + Chrome DevTools validation/debug routing | 3 skills, 0 cmds, 0 agents, 0 hooks | No | [[BROWSER-01-WORKFLOW]] |
@@ -102,7 +102,7 @@ Cross-plugin dependencies declared in `plugin.json` `dependencies` array of plug
 4. `fullrepo_sync.py --publish` - push snapshot tree to `fullrepo` with `--force-with-lease`.
 5. `fullrepo_sync.py --status-json` - machine-readable state.
 
-Agent-only paths (not in `main`, only in `fullrepo`): `AGENTS.md`, `CLAUDE.md`, `REVIEW.md`, `.claude/**`, `.cursor/rules/**`, `.gemini/**`, `.roo/**`, `.windsurf/**`, `.openhands/**`, `.aider*`, `.agents/skills/**`, `.agents/commands/**`, `.agents/hooks/**`, `.github/copilot-instructions.md`, `.github/instructions/**`, `.github/prompts/**`, `.serena/project.yml`, `.serena/memories/**`, `.serena/plans/**`, `.serena/research/**`, `.serena/newproj/**`, `.serena/deploy/**`.
+Agent-only paths (not in `main`, only in `fullrepo`): `AGENTS.md`, `CLAUDE.md`, `REVIEW.md`, `GEMINI.md`, `QWEN.md`, `.cursorrules`, `.windsurfrules`, `.claude/**`, `.codex/**`, `.cursor/rules/**`, `.gemini/**`, `.roo/**`, `.windsurf/**`, `.openhands/**`, `.aider*`, `.agents/skills/**`, `.agents/commands/**`, `.agents/hooks/**`, `.github/copilot-instructions.md`, `.github/instructions/**`, `.github/prompts/**`, `.serena/project.yml`, `.serena/memories/**`, `.serena/plans/**`, `.serena/research/**`, `.serena/newproj/**`, `.serena/deploy/**`.
 
 ## Change Rules
 

@@ -5,15 +5,16 @@ Hard invariants enforced before any release tag is pushed:
 
 1. VERSION file matches the latest released CHANGELOG section
    (`## [X.Y.Z] - YYYY-MM-DD`) excluding `[Unreleased]`.
-2. Marketplace top-level / per-plugin versions in
+2. Root metadata versions in package.json and pyproject.toml match VERSION.
+3. Marketplace top-level / per-plugin versions in
    .claude-plugin/marketplace.json match plugins/*/.claude-plugin/plugin.json
    (already enforced by validate_plugin_versions.py - we re-call it
    structurally for tag-cycle context).
-3. Tag naming convention: if a git tag named `marketplace--v<VERSION>` or
+4. Tag naming convention: if a git tag named `marketplace--v<VERSION>` or
    `<plugin>--v<plugin_version>` exists, it must point at HEAD (current
    release commit) and not any earlier commit. Tags that do not yet exist
    are not flagged - the caller (release.yml workflow) creates them.
-4. scripts/release_manifest.py produces parseable JSON that includes the
+5. scripts/release_manifest.py produces parseable JSON that includes the
    declared VERSION and per-plugin versions.
 
 Exit codes: 0 release-ready, 1 on any inconsistency.
@@ -29,6 +30,7 @@ import json
 import re
 import subprocess
 import sys
+import tomllib
 from pathlib import Path
 
 CHANGELOG_RELEASE_RE = re.compile(
@@ -94,6 +96,44 @@ def validate_version_vs_changelog(root: Path) -> list[str]:
     return errors
 
 
+def validate_root_metadata_parity(root: Path, version: str) -> list[str]:
+    errors: list[str] = []
+
+    package_path = root / "package.json"
+    if not package_path.is_file():
+        errors.append(f"package.json is missing; VERSION={version}")
+    else:
+        try:
+            package = json.loads(package_path.read_text(encoding="utf-8"))
+        except json.JSONDecodeError as exc:
+            errors.append(f"package.json is not valid JSON: {exc}")
+        else:
+            package_version = package.get("version")
+            if package_version != version:
+                errors.append(
+                    f"package.json version={package_version!r} does not match VERSION={version!r}"
+                )
+
+    pyproject_path = root / "pyproject.toml"
+    if not pyproject_path.is_file():
+        errors.append(f"pyproject.toml is missing; VERSION={version}")
+    else:
+        try:
+            pyproject = tomllib.loads(pyproject_path.read_text(encoding="utf-8"))
+        except tomllib.TOMLDecodeError as exc:
+            errors.append(f"pyproject.toml is not valid TOML: {exc}")
+        else:
+            project = pyproject.get("project", {})
+            pyproject_version = project.get("version") if isinstance(project, dict) else None
+            if pyproject_version != version:
+                errors.append(
+                    f"pyproject.toml project.version={pyproject_version!r} "
+                    f"does not match VERSION={version!r}"
+                )
+
+    return errors
+
+
 def validate_manifest_parity(root: Path) -> list[str]:
     errors: list[str] = []
     marketplace = json.loads((root / ".claude-plugin" / "marketplace.json").read_text(encoding="utf-8"))
@@ -148,7 +188,7 @@ def validate_tag_alignment(root: Path, version: str) -> list[str]:
     return warnings
 
 
-def validate_release_manifest(root: Path) -> list[str]:
+def validate_release_manifest(root: Path, version: str) -> list[str]:
     errors: list[str] = []
     script = root / "scripts" / "release_manifest.py"
     if not script.is_file():
@@ -176,6 +216,16 @@ def validate_release_manifest(root: Path) -> list[str]:
     if not isinstance(payload, dict):
         errors.append("release_manifest output must be a JSON object")
         return errors
+    marketplace = payload.get("marketplace")
+    if not isinstance(marketplace, dict):
+        errors.append("release_manifest output missing marketplace object")
+        return errors
+    manifest_version = marketplace.get("version")
+    if manifest_version != version:
+        errors.append(
+            f"release_manifest marketplace.version={manifest_version!r} "
+            f"does not match VERSION={version!r}"
+        )
     return errors
 
 
@@ -186,8 +236,9 @@ def main() -> int:
     info: list[str] = []
 
     failures.extend(validate_version_vs_changelog(root))
+    failures.extend(validate_root_metadata_parity(root, version))
     failures.extend(validate_manifest_parity(root))
-    failures.extend(validate_release_manifest(root))
+    failures.extend(validate_release_manifest(root, version))
 
     for entry in validate_tag_alignment(root, version):
         if entry.startswith("INFO"):

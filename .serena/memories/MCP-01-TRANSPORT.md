@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-17
-Last commit: 66ef8f4 chore(release): bump VERSION + 9 plugins to 0.6.1
+Last updated: 2026-05-20
+Last commit: 75c26e8 chore(release): prepare marketplace 0.6.2
 Scope: plugins/rldyour-mcps/.mcp.json, config/mcp-runtime-versions.env, scripts/check_mcp_runtime_versions.py, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.sh, AGENTS.md
 Area: MCP
 -->
@@ -23,10 +23,10 @@ MCP transport contracts for the marketplace. `rldyour-mcps` is the only plugin a
 
 - `plugins/rldyour-mcps/.mcp.json` defines 13 servers at HEAD.
 - Stdio/local servers and pins:
-  - `serena`: `uvx --from serena-agent==1.3.0 --python 3.13 --prerelease allow serena start-mcp-server --project-from-cwd --context=agent --enable-web-dashboard False --open-web-dashboard False`.
+  - `serena`: `uvx --from serena-agent==1.5.1 --python 3.13 --prerelease allow serena start-mcp-server --project-from-cwd --context=agent --enable-web-dashboard False --open-web-dashboard False`.
   - `sequential-thinking`: `bunx @modelcontextprotocol/server-sequential-thinking@2025.12.18`.
   - `playwright`: `bunx @playwright/mcp@0.0.75 --headless --caps=network,storage,testing,devtools`.
-  - `chrome-devtools`: `bunx chrome-devtools-mcp@0.26.0 --headless --isolated --no-usage-statistics --no-performance-crux`.
+  - `chrome-devtools`: `bunx chrome-devtools-mcp@1.0.1 --headless --isolated --no-usage-statistics --no-performance-crux`.
   - `context7`: `bunx @upstash/context7-mcp@2.2.5`.
   - `semgrep`: `uvx --from semgrep==1.163.0 semgrep mcp`. Note: `.github/workflows/semgrep.yml` CI SAST uses Docker image `semgrep/semgrep:1.163.0` - intentionally matched to this MCP pin (verified at `.github/workflows/semgrep.yml` at HEAD `334fe09`).
   - `shadcn`: `bunx shadcn@4.7.0 mcp`.
@@ -34,8 +34,8 @@ MCP transport contracts for the marketplace. `rldyour-mcps` is the only plugin a
   - `github`: `github-mcp-server stdio --toolsets=repos,issues,pull_requests,users,context`.
 - HTTP servers: `deepwiki` (`https://mcp.deepwiki.com/mcp`), `grep` (`https://mcp.grep.app`), `figma` (`https://mcp.figma.com/mcp`), `openai-docs` (`https://developers.openai.com/mcp`).
 - Required env for current transport: `CONTEXT7_API_KEY`, `GITHUB_PERSONAL_ACCESS_TOKEN`.
-- Required host binaries: `github-mcp-server` (v1.0.4) and `dart` (Dart SDK v3.11.0, pinned as `DART_SDK_VERSION=3.11.0` in `config/mcp-runtime-versions.env` at HEAD `a506526`).
-- `scripts/check_mcp_runtime_versions.py` covers all 13 servers (11 package-pinned + 2 system-binary entries via `SYSTEM_BINARY_TO_ENV` dict at lines 44-58): `github-mcp-server` and `dart` both probed via `--version`. Verified by running the script at HEAD `a506526` (13/13 OK output).
+- Required host binaries: `github-mcp-server` (v1.0.5) and `dart` (Dart SDK v3.11.0, pinned as `DART_SDK_VERSION=3.11.0` in `config/mcp-runtime-versions.env` at HEAD `75c26e8`).
+- `scripts/check_mcp_runtime_versions.py` covers all 13 servers (11 package-pinned + 2 system-binary entries via `SYSTEM_BINARY_TO_ENV` dict): `github-mcp-server` and `dart` both probed via `--version`. Verified by running the script at HEAD `75c26e8` (13/13 OK output).
 
 ## Contracts And Data
 

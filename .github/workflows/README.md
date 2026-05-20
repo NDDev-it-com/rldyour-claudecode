@@ -1,6 +1,6 @@
 # GitHub Actions Workflows
 
-Nine workflows split into three classes by trigger policy. This split keeps
+Ten workflows split into three classes by trigger policy. This split keeps
 the GHEC monthly-minutes budget predictable and separates "repo is broken"
 signals from "upstream published an update" signals.
 
@@ -14,6 +14,7 @@ These workflows must be green before any merge.
 | `pytest.yml` | `pytest` | Unit tests under `tests/` with `-m "not integration"`. Live network probes run in `dependency-check.yml`. |
 | `gitleaks.yml` | `gitleaks` | Defense-in-depth secret scanning. |
 | `semgrep.yml` | `semgrep` | SAST via OSS rule packs. |
+| `codeql.yml` | `analyze` | CodeQL semantic analysis for Python and GitHub Actions. |
 | `actionlint.yml` | `actionlint` | Workflow YAML syntax + expression lint. PATH-filtered to `.github/workflows/**`. |
 
 Branch protection on `main` should require these (and only these) status checks.

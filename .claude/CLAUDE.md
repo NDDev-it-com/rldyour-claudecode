@@ -10,13 +10,13 @@ claims:
   reviewer_transport_marker: RLDYOUR_REPORT_EOF
   reviewer_report_dir_template: ".serena/reviews/<run_id>/"
   reviewer_run_id_format: "<UTC-ISO-compact>-<git-short-sha>"
-  claude_code_min_version: "2.1.143"
+  claude_code_min_version: "2.1.145"
   skill_listing_budget_fraction: 0.04
   max_skill_description_chars: 1536
   fullrepo_branch: fullrepo
   plugin_count: 9
   skill_count: 32
-  command_count: 9
+  command_count: 10
   subagent_count: 8
 -->
 
@@ -27,7 +27,7 @@ claims:
 ```
 rldyour-mcps         transport     0 skills • 0 cmds • 0 agents • 0 hooks  • .mcp.json (13 pinned servers)
 rldyour-serena-mcp   semantic      2 skills • 0 cmds • 1 agent  • 4 hooks
-rldyour-flow         SDLC          7 skills • 5 cmds • 6 agents • 4 hooks  • 7 scripts • 7 references
+rldyour-flow         SDLC          7 skills • 6 cmds • 6 agents • 4 hooks  • 7 scripts • 7 references
 rldyour-explore      research      2 skills • 1 cmd  • 1 agent  • 0 hooks
 rldyour-security     security      2 skills • 1 cmd  • 0 agents • 0 hooks
 rldyour-browser      browser       3 skills • 0 cmds • 0 agents • 0 hooks
@@ -36,7 +36,7 @@ rldyour-lsps         lsp           4 skills • 0 cmds • 0 agents • 0 hooks 
 rldyour-rules        rules         7 skills • 1 cmd  • 0 agents • 0 hooks  • 6 references
 ```
 
-Total: 32 skills, 9 slash commands, 8 subagents. Slash commands (SDLC + tool-routing), plugin dependency graph, MCP transport detail, and fullrepo branch policy are listed in `./AGENTS.md`.
+Total: 32 skills, 10 slash commands, 8 subagents. Slash commands (SDLC + tool-routing), plugin dependency graph, MCP transport detail, and fullrepo branch policy are listed in `./AGENTS.md`.
 
 ## Subagent Frontmatter Matrix
 
@@ -125,9 +125,9 @@ Patterns verified against `anthropics/claude-plugins-official` snapshot `1a2f18b
 - **`alwaysLoad: true` for critical-path MCP servers** - community pattern in `tractorjuice/arc-kit`, `OMARVII/claude-alloy`, `darkroomengineering/cc-settings`. Our restraint (only `serena`) is appropriate scoping.
 - **Tag convention `<plugin-name>--v<version>`** - Anthropic-canonical via `claude plugin tag --push` (docs `code.claude.com/docs/en/plugin-dependencies`). Anthropic's own plugins-official marketplace doesn't apply tags yet, but the documented convention is the canonical one.
 
-## Changelog Adoption (v2.1.133 → v2.1.142)
+## Changelog Adoption (v2.1.133 → v2.1.145)
 
-Verified against `code.claude.com/docs/en/changelog` for v2.1.133-v2.1.142 on 2026-05-15. Current local CC: **v2.1.143** (`$(which claude) --version`).
+Verified against `code.claude.com/docs/en/changelog` for v2.1.133-v2.1.145 on 2026-05-20. Current local CC: **v2.1.145** (`claude --version`).
 
 Adopted:
 - v2.1.105 - `maxSkillDescriptionChars` and `skillListingBudgetFraction` user settings (Anthropic + claudekit-cli baseline is `0.03`; this repo recommends `0.04` - see Skill Listing Budget section above for the bilingual-description rationale). Per-entry skill description cap `1,536` chars, used by all 32 skills.
@@ -139,21 +139,20 @@ Adopted:
 Available, not adopted:
 - v2.1.133 `worktree.baseRef: "head"` - user-side setting (`~/.claude/settings.json`); recommendation documented in AGENTS.md Worktree Workflow but not forced. `ry-explore` uses `context: fork`, not `isolation: worktree`.
 - v2.1.133 hook input `effort.level` + `$CLAUDE_EFFORT` env var in Bash - could enrich hook telemetry; not yet wired into `flow_post_task_state.py` or `serena_memory_state.py`.
-- v2.1.142 added `claude agents` flags (`--add-dir`, `--settings`, `--mcp-config`, `--plugin-dir`, `--permission-mode`, `--model`, `--effort`, `--dangerously-skip-permissions`) and made fast mode default to Opus 4.7.
-- v2.1.142 fixed `MCP_TOOL_TIMEOUT` behavior for HTTP/SSE servers so per-request timeout applies to all MCP calls.
+- v2.1.142-2.1.145 refreshed the operational floor: agent CLI flags, HTTP `MCP_TOOL_TIMEOUT` fix, plugin dependency enforcement, `/plugin` context-cost/component previews, background/worktree/MCP pagination fixes, and stricter `claude plugin validate`; this repo pins CI/local floor to 2.1.145.
 - v2.1.141 `claude agents --cwd <path>` and `terminalSequence` hook field were added; hook and daemon regressions were fixed.
 - v2.1.139 hook `args: string[]` exec-form **adopted** in v0.5.0 (commit `614bdcf`): all 8 hooks switched from shell-form `command: "bash ${CLAUDE_PLUGIN_ROOT}/..."` to exec-form `command: "bash", args: ["${CLAUDE_PLUGIN_ROOT}/hooks/X.sh"]`. Verified 2026-05-17 against `code.claude.com/docs/en/hooks` which explicitly recommends exec-form for any hook with path placeholders.
 - v2.1.139 `PostToolUse` `continueOnBlock: true` - our PostToolUse hooks are advisory-only (`exit 0` always), nothing to "block on".
 - v2.1.139 stdio MCP env receives `${CLAUDE_PROJECT_DIR}` - no current server needs project-root context.
 - v2.1.139 `claude plugin details <name>` - diagnostic only (see AGENTS.md Validation And Setup).
 
-GitHub MCP transport (changed in v0.1.2, 2026-05-13): switched from HTTP `api.githubcopilot.com/mcp/` (Copilot-entitlement-gated; non-Copilot accounts get `HTTP 403 "unauthorized: not authorized to use this Copilot feature"` on `initialize`) to local stdio `github-mcp-server stdio --toolsets=repos,issues,pull_requests,users,context`. Host binary is the Homebrew bottle `github-mcp-server` pinned at v1.0.4 in `config/mcp-runtime-versions.env`; PAT scopes `repo` + `read:org` are sufficient, no Copilot subscription required. `scripts/check_mcp_runtime_versions.py` enforces version parity by probing `github-mcp-server --version` rather than parsing `.mcp.json` args. `anthropics/claude-plugins-official` keeps the HTTP endpoint as their canonical pattern for Copilot users - we cannot mirror that without an allowlist.
+GitHub MCP transport (changed in v0.1.2, 2026-05-13): switched from HTTP `api.githubcopilot.com/mcp/` (Copilot-entitlement-gated; non-Copilot accounts get `HTTP 403 "unauthorized: not authorized to use this Copilot feature"` on `initialize`) to local stdio `github-mcp-server stdio --toolsets=repos,issues,pull_requests,users,context`. Host binary is the Homebrew bottle `github-mcp-server` pinned at v1.0.5 in `config/mcp-runtime-versions.env`; PAT scopes `repo` + `read:org` are sufficient, no Copilot subscription required. `scripts/check_mcp_runtime_versions.py` enforces version parity by probing `github-mcp-server --version` rather than parsing `.mcp.json` args. `anthropics/claude-plugins-official` keeps the HTTP endpoint as their canonical pattern for Copilot users - we cannot mirror that without an allowlist.
 
 Smoke-script footgun (documented for future maintainers): `scripts/smoke_fullrepo_sync.sh` calls `fullrepo_sync.py --bootstrap-init`, which restores agent-only worktree files (AGENTS.md, .claude/CLAUDE.md, .serena/**) from `origin/fullrepo`. Run smoke **before** editing agent-only files in a session, or re-apply edits after smoke completes; otherwise in-progress changes are silently reverted.
 
 Capability-smoke hardening (added 2026-05-13, v0.1.2): `scripts/smoke_mcp_capabilities.sh` no longer treats HTTP 401/403 as blanket PASS for `HTTP_AUTH_GATED` servers - that shortcut hid the GitHub Copilot entitlement failure. Now performs real MCP `initialize` JSON-RPC handshake over HTTP, parses both `application/json` and `text/event-stream` bodies, requires `result.serverInfo.name`. Classification: 401 without auth → SKIP, 401 with auth → FAIL ("token rejected"), 403 → FAIL with explicit remediation hint, 200 without `serverInfo` → FAIL ("silent-misconfig catch"). `figma` is the only remaining `HTTP_AUTH_GATED` entry (accepts 200 without `serverInfo` pre-session).
 
-Capability smoke (added 2026-05-12): `scripts/smoke_mcp_capabilities.sh` performs JSON-RPC `initialize` + `tools/list` per server (stdio spawn or HTTP POST) and asserts a non-empty tool set. Used to validate `serena 1.2.0 → 1.3.0` bump - 13/13 servers pass on 2026-05-12. Serena under `--context=agent` reports 28 tools in 1.3.0 (was 45 in 1.2.0); the mode-selection refactor scopes the tool surface more tightly per context. All workflow tools we use are present.
+Capability smoke (added 2026-05-12): `scripts/smoke_mcp_capabilities.sh` performs JSON-RPC `initialize` + `tools/list` per server (stdio spawn or HTTP POST) and asserts a non-empty tool set. Latest focused 2026-05-20 checks: Serena `1.5.1` reports 27 tools, Chrome DevTools `1.0.1` reports 29 tools, and GitHub MCP `1.0.5` reports 40 tools. All workflow tools we use are present.
 
 ## Engineering Conventions
 

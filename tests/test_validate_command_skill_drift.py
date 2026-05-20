@@ -212,6 +212,30 @@ Use the `other-skill` skill for this request.
 class TestCommandOnlyPattern:
     """Commands without a matching skill (command + agent pattern) are skipped."""
 
+    def test_command_delegating_to_different_existing_skill_passes(
+        self, patch_repo_root: Path
+    ) -> None:
+        _write_skill(patch_repo_root, "rldyour-test", "target-skill")
+        _write_command(
+            patch_repo_root,
+            "rldyour-test",
+            "public-alias",
+            """---
+description: "Test alias command."
+---
+
+Alias: **$ARGUMENTS**
+
+Use the `target-skill` skill for this request. The skill body owns the workflow.
+
+Reply in Russian.
+""",
+        )
+        result = _run(patch_repo_root)
+        assert result.returncode == 0, result.stdout + result.stderr
+        assert "public-alias" in result.stdout
+        assert "target-skill" in result.stdout
+
     def test_command_without_matching_skill_skipped(self, patch_repo_root: Path) -> None:
         # ry-explore-style: command + agent, no skill with the same name.
         _write_command(

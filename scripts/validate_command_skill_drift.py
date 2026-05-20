@@ -1,23 +1,26 @@
 #!/usr/bin/env python3
-"""validate_command_skill_drift.py - enforce that a slash command that mirrors
-a skill stays a thin wrapper.
+"""validate_command_skill_drift.py - enforce that skill-backed slash commands
+stay thin wrappers.
 
 Claude Code merged custom commands into skills (May 2026 docs). When a command
 and a same-named skill ship together, the skill is the source of truth and the
 command must be a thin delegation wrapper. Otherwise the two bodies drift and
 the model receives contradictory guidance.
 
-Invariants enforced (when basename(command) == skill name AND that skill exists):
+Invariants enforced when a command either:
+
+  - has the same basename as an existing skill, OR
+  - delegates to an existing skill through ``Use the `<skill-name>` skill``.
 
   1. Command file body (after frontmatter) is at most ``MAX_COMMAND_BODY`` chars.
   2. Command body contains the literal ``Use the `<skill-name>` skill`` so the
-     model is routed to the skill, not to inline instructions.
+     model is routed to the delegated skill, not to inline instructions.
   3. Command body does not duplicate skill workflow with self-headings
      (``Workflow``, ``Rules``, ``Quality gates`` etc.).
   4. Command body does not contain numbered checklists longer than 3 items.
 
-Commands that have NO matching skill (e.g. ``ry-explore`` is command + agent,
-not command + skill) are skipped silently.
+Commands that have NO matching/delegated skill (e.g. ``ry-explore`` is a
+command + agent pattern, not command + skill) are skipped silently.
 
 Exit code: 0 on PASS, 1 on FAIL, 2 on internal error.
 """
@@ -90,8 +93,12 @@ def validate_command(path: Path, skill_names: set[str]) -> list[str]:
     body = strip_frontmatter(text)
     name = path.stem
 
-    if name not in skill_names:
-        # command without a matching skill (e.g. command + agent pattern). Skip.
+    skill_ref = USE_SKILL_RE.search(body)
+    delegated_skill = skill_ref.group(1) if skill_ref else None
+    target_skill = name if name in skill_names else delegated_skill
+
+    if target_skill not in skill_names:
+        # Command without a matching/delegated skill (e.g. command + agent pattern). Skip.
         return []
 
     if len(body) > MAX_COMMAND_BODY:
@@ -99,14 +106,14 @@ def validate_command(path: Path, skill_names: set[str]) -> list[str]:
             f"body is {len(body)} chars; thin-wrapper cap is {MAX_COMMAND_BODY}"
         )
 
-    skill_ref = USE_SKILL_RE.search(body)
     if not skill_ref:
         failures.append(
-            f"missing literal 'Use the `{name}` skill' delegation phrase"
+            f"missing literal 'Use the `{target_skill}` skill' delegation phrase"
         )
-    elif skill_ref.group(1) != name:
+    elif skill_ref.group(1) != target_skill:
         failures.append(
-            f"delegation phrase points to '{skill_ref.group(1)}' but command is '{name}'"
+            f"delegation phrase points to '{skill_ref.group(1)}' "
+            f"but expected '{target_skill}'"
         )
 
     for heading_match in HEADING_RE.finditer(body):
@@ -144,7 +151,11 @@ def main() -> int:
     for cmd in commands:
         name = cmd.stem
         rel = cmd.relative_to(ROOT)
-        if name not in skill_names:
+        body = strip_frontmatter(cmd.read_text(encoding="utf-8"))
+        skill_ref = USE_SKILL_RE.search(body)
+        delegated_skill = skill_ref.group(1) if skill_ref else None
+        target_skill = name if name in skill_names else delegated_skill
+        if target_skill not in skill_names:
             print(f"SKIP {rel} (no matching skill - command-only pattern)")
             skipped += 1
             continue
@@ -156,7 +167,10 @@ def main() -> int:
             for msg in failures:
                 print(f"FAIL {rel}: {msg}", file=sys.stderr)
         else:
-            print(f"OK {rel} (≤ {MAX_COMMAND_BODY} chars, delegates to '{name}' skill)")
+            print(
+                f"OK {rel} (≤ {MAX_COMMAND_BODY} chars, "
+                f"delegates to '{target_skill}' skill)"
+            )
 
     if any_failure:
         return 1

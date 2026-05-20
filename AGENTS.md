@@ -14,20 +14,20 @@ claims:
   reviewer_transport_marker: RLDYOUR_REPORT_EOF
   reviewer_report_dir_template: ".serena/reviews/<run_id>/"
   reviewer_run_id_format: "<UTC-ISO-compact>-<git-short-sha>"
-  claude_code_min_version: "2.1.143"
+  claude_code_min_version: "2.1.145"
   skill_listing_budget_fraction: 0.04
   max_skill_description_chars: 1536
   fullrepo_branch: fullrepo
   plugin_count: 9
   skill_count: 32
-  command_count: 9
+  command_count: 10
   subagent_count: 8
 -->
 
 
 ## Source Of Truth
 
-- `./.claude-plugin/marketplace.json` - marketplace manifest, `pluginRoot: ./plugins`, source form `./plugins/<name>`.
+- `./.claude-plugin/marketplace.json` - marketplace manifest with per-entry relative sources (`source: "./plugins/<name>"`); `metadata.pluginRoot` is intentionally absent.
 - `./plugins/<name>/.claude-plugin/plugin.json` - per-plugin manifest. Required: `$schema`, `name`, `version` (per-plugin values can differ), `description`, `author`, `license`, `homepage`, `repository`, `keywords`.
 - `./plugins/rldyour-mcps/.mcp.json` - single-owner MCP transport for the whole marketplace.
 - `./plugins/rldyour-flow/hooks/hooks.json` and `./plugins/rldyour-serena-mcp/hooks/hooks.json` - only two plugins ever own hooks.
@@ -67,7 +67,7 @@ OpenAI Codex CLI reads `AGENTS.md` before starting work and runs commands listed
 - Manifests: `claude plugin validate <path>` after editing any `marketplace.json` or `plugin.json`. CI runs on every PR via `.github/workflows/validate.yml`.
 - Tag releases: `claude plugin tag --push` (v2.1.118+). Convention: `<plugin-name>--v<version>` and `marketplace--v<version>`.
 - Inspect plugin inventory + projected context cost: `claude plugin details <name>` (v2.1.139+; v2.1.142 adds LSP).
-- **Minimum Claude Code: v2.1.143+** (matches CI pin in `validate.yml`). Used features: `opus[1m]` (v2.1.111+, account-gated), `alwaysLoad` (v2.1.121+), hook `if` filter (v2.1.118+), exec-form `args` (v2.1.139+), `maxSkillDescriptionChars` + `skillListingBudgetFraction` (v2.1.105+), `skillOverrides` (v2.1.129+, plugin skills exempt).
+- **Minimum Claude Code: v2.1.145+** (matches the CI pin read from `package.json`). Used features: `opus[1m]` (v2.1.111+, account-gated), `alwaysLoad` (v2.1.121+), hook `if` filter (v2.1.118+), exec-form `args` (v2.1.139+), marketplace `displayName` support (v2.1.143+), `maxSkillDescriptionChars` + `skillListingBudgetFraction` (v2.1.105+), `skillOverrides` (v2.1.129+, plugin skills exempt).
 - Bootstrap a fresh checkout: `bash scripts/bootstrap_check.sh` (fullrepo restore + claude validate + required env + dart SDK + pre-push hook advisory).
 - Audit git/branch/worktree: `bash plugins/rldyour-flow/scripts/git_sync_audit.sh`.
 - Quality checks for consumer projects: `bash plugins/rldyour-flow/scripts/detect_project_checks.sh`. LSP health: `bash plugins/rldyour-lsps/scripts/check_lsps.sh`. This repository has no runtime test suite by design.
@@ -75,13 +75,14 @@ OpenAI Codex CLI reads `AGENTS.md` before starting work and runs commands listed
 
 ## SDLC Workflow
 
-Five orchestrated lifecycle skills (Russian-leading descriptions) live in `rldyour-flow`:
+Five orchestrated lifecycle skills plus one explicit sync command (Russian-leading descriptions) live in `rldyour-flow`:
 
 - `/rldyour-flow:ry-init` - read-only scope discovery and context pack.
 - `/rldyour-flow:ry-start` - full task lifecycle: init → research → plan → implement → quality gates → reviewers → post-task sync.
 - `/rldyour-flow:ry-newp` - new project: skeptical intake → research → architecture docs → optional scaffold.
 - `/rldyour-flow:ry-review` - report-only deep review with 6 reviewer tracks.
 - `/rldyour-flow:ry-deploy` - deploy with local ↔ GitHub ↔ server sync, log checks, fix-forward.
+- `/rldyour-flow:ry-sync` - public slash-command wrapper for `flow-post-task-sync` finalization: Serena freshness, instruction docs, checks, commits, push, `fullrepo`, cleanup.
 
 Reviewer subagents in `plugins/rldyour-flow/agents/flow-*-review.md`: all `model: sonnet`, `effort: high`, `maxTurns: 90` (security `100`), explicit `tools:` allowlist (`Read`, `Grep`, `Glob`, `Bash` + Serena/Context7/DeepWiki/Grep MCP; security track adds `WebFetch`, `WebSearch`, Semgrep). Distinct colors: blue/green/purple/orange/pink/red. Reviewer protocol details in `plugins/rldyour-flow/references/reviewer-protocol.md`.
 
@@ -125,7 +126,7 @@ Trust model: agent-only files restored into a fresh worktree come from `origin/f
 
 ## Fullrepo Branch Policy
 
-Agent-only files live on the `fullrepo` branch only. Patterns are defined in `plugins/rldyour-flow/scripts/fullrepo_sync.py` (`AGENT_ONLY_PATTERNS`) and include: root `AGENTS.md`, `CLAUDE.md`, `REVIEW.md`, `GEMINI.md`, `QWEN.md`, `.cursorrules`, `.windsurfrules`, `.claude/**`, `.cursor/rules/**`, `.gemini/**`, `.roo/**`, `.windsurf/**`, `.openhands/**`, `.aider*`, `.agents/skills/**`, `.agents/commands/**`, `.agents/hooks/**`, `.github/copilot-instructions.md`, `.github/instructions/**`, `.github/prompts/**`, `.serena/project.yml`, `.serena/memories/**`, `.serena/plans/**`, `.serena/research/**`, `.serena/newproj/**`, `.serena/deploy/**`.
+Agent-only files live on the `fullrepo` branch only. Patterns are defined in `plugins/rldyour-flow/scripts/fullrepo_sync.py` (`AGENT_ONLY_PATTERNS`) and include: root `AGENTS.md`, `CLAUDE.md`, `REVIEW.md`, `GEMINI.md`, `QWEN.md`, `.cursorrules`, `.windsurfrules`, `.claude/**`, `.codex/**`, `.cursor/rules/**`, `.gemini/**`, `.roo/**`, `.windsurf/**`, `.openhands/**`, `.aider*`, `.agents/skills/**`, `.agents/commands/**`, `.agents/hooks/**`, `.github/copilot-instructions.md`, `.github/instructions/**`, `.github/prompts/**`, `.serena/project.yml`, `.serena/memories/**`, `.serena/plans/**`, `.serena/research/**`, `.serena/newproj/**`, `.serena/deploy/**`.
 
 Subcommands:
 
@@ -139,7 +140,7 @@ Subcommands:
 
 ## MCP Transport (`rldyour-mcps/.mcp.json`)
 
-13 pinned servers (full pin source: `config/mcp-runtime-versions.env`): `serena-agent==1.3.0` with `alwaysLoad: true` (v2.1.121+), `@modelcontextprotocol/server-sequential-thinking@2025.12.18`, `@playwright/mcp@0.0.75`, `chrome-devtools-mcp@0.26.0`, `@upstash/context7-mcp@2.2.5`, `semgrep==1.163.0`, `shadcn@4.7.0`, host binaries `github-mcp-server` (1.0.4) + `dart` (3.11.0); HTTP: `deepwiki`, `grep`, `figma`, `openai-docs`. Required env: `CONTEXT7_API_KEY`, `GITHUB_PERSONAL_ACCESS_TOKEN`. GitHub MCP uses local stdio (not Copilot-gated HTTP).
+13 pinned servers (full pin source: `config/mcp-runtime-versions.env`): `serena-agent==1.5.1` with `alwaysLoad: true` (v2.1.121+), `@modelcontextprotocol/server-sequential-thinking@2025.12.18`, `@playwright/mcp@0.0.75`, `chrome-devtools-mcp@1.0.1`, `@upstash/context7-mcp@2.2.5`, `semgrep==1.163.0`, `shadcn@4.7.0`, host binaries `github-mcp-server` (1.0.5) + `dart` (3.11.0); HTTP: `deepwiki`, `grep`, `figma`, `openai-docs`. Required env: `CONTEXT7_API_KEY`, `GITHUB_PERSONAL_ACCESS_TOKEN`. GitHub MCP uses local stdio (not Copilot-gated HTTP).
 
 Timeout knobs are env-only: `MCP_TIMEOUT`, `MCP_TOOL_TIMEOUT` (v2.1.142+ for HTTP/SSE). Per-server `startup_timeout_sec`/`tool_timeout_sec` keys are NOT documented and silently ignored - do not add them.
 
