@@ -1,7 +1,7 @@
 <!-- Memory Metadata
-Last updated: 2026-05-20
-Last commit: 75c26e8 chore(release): prepare marketplace 0.6.2
-Scope: .claude-plugin/marketplace.json, plugins/*/.claude-plugin/plugin.json, README.md, AGENTS.md
+Last updated: 2026-05-21
+Last commit: fb1f4db chore(release): add cross-tool contract gate
+Scope: .claude-plugin/marketplace.json, plugins/*/.claude-plugin/plugin.json, config/rldyour-contract.json, docs/contract-matrix.md, README.md, AGENTS.md
 Area: CORE
 -->
 
@@ -18,14 +18,17 @@ Current business logic and architecture of the `rldyour-claudecode` marketplace.
 - `VERSION`: marketplace release boundary.
 - `README.md`: owner-facing catalog, control model, install/check commands, active per-plugin versions.
 - `AGENTS.md`: concise cross-tool project rules and boundaries.
+- `config/rldyour-contract.json`: canonical cross-tool business contract for domains, public flows, skills, agents, hooks, and CI baseline.
+- `docs/contract-matrix.md`: generated human-readable projection of `config/rldyour-contract.json`.
 
-## Current State (HEAD `75c26e8`)
+## Current State (HEAD `fb1f4db`)
 
-- **VERSION**: `0.6.2` (release boundary, verified at `VERSION` file at HEAD `75c26e8`).
+- **VERSION**: `0.6.3` (release boundary, verified at `VERSION` file at HEAD `fb1f4db`).
 - **Repository visibility**: **public** as of 0.6.0 wave. Toggled to public on GitHub; CodeQL is now free (ADR-0008 amendment 2026-05-18).
 - **9 plugins** verified at HEAD from `.claude-plugin/marketplace.json`: `rldyour-mcps`, `rldyour-explore`, `rldyour-serena-mcp`, `rldyour-security`, `rldyour-browser`, `rldyour-design`, `rldyour-lsps`, `rldyour-flow`, `rldyour-rules`.
-- **Per-plugin versions** (verified via `bash scripts/validate_marketplace.sh` at HEAD `75c26e8`): all 9 plugins at `0.6.2`.
-- **Component totals**: 32 skills, 10 slash commands, 8 subagents, 9 hook scripts in 2 hook manifests, 12 plugin-owned scripts, 16 references.
+- **Per-plugin versions** (verified via `bash scripts/validate_marketplace.sh` at HEAD `fb1f4db`): all 9 plugins at `0.6.3`.
+- **Component totals**: 32 skills, 10 slash commands, 8 subagents, 9 hook scripts in 2 hook manifests, 12 plugin-owned scripts, 16 references, 46 repository scripts, 11 GitHub workflows.
+- **Cross-tool contract** (added at HEAD `fb1f4db`): `config/rldyour-contract.json` maps 9 domains, 10 public flows, 32 Claude skills, 8 agent roles, 9 hook lifecycle entries, and 12 CI baseline entries across Claude Code, Codex, and OpenCode. `scripts/validate_contract.py` proves the local Claude adapter against real files; `scripts/generate_contract_matrix.py --check` keeps `docs/contract-matrix.md` generated.
 - **ADR count**: 11 (docs/adr/0001 through 0011 + 0000-template + README; ADR-0011 agent-instruction-knowledge-equivalence added at HEAD `da432c6`). Verified at `docs/adr/` listing at HEAD `b4e63ec`.
 - **`marketplace.json` `owner.email` field removed** at HEAD `cbe4595` (chore: remove owner email field). `owner` object retains `name` and `url`. Verified at `.claude-plugin/marketplace.json` at HEAD `b4e63ec`.
 - The owner decides what is enabled. Repository docs state nothing is treated as enabled or correct unless explicitly decided by the owner.
@@ -107,6 +110,7 @@ Agent-only paths (not in `main`, only in `fullrepo`): `AGENTS.md`, `CLAUDE.md`, 
 ## Change Rules
 
 - When plugin manifests or marketplace entries change: update `.claude-plugin/marketplace.json` + relevant `plugin.json` + `README.md` + `CHANGELOG.md` + this memory if behaviour or versions changed.
+- When cross-tool public flows, canonical roles, hook lifecycle, or CI baseline changes: update `config/rldyour-contract.json`, regenerate `docs/contract-matrix.md`, and run `python3 scripts/validate_contract.py`.
 - Do not introduce another `.mcp.json` owner or another hook-owning plugin without changing the architecture contract.
 - Keep per-plugin version bumps scoped to the plugin whose runtime cache must refresh (SKILL.md/agent.md/hooks.json/.mcp.json changes trigger refresh; script body changes do not).
 - Adding new plugin: confirm domain boundary, declare dependencies in `plugin.json`, add marketplace entry, write or extend domain memory.
@@ -114,6 +118,7 @@ Agent-only paths (not in `main`, only in `fullrepo`): `AGENTS.md`, `CLAUDE.md`, 
 ## Verification
 
 - `python3 scripts/validate_plugin_versions.py`: verifies marketplace entry versions match `plugin.json` versions.
+- `python3 scripts/validate_contract.py && python3 scripts/generate_contract_matrix.py --check`: verifies cross-tool contract and generated matrix freshness.
 - `python3 scripts/validate_agent_tools.py`: verifies agent `tools:` allowlists ([[TECHDEBT-01-NOW]] R4 mitigation).
 - `bash scripts/validate_marketplace.sh`: validates marketplace, per-plugin manifests, frontmatter, shell/Python syntax, routing policy, MCP version drift, agent tools allowlist, Serena memory taxonomy smoke.
 - `claude plugin validate .` and `claude plugin validate plugins/<name>`: canonical Claude Code manifest validation.

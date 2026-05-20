@@ -33,7 +33,7 @@ claims:
 - `./plugins/rldyour-flow/hooks/hooks.json` and `./plugins/rldyour-serena-mcp/hooks/hooks.json` - only two plugins ever own hooks.
 - `./plugins/rldyour-flow/references/*.md` - durable contracts for `ry-init`, `ry-start`, `ry-newp`, `ry-review`, `ry-deploy`, post-task sync, reviewer protocol, and source citations.
 - `./plugins/rldyour-rules/references/*.md` - engineering rules: architecture, dependency, quality gates, project instructions and ADRs.
-- `./.serena/memories/CORE-01-INDEX.md` - numbered Serena memory map for future GPT/Claude/Codex sessions.
+- `./config/rldyour-contract.json` + `./docs/contract-matrix.md` - machine-readable cross-tool business contract and generated matrix; `./.serena/memories/CORE-01-INDEX.md` maps numbered project memories.
 
 ## Repository Layout
 
@@ -67,6 +67,7 @@ OpenAI Codex CLI reads `AGENTS.md` before starting work and runs commands listed
 - Manifests: `claude plugin validate <path>` after editing any `marketplace.json` or `plugin.json`. CI runs on every PR via `.github/workflows/validate.yml`.
 - Tag releases: `claude plugin tag --push` (v2.1.118+). Convention: `<plugin-name>--v<version>` and `marketplace--v<version>`.
 - Inspect plugin inventory + projected context cost: `claude plugin details <name>` (v2.1.139+; v2.1.142 adds LSP).
+- Cross-tool contract gate: `python3 scripts/validate_contract.py && python3 scripts/generate_contract_matrix.py --check`.
 - **Minimum Claude Code: v2.1.145+** (matches the CI pin read from `package.json`). Used features: `opus[1m]` (v2.1.111+, account-gated), `alwaysLoad` (v2.1.121+), hook `if` filter (v2.1.118+), exec-form `args` (v2.1.139+), marketplace `displayName` support (v2.1.143+), `maxSkillDescriptionChars` + `skillListingBudgetFraction` (v2.1.105+), `skillOverrides` (v2.1.129+, plugin skills exempt).
 - Bootstrap a fresh checkout: `bash scripts/bootstrap_check.sh` (fullrepo restore + claude validate + required env + dart SDK + pre-push hook advisory).
 - Audit git/branch/worktree: `bash plugins/rldyour-flow/scripts/git_sync_audit.sh`.

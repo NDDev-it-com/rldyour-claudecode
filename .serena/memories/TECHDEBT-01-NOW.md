@@ -1,7 +1,7 @@
 <!-- Memory Metadata
-Last updated: 2026-05-20
-Last commit: 75c26e8 chore(release): prepare marketplace 0.6.2
-Scope: Serena memory sync, hook gates, fullrepo lifecycle, MCP pins, validation harness, current implementation risks
+Last updated: 2026-05-21
+Last commit: fb1f4db chore(release): add cross-tool contract gate
+Scope: Serena memory sync, hook gates, fullrepo lifecycle, MCP pins, validation harness, cross-tool contract, current implementation risks
 Area: TECHDEBT
 -->
 
@@ -22,6 +22,7 @@ Open technical debt, implementation mistakes already fixed, and anti-regression 
 - `plugins/rldyour-security/skills/owasp-top-10-implementation/SKILL.md`: OWASP 2025 categories (D22).
 - `scripts/validate_agent_tools.py`: agent tools allowlist enforcement (R4 mitigation); imports `split_mcp_ref` from `scripts/_mcp_parse.py` as of `cd13d0a`.
 - `scripts/validate_boundaries.py`: structural boundary enforcement closing ADR-0006 gap (added `66dbdf6`).
+- `config/rldyour-contract.json` + `scripts/validate_contract.py`: cross-tool contract and local Claude adapter validation (D88).
 - `scripts/validate_marketplace.sh` line 117: agent tools validator wiring.
 - `.claude/CLAUDE.md`: "Smoke-script footgun" section documents R5 process order.
 - `CHANGELOG.md` `[0.1.8]`: Wave 4 R5 hardening, smoke, SC2044, memory graph record.
@@ -157,6 +158,7 @@ Open technical debt, implementation mistakes already fixed, and anti-regression 
 - D85. VERSION + all 9 plugins bumped to 0.6.0 (commit `d89d274 chore(release)`): `VERSION` changed from `0.5.2` to `0.6.0`. All 9 plugin.json and marketplace.json entries updated to `0.6.0`. Tags planned: `marketplace--v0.6.0` + 9 `<plugin>--v0.6.0`. Verified at `VERSION` (`0.6.0`) and `python3 scripts/validate_plugin_versions.py` at HEAD `d89d274`.
 - D86. Secret Scanning + Push Protection intentionally disabled clarified (commit `b4e63ec docs(security)`): `docs/security/threat-model.md` lines 210-218 and `docs/adr/0008` amended to document that GitHub Secret Scanning + Push Protection are intentionally disabled because org enterprise policy keeps them off (paid-tier feature blocked by enterprise plan - NOT planned for enablement). Coverage delivered through workflow-layer gitleaks + Semgrep `p/secrets` + local pre-push guard. Verified at `docs/security/threat-model.md:210-218` and `docs/adr/0008-ci-baseline-without-paid-addons.md` at HEAD `b4e63ec`.
 - D87. 0.6.2 release-prep hardening (commit `75c26e8 chore(release)`): `validate_boundaries.py` now enforces `config/marketplace-policy.json` parity for `agent_only_path_globs` and `runtime_exclude_globs` against `fullrepo_sync.py`; `scripts/smoke_bootstrap_check.sh` verifies exact static parity between Bash bootstrap roots and Python fullrepo patterns; `.codex` was added to the bootstrap divergence guard; `.serena/.bootstrap_overrides.log` was added to runtime excludes; `/rldyour-flow:ry-sync` delegates to `flow-post-task-sync`; MCP pins updated to Serena 1.5.1, Chrome DevTools MCP 1.0.1, GitHub MCP host binary 1.0.5; release metadata parity now covers `package.json`, `pyproject.toml`, and release manifest marketplace version. Verified with `bash scripts/validate_marketplace.sh`, full pytest, Ruff, Pyright, and `git diff --check` at HEAD `75c26e8`.
+- D88. Cross-tool contract gap closed (commit `fb1f4db chore(release)`): the prior audit finding "Claude is consistent locally but not proven as one mechanism with Codex/OpenCode" is closed by `config/rldyour-contract.json`, `scripts/validate_contract.py`, generated `docs/contract-matrix.md`, and `scripts/generate_contract_matrix.py --check`. The contract maps 9 domains, 10 public flows, 32 Claude skills, 8 agent roles, 9 hook lifecycle entries, and 12 CI baseline entries across Claude Code, Codex, and OpenCode. Local validation proves all Claude paths/scripts/workflows exist and that hook scripts are referenced by `hooks.json`. `.github/workflows/dependency-review.yml` also closes the CI baseline dependency-review gap. Verified with `bash scripts/validate_marketplace.sh`, full pytest 144/144, Ruff, Pyright, actionlint, MCP runtime smoke, and release manifest generation at HEAD `fb1f4db`.
 
 ## Error Patterns To Avoid
 
@@ -208,6 +210,7 @@ Open technical debt, implementation mistakes already fixed, and anti-regression 
 - Release record (D66-D76 0.5.1 hardening wave): [[RELEASE-01-VALIDATION]] `[0.5.1] - 2026-05-17`.
 - Release record (D77-D80 0.5.2 ADR-0011 + hook freshness wave): [[RELEASE-01-VALIDATION]] `[0.5.2] - 2026-05-18`.
 - Release record (D81-D86 0.6.0 public-readiness wave + post-tag patches): [[RELEASE-01-VALIDATION]] `[0.6.0] - 2026-05-18`.
+- Release record (D87-D88 0.6.2/0.6.3 release-hardening waves): [[RELEASE-01-VALIDATION]] `[0.6.2] - 2026-05-20` and `[0.6.3] - 2026-05-21`.
 - Public-readiness docs (D81): [[DOCS-01-INSTRUCTIONS]] SECURITY.md, CONTRIBUTING.md, CODE_OF_CONDUCT.md, Issue/PR templates.
 - CodeQL SAST + ADR-0008 amendment (D83): [[SECURITY-01-OWASP]] (three-workflow SAST baseline) and [[CLAUDECODE-01-PLUGIN-CANON]] (CI workflow facts).
 - Reviewer contract drift detection (D30): [[RELEASE-01-VALIDATION]] (validator wired into `scripts/validate_marketplace.sh`).

@@ -1,7 +1,7 @@
 <!-- Memory Metadata
-Last updated: 2026-05-20
-Last commit: 75c26e8 chore(release): prepare marketplace 0.6.2
-Scope: .claude/CLAUDE.md, AGENTS.md, plugins/*/.claude-plugin/plugin.json, plugins/rldyour-mcps/.mcp.json, plugins/*/skills/*/SKILL.md, plugins/*/agents/*.md, plugins/*/hooks/hooks.json, plugins/rldyour-serena-mcp/scripts/analyze_sync_scope.py
+Last updated: 2026-05-21
+Last commit: fb1f4db chore(release): add cross-tool contract gate
+Scope: .claude/CLAUDE.md, AGENTS.md, config/rldyour-contract.json, docs/contract-matrix.md, scripts/validate_contract.py, scripts/generate_contract_matrix.py, plugins/*/.claude-plugin/plugin.json, plugins/rldyour-mcps/.mcp.json, plugins/*/skills/*/SKILL.md, plugins/*/agents/*.md, plugins/*/hooks/hooks.json, plugins/rldyour-serena-mcp/scripts/analyze_sync_scope.py
 Area: CLAUDECODE
 -->
 
@@ -20,6 +20,8 @@ Current Claude Code plugin/runtime facts that this marketplace relies on. These 
 - `plugins/*/agents/*.md`: subagent frontmatter and tool permissions.
 - `plugins/rldyour-flow/hooks/hooks.json` and `plugins/rldyour-serena-mcp/hooks/hooks.json`: hook declarations.
 - `plugins/rldyour-serena-mcp/scripts/analyze_sync_scope.py`: analyzer mapping that targets this memory for plugin component and Claude Code instruction contract changes.
+- `config/rldyour-contract.json`: cross-tool business contract; Claude adapter paths must point to real plugin/skill/command/agent/hook/workflow files in this repository.
+- `scripts/validate_contract.py` and `scripts/generate_contract_matrix.py`: contract validator and generated matrix gate.
 
 ## Current Behavior
 
@@ -42,6 +44,8 @@ Current Claude Code plugin/runtime facts that this marketplace relies on. These 
 - `scripts/validate_docs_canon.py` uses `max(30, len(knob) + 15)` window heuristic (changed from fixed `start - 30` in `8b9a6c6`) to correctly detect long knob names like `maxSkillDescriptionChars` in context. Regression covered by `tests/test_validate_docs_canon.py::TestValidateDocsCanon::test_long_knob_window_expands_dynamically`. Verified at `scripts/validate_docs_canon.py:88` at HEAD `a04c6eb`.
 - `scripts/validate_boundaries.py` enforces 6 structural invariants against `config/marketplace-policy.json`: (1) exactly one plugin owns `.mcp.json` (mcp_owner match); (2) `hooks/hooks.json` owners match policy `hook_owners` set exactly; (3) `plugin.json` `name` field matches directory name; (4) `plugin.json` `dependencies` matches `plugin_dependencies[<plugin>]`; (5) `agent_only_path_globs` matches `fullrepo_sync.AGENT_ONLY_PATTERNS`; (6) `runtime_exclude_globs` matches `fullrepo_sync.RUNTIME_EXCLUDE_PATTERNS`. SKIPs gracefully when `config/marketplace-policy.json` is absent. Wired into `scripts/validate_marketplace.sh` and `.github/workflows/validate.yml` as a mandatory step. Verified at HEAD `75c26e8`.
 - `/rldyour-flow:ry-sync` is a thin slash-command wrapper that delegates to the `flow-post-task-sync` skill. `scripts/validate_command_skill_drift.py` now validates commands that delegate to an existing skill even when the command basename differs from the skill name; `ry-sync` delegates to `flow-post-task-sync` and stays under the 800-character wrapper cap. Verified by `python3 scripts/validate_command_skill_drift.py` at HEAD `75c26e8`.
+- **Cross-tool contract gate (0.6.3, HEAD `fb1f4db`)**: `config/rldyour-contract.json` declares canonical domains, public flows, skill IDs, agent roles, hook lifecycle entries, and CI baseline mappings for Claude Code, Codex, and OpenCode. `scripts/validate_contract.py` proves the local Claude adapter against marketplace plugins, `SKILL.md` paths, command markdown files, agent markdown files, `hooks.json` script references, and workflow/script paths. `scripts/generate_contract_matrix.py --check` keeps `docs/contract-matrix.md` generated. Both commands are wired into `scripts/validate_marketplace.sh` and `.github/workflows/validate.yml`.
+- **Dependency Review PR gate (0.6.3, HEAD `fb1f4db`)**: `.github/workflows/dependency-review.yml` runs on pull requests touching package/dependency/config/plugin paths, uses SHA-pinned `actions/dependency-review-action@2031cfc080254a8a887f58cffee85186f0e49e48` (v4.9.0), fails on moderate-or-higher advisories, and keeps harden-runner egress allowlisting.
 - `.github/workflows/validate.yml` `syntax-checks` job gained 2 advisory steps at HEAD `924256c` (commit `72c5665`): "Ruff lint (advisory)": `ruff check scripts/ plugins/` with `continue-on-error: true`; "Pyright type check (advisory)": project-wide `pyright` with `continue-on-error: true`. `pip install` step expanded to include `ruff>=0.7`, `pyright>=1.1`, `pyyaml>=6`, `pytest>=8` (resolves runtime/test imports under static analysis). At HEAD `924256c` both gates pass: 0 ruff errors and 0 pyright errors/warnings across `scripts/`, `plugins/`, `tests/`. Verified at `.github/workflows/validate.yml` lines 215-230 at HEAD `924256c`.
 - `scripts/_mcp_parse.py` shared module (added commit `cd13d0a`): single source of truth for parsing `mcp__plugin_<plugin>_<server>__<tool_or_star>` references. `split_mcp_ref(ref, plugins) -> tuple[str, str, str] | None` uses longest-known-prefix match (handles hyphen-separated plugin names) with `rpartition('_')` fallback for unknown plugins. Imported by both `scripts/validate_skill_allowed_tools.py` and `scripts/validate_agent_tools.py`. `pyproject.toml` sets `extraPaths = ["scripts"]` so Pyright resolves `from _mcp_parse import ...`. `tests/test_mcp_parse.py` (9 tests) covers the shared parser directly. Verified at `scripts/_mcp_parse.py` at HEAD `924256c`.
 - Official Claude Code MCP docs still show the GitHub remote MCP endpoint as an example; this repository uses local stdio `github-mcp-server` to keep the marketplace self-contained without dependence on `api.githubcopilot.com/mcp/`. A standard GitHub PAT with `repo` + `read:org` scopes is sufficient; no Copilot subscription is required. Rationale source: `plugins/rldyour-mcps/README.md` line 28 at HEAD.
@@ -72,6 +76,7 @@ Current Claude Code plugin/runtime facts that this marketplace relies on. These 
 ## Verification
 
 - `bash scripts/validate_marketplace.sh`: validates plugin manifests, skill/agent/command frontmatter, and the Serena taxonomy smoke.
+- `python3 scripts/validate_contract.py && python3 scripts/generate_contract_matrix.py --check`: validates cross-tool business contract and generated matrix.
 - `python3 scripts/validate_instruction_docs.py --require-agent-docs`: validates `AGENTS.md` and `.claude/CLAUDE.md` presence and line budgets.
 - `claude plugin validate .`: validates marketplace manifest through the Claude Code CLI.
 - `bash scripts/smoke_serena_memory_taxonomy.sh`: verifies that plugin component and agent-instruction changes target this memory.

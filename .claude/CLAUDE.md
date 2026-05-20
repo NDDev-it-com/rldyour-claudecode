@@ -1,6 +1,6 @@
 # Claude Code Project Memory - rldyour-claude
 
-Personal Claude Code plugin marketplace by `rldyourmnd`. Cross-tool overview, source-of-truth manifests, plugin layers, and CLI commands live in `./AGENTS.md`. This file (`./.claude/CLAUDE.md`) is the Claude Code-native deep memory: subagent matrix, hook canon, skill-listing budget, frontmatter conventions, and Don't/Done rules. Both files are agent-only, live on the `fullrepo` branch, and are excluded from `main` via `.git/info/exclude`.
+Personal Claude Code plugin marketplace by `rldyourmnd`. Cross-tool overview, source-of-truth manifests, plugin layers, CLI commands, and `config/rldyour-contract.json` / `docs/contract-matrix.md` live in `./AGENTS.md`. This file (`./.claude/CLAUDE.md`) is the Claude Code-native deep memory: subagent matrix, hook canon, skill-listing budget, frontmatter conventions, and Don't/Done rules. Both files are agent-only, live on the `fullrepo` branch, and are excluded from `main` via `.git/info/exclude`.
 
 <!-- sync_contract:
 claims:

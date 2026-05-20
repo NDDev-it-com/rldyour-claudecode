@@ -1,7 +1,7 @@
 <!-- Memory Metadata
-Last updated: 2026-05-18
-Last commit: 66ef8f4 chore(release): bump VERSION + 9 plugins to 0.6.1
-Scope: AGENTS.md, .claude/CLAUDE.md, plugins/rldyour-rules/skills/project-instructions-policy/SKILL.md, plugins/rldyour-flow/scripts/instruction_docs_state.py, scripts/validate_instruction_docs.py, plugins/rldyour-serena-mcp/scripts/analyze_sync_scope.py
+Last updated: 2026-05-21
+Last commit: fb1f4db chore(release): add cross-tool contract gate
+Scope: AGENTS.md, .claude/CLAUDE.md, config/rldyour-contract.json, docs/contract-matrix.md, plugins/rldyour-rules/skills/project-instructions-policy/SKILL.md, plugins/rldyour-flow/scripts/instruction_docs_state.py, scripts/validate_instruction_docs.py, plugins/rldyour-serena-mcp/scripts/analyze_sync_scope.py
 Area: DOCS
 -->
 
@@ -15,6 +15,7 @@ Durable instruction-file policy for the repository: what belongs in `AGENTS.md`,
 
 - `AGENTS.md`: concise cross-tool project instructions.
 - `.claude/CLAUDE.md`: Claude Code-native deep memory for hook canon, subagents, budgets, diagnostics, and Don't/Done rules.
+- `config/rldyour-contract.json` and `docs/contract-matrix.md`: cross-tool parity contract referenced from the instruction docs after 0.6.3.
 - `plugins/rldyour-rules/skills/project-instructions-policy/SKILL.md`: instruction docs policy skill.
 - `plugins/rldyour-rules/references/project-instructions-and-adrs.md`: AGENTS/CLAUDE/REVIEW/ADR policy reference.
 - `plugins/rldyour-flow/scripts/instruction_docs_state.py`: detects when durable project facts changed and instruction docs need review.
@@ -33,13 +34,14 @@ Durable instruction-file policy for the repository: what belongs in `AGENTS.md`,
 - **Public-readiness community docs (0.6.0, commit `ad833b9`, follow-up `332e0e7`)**: `SECURITY.md`, `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md` added at repo root. `.github/ISSUE_TEMPLATE/bug_report.yml`, `.github/ISSUE_TEMPLATE/feature_request.yml`, `.github/ISSUE_TEMPLATE/config.yml`, `.github/PULL_REQUEST_TEMPLATE.md` added. Verified at listed files at HEAD `b4e63ec`. SECURITY.md and CONTRIBUTING.md are English-only public-facing community policy files.
 - **ADR count at HEAD**: 11 ADRs (docs/adr/0001 through 0011 + 0000-template + README). ADR-0011 added in 0.5.2 wave (`da432c6`); README ADR count updated to 11 in 0.6.0 wave (`332e0e7`). Verified at `docs/adr/` listing at HEAD `b4e63ec`.
 - `AGENTS.md` routes memory writes through `flow-memory-sync` when Stop/post-task sync requires it and through `serena-memory-sync` as a manual/fallback workflow.
+- `AGENTS.md` now lists `config/rldyour-contract.json` and `docs/contract-matrix.md` as source-of-truth files, and includes the contract validation command. `.claude/CLAUDE.md` points back to AGENTS.md for those cross-tool facts.
 - Instruction-only commits are sync-relevant. They are not treated as knowledge-only no-ops by `mark_sync_required.sh` or `serena_memory_state.py`.
 
 ## Contracts And Data
 
 - `AGENTS.md` should contain cross-tool facts: source-of-truth paths, plugin boundaries, validation/setup commands, SDLC routing, fullrepo policy, MCP transport summary, engineering constraints, and done criteria.
 - `.claude/CLAUDE.md` should contain Claude Code-specific facts: subagent matrix, hook lifecycle/canon, skill-listing budget, changelog adoption, diagnostics, and Claude-specific Don't/Done rules.
-- Current line counts at HEAD: `AGENTS.md` 205 lines; `.claude/CLAUDE.md` 200 lines (verified by `wc -l` at HEAD `6f07fe8`). Both files declare a 200-line cap in HTML maintainer comments (stripped from Claude's context per CC v2.1.72).
+- Current line counts at HEAD `fb1f4db` plus agent-only sync edits: `AGENTS.md` 200 lines; `.claude/CLAUDE.md` 199 lines (verified by `python3 scripts/validate_instruction_docs.py --require-agent-docs`). Both files declare a 200-line cap in HTML maintainer comments (stripped from Claude's context per CC v2.1.72).
 - Do not put secrets, chat transcripts, raw tokens, private cookies, or local credentials into instruction docs.
 - Do not store generic advice when a source path or command is more useful.
 - Memory taxonomy changes require updates to `AGENTS.md`, `.claude/CLAUDE.md`, `serena-memory-sync` skill, `flow-memory-sync` agent, and `CORE-01-INDEX.md`.
@@ -65,6 +67,7 @@ Durable instruction-file policy for the repository: what belongs in `AGENTS.md`,
 ## Verification
 
 - `python3 scripts/validate_instruction_docs.py --require-agent-docs`: validates instruction docs presence and line budgets.
+- `python3 scripts/validate_contract.py && python3 scripts/generate_contract_matrix.py --check`: validates the cross-tool contract surfaced by AGENTS.md.
 - `python3 plugins/rldyour-flow/scripts/instruction_docs_state.py --json | python3 -m json.tool`: explains whether docs need review and why.
 - `bash scripts/smoke_serena_memory_taxonomy.sh`: asserts `AGENTS.md` changes require memory sync and target this memory.
 - `git status --short`: should not show agent-only docs on `main` because they are fullrepo-managed.
