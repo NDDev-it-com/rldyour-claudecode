@@ -40,6 +40,24 @@ class TestParity:
         assert "0.9.9" in result.stderr
         assert "0.4.0" in result.stderr
 
+    def test_package_json_version_drift_blocked(self, patch_repo_root: Path) -> None:
+        package = patch_repo_root / "package.json"
+        package.write_text('{"name": "fixture", "version": "0.9.9"}', encoding="utf-8")
+        result = _run(patch_repo_root)
+        assert result.returncode == 1
+        assert "package.json version" in result.stderr
+        assert "0.9.9" in result.stderr
+        assert "0.4.0" in result.stderr
+
+    def test_pyproject_version_drift_blocked(self, patch_repo_root: Path) -> None:
+        pyproject = patch_repo_root / "pyproject.toml"
+        pyproject.write_text('[project]\nname = "fixture"\nversion = "0.9.9"\n', encoding="utf-8")
+        result = _run(patch_repo_root)
+        assert result.returncode == 1
+        assert "pyproject.toml project.version" in result.stderr
+        assert "0.9.9" in result.stderr
+        assert "0.4.0" in result.stderr
+
 
 class TestManifestParity:
     def test_plugin_version_drift_blocked(self, patch_repo_root: Path) -> None:

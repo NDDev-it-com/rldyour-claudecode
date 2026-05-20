@@ -15,7 +15,7 @@ Never produces weaponized exploits, persistence steps, credential extraction, or
 
 ## Coordination
 
-The `flow-security-review` subagent in `rldyour-flow` is the orchestrated security track invoked from `ry-start` / `ry-review` review phase (`maxTurns: 42` - the +6 turns over standard reviewers reserved for variant-hunt sweep). This plugin's `ry-sec-review` skill is the user-facing slash command.
+The `flow-security-review` subagent in `rldyour-flow` is the orchestrated security track invoked from `ry-start` / `ry-review` review phase (`maxTurns: 100` - the extra budget over standard reviewers is reserved for variant-hunt sweep). This plugin's `ry-sec-review` skill is the user-facing slash command.
 
 ## Dependencies
 

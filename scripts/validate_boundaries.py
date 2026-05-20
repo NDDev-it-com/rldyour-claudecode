@@ -25,6 +25,12 @@ declared boundaries:
      updating the policy file, which is the source of truth for the
      dependency graph documented in ADR-0006.
 
+  5. agent_only_path_globs parity: policy paths match
+     fullrepo_sync.AGENT_ONLY_PATTERNS exactly.
+
+  6. runtime_exclude_globs parity: policy runtime excludes match
+     fullrepo_sync.RUNTIME_EXCLUDE_PATTERNS exactly.
+
 Closes the ADR-0006 self-acknowledged gap: the Confirmation section
 previously stated "a future validate_boundaries.py (not yet implemented)
 will enforce them" - this script is that implementation.
@@ -43,10 +49,13 @@ structural boundaries - what's where, not what version it is.
 from __future__ import annotations
 
 import json
+import re
 import sys
 from pathlib import Path
 
 POLICY_PATH = Path("config/marketplace-policy.json")
+FULLREPO_SYNC_PATH = Path("plugins/rldyour-flow/scripts/fullrepo_sync.py")
+TUPLE_RE_TEMPLATE = r"^{name}\s*=\s*\((.*?)\)"
 
 
 def _load_policy(root: Path) -> dict[str, object] | None:
@@ -138,6 +147,60 @@ def _check_plugin_manifests(
             )
 
 
+def _extract_tuple_constant(path: Path, name: str) -> list[str]:
+    if not path.is_file():
+        raise FileNotFoundError(path)
+    text = path.read_text(encoding="utf-8")
+    pattern = TUPLE_RE_TEMPLATE.format(name=re.escape(name))
+    match = re.search(pattern, text, re.DOTALL | re.MULTILINE)
+    if not match:
+        raise ValueError(f"{name} tuple not found in {path}")
+    return re.findall(r'"([^"]+)"', match.group(1))
+
+
+def _check_fullrepo_policy_paths(
+    root: Path,
+    policy: dict[str, object],
+    failures: list[str],
+) -> None:
+    sync_path = root / FULLREPO_SYNC_PATH
+    try:
+        agent_only_patterns = sorted(_extract_tuple_constant(sync_path, "AGENT_ONLY_PATTERNS"))
+        runtime_excludes = sorted(_extract_tuple_constant(sync_path, "RUNTIME_EXCLUDE_PATTERNS"))
+    except (FileNotFoundError, ValueError) as exc:
+        failures.append(f"fullrepo policy source unreadable: {exc}")
+        return
+
+    raw_agent_only = policy.get("agent_only_path_globs", [])
+    if not isinstance(raw_agent_only, list):
+        failures.append(
+            f"policy.agent_only_path_globs must be a list, got "
+            f"{type(raw_agent_only).__name__}"
+        )
+        raw_agent_only = []
+    policy_agent_only = sorted(str(p) for p in raw_agent_only)
+    if policy_agent_only != agent_only_patterns:
+        failures.append(
+            "agent_only_path_globs drift - "
+            f"policy={policy_agent_only} vs fullrepo_sync.AGENT_ONLY_PATTERNS={agent_only_patterns}"
+        )
+
+    raw_runtime_excludes = policy.get("runtime_exclude_globs", [])
+    if not isinstance(raw_runtime_excludes, list):
+        failures.append(
+            f"policy.runtime_exclude_globs must be a list, got "
+            f"{type(raw_runtime_excludes).__name__}"
+        )
+        raw_runtime_excludes = []
+    policy_runtime_excludes = sorted(str(p) for p in raw_runtime_excludes)
+    if policy_runtime_excludes != runtime_excludes:
+        failures.append(
+            "runtime_exclude_globs drift - "
+            f"policy={policy_runtime_excludes} vs "
+            f"fullrepo_sync.RUNTIME_EXCLUDE_PATTERNS={runtime_excludes}"
+        )
+
+
 def main() -> int:
     root = Path(__file__).resolve().parent.parent
     policy = _load_policy(root)
@@ -186,6 +249,7 @@ def main() -> int:
         for k, v in raw_plugin_deps.items()
     }
     _check_plugin_manifests(root, plugin_deps, failures)
+    _check_fullrepo_policy_paths(root, policy, failures)
 
     if failures:
         for line in failures:
@@ -198,7 +262,8 @@ def main() -> int:
     print(
         f"OK boundaries: mcp_owner={mcp_owner!r}, "
         f"hook_owners={sorted(hook_owners)}, "
-        f"{len(plugin_deps)} plugin dependency contract(s) verified"
+        f"{len(plugin_deps)} plugin dependency contract(s), "
+        f"agent-only path policy, and runtime excludes verified"
     )
     return 0
 

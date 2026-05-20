@@ -6,6 +6,65 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+## [0.6.2] - 2026-05-20
+
+**Claude Code 2.1.145 and release-hygiene hardening.** This patch turns the
+external audit findings into enforced repository contracts: root metadata
+versions now participate in release validation, the current Claude Code CLI
+and GitHub MCP host-binary pins are refreshed, agent-only path policy is
+validated against the `fullrepo_sync.py` source of truth, and post-task sync
+is exposed as a first-class `/rldyour-flow:ry-sync` command.
+
+### Added
+
+- **`/rldyour-flow:ry-sync`** slash command as a public wrapper for the
+  existing `flow-post-task-sync` skill. It gives Claude Code users the same
+  explicit finalization entrypoint as the Stop-hook advisory path: Serena
+  freshness, instruction docs, checks, atomic commits, upstream push,
+  `fullrepo` publish, and safe branch/worktree cleanup.
+- **`tests/test_validate_boundaries.py`** coverage for `agent_only_path_globs`
+  and `runtime_exclude_globs` parity between `config/marketplace-policy.json`
+  and `plugins/rldyour-flow/scripts/fullrepo_sync.py`.
+- **Release-state unit tests** proving that drift in `package.json.version`
+  and `pyproject.toml [project].version` now fails the release gate.
+
+### Changed
+
+- Marketplace `VERSION`, all 9 plugin versions, root `package.json.version`,
+  and `pyproject.toml [project].version` bumped to `0.6.2`.
+- Claude Code CLI pin bumped from `2.1.143` to `2.1.145` in `package.json`,
+  `config/mcp-runtime-versions.env`, `config/cc-canon.json`, docs, and
+  agent instruction contracts. Local evidence: `claude --version` reported
+  `2.1.145`; npm latest/next was `2.1.145` on 2026-05-20.
+- MCP runtime pins refreshed where local validation could prove compatibility:
+  `serena-agent` `1.3.0 -> 1.5.1`, `chrome-devtools-mcp` `0.26.0 -> 1.0.1`,
+  and `GITHUB_MCP_SERVER_VERSION` `1.0.4 -> 1.0.5`. Dart remains pinned to
+  local host SDK `3.11.0` while upstream stable is `3.12.0`; bumping without
+  upgrading the host SDK would correctly fail the runtime-version gate.
+- `scripts/smoke_bootstrap_check.sh` now compares the bash
+  `AGENT_ONLY_PATHS` mirror exactly against `fullrepo_sync.py`
+  `AGENT_ONLY_PATTERNS` instead of allowing count-based drift.
+- `scripts/validate_command_skill_drift.py` now validates commands that
+  intentionally delegate to a different existing skill, so `/ry-sync`
+  delegates to `flow-post-task-sync` without becoming an unvalidated
+  command-only exception.
+- Documentation corrected to the actual Claude Code marketplace source
+  layout (`source: "./plugins/<name>"`, no `metadata.pluginRoot`), the
+  10-workflow CI inventory, and current reviewer `maxTurns` values
+  (`90` standard, `100` security).
+
+### Fixed
+
+- `scripts/validate_release_state.py` now fails when `package.json` or
+  `pyproject.toml` versions drift from `VERSION`, closing the concrete
+  `0.6.1` vs `0.5.1` release-trust gap from the audit.
+- `config/marketplace-policy.json`, `scripts/bootstrap_check.sh`, and
+  `fullrepo_sync.py` now agree on `.codex/**` as an agent-only path and on
+  runtime-only Serena markers such as `.serena/.gitignore`,
+  `.serena/project.local.yml`, and `.serena/.bootstrap_overrides.log`.
+- `.github/workflows/README.md` now lists `codeql.yml` as a required PR gate
+  and describes the actual total of 10 workflows.
+
 ## [0.6.1] - 2026-05-18
 
 **Post-public-toggle stabilisation patch.** The repository visibility
@@ -1962,7 +2021,8 @@ Release boundary cut after the 2026-05-08..2026-05-12 wave of best-practice, MCP
   shell syntax checks, frontmatter presence verification on all skills,
   agents, and commands.
 
-[Unreleased]: https://github.com/NDDev-it-com/rldyour-claudecode/compare/marketplace--v0.6.1...HEAD
+[Unreleased]: https://github.com/NDDev-it-com/rldyour-claudecode/compare/marketplace--v0.6.2...HEAD
+[0.6.2]: https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/marketplace--v0.6.2
 [0.6.1]: https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/marketplace--v0.6.1
 [0.6.0]: https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/marketplace--v0.6.0
 [0.5.2]: https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/marketplace--v0.5.2
