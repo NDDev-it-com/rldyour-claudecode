@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-20
-Last commit: 75c26e8 chore(release): prepare marketplace 0.6.2
+Last commit: 3b0ad53 chore(release): 0.6.4
 Scope: plugins/rldyour-flow/**, scripts/worktree_add.sh, AGENTS.md, .claude/CLAUDE.md, plugins/rldyour-flow/scripts/fullrepo_sync.py
 Area: FLOW
 -->

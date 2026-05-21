@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-20
-Last commit: 75c26e8 chore(release): prepare marketplace 0.6.2
+Last commit: 3b0ad53 chore(release): 0.6.4
 Scope: plugins/rldyour-mcps/.mcp.json, config/mcp-runtime-versions.env, scripts/check_mcp_runtime_versions.py, scripts/smoke_mcp_runtime.sh, scripts/smoke_mcp_capabilities.sh, AGENTS.md
 Area: MCP
 -->

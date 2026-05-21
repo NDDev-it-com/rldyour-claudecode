@@ -2,18 +2,18 @@
   "$schema": "../config/schemas/marketplace.json",
   "name": "rldyour-claudecode",
   "owner": {
-    "name": "rldyourmnd",
+    "name": "Danil Silantyev (github:rldyourmnd), CEO NDDev",
     "url": "https://github.com/rldyourmnd"
   },
-  "description": "Personal Claude Code plugin marketplace by rldyourmnd - SDLC flow, Serena, MCP, security, browser, design, LSP, rules. Персональный маркетплейс плагинов Claude Code: SDLC flow, Serena, MCP, безопасность, браузер, дизайн, LSP, правила.",
+  "description": "Personal Claude Code plugin marketplace by Danil Silantyev (github:rldyourmnd), CEO NDDev - SDLC flow, Serena, MCP, security, browser, design, LSP, rules. Персональный маркетплейс плагинов Claude Code: SDLC flow, Serena, MCP, безопасность, браузер, дизайн, LSP, правила.",
   "plugins": [
     {
       "name": "rldyour-mcps",
       "source": "./plugins/rldyour-mcps",
       "description": "Транспортный слой MCP - 13 серверов с зафиксированными версиями: Serena, Sequential Thinking, Playwright, Chrome DevTools, Context7, DeepWiki, Grep, Semgrep, shadcn, Dart/Flutter, Figma, OpenAI Docs, GitHub.",
-      "version": "0.6.3",
+      "version": "0.6.4",
       "author": {
-        "name": "rldyourmnd"
+        "name": "Danil Silantyev (github:rldyourmnd), CEO NDDev"
       },
       "category": "infrastructure",
       "tags": [
@@ -21,15 +21,15 @@
         "transport",
         "rldyour"
       ],
-      "license": "MIT"
+      "license": "AGPL-3.0-or-later"
     },
     {
       "name": "rldyour-explore",
       "source": "./plugins/rldyour-explore",
       "description": "Скиллы технического и веб-исследования + ry-explore субагент глубокого анализа (Opus 4.7 1M, max effort) через Context7/DeepWiki/Grep MCP. /ry-explore slash command included.",
-      "version": "0.6.3",
+      "version": "0.6.4",
       "author": {
-        "name": "rldyourmnd"
+        "name": "Danil Silantyev (github:rldyourmnd), CEO NDDev"
       },
       "category": "research",
       "tags": [
@@ -41,15 +41,15 @@
         "grep",
         "rldyour"
       ],
-      "license": "MIT"
+      "license": "AGPL-3.0-or-later"
     },
     {
       "name": "rldyour-serena-mcp",
       "source": "./plugins/rldyour-serena-mcp",
       "description": "Семантический воркфлоу для кода через Serena MCP + синхронизация .serena памяти + хуки жизненного цикла (UserPromptSubmit/PreToolUse/PostToolUse/Stop).",
-      "version": "0.6.3",
+      "version": "0.6.4",
       "author": {
-        "name": "rldyourmnd"
+        "name": "Danil Silantyev (github:rldyourmnd), CEO NDDev"
       },
       "category": "development",
       "tags": [
@@ -61,15 +61,15 @@
         "hooks",
         "rldyour"
       ],
-      "license": "MIT"
+      "license": "AGPL-3.0-or-later"
     },
     {
       "name": "rldyour-security",
       "source": "./plugins/rldyour-security",
       "description": "Безопасность по OWASP Top 10 2025 при реализации + защитный Mythos-style security review через /ry-sec-review slash command.",
-      "version": "0.6.3",
+      "version": "0.6.4",
       "author": {
-        "name": "rldyourmnd"
+        "name": "Danil Silantyev (github:rldyourmnd), CEO NDDev"
       },
       "category": "security",
       "tags": [
@@ -80,15 +80,15 @@
         "vulnerability-review",
         "rldyour"
       ],
-      "license": "MIT"
+      "license": "AGPL-3.0-or-later"
     },
     {
       "name": "rldyour-browser",
       "source": "./plugins/rldyour-browser",
       "description": "Браузерные воркфлоу через Playwright и Chrome DevTools MCP - валидация UI/pixel-perfect/e2e, дебаг console/network/perf, маршрутизация. Skills-only - MCP transport from rldyour-mcps. Browser workflows.",
-      "version": "0.6.3",
+      "version": "0.6.4",
       "author": {
-        "name": "rldyourmnd"
+        "name": "Danil Silantyev (github:rldyourmnd), CEO NDDev"
       },
       "category": "development",
       "tags": [
@@ -100,15 +100,15 @@
         "browser-debug",
         "rldyour"
       ],
-      "license": "MIT"
+      "license": "AGPL-3.0-or-later"
     },
     {
       "name": "rldyour-design",
       "source": "./plugins/rldyour-design",
       "description": "Сквозной дизайн-воркфлоу: Figma → код → токены → FSD → shadcn/ui → ReactBits → browser-валидация. 5 скиллов + /ry-design. Skills-only - MCP transport from rldyour-mcps.",
-      "version": "0.6.3",
+      "version": "0.6.4",
       "author": {
-        "name": "rldyourmnd"
+        "name": "Danil Silantyev (github:rldyourmnd), CEO NDDev"
       },
       "category": "design",
       "tags": [
@@ -122,15 +122,15 @@
         "ry-design",
         "rldyour"
       ],
-      "license": "MIT"
+      "license": "AGPL-3.0-or-later"
     },
     {
       "name": "rldyour-lsps",
       "source": "./plugins/rldyour-lsps",
       "description": "LSP-воркфлоу: маршрутизация, health-check, brew-first установка, Serena LSP integration. 4 skills + 2 scripts + 3 references. Покрывает Python/Rust/Dart/TS/Go/C++/Qt/YAML/Docker/HTML/CSS/Shell/JSON/TOML/Markdown.",
-      "version": "0.6.3",
+      "version": "0.6.4",
       "author": {
-        "name": "rldyourmnd"
+        "name": "Danil Silantyev (github:rldyourmnd), CEO NDDev"
       },
       "category": "development",
       "tags": [
@@ -144,15 +144,15 @@
         "clangd",
         "rldyour"
       ],
-      "license": "MIT"
+      "license": "AGPL-3.0-or-later"
     },
     {
       "name": "rldyour-flow",
       "source": "./plugins/rldyour-flow",
       "description": "Автономный SDLC-воркфлоу: ry-init/start/newp/review/deploy/sync + 6 reviewer subagents + post-task-sync + instruction-docs-sync. Хуки SessionStart/PreToolUse/PostToolUse/Stop. Fullrepo branch.",
-      "version": "0.6.3",
+      "version": "0.6.4",
       "author": {
-        "name": "rldyourmnd"
+        "name": "Danil Silantyev (github:rldyourmnd), CEO NDDev"
       },
       "category": "development",
       "tags": [
@@ -167,15 +167,15 @@
         "fullrepo",
         "rldyour"
       ],
-      "license": "MIT"
+      "license": "AGPL-3.0-or-later"
     },
     {
       "name": "rldyour-rules",
       "source": "./plugins/rldyour-rules",
       "description": "Quality-first инженерные правила: clean architecture (FSD/VSA/Hexagonal), implementation discipline, dependency policy + supply chain (SLSA L2), verification gates (pyright/ruff/ESLint v9), AGENTS.md/.claude/CLAUDE.md/MADR 4.0.0, /ry-rules-review.",
-      "version": "0.6.3",
+      "version": "0.6.4",
       "author": {
-        "name": "rldyourmnd"
+        "name": "Danil Silantyev (github:rldyourmnd), CEO NDDev"
       },
       "category": "development",
       "tags": [
@@ -190,7 +190,7 @@
         "ry-rules-review",
         "rldyour"
       ],
-      "license": "MIT"
+      "license": "AGPL-3.0-or-later"
     }
   ]
 }

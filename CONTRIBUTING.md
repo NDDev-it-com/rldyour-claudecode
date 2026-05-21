@@ -1,10 +1,10 @@
 # Contributing
 
 Thanks for your interest in `rldyour-claudecode`. This is a personal
-Claude Code plugin marketplace by `rldyourmnd`; PRs and Issues are
-welcome, but the bar is "consistency with the existing architecture
-and quality-first invariants" - drive-by patches that don't fit the
-philosophy will be redirected or closed.
+Claude Code plugin marketplace by Danil Silantyev (github:rldyourmnd),
+CEO NDDev; PRs and Issues are welcome, but the bar is
+"consistency with the existing architecture and quality-first invariants" -
+drive-by patches that don't fit the philosophy will be redirected or closed.
 
 If you want a workflow without these constraints, **fork and tailor**.
 That's the canonical way to extend this marketplace.
@@ -75,7 +75,10 @@ PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 python3 -m pytest tests/ -m "not integration"
   `perf`, `test`, `build`, `ci`, `chore`, `style`, `revert`.
 - **Atomic commits**: one logical change per commit. Separate mechanical
   refactors from behavior changes. Separate source / docs / Serena
-  knowledge.
+  knowledge. Split license/metadata, validators/tests, generated artifacts,
+  and fullrepo/Serena sync when they are independently reviewable.
+- **Published history**: do not rewrite already-pushed history without explicit
+  maintainer approval; use a follow-up commit instead.
 - **No** `--no-verify` unless explicitly requested by the maintainer.
 
 ### Quality gates
@@ -138,7 +141,7 @@ When a PR lands:
 ## License
 
 By contributing, you agree your contributions are licensed under the
-[MIT License](./LICENSE).
+[GNU Affero General Public License v3.0 or later](./LICENSE).
 
 ## Code of Conduct
 

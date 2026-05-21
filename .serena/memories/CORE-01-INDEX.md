@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-21
-Last commit: fb1f4db chore(release): add cross-tool contract gate
+Last commit: 3b0ad53 chore(release): 0.6.4
 Scope: .serena/memories/**, config/rldyour-contract.json, docs/contract-matrix.md, scripts/validate_contract.py, scripts/generate_contract_matrix.py, plugins/rldyour-serena-mcp/scripts/analyze_sync_scope.py, plugins/rldyour-serena-mcp/skills/serena-memory-sync/SKILL.md, plugins/rldyour-serena-mcp/agents/flow-memory-sync.md, scripts/smoke_serena_memory_taxonomy.sh, AGENTS.md, .claude/CLAUDE.md
 Area: CORE
 -->
@@ -107,7 +107,7 @@ All 18 active memories are catalogued in the Active Memory Map above. This index
 
 - `python3 plugins/rldyour-serena-mcp/scripts/analyze_sync_scope.py --from-ref HEAD --to-ref HEAD`: proves empty diffs produce no memory targets while still exposing the taxonomy.
 - `bash scripts/smoke_serena_memory_taxonomy.sh`: proves analyzer schema/targets, agent-instruction sync relevance, nested memory freshness, Stop advisory taxonomy, fullrepo-managed acknowledgement.
-- `python3 plugins/rldyour-serena-mcp/scripts/serena_memory_state.py`: proves freshness state and recursive memory scanning. Should report `memory_count: 18`, `is_current: True`, `memory_match_reason: direct-head-reference` at HEAD `fb1f4db`.
+- `python3 plugins/rldyour-serena-mcp/scripts/serena_memory_state.py`: proves freshness state and recursive memory scanning. Should report `memory_count: 18`, `is_current: True`, `memory_match_reason: direct-head-reference` at HEAD `3b0ad53`.
 - `python3 scripts/validate_instruction_docs.py --require-agent-docs`: proves AGENTS.md and `.claude/CLAUDE.md` are present and within policy.
 - `python3 scripts/validate_contract.py && python3 scripts/generate_contract_matrix.py --check`: proves cross-tool contract and generated matrix freshness.
 - `python3 scripts/validate_agent_tools.py`: proves agent `tools:` allowlist invariants ([[TECHDEBT-01-NOW]] R4 mitigation).

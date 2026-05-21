@@ -40,6 +40,8 @@ CHANGELOG_RELEASE_RE = re.compile(
 
 
 _GIT_TIMEOUT_SEC = 30
+EXPECTED_LICENSE = "AGPL-3.0-or-later"
+EXPECTED_AUTHOR_NAME = "Danil Silantyev"
 
 
 def _git(*args: str, cwd: Path | None = None) -> subprocess.CompletedProcess[str]:
@@ -113,6 +115,16 @@ def validate_root_metadata_parity(root: Path, version: str) -> list[str]:
                 errors.append(
                     f"package.json version={package_version!r} does not match VERSION={version!r}"
                 )
+            if package.get("license") != EXPECTED_LICENSE:
+                errors.append(
+                    f"package.json license={package.get('license')!r} "
+                    f"does not match {EXPECTED_LICENSE!r}"
+                )
+            author = package.get("author")
+            if not isinstance(author, dict) or author.get("name") != (
+                "Danil Silantyev (github:rldyourmnd), CEO NDDev"
+            ):
+                errors.append("package.json author must identify Danil Silantyev / rldyourmnd")
 
     pyproject_path = root / "pyproject.toml"
     if not pyproject_path.is_file():
@@ -130,6 +142,18 @@ def validate_root_metadata_parity(root: Path, version: str) -> list[str]:
                     f"pyproject.toml project.version={pyproject_version!r} "
                     f"does not match VERSION={version!r}"
                 )
+            pyproject_license = project.get("license") if isinstance(project, dict) else None
+            if pyproject_license != EXPECTED_LICENSE:
+                errors.append(
+                    f"pyproject.toml project.license={pyproject_license!r} "
+                    f"does not match {EXPECTED_LICENSE!r}"
+                )
+            authors = project.get("authors") if isinstance(project, dict) else None
+            if not isinstance(authors, list) or not any(
+                isinstance(author, dict) and author.get("name") == EXPECTED_AUTHOR_NAME
+                for author in authors
+            ):
+                errors.append("pyproject.toml authors must include Danil Silantyev")
 
     return errors
 

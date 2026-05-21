@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-21
-Last commit: fb1f4db chore(release): add cross-tool contract gate
+Last commit: 3b0ad53 chore(release): 0.6.4
 Scope: .claude-plugin/marketplace.json, plugins/*/.claude-plugin/plugin.json, config/rldyour-contract.json, docs/contract-matrix.md, README.md, AGENTS.md
 Area: CORE
 -->
@@ -21,14 +21,14 @@ Current business logic and architecture of the `rldyour-claudecode` marketplace.
 - `config/rldyour-contract.json`: canonical cross-tool business contract for domains, public flows, skills, agents, hooks, and CI baseline.
 - `docs/contract-matrix.md`: generated human-readable projection of `config/rldyour-contract.json`.
 
-## Current State (HEAD `fb1f4db`)
+## Current State (HEAD `3b0ad53`)
 
-- **VERSION**: `0.6.3` (release boundary, verified at `VERSION` file at HEAD `fb1f4db`).
+- **VERSION**: `0.6.4` (release boundary, verified at `VERSION` file at HEAD `3b0ad53`).
 - **Repository visibility**: **public** as of 0.6.0 wave. Toggled to public on GitHub; CodeQL is now free (ADR-0008 amendment 2026-05-18).
 - **9 plugins** verified at HEAD from `.claude-plugin/marketplace.json`: `rldyour-mcps`, `rldyour-explore`, `rldyour-serena-mcp`, `rldyour-security`, `rldyour-browser`, `rldyour-design`, `rldyour-lsps`, `rldyour-flow`, `rldyour-rules`.
-- **Per-plugin versions** (verified via `bash scripts/validate_marketplace.sh` at HEAD `fb1f4db`): all 9 plugins at `0.6.3`.
+- **Per-plugin versions** (verified via `bash scripts/validate_marketplace.sh` at HEAD `3b0ad53`): all 9 plugins at `0.6.4`.
 - **Component totals**: 32 skills, 10 slash commands, 8 subagents, 9 hook scripts in 2 hook manifests, 12 plugin-owned scripts, 16 references, 46 repository scripts, 11 GitHub workflows.
-- **Cross-tool contract** (added at HEAD `fb1f4db`): `config/rldyour-contract.json` maps 9 domains, 10 public flows, 32 Claude skills, 8 agent roles, 9 hook lifecycle entries, and 12 CI baseline entries across Claude Code, Codex, and OpenCode. `scripts/validate_contract.py` proves the local Claude adapter against real files; `scripts/generate_contract_matrix.py --check` keeps `docs/contract-matrix.md` generated.
+- **Cross-tool contract** (added at HEAD `3b0ad53`): `config/rldyour-contract.json` maps 9 domains, 10 public flows, 32 Claude skills, 8 agent roles, 9 hook lifecycle entries, and 12 CI baseline entries across Claude Code, Codex, and OpenCode. `scripts/validate_contract.py` proves the local Claude adapter against real files; `scripts/generate_contract_matrix.py --check` keeps `docs/contract-matrix.md` generated.
 - **ADR count**: 11 (docs/adr/0001 through 0011 + 0000-template + README; ADR-0011 agent-instruction-knowledge-equivalence added at HEAD `da432c6`). Verified at `docs/adr/` listing at HEAD `b4e63ec`.
 - **`marketplace.json` `owner.email` field removed** at HEAD `cbe4595` (chore: remove owner email field). `owner` object retains `name` and `url`. Verified at `.claude-plugin/marketplace.json` at HEAD `b4e63ec`.
 - The owner decides what is enabled. Repository docs state nothing is treated as enabled or correct unless explicitly decided by the owner.

@@ -180,6 +180,10 @@ Current dependency graph:
 - Quality-first: no hacks, no fake checks, no swallowed errors. See `plugins/rldyour-rules/skills/quality-first-engineering/SKILL.md`.
 - Plugin boundary + dependency policy (SLSA L2 + SBOM + lockfile): `plugins/rldyour-rules/skills/architecture-boundaries/SKILL.md`, `plugins/rldyour-rules/references/dependency-policy.md`.
 - Conventional Commits for all changes; atomic commits per logical unit; ≤ 72-char subject.
+- Keep history logical and inspectable: split unrelated implementation,
+  tests/validators, docs/instructions, license/metadata, generated artifacts,
+  and Serena/fullrepo sync when independently reviewable. Do not rewrite
+  already-pushed history without explicit owner approval.
 - Never commit secrets, runtime markers, browser artifacts, local env files. All MCP versions pinned.
 - CI workflows run on explicit user request only (`workflow_dispatch` + PR gates); see `.github/workflows/README.md`.
 - **Always Read a file before Edit/Write** (Claude Code Edit/Write track per-session Read state). For batch updates use `sed -i` via Bash (bypasses the tracker).

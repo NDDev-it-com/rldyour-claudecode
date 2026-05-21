@@ -1,15 +1,15 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "rldyour-browser",
-  "version": "0.6.3",
+  "version": "0.6.4",
   "description": "Браузерные воркфлоу через Playwright и Chrome DevTools MCP - валидация UI/pixel-perfect/e2e, дебаг console/network/runtime/performance, маршрутизация между двумя MCP. Skills-only; транспорт MCP берётся из rldyour-mcps. Browser workflows via Playwright + Chrome DevTools MCP.",
   "author": {
-    "name": "rldyourmnd",
+    "name": "Danil Silantyev (github:rldyourmnd), CEO NDDev",
     "url": "https://github.com/rldyourmnd"
   },
-  "license": "MIT",
-  "homepage": "https://github.com/nddev-it-com/rldyour-claudecode/tree/main/plugins/rldyour-browser",
-  "repository": "https://github.com/nddev-it-com/rldyour-claudecode",
+  "license": "AGPL-3.0-or-later",
+  "homepage": "https://github.com/NDDev-it-com/rldyour-claudecode/tree/main/plugins/rldyour-browser",
+  "repository": "https://github.com/NDDev-it-com/rldyour-claudecode",
   "keywords": [
     "browser",
     "playwright",

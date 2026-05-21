@@ -7,6 +7,32 @@
     "codex",
     "opencode"
   ],
+  "runtime_policy": {
+    "id": "owner-full-auto-standard",
+    "standard_mode": "owner-full-auto",
+    "aliases": [
+      "yolo",
+      "full-auto",
+      "dangerously-skip-permissions"
+    ],
+    "authoritative_decision": "docs/adr/0012-owner-full-auto-standard.md",
+    "claude": {
+      "permission_posture": "owner-trusted plugin runtime and project permissions",
+      "notes": "Claude Code does not expose Codex-style danger-full-access fields in this contract; this adapter must not downgrade the owner workflow to a safe-default policy."
+    },
+    "codex": {
+      "profile": "rldyour-yolo",
+      "approval_policy": "never",
+      "sandbox_mode": "danger-full-access",
+      "default_permissions": ":danger-no-sandbox"
+    },
+    "opencode": {
+      "primary_permissions": {
+        "edit": "allow",
+        "bash": "allow"
+      }
+    }
+  },
   "domains": [
     {
       "id": "browser",
@@ -114,6 +140,13 @@
       "claude": { "kind": "command", "path": "plugins/rldyour-flow/commands/ry-review.md", "invocation": "/rldyour-flow:ry-review" },
       "codex": { "kind": "skill", "name": "rldyour-flow:ry-review", "invocation": "$rldyour-flow:ry-review" },
       "opencode": { "kind": "command", "name": "ry-review", "invocation": "/ry-review" }
+    },
+    {
+      "id": "flow.repair",
+      "description": "Repository repair and semantic entropy normalization workflow",
+      "claude": { "kind": "command", "path": "plugins/rldyour-flow/commands/ry-repair.md", "invocation": "/rldyour-flow:ry-repair" },
+      "codex": { "kind": "skill", "name": "rldyour-flow:ry-repair", "invocation": "$rldyour-flow:ry-repair" },
+      "opencode": { "kind": "command", "name": "ry-repair", "invocation": "/ry-repair" }
     },
     {
       "id": "flow.deploy",
@@ -256,6 +289,13 @@
       "claude": { "kind": "skill", "path": "plugins/rldyour-flow/skills/ry-review/SKILL.md", "name": "ry-review" },
       "codex": { "kind": "skill", "name": "rldyour-flow:ry-review" },
       "opencode": { "kind": "skill", "name": "ry-review" }
+    },
+    {
+      "id": "flow.ry-repair",
+      "description": "Repository repair and semantic entropy normalization",
+      "claude": { "kind": "skill", "path": "plugins/rldyour-flow/skills/ry-repair/SKILL.md", "name": "ry-repair" },
+      "codex": { "kind": "skill", "name": "rldyour-flow:ry-repair" },
+      "opencode": { "kind": "skill", "name": "ry-repair" }
     },
     {
       "id": "flow.ry-start",

@@ -1,15 +1,15 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "rldyour-lsps",
-  "version": "0.6.3",
+  "version": "0.6.4",
   "description": "LSP-воркфлоу для Claude Code: маршрутизация, health-checks, brew-first установка, Serena LSP integration. Skills + scripts + references. Покрывает Python, Rust, Dart/Flutter, TS/JS, Go, C/C++, Qt, YAML, Docker, HTML/CSS, Shell, JSON, TOML, Markdown.",
   "author": {
-    "name": "rldyourmnd",
+    "name": "Danil Silantyev (github:rldyourmnd), CEO NDDev",
     "url": "https://github.com/rldyourmnd"
   },
-  "license": "MIT",
-  "homepage": "https://github.com/nddev-it-com/rldyour-claudecode/tree/main/plugins/rldyour-lsps",
-  "repository": "https://github.com/nddev-it-com/rldyour-claudecode",
+  "license": "AGPL-3.0-or-later",
+  "homepage": "https://github.com/NDDev-it-com/rldyour-claudecode/tree/main/plugins/rldyour-lsps",
+  "repository": "https://github.com/NDDev-it-com/rldyour-claudecode",
   "keywords": [
     "lsp",
     "language-server",

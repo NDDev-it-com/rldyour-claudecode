@@ -6,6 +6,25 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+## [0.6.4] - 2026-05-21
+
+### Changed
+
+- Marketplace `VERSION`, root package metadata, and all 9 plugin manifests
+  bumped to `0.6.4`. Local release evidence: `bash
+  scripts/validate_marketplace.sh` passed end-to-end on 2026-05-21.
+- Claude Code CLI compatibility pin moved from `2.1.145` to `2.1.146`.
+  The 2026-05-21 baseline matters for rldyour flows because it fixes MCP
+  pagination and preserves explicit AskUserQuestion decision gates in Auto
+  mode.
+- Repository, marketplace, and plugin metadata now use AGPL-3.0-or-later with
+  canonical authorship for Danil Silantyev (`github:rldyourmnd`), CEO NDDev.
+  Release validators now fail on license or author drift.
+- `fullrepo_sync.py` now records remote configuration, local tree parity, and
+  generated `fullrepo` commit author/committer identity; `flow_post_task_state.py`
+  no longer treats a missing remote as a Stop-loop condition when the local
+  `fullrepo` snapshot already matches agent-only context.
+
 ## [0.6.3] - 2026-05-21
 
 **Cross-tool contract hardening.** This patch closes the remaining audit gap
@@ -2057,7 +2076,8 @@ Release boundary cut after the 2026-05-08..2026-05-12 wave of best-practice, MCP
   shell syntax checks, frontmatter presence verification on all skills,
   agents, and commands.
 
-[Unreleased]: https://github.com/NDDev-it-com/rldyour-claudecode/compare/marketplace--v0.6.3...HEAD
+[Unreleased]: https://github.com/NDDev-it-com/rldyour-claudecode/compare/marketplace--v0.6.4...HEAD
+[0.6.4]: https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/marketplace--v0.6.4
 [0.6.3]: https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/marketplace--v0.6.3
 [0.6.2]: https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/marketplace--v0.6.2
 [0.6.1]: https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/marketplace--v0.6.1

@@ -162,7 +162,11 @@ Capability smoke (added 2026-05-12): `scripts/smoke_mcp_capabilities.sh` perform
 - `model: opus[1m]` is the canonical bracketed form for Opus 4.7 1M context (used by `ry-explore`); requires CC **v2.1.111+**.
 - `model: sonnet` is the canonical short form for reviewer subagents.
 - Slash command frontmatter: `description`, `argument-hint`, optional `context: fork` and `agent: <name>`. Bare `model:` on a slash command is silently ignored without `context: fork` - pair them or delegate via `agent:`.
-- Conventional Commits, ≤72 char subjects, atomic commits per logical unit. Separate commits for source / docs / Serena knowledge when it improves history clarity.
+- Conventional Commits, ≤72 char subjects, atomic commits per logical unit.
+  Separate commits for source, tests/validators, docs/instructions,
+  license/metadata, generated artifacts, and Serena/fullrepo sync when it
+  improves history clarity. Do not rewrite already-pushed history without
+  explicit owner approval.
 - All MCP server versions are pinned (stdio with `==X.Y.Z`; HTTP servers by URL).
 - `allowed-tools` may mix built-in tool names (`Read`, `Write`, `Edit`, `Grep`, `Glob`, `Bash`, `WebSearch`, `WebFetch`) and MCP wildcards (`mcp__plugin_rldyour-mcps_<server>__*`) in the same skill - pattern is validated by `claude plugin validate` and used by `serena-code-workflow`, `serena-memory-sync`, `lsp-routing`, `serena-lsp-integration`, `figma-to-code`, `ry-design`, `design-system-implementation`.
 
