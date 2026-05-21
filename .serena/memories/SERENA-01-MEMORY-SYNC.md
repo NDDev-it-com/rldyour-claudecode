@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-21
-Last commit: 3b0ad53 chore(release): 0.6.4
+Last commit: 84c28c2 fix(bootstrap): resolve git paths in submodules
 Scope: plugins/rldyour-serena-mcp/scripts/analyze_sync_scope.py, plugins/rldyour-serena-mcp/scripts/serena_memory_state.py, plugins/rldyour-serena-mcp/scripts/commit_serena_knowledge.sh, plugins/rldyour-serena-mcp/hooks/*.sh, plugins/rldyour-serena-mcp/skills/serena-memory-sync/SKILL.md, plugins/rldyour-serena-mcp/agents/flow-memory-sync.md, scripts/smoke_serena_memory_taxonomy.sh, config/rldyour-contract.json, scripts/validate_contract.py, scripts/generate_contract_matrix.py, tests/test_validate_contract.py, docs/adr/0011-agent-instruction-knowledge-equivalence.md, tests/test_serena_memory_state.py
 Area: SERENA
 -->
@@ -40,7 +40,7 @@ Durable contract for Serena memory freshness, impact analysis, scoped sync, and 
 - **`_is_knowledge_path()` precise-match semantics (0.5.2, commit `03afa2f`, F-3 closure)**: directory entries (ending in `/`) use `startswith`; exact-file entries (e.g. `AGENTS.md`, `.github/copilot-instructions.md`) use `==`; `.aider` is a dotfile-family special case matching `.aider`, `.aiderignore`, `.aider.conf.yml`, `.aider.chat.history.md`. Prevents false-positive prefix matches like `AGENTS.md.bak` or `.github/copilot-instructions.mdx`. Verified at `plugins/rldyour-serena-mcp/scripts/serena_memory_state.py:179-210` at HEAD `da432c6`.
 - **`knowledge-only-commits-since-sync` freshness branch**: `serena_memory_state.py` sets `memory_match_reason = "knowledge-only-commits-since-sync"` when all commits since the newest synced memory touched only `SERENA_KNOWLEDGE_PREFIXES` + `AGENT_INSTRUCTION_PATHS`. Verified at `plugins/rldyour-serena-mcp/scripts/serena_memory_state.py:285-295` at HEAD `da432c6`.
 - Analyzer targets include `CLAUDECODE-01-PLUGIN-CANON.md` for plugin component contracts and Claude Code instruction context.
-- For the 0.6.4 release sync wave at HEAD `3b0ad53`, `analyze_sync_scope.py --from-ref HEAD^ --to-ref HEAD` classified 25 files across 17 areas and targeted `CLAUDECODE-01-PLUGIN-CANON.md`, `CORE-02-MARKETPLACE.md`, `RELEASE-01-VALIDATION.md`, `SERENA-01-MEMORY-SYNC.md`, and `TECHDEBT-01-NOW.md`. This was a high-sync-focus release/config/CI wave, not a taxonomy-shape change.
+- For the 0.6.7 release sync wave at HEAD `84c28c2`, `serena_memory_state.py` classified changes since the previous synced memory commit as high-sync-focus release/config/bootstrap work and targeted `CLAUDECODE-01-PLUGIN-CANON.md`, `CORE-02-MARKETPLACE.md`, `FLOW-01-SDLC.md`, `HOOKS-01-LIFECYCLE.md`, `MCP-01-TRANSPORT.md`, `RELEASE-01-VALIDATION.md`, `SERENA-01-MEMORY-SYNC.md`, and `TECHDEBT-01-NOW.md`.
 - `serena_memory_state.py` scans `.serena/memories/**/*.md` so nested memories remain freshness-aware if future taxonomy uses subdirectories.
 - `commit_serena_knowledge.sh` uses `git status --porcelain -uall`, filters runtime marker files, clears markers only when memory state matches HEAD, and refuses fullrepo-managed stale memories even when the normal branch has no tracked knowledge diff.
 - `stop_memory_sync.sh` writes compound fingerprint `${HEAD_SHA}:${NEWEST_SHA:-none}` to `.serena/.sync_marker` (commit `23901c6`, D32). Verified at `plugins/rldyour-serena-mcp/hooks/stop_memory_sync.sh:72-77` at HEAD.

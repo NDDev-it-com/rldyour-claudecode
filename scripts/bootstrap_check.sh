@@ -158,7 +158,7 @@ fi
 echo "OK bootstrap clean (tracked_agent_paths=0)"
 
 step ".git/info/exclude block installed"
-EXCLUDE_FILE=".git/info/exclude"
+EXCLUDE_FILE="$(git rev-parse --git-path info/exclude 2>/dev/null || printf '.git/info/exclude')"
 if [ -f "$EXCLUDE_FILE" ] && grep -q "rldyour fullrepo agent-only files" "$EXCLUDE_FILE"; then
   echo "OK exclude block present"
 else
@@ -249,19 +249,22 @@ else
 fi
 
 step "git pre-push hook (advisory)"
-if [ ! -d .git ]; then
+if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
   echo "INFO not in a git repository; skipping pre-push hook check"
-elif [ -e .git/hooks/pre-push ] && grep -q "rldyour" .git/hooks/pre-push 2>/dev/null; then
-  echo "OK rldyour pre-push guard installed at .git/hooks/pre-push"
-elif [ -e .git/hooks/pre-push ]; then
-  echo "INFO .git/hooks/pre-push exists but is not the rldyour guard."
-  echo "     To install/upgrade: bash scripts/install_local_git_hooks.sh --apply"
 else
-  echo "INFO no .git/hooks/pre-push installed."
-  echo "     To enable the rldyour pre-push guard (recommended for product"
-  echo "     repositories that consume this marketplace):"
-  echo "       bash scripts/install_local_git_hooks.sh --dry-run    # preview"
-  echo "       bash scripts/install_local_git_hooks.sh --apply      # install"
+  PRE_PUSH_HOOK="$(git rev-parse --git-path hooks/pre-push)"
+  if [ -e "$PRE_PUSH_HOOK" ] && grep -q "rldyour" "$PRE_PUSH_HOOK" 2>/dev/null; then
+    echo "OK rldyour pre-push guard installed at $PRE_PUSH_HOOK"
+  elif [ -e "$PRE_PUSH_HOOK" ]; then
+    echo "INFO $PRE_PUSH_HOOK exists but is not the rldyour guard."
+    echo "     To install/upgrade: bash scripts/install_local_git_hooks.sh --apply"
+  else
+    echo "INFO no git pre-push hook installed."
+    echo "     To enable the rldyour pre-push guard (recommended for product"
+    echo "     repositories that consume this marketplace):"
+    echo "       bash scripts/install_local_git_hooks.sh --dry-run    # preview"
+    echo "       bash scripts/install_local_git_hooks.sh --apply      # install"
+  fi
 fi
 
 printf '\n\033[1;32m✔ bootstrap_check passed\033[0m\n'

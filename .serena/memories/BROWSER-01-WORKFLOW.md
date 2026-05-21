@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-17
-Last commit: 3b0ad53 chore(release): 0.6.4
+Last commit: 84c28c2 fix(bootstrap): resolve git paths in submodules
 Scope: plugins/rldyour-browser/skills/browser-tool-routing/SKILL.md, plugins/rldyour-browser/skills/browser-validation/SKILL.md, plugins/rldyour-browser/skills/browser-debug/SKILL.md, plugins/rldyour-mcps/.mcp.json (playwright + chrome-devtools entries)
 Area: BROWSER
 -->

@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-17
-Last commit: 3b0ad53 chore(release): 0.6.4
+Last commit: 84c28c2 fix(bootstrap): resolve git paths in submodules
 Scope: plugins/rldyour-design/skills/ry-design/SKILL.md, plugins/rldyour-design/skills/figma-to-code/SKILL.md, plugins/rldyour-design/skills/design-system-implementation/SKILL.md, plugins/rldyour-design/skills/fsd-frontend-architecture/SKILL.md, plugins/rldyour-design/skills/design-validation/SKILL.md, plugins/rldyour-design/commands/ry-design.md, plugins/rldyour-mcps/.mcp.json (figma + shadcn entries)
 Area: DESIGN
 -->

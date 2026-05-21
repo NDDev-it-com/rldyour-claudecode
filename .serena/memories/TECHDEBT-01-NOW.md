@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-21
-Last commit: 3b0ad53 chore(release): 0.6.4
+Last commit: 84c28c2 fix(bootstrap): resolve git paths in submodules
 Scope: Serena memory sync, hook gates, fullrepo lifecycle, MCP pins, validation harness, cross-tool contract, current implementation risks
 Area: TECHDEBT
 -->
@@ -13,7 +13,7 @@ Open technical debt, implementation mistakes already fixed, and anti-regression 
 
 ## Source Of Truth
 
-- `scripts/bootstrap_check.sh`: divergence guard (R5 mitigation, lines 31-138).
+- `scripts/bootstrap_check.sh`: divergence guard (R5 mitigation) and submodule-safe Git path resolution through `git rev-parse --git-path` (0.6.7).
 - `scripts/smoke_bootstrap_check.sh`: R5 behavior smoke (7 assertions at HEAD).
 - `scripts/validate_marketplace.sh`: full validation harness; wires bootstrap smoke at line 144.
 - `.github/workflows/validate.yml`: CI wires bootstrap smoke at line 141.
@@ -37,6 +37,7 @@ Open technical debt, implementation mistakes already fixed, and anti-regression 
 - Impact: broken MCP onboarding, false-positive smoke baselines, or session-start failures.
 - Mitigation in place: `scripts/check_mcp_runtime_versions.py`, `scripts/smoke_mcp_runtime.sh`, and `scripts/smoke_mcp_capabilities.sh`.
 - Prevention: update `.mcp.json`, `config/mcp-runtime-versions.env`, docs/changelog, and validation evidence in one change.
+- Latest non-MCP bootstrap sync note: `84c28c2` fixed `scripts/bootstrap_check.sh` path resolution for submodules; this closes the local false-negative where `.git` is a gitfile and `.git/info/exclude` does not exist at the worktree root.
 
 ### R2. Memory writes still require explicit verified sync pass
 

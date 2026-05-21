@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-20
-Last commit: 3b0ad53 chore(release): 0.6.4
+Last commit: 84c28c2 fix(bootstrap): resolve git paths in submodules
 Scope: plugins/rldyour-flow/**, scripts/worktree_add.sh, AGENTS.md, .claude/CLAUDE.md, plugins/rldyour-flow/scripts/fullrepo_sync.py
 Area: FLOW
 -->
@@ -32,6 +32,7 @@ rldyour-flow orchestration contracts for init/start/review/deploy workflows, rev
 - `reviewer-protocol.md` is the shared contract for subagent result transport: full reports are written to `<report_dir>/<reviewer-name>.md` with heredoc marker `RLDYOUR_REPORT_EOF`, and parent summaries include count + capped one-liner findings with `info` severity support; 6-track output is compacted to prevent Claude Code parent-context overflow. The **Output Transport** section of `plugins/rldyour-flow/references/reviewer-protocol.md` is the authoritative reference for run_id format, report directory layout, reviewer write contract, compact summary structure (cap 30 entries, 4 KB limit), and orchestrator read contract.
 - `ry-start` and `ry-review` must read each full report file for every `critical` and `high` finding before disposition because `flow-security-review` carries `Category`, `Attack path`, and `Verification` fields only in the report body.
 - Fullrepo-managed repositories keep agent-only files out of `main` and publish them to `origin/fullrepo`. `scripts/bootstrap_check.sh` now includes `.codex` in the pre-bootstrap divergence guard, and `scripts/smoke_bootstrap_check.sh` verifies exact static parity between the Bash `AGENT_ONLY_PATHS` roots and `fullrepo_sync.AGENT_ONLY_PATTERNS`.
+- `scripts/bootstrap_check.sh` must derive exclude and hook paths from Git (`git rev-parse --git-path info/exclude` and `git rev-parse --git-path hooks/pre-push`) so the fullrepo/bootstrap guard works in submodule checkouts as well as standalone repositories. Fixed at `84c28c2`.
 
 ## Fullrepo Contract
 
