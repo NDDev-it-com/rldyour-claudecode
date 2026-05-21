@@ -1,18 +1,18 @@
 <!-- Memory Metadata
 Last updated: 2026-05-22
 Last commit: 9330d026c96dcf7fd24ea9d6e70aebf063415511 feat(flow): align stop lifecycle and numeric releases
-Scope: security posture and blocking/warning policy
-Area: SECURITY
+Scope: always-needed repository context
+Area: CONTEXT
 -->
 
-# SECURITY-01-OWASP
+# Core Context
 
 ## Scope
-security posture and blocking/warning policy
+always-needed repository context
 
 ## Current source of truth
-- `path:plugins/rldyour-security`
 - `path:README.md`
+- `path:config/rldyour-contract.json`
 
 ## Last verified
 - date: 2026-05-22
@@ -20,12 +20,12 @@ security posture and blocking/warning policy
 - checked by: Codex ry-start memory-domain normalization
 
 ## Facts
-- Security memories record block/warn/review classes and defensive-only review policy.
+- Context memories hold stable facts that agents need before planning or editing.
 
 ## Evidence
 - `commit:9330d026c96dcf7fd24ea9d6e70aebf063415511`
-- `path:plugins/rldyour-security`
 - `path:README.md`
+- `path:config/rldyour-contract.json`
 
 ## Known pitfalls
 - Treat this memory as derived context. Current code, configuration, runtime output, and GitHub state override stale memory text.

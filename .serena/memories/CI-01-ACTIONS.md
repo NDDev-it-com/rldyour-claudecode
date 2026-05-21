@@ -1,17 +1,17 @@
 <!-- Memory Metadata
 Last updated: 2026-05-22
 Last commit: 9330d026c96dcf7fd24ea9d6e70aebf063415511 feat(flow): align stop lifecycle and numeric releases
-Scope: security posture and blocking/warning policy
-Area: SECURITY
+Scope: GitHub Actions and local CI policy
+Area: CI
 -->
 
-# SECURITY-01-OWASP
+# CI Actions
 
 ## Scope
-security posture and blocking/warning policy
+GitHub Actions and local CI policy
 
 ## Current source of truth
-- `path:plugins/rldyour-security`
+- `path:.github/workflows`
 - `path:README.md`
 
 ## Last verified
@@ -20,11 +20,11 @@ security posture and blocking/warning policy
 - checked by: Codex ry-start memory-domain normalization
 
 ## Facts
-- Security memories record block/warn/review classes and defensive-only review policy.
+- CI memories record which checks prove repository integrity and which checks are intentionally lightweight.
 
 ## Evidence
 - `commit:9330d026c96dcf7fd24ea9d6e70aebf063415511`
-- `path:plugins/rldyour-security`
+- `path:.github/workflows`
 - `path:README.md`
 
 ## Known pitfalls

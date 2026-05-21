@@ -1,8 +1,8 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "rldyour-serena-mcp",
-  "version": "0.6.4",
-  "description": "Серена-первый воркфлоу для кода + синхронизация .serena памяти + хуки жизненного цикла (UserPromptSubmit/PreToolUse/PostToolUse/Stop). Транспорт Serena MCP берётся из rldyour-mcps. Semantic code inspection layer for Claude Code.",
+  "version": "0.6.8",
+  "description": "Серена-первый воркфлоу для кода + синхронизация .serena памяти + prompt/tool marker hooks (UserPromptSubmit/PreToolUse/PostToolUse). Stop orchestration belongs to rldyour-flow. Транспорт Serena MCP берётся из rldyour-mcps.",
   "author": {
     "name": "Danil Silantyev (github:rldyourmnd), CEO NDDev",
     "url": "https://github.com/rldyourmnd"

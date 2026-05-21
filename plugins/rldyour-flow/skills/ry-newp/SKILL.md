@@ -19,6 +19,14 @@ Design a new project with enough rigor that implementation can start with clear 
 5. Ask for approval before creating any scaffold code.
 6. If scaffold is approved, create the minimal useful project structure, commit atomically, and initialize Serena memories.
 
+## Serena Memory Seeds
+
+After scaffold approval and the first real commit, initialize Serena memories
+from verified project facts only. At minimum seed `CONTEXT-01-CORE.md` for
+current source-of-truth facts and `FUTURE-01-VISION.md` for future-shape
+constraints. Propose ADR memories for non-obvious decisions, but do not write
+ADR meaning without explicit owner approval.
+
 ## Output
 
 Produce English project documents and Russian user-facing summaries.

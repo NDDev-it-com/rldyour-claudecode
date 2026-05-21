@@ -28,6 +28,15 @@ Implement a task to a high-quality, scalable, synchronized state. Speed is secon
 14. Run review phase with reviewer subagents (`flow-architecture-review`, `flow-quality-review`, `flow-consistency-review`, `flow-integration-review`, `flow-verification-review`, `flow-security-review`) when applicable.
 15. Run `flow-post-task-sync` before final response.
 
+## Deploy Intent Routing
+
+If the user request includes deploy, production, server rollout, sync-and-deploy,
+or a named deployment target, do not finish after implementation. After code
+validation, reviewer fixes, and Serena/docs sync, route into `ry-deploy` with
+the same scope and target. If the deploy contract is incomplete, ask for the
+missing server, branch, environment, health-check, rollback, or credential
+decision before deploying. Never invent server access or deployment targets.
+
 ## Automatic Helper Routing
 
 The user normally invokes only `rldyour-flow` commands and writes prompts in Russian. `ry-start` must route helper skills automatically instead of waiting for explicit helper skill names:

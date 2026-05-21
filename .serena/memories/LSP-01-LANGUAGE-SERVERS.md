@@ -1,17 +1,17 @@
 <!-- Memory Metadata
 Last updated: 2026-05-22
 Last commit: 9330d026c96dcf7fd24ea9d6e70aebf063415511 feat(flow): align stop lifecycle and numeric releases
-Scope: security posture and blocking/warning policy
-Area: SECURITY
+Scope: language-server setup and diagnostic proof
+Area: LSP
 -->
 
-# SECURITY-01-OWASP
+# Language Server Quality Gates
 
 ## Scope
-security posture and blocking/warning policy
+language-server setup and diagnostic proof
 
 ## Current source of truth
-- `path:plugins/rldyour-security`
+- `path:plugins/rldyour-lsps`
 - `path:README.md`
 
 ## Last verified
@@ -20,11 +20,11 @@ security posture and blocking/warning policy
 - checked by: Codex ry-start memory-domain normalization
 
 ## Facts
-- Security memories record block/warn/review classes and defensive-only review policy.
+- LSP memories record language-server coverage and diagnostic proof requirements.
 
 ## Evidence
 - `commit:9330d026c96dcf7fd24ea9d6e70aebf063415511`
-- `path:plugins/rldyour-security`
+- `path:plugins/rldyour-lsps`
 - `path:README.md`
 
 ## Known pitfalls

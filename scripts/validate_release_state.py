@@ -10,10 +10,10 @@ Hard invariants enforced before any release tag is pushed:
    .claude-plugin/marketplace.json match plugins/*/.claude-plugin/plugin.json
    (already enforced by validate_plugin_versions.py - we re-call it
    structurally for tag-cycle context).
-4. Tag naming convention: if a git tag named `marketplace--v<VERSION>` or
-   `<plugin>--v<plugin_version>` exists, it must point at HEAD (current
-   release commit) and not any earlier commit. Tags that do not yet exist
-   are not flagged - the caller (release.yml workflow) creates them.
+4. Tag naming convention: if a git tag named `<VERSION>` exists, it must
+   point at HEAD (current release commit) and not any earlier commit. Tags
+   that do not yet exist are not flagged - the caller (release.yml workflow)
+   creates them.
 5. scripts/release_manifest.py produces parseable JSON that includes the
    declared VERSION and per-plugin versions.
 
@@ -192,7 +192,7 @@ def validate_tag_alignment(root: Path, version: str) -> list[str]:
     head = _head_sha(cwd=root)
     if not head:
         return ["INFO not a git repository or HEAD unreadable; skipping tag alignment"]
-    candidate = f"marketplace--v{version}"
+    candidate = version
     tag_sha = _tag_sha(candidate, cwd=root)
     if tag_sha is None:
         warnings.append(

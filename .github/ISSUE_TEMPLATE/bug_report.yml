@@ -17,7 +17,7 @@ body:
     id: version
     attributes:
       label: Marketplace version
-      description: Output of `cat VERSION` or the `marketplace--v<X.Y.Z>` tag in use.
+      description: Output of `cat VERSION` or the numeric `X.Y.Z` release tag in use.
       placeholder: "0.6.0"
     validations:
       required: true

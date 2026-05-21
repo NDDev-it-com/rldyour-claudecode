@@ -1,17 +1,18 @@
 <!-- Memory Metadata
 Last updated: 2026-05-22
 Last commit: 9330d026c96dcf7fd24ea9d6e70aebf063415511 feat(flow): align stop lifecycle and numeric releases
-Scope: security posture and blocking/warning policy
-Area: SECURITY
+Scope: validation gates and test suites
+Area: TESTS
 -->
 
-# SECURITY-01-OWASP
+# Validation Gates
 
 ## Scope
-security posture and blocking/warning policy
+validation gates and test suites
 
 ## Current source of truth
-- `path:plugins/rldyour-security`
+- `path:scripts`
+- `path:.github/workflows`
 - `path:README.md`
 
 ## Last verified
@@ -20,11 +21,12 @@ security posture and blocking/warning policy
 - checked by: Codex ry-start memory-domain normalization
 
 ## Facts
-- Security memories record block/warn/review classes and defensive-only review policy.
+- Test memories record which suites and smoke tests prove the touched behavior.
 
 ## Evidence
 - `commit:9330d026c96dcf7fd24ea9d6e70aebf063415511`
-- `path:plugins/rldyour-security`
+- `path:scripts`
+- `path:.github/workflows`
 - `path:README.md`
 
 ## Known pitfalls
