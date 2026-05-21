@@ -8,6 +8,10 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ### Changed
 
+- Claude Code CLI compatibility pin moved from `2.1.145` to `2.1.146`.
+  The 2026-05-21 baseline matters for rldyour flows because it fixes MCP
+  pagination and preserves explicit AskUserQuestion decision gates in Auto
+  mode.
 - Repository, marketplace, and plugin metadata now use AGPL-3.0-or-later with
   canonical authorship for Danil Silantyev (`github:rldyourmnd`), CEO &
   Engineer NDDev. Release validators now fail on license or author drift.

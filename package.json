@@ -13,7 +13,7 @@
     "node": ">=22.0.0"
   },
   "devDependencies": {
-    "@anthropic-ai/claude-code": "2.1.145"
+    "@anthropic-ai/claude-code": "2.1.146"
   },
   "author": {
     "name": "Danil Silantyev (github:rldyourmnd), CEO & Engineer NDDev",
