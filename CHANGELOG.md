@@ -6,6 +6,14 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+## [0.6.7] - 2026-05-22
+
+### Fixed
+
+- `scripts/bootstrap_check.sh` now resolves `.git/info/exclude` and
+  `hooks/pre-push` through `git rev-parse --git-path`, so fresh-bootstrap
+  validation works in submodule checkouts where `.git` is a file.
+
 ## [0.6.6] - 2026-05-22
 
 ### Changed
