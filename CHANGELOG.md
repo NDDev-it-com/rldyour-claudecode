@@ -6,6 +6,26 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+## [0.6.8] - 2026-05-22
+
+### Changed
+
+- Primary GitHub Release tags are now numeric-only (`X.Y.Z`) and must match
+  root `VERSION`; legacy `marketplace--v*` and per-plugin `--v*` tags are kept
+  as historical/cache metadata only.
+- `ry-start` now routes explicit deploy/server rollout intent into `ry-deploy`
+  after implementation validation and sync instead of stopping at code changes.
+- `ry-review` now defines time-window, PR, issue, branch, and last-deploy target
+  parsing before reviewer dispatch.
+- `ry-newp` now explicitly seeds `CONTEXT-01-CORE.md` and
+  `FUTURE-01-VISION.md` after approved scaffold commits.
+
+### Fixed
+
+- `rldyour-flow` is the single authoritative Claude Stop lifecycle owner;
+  `rldyour-serena-mcp` no longer registers a parallel Stop hook that could race
+  the ordered dispatcher.
+
 ## [0.6.7] - 2026-05-22
 
 ### Fixed
@@ -2104,7 +2124,11 @@ Release boundary cut after the 2026-05-08..2026-05-12 wave of best-practice, MCP
   shell syntax checks, frontmatter presence verification on all skills,
   agents, and commands.
 
-[Unreleased]: https://github.com/NDDev-it-com/rldyour-claudecode/compare/marketplace--v0.6.4...HEAD
+[Unreleased]: https://github.com/NDDev-it-com/rldyour-claudecode/compare/0.6.8...HEAD
+[0.6.8]: https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/0.6.8
+[0.6.7]: https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/marketplace--v0.6.7
+[0.6.6]: https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/marketplace--v0.6.6
+[0.6.5]: https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/marketplace--v0.6.5
 [0.6.4]: https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/marketplace--v0.6.4
 [0.6.3]: https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/marketplace--v0.6.3
 [0.6.2]: https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/marketplace--v0.6.2

@@ -29,12 +29,12 @@ This project and all first-party marketplace plugins are licensed under the GNU 
 |---|---|---|---|---|---|---|---|---|---|
 | `rldyour-mcps` | `0.6.5` | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 0 |
 | `rldyour-explore` | `0.6.4` | 2 | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| `rldyour-serena-mcp` | `0.6.4` | 2 | 0 | 1 | 4 | 3 | 0 | 0 | 0 |
+| `rldyour-serena-mcp` | `0.6.8` | 2 | 0 | 1 | 4 | 3 | 0 | 0 | 0 |
 | `rldyour-security` | `0.6.4` | 2 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
 | `rldyour-browser` | `0.6.4` | 3 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | `rldyour-design` | `0.6.5` | 5 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
 | `rldyour-lsps` | `0.6.4` | 4 | 0 | 0 | 0 | 2 | 3 | 0 | 1 |
-| `rldyour-flow` | `0.6.5` | 8 | 7 | 6 | 6 | 7 | 7 | 0 | 0 |
+| `rldyour-flow` | `0.6.8` | 8 | 7 | 6 | 6 | 7 | 7 | 0 | 0 |
 | `rldyour-rules` | `0.6.4` | 7 | 1 | 0 | 0 | 0 | 6 | 0 | 0 |
 
 <!-- inventory:end -->
@@ -181,6 +181,6 @@ Reference documents:
 
 - **Issues**: [github.com/NDDev-it-com/rldyour-claudecode/issues](https://github.com/NDDev-it-com/rldyour-claudecode/issues) - bug reports, regression evidence, missing-component requests.
 - **Discussions**: [github.com/NDDev-it-com/rldyour-claudecode/discussions](https://github.com/NDDev-it-com/rldyour-claudecode/discussions) - general questions, workflow advice, plugin behaviour clarifications, sharing usage patterns.
-- **Releases**: [github.com/NDDev-it-com/rldyour-claudecode/releases](https://github.com/NDDev-it-com/rldyour-claudecode/releases) - marketplace boundary tags (`marketplace--vX.Y.Z`) and per-plugin tags (`<plugin>--vX.Y.Z`) with release notes from CHANGELOG.
+- **Releases**: [github.com/NDDev-it-com/rldyour-claudecode/releases](https://github.com/NDDev-it-com/rldyour-claudecode/releases) - numeric product tags (`X.Y.Z`) with release notes from CHANGELOG.
 
 This is a personal marketplace - response time is best-effort, no SLA. Feel free to fork and tailor to your own workflow.

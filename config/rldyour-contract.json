@@ -520,8 +520,8 @@
     },
     {
       "id": "task.stop.memory-sync",
-      "description": "Block final response when Serena memory sync is required",
-      "claude": { "plugin": "rldyour-serena-mcp", "event": "Stop", "script": "plugins/rldyour-serena-mcp/hooks/stop_memory_sync.sh" },
+      "description": "Block final response when Serena memory sync is required via ordered flow dispatcher",
+      "claude": { "plugin": "rldyour-flow", "event": "Stop", "script": "plugins/rldyour-flow/hooks/stop_lifecycle_dispatcher.sh" },
       "codex": { "name": "stop_memory_sync", "status": "plugin hook when plugin_hooks=true and hook is trusted" },
       "opencode": { "name": "task stop plugin event", "status": "adapter-specific stop hook" }
     },

@@ -48,14 +48,17 @@ Update `CHANGELOG.md` (Keep-a-Changelog format) before tagging:
 
 ## Tagging
 
-Use `claude plugin tag --push` (CC v2.1.118+) - it validates that `plugin.json` and the marketplace entry agree on version, refuses dirty worktrees and pre-existing tags, then pushes the tag.
+Primary release tags are numeric-only and must equal root `VERSION` exactly:
+`X.Y.Z`. Historical `marketplace--v*` and `<plugin>--v*` tags may remain in
+Git history, but new GitHub Releases are created only from the numeric product
+tag.
 
-Tag conventions:
+If plugin-scoped cache tags are needed for Claude Code marketplace behavior,
+use `claude plugin tag --push` (CC v2.1.118+) after the product release commit;
+those tags are implementation metadata and do not trigger the release workflow.
 
-- Per-plugin: `<plugin-name>--v<version>` (e.g. `rldyour-flow--v0.2.0`).
-- Marketplace-wide (rare): `marketplace--v<version>` based on root `VERSION`.
-
-Manual fallback when `claude plugin tag` is not available:
+Manual fallback when a plugin-scoped cache tag is needed and `claude plugin tag`
+is not available:
 
 ```bash
 git tag -a rldyour-flow--v0.2.0 -m "rldyour-flow 0.2.0"
