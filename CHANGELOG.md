@@ -6,6 +6,14 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+## [0.6.9] - 2026-05-22
+
+### Changed
+
+- Claude Code CLI baseline moved from `2.1.146` to `2.1.147`, matching the
+  currently published npm package and installed owner runtime.
+- README generated inventory now reports the restored Serena memory count.
+
 ## [0.6.8] - 2026-05-22
 
 ### Changed
@@ -2124,7 +2132,8 @@ Release boundary cut after the 2026-05-08..2026-05-12 wave of best-practice, MCP
   shell syntax checks, frontmatter presence verification on all skills,
   agents, and commands.
 
-[Unreleased]: https://github.com/NDDev-it-com/rldyour-claudecode/compare/0.6.8...HEAD
+[Unreleased]: https://github.com/NDDev-it-com/rldyour-claudecode/compare/0.6.9...HEAD
+[0.6.9]: https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/0.6.9
 [0.6.8]: https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/0.6.8
 [0.6.7]: https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/marketplace--v0.6.7
 [0.6.6]: https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/marketplace--v0.6.6
