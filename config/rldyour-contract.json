@@ -528,7 +528,7 @@
     {
       "id": "task.stop.post-task-sync",
       "description": "Block final response when post-task sync is required",
-      "claude": { "plugin": "rldyour-flow", "event": "Stop", "script": "plugins/rldyour-flow/hooks/stop_post_task_sync.sh" },
+      "claude": { "plugin": "rldyour-flow", "event": "Stop", "script": "plugins/rldyour-flow/hooks/stop_lifecycle_dispatcher.sh" },
       "codex": { "name": "stop_post_task_sync", "status": "plugin hook when plugin_hooks=true and hook is trusted" },
       "opencode": { "name": "task stop plugin event", "status": "adapter-specific stop hook" }
     }

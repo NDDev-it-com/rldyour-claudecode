@@ -73,9 +73,9 @@
           {
             "type": "command",
             "command": "/bin/bash",
-            "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/stop_post_task_sync.sh"],
-            "timeout": 10,
-            "statusMessage": "Checking rldyour-flow post-task sync"
+            "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/stop_lifecycle_dispatcher.sh"],
+            "timeout": 15,
+            "statusMessage": "Checking ordered Serena and flow post-task sync"
           }
         ]
       }

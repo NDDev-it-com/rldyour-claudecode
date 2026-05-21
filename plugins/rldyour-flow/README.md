@@ -17,13 +17,13 @@ SDLC orchestrator. The biggest plugin in the marketplace - owns slash commands, 
   | `flow-verification-review` | 90 | pink | tests, LSP, browser/server evidence |
   | `flow-security-review` | 100 | red | defensive auth/authz/secrets/injection (+10 turns for variant-hunt) |
 
-- `4` hook events / `5` hook scripts: `SessionStart` (worktree bootstrap + state advisory - two registered scripts), `PreToolUse:Bash` (manual-first CI advisory), `PostToolUse:Bash` (commit advice - Conventional Commits, sensitive paths, agent-only paths), `Stop` (post-task-sync gate).
+- `4` hook events / `6` hook scripts: `SessionStart` (worktree bootstrap + state advisory - two registered scripts), `PreToolUse:Bash` (manual-first CI advisory), `PostToolUse:Bash` (commit advice - Conventional Commits, sensitive paths, agent-only paths), `Stop` (ordered Serena memory gate then post-task-sync gate).
 - `7` scripts: `fullrepo_sync.py`, `flow_post_task_state.py`, `instruction_docs_state.py`, `git_sync_audit.sh`, `detect_project_checks.sh`, `deploy_readiness.sh`, `local_git_ai_guard.sh`.
 - `7` references: `flow-lifecycle.md`, `init-context-pack.md`, `context-sufficiency-gate.md`, `reviewer-protocol.md`, `post-task-sync.md`, `deploy-contract.md`, `sources.md`.
 
 ## Pattern
 
-Stop hooks are **advisory enforcement gates**, not executors. They block Stop with `exit 2` while work remains and emit machine-readable state via `flow_post_task_state.py`. The `flow-post-task-sync` skill is the executor of merge/push/fullrepo-publish/cleanup under model judgement - `ry-start`, `ry-deploy`, and explicit user invocation drive the actual high-blast-radius operations.
+Stop hooks are **advisory enforcement gates**, not executors. The registered Flow Stop hook is `stop_lifecycle_dispatcher.sh`: it drains Claude stdin, runs Serena memory freshness first, then runs `flow_post_task_state.py` through the Flow gate, with bounded child process timeouts. The `flow-post-task-sync` skill is the executor of merge/push/fullrepo-publish/cleanup under model judgement - `ry-start`, `ry-deploy`, and explicit user invocation drive the actual high-blast-radius operations.
 
 ## Dependencies
 
