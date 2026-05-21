@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-22
-Last commit: 9330d026c96dcf7fd24ea9d6e70aebf063415511 feat(flow): align stop lifecycle and numeric releases
+Last commit: be48d065a841ae95f762177a7b70002ad93470fc docs: refresh generated inventory
 Scope: Serena memory, fullrepo, and knowledge sync policy
 Area: SERENA
 -->
@@ -15,16 +15,22 @@ Serena memory, fullrepo, and knowledge sync policy
 - `path:.serena/project.yml`
 - `path:README.md`
 
+
+## Source Of Truth
+- `path:plugins/rldyour-serena-mcp`
+- `path:.serena/project.yml`
+- `path:README.md`
+
 ## Last verified
 - date: 2026-05-22
-- commit: `9330d026c96dcf7fd24ea9d6e70aebf063415511`
-- checked by: Codex ry-start memory-domain normalization
+- commit: `be48d065a841ae95f762177a7b70002ad93470fc`
+- checked by: Codex ry-start sync audit
 
 ## Facts
 - Serena memories record memory format, evidence, freshness, fullrepo, and runtime marker policy.
 
 ## Evidence
-- `commit:9330d026c96dcf7fd24ea9d6e70aebf063415511`
+- `commit:be48d065a841ae95f762177a7b70002ad93470fc`
 - `path:plugins/rldyour-serena-mcp`
 - `path:.serena/project.yml`
 - `path:README.md`
@@ -37,3 +43,8 @@ Update after verified changes to the referenced source-of-truth files.
 
 ## Delete / merge policy
 - Delete or merge only when the referenced source-of-truth files no longer support this memory and the replacement memory preserves the durable facts.
+
+## Cross-References
+- `FLOW-01-SDLC.md`
+- `DOCS-01-INSTRUCTIONS.md`
+- `CONTEXT-01-CORE.md`

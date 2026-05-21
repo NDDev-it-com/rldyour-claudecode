@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-22
-Last commit: 9330d026c96dcf7fd24ea9d6e70aebf063415511 feat(flow): align stop lifecycle and numeric releases
+Last commit: be48d065a841ae95f762177a7b70002ad93470fc docs: refresh generated inventory
 Scope: deploy and rollout verification contracts
 Area: DEPLOY
 -->
@@ -14,16 +14,21 @@ deploy and rollout verification contracts
 - `path:README.md`
 - `path:plugins/rldyour-flow/skills/ry-deploy`
 
+
+## Source Of Truth
+- `path:README.md`
+- `path:plugins/rldyour-flow/skills/ry-deploy`
+
 ## Last verified
 - date: 2026-05-22
-- commit: `9330d026c96dcf7fd24ea9d6e70aebf063415511`
-- checked by: Codex ry-start memory-domain normalization
+- commit: `be48d065a841ae95f762177a7b70002ad93470fc`
+- checked by: Codex ry-start sync audit
 
 ## Facts
 - Deploy memories record preflight, rollout, postflight, rollback, and sync requirements.
 
 ## Evidence
-- `commit:9330d026c96dcf7fd24ea9d6e70aebf063415511`
+- `commit:be48d065a841ae95f762177a7b70002ad93470fc`
 - `path:README.md`
 - `path:plugins/rldyour-flow/skills/ry-deploy`
 
@@ -35,3 +40,8 @@ Update after verified changes to the referenced source-of-truth files.
 
 ## Delete / merge policy
 - Delete or merge only when the referenced source-of-truth files no longer support this memory and the replacement memory preserves the durable facts.
+
+## Cross-References
+- `RELEASE-01-VALIDATION.md`
+- `TESTS-01-VALIDATION-GATES.md`
+- `SECURITY-01-OWASP.md`

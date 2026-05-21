@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-22
-Last commit: 9330d026c96dcf7fd24ea9d6e70aebf063415511 feat(flow): align stop lifecycle and numeric releases
+Last commit: be48d065a841ae95f762177a7b70002ad93470fc docs: refresh generated inventory
 Scope: Claude Code adapter implementation surface
 Area: CLAUDE
 -->
@@ -14,16 +14,21 @@ Claude Code adapter implementation surface
 - `path:config/rldyour-contract.json`
 - `path:.claude-plugin/marketplace.json`
 
+
+## Source Of Truth
+- `path:config/rldyour-contract.json`
+- `path:.claude-plugin/marketplace.json`
+
 ## Last verified
 - date: 2026-05-22
-- commit: `9330d026c96dcf7fd24ea9d6e70aebf063415511`
-- checked by: Codex ry-start memory-domain normalization
+- commit: `be48d065a841ae95f762177a7b70002ad93470fc`
+- checked by: Codex ry-start sync audit
 
 ## Facts
 - Claude memories describe the Claude Code plugin marketplace, command, skill, hook, MCP, and LSP surfaces.
 
 ## Evidence
-- `commit:9330d026c96dcf7fd24ea9d6e70aebf063415511`
+- `commit:be48d065a841ae95f762177a7b70002ad93470fc`
 - `path:config/rldyour-contract.json`
 - `path:.claude-plugin/marketplace.json`
 
@@ -35,3 +40,8 @@ Update after verified changes to the referenced source-of-truth files.
 
 ## Delete / merge policy
 - Delete or merge only when the referenced source-of-truth files no longer support this memory and the replacement memory preserves the durable facts.
+
+## Cross-References
+- `MCP-01-TRANSPORT.md`
+- `FLOW-01-SDLC.md`
+- `RUNTIME-01-BASELINES.md`

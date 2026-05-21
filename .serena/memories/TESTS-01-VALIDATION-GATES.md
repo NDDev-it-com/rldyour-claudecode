@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-22
-Last commit: 9330d026c96dcf7fd24ea9d6e70aebf063415511 feat(flow): align stop lifecycle and numeric releases
+Last commit: be48d065a841ae95f762177a7b70002ad93470fc docs: refresh generated inventory
 Scope: validation gates and test suites
 Area: TESTS
 -->
@@ -15,16 +15,22 @@ validation gates and test suites
 - `path:.github/workflows`
 - `path:README.md`
 
+
+## Source Of Truth
+- `path:scripts`
+- `path:.github/workflows`
+- `path:README.md`
+
 ## Last verified
 - date: 2026-05-22
-- commit: `9330d026c96dcf7fd24ea9d6e70aebf063415511`
-- checked by: Codex ry-start memory-domain normalization
+- commit: `be48d065a841ae95f762177a7b70002ad93470fc`
+- checked by: Codex ry-start sync audit
 
 ## Facts
 - Test memories record which suites and smoke tests prove the touched behavior.
 
 ## Evidence
-- `commit:9330d026c96dcf7fd24ea9d6e70aebf063415511`
+- `commit:be48d065a841ae95f762177a7b70002ad93470fc`
 - `path:scripts`
 - `path:.github/workflows`
 - `path:README.md`
@@ -37,3 +43,8 @@ Update after verified changes to the referenced source-of-truth files.
 
 ## Delete / merge policy
 - Delete or merge only when the referenced source-of-truth files no longer support this memory and the replacement memory preserves the durable facts.
+
+## Cross-References
+- `CI-01-ACTIONS.md`
+- `RELEASE-01-VALIDATION.md`
+- `RUNTIME-01-BASELINES.md`

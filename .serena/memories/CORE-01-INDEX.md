@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-22
-Last commit: 9330d026c96dcf7fd24ea9d6e70aebf063415511 feat(flow): align stop lifecycle and numeric releases
+Last commit: be48d065a841ae95f762177a7b70002ad93470fc docs: refresh generated inventory
 Scope: repository identity and source-of-truth map
 Area: CORE
 -->
@@ -15,16 +15,22 @@ repository identity and source-of-truth map
 - `path:VERSION`
 - `path:CHANGELOG.md`
 
+
+## Source Of Truth
+- `path:README.md`
+- `path:VERSION`
+- `path:CHANGELOG.md`
+
 ## Last verified
 - date: 2026-05-22
-- commit: `9330d026c96dcf7fd24ea9d6e70aebf063415511`
-- checked by: Codex ry-start memory-domain normalization
+- commit: `be48d065a841ae95f762177a7b70002ad93470fc`
+- checked by: Codex ry-start sync audit
 
 ## Facts
 - Core memories index repository identity, source-of-truth files, and the current validation map.
 
 ## Evidence
-- `commit:9330d026c96dcf7fd24ea9d6e70aebf063415511`
+- `commit:be48d065a841ae95f762177a7b70002ad93470fc`
 - `path:README.md`
 - `path:VERSION`
 - `path:CHANGELOG.md`
@@ -37,3 +43,8 @@ Update after verified changes to the referenced source-of-truth files.
 
 ## Delete / merge policy
 - Delete or merge only when the referenced source-of-truth files no longer support this memory and the replacement memory preserves the durable facts.
+
+## Cross-References
+- `CONTEXT-01-CORE.md`
+- `PATTERNS-01-CANONICAL.md`
+- `DOCS-01-INSTRUCTIONS.md`
