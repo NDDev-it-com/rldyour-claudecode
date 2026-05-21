@@ -27,7 +27,7 @@ This project and all first-party marketplace plugins are licensed under the GNU 
 
 | Plugin | Version | Skills | Commands | Agents | Hooks | Scripts | References | MCP | LSP |
 |---|---|---|---|---|---|---|---|---|---|
-| `rldyour-mcps` | `0.6.4` | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 0 |
+| `rldyour-mcps` | `0.6.5` | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 0 |
 | `rldyour-explore` | `0.6.4` | 2 | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | `rldyour-serena-mcp` | `0.6.4` | 2 | 0 | 1 | 4 | 3 | 0 | 0 | 0 |
 | `rldyour-security` | `0.6.4` | 2 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
