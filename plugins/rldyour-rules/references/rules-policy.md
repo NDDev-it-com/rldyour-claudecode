@@ -68,7 +68,12 @@ Use [Conventional Commits v1.0.0](https://www.conventionalcommits.org/en/v1.0.0/
 
 Subject ≤72 chars. Optional scope in parentheses (`feat(auth): ...`). Use `!` after type/scope or `BREAKING CHANGE:` footer for breaking changes.
 
-Atomic commits per logical change. Never amend after pre-commit hook failure (commit didn't happen → amending modifies the previous commit).
+Atomic commits per logical change. Split unrelated implementation, tests,
+validators, docs/instructions, license/metadata, generated artifacts, and
+Serena/fullrepo sync when they are independently reviewable. Never amend after
+pre-commit hook failure (commit did not happen, so amending modifies the
+previous commit). Do not rewrite already-pushed history without explicit owner
+approval; use a follow-up commit for published branches.
 
 ## Russian / English Discipline
 
@@ -82,6 +87,8 @@ Atomic commits per logical change. Never amend after pre-commit hook failure (co
 - Trace integration points before finalizing.
 - Preserve public contracts unless task requires breaking change.
 - Atomic, readable commits. Separate refactors from behavior changes.
+- Clean inspectable history. Separate unrelated concerns instead of dumping a
+  whole task into one commit.
 - Clear names > comments. Comments only for WHY, not WHAT.
 - Remove obsolete code, stale flags, outdated tests in scope.
 - Generated files synchronized or explicitly skipped.
