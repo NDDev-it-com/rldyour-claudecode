@@ -13,8 +13,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
   pagination and preserves explicit AskUserQuestion decision gates in Auto
   mode.
 - Repository, marketplace, and plugin metadata now use AGPL-3.0-or-later with
-  canonical authorship for Danil Silantyev (`github:rldyourmnd`), CEO &
-  Engineer NDDev. Release validators now fail on license or author drift.
+  canonical authorship for Danil Silantyev (`github:rldyourmnd`), CEO NDDev.
+  Release validators now fail on license or author drift.
 - `fullrepo_sync.py` now records remote configuration, local tree parity, and
   generated `fullrepo` commit author/committer identity; `flow_post_task_state.py`
   no longer treats a missing remote as a Stop-loop condition when the local

@@ -122,7 +122,7 @@ def validate_root_metadata_parity(root: Path, version: str) -> list[str]:
                 )
             author = package.get("author")
             if not isinstance(author, dict) or author.get("name") != (
-                "Danil Silantyev (github:rldyourmnd), CEO & Engineer NDDev"
+                "Danil Silantyev (github:rldyourmnd), CEO NDDev"
             ):
                 errors.append("package.json author must identify Danil Silantyev / rldyourmnd")
 
