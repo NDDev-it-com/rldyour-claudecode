@@ -14,7 +14,7 @@ Implement a task to a high-quality, scalable, synchronized state. Speed is secon
 
 1. If context is missing, run a scoped `ry-init` automatically.
 2. Understand the prompt. For ambiguity, ask concise Russian questions with options.
-3. Research code through Serena memories and semantic tools.
+3. Research current code through Serena memories and semantic tools.
 4. Research current docs, patterns, and alternatives through `rldyour-explore`.
 5. Read `${CLAUDE_PLUGIN_ROOT}/references/context-sufficiency-gate.md` and pass the gate before editing code.
 6. Write a detailed plan. Verify each plan item against code using Serena before editing.
