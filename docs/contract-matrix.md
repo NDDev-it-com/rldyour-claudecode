@@ -32,6 +32,7 @@ This matrix is the human-readable projection of the machine-readable rldyour con
 | flow.start | Full implementation lifecycle | /rldyour-flow:ry-start | $rldyour-flow:ry-start | /ry-start | `plugins/rldyour-flow/commands/ry-start.md` |
 | flow.new-project | New-project planning and optional scaffold workflow | /rldyour-flow:ry-newp | $rldyour-flow:ry-newp | /ry-newp | `plugins/rldyour-flow/commands/ry-newp.md` |
 | flow.review | Report-only deep review workflow | /rldyour-flow:ry-review | $rldyour-flow:ry-review | /ry-review | `plugins/rldyour-flow/commands/ry-review.md` |
+| flow.repair | Repository repair and semantic entropy normalization workflow | /rldyour-flow:ry-repair | $rldyour-flow:ry-repair | /ry-repair | `plugins/rldyour-flow/commands/ry-repair.md` |
 | flow.deploy | Deploy workflow with local, GitHub, server, logs, and sync closure | /rldyour-flow:ry-deploy | $rldyour-flow:ry-deploy | /ry-deploy | `plugins/rldyour-flow/commands/ry-deploy.md` |
 | flow.sync.manual | Explicit post-task synchronization wrapper | /rldyour-flow:ry-sync | $rldyour-flow:flow-post-task-sync | /ry-sync | `plugins/rldyour-flow/commands/ry-sync.md` |
 | rules.review | Rules and quality discipline review | /rldyour-rules:ry-rules-review | $rldyour-rules:ry-rules-review | /ry-rules-review | `plugins/rldyour-rules/commands/ry-rules-review.md` |
@@ -57,6 +58,7 @@ This matrix is the human-readable projection of the machine-readable rldyour con
 | flow.ry-init | Initialize scoped project context | ry-init | rldyour-flow:ry-init | ry-init | `plugins/rldyour-flow/skills/ry-init/SKILL.md` |
 | flow.ry-newp | Plan a new project | ry-newp | rldyour-flow:ry-newp | ry-newp | `plugins/rldyour-flow/skills/ry-newp/SKILL.md` |
 | flow.ry-review | Report-only deep review | ry-review | rldyour-flow:ry-review | ry-review | `plugins/rldyour-flow/skills/ry-review/SKILL.md` |
+| flow.ry-repair | Repository repair and semantic entropy normalization | ry-repair | rldyour-flow:ry-repair | ry-repair | `plugins/rldyour-flow/skills/ry-repair/SKILL.md` |
 | flow.ry-start | Full task lifecycle | ry-start | rldyour-flow:ry-start | ry-start | `plugins/rldyour-flow/skills/ry-start/SKILL.md` |
 | lsps.health-check | Check LSP and Serena prerequisites | lsp-health-check | rldyour-lsps:lsp-health-check | lsp-health-check | `plugins/rldyour-lsps/skills/lsp-health-check/SKILL.md` |
 | lsps.routing | Route language-server usage | lsp-routing | rldyour-lsps:lsp-routing | lsp-routing | `plugins/rldyour-lsps/skills/lsp-routing/SKILL.md` |
