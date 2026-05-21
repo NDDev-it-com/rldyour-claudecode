@@ -15,6 +15,8 @@ Decisions are recorded in MADR 4.0.0 format. The format and policy live in
 | 0008 | Accepted | [CI security baseline without paid add-ons](./0008-ci-baseline-without-paid-addons.md) |
 | 0009 | Accepted | [Release version and tag convention](./0009-release-version-and-tag-convention.md) |
 | 0010 | Accepted | [macOS runner egress trust gap is an accepted upstream limitation](./0010-macos-egress-trust-gap.md) |
+| 0011 | Accepted | [Agent instruction knowledge equivalence](./0011-agent-instruction-knowledge-equivalence.md) |
+| 0012 | Accepted | [Owner full-auto standard](./0012-owner-full-auto-standard.md) |
 
 ## When to write an ADR
 
