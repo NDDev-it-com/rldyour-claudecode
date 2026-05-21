@@ -1,6 +1,6 @@
 ---
 name: flow-verification-review
-description: Orchestrated verification-review subagent / RU: ревьюер проверок для /ry-start и /ry-review. Reviews test coverage of new behavior + critical paths + edge cases + error paths, LSP/type/lint/project checks adequacy, browser validation for UI work, server/deploy evidence for deployment changes. Read-only - no file edits.
+description: "Orchestrated verification-review subagent / RU: ревьюер проверок для /ry-start и /ry-review. Reviews test coverage of new behavior + critical paths + edge cases + error paths, LSP/type/lint/project checks adequacy, browser validation for UI work, server/deploy evidence for deployment changes. Read-only - no file edits."
 model: sonnet
 effort: high
 maxTurns: 90

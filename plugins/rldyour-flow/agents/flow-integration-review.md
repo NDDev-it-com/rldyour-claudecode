@@ -1,6 +1,6 @@
 ---
 name: flow-integration-review
-description: Orchestrated integration-review subagent / RU: интеграционный ревьюер для /ry-start и /ry-review. Reviews cross-module synchronization - API/client/DTO/schema/validation/service/repository/database alignment, config/env/docs/migrations alignment, generated code and type contracts, backward compatibility. Read-only - no file edits.
+description: "Orchestrated integration-review subagent / RU: интеграционный ревьюер для /ry-start и /ry-review. Reviews cross-module synchronization - API/client/DTO/schema/validation/service/repository/database alignment, config/env/docs/migrations alignment, generated code and type contracts, backward compatibility. Read-only - no file edits."
 model: sonnet
 effort: high
 maxTurns: 90
