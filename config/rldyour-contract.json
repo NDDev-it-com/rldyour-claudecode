@@ -7,6 +7,32 @@
     "codex",
     "opencode"
   ],
+  "runtime_policy": {
+    "id": "owner-full-auto-standard",
+    "standard_mode": "owner-full-auto",
+    "aliases": [
+      "yolo",
+      "full-auto",
+      "dangerously-skip-permissions"
+    ],
+    "authoritative_decision": "docs/adr/0012-owner-full-auto-standard.md",
+    "claude": {
+      "permission_posture": "owner-trusted plugin runtime and project permissions",
+      "notes": "Claude Code does not expose Codex-style danger-full-access fields in this contract; this adapter must not downgrade the owner workflow to a safe-default policy."
+    },
+    "codex": {
+      "profile": "rldyour-yolo",
+      "approval_policy": "never",
+      "sandbox_mode": "danger-full-access",
+      "default_permissions": ":danger-no-sandbox"
+    },
+    "opencode": {
+      "primary_permissions": {
+        "edit": "allow",
+        "bash": "allow"
+      }
+    }
+  },
   "domains": [
     {
       "id": "browser",
