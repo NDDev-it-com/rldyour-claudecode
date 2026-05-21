@@ -24,7 +24,6 @@ claims:
   subagent_count: 8
 -->
 
-
 ## Source Of Truth
 
 - `./.claude-plugin/marketplace.json` - marketplace manifest with per-entry relative sources (`source: "./plugins/<name>"`); `metadata.pluginRoot` is intentionally absent.
@@ -180,10 +179,7 @@ Current dependency graph:
 - Quality-first: no hacks, no fake checks, no swallowed errors. See `plugins/rldyour-rules/skills/quality-first-engineering/SKILL.md`.
 - Plugin boundary + dependency policy (SLSA L2 + SBOM + lockfile): `plugins/rldyour-rules/skills/architecture-boundaries/SKILL.md`, `plugins/rldyour-rules/references/dependency-policy.md`.
 - Conventional Commits for all changes; atomic commits per logical unit; ≤ 72-char subject.
-- Keep history logical and inspectable: split unrelated implementation,
-  tests/validators, docs/instructions, license/metadata, generated artifacts,
-  and Serena/fullrepo sync when independently reviewable. Do not rewrite
-  already-pushed history without explicit owner approval.
+- Keep history logical and inspectable: split unrelated implementation, tests/validators, docs/instructions, license/metadata, generated artifacts, and Serena/fullrepo sync when independently reviewable. Do not rewrite already-pushed history without explicit owner approval.
 - Never commit secrets, runtime markers, browser artifacts, local env files. All MCP versions pinned.
 - CI workflows run on explicit user request only (`workflow_dispatch` + PR gates); see `.github/workflows/README.md`.
 - **Always Read a file before Edit/Write** (Claude Code Edit/Write track per-session Read state). For batch updates use `sed -i` via Bash (bypasses the tracker).
@@ -200,5 +196,3 @@ Current dependency graph:
 ## Cross-Tool Support
 
 `AGENTS.md` is the cross-tool agent-instruction standard (Linux Foundation AAIF; 60k+ repos, 30+ tools per `https://agents.md/`). Claude Code-specific deep memory (subagent matrix, hook canon, skill budgets, CC changelog adoption, Don't/Done rules) lives in `./.claude/CLAUDE.md`. Both files are dual-source (no `@import` redirection); split verified by `python3 plugins/rldyour-flow/scripts/instruction_docs_state.py --json` + `instruction-docs-sync` skill.
-
-<!-- Living-doc note: cross-tool facts go here; Claude Code-specific facts (skill listing, hook canon, subagent matrix) go in ./.claude/CLAUDE.md. Don't auto-generate. -->

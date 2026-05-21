@@ -77,10 +77,7 @@ Two plugins coordinate hooks. `flow.stop_post_task_sync.sh` derives `serena_curr
 
 Stop hooks are **advisory enforcement gates**, not executors. Pattern: hooks compute machine-readable state, block Stop (`exit 2`) until the orchestrator (`ry-start`, `flow-post-task-sync` skill, model in main session) brings the project to a clean final state. Hooks themselves do **not** push, merge, publish, or delete branches - those are high-blast-radius operations and live in the workflow executor under model judgement.
 
-Sequence:
-1. **Serena Stop hook** (`stop_memory_sync.sh`) checks `serena_memory_state.py`. If memories are stale for current HEAD, blocks Stop with an advisory pointing at the `flow-memory-sync` subagent (preferred) or the equivalent Serena workflow (fallback).
-2. **Flow Stop hook** (`stop_post_task_sync.sh`) reads `serena_current` from `serena_memory_state.py`, then checks `flow_post_task_state.py`. If git/docs/fullrepo/cleanup state is dirty (uncommitted, ahead of upstream, fullrepo stale, instruction docs need review, merged branches/worktrees not cleaned), blocks Stop with an advisory pointing at the `flow-post-task-sync` skill.
-3. Loop guard: `.serena/.sync_marker` and `.serena/.flow_sync_marker` carry fingerprints. If `stop_hook_active=true` and the fingerprint matches, the chain allows Stop without re-running - prevents infinite loops while still forcing real progress between Stops.
+Stop sequence: Serena Stop checks `serena_memory_state.py` first and blocks stale memories with `flow-memory-sync` guidance; Flow Stop then checks git/docs/fullrepo/cleanup state through `flow_post_task_state.py`; `.serena/.sync_marker` and `.serena/.flow_sync_marker` carry loop-guard fingerprints so repeated identical Stop gates do not loop forever.
 
 The orchestrator (skill / model in main session) does the actual work: invoke `flow-memory-sync` subagent for memories, then run the `flow-post-task-sync` skill which handles checks → atomic commits → push → ff-merge into default branch → push default → fullrepo publish (`--force-with-lease`, only on `fullrepo`) → cleanup merged branches and worktrees.
 
@@ -163,10 +160,7 @@ Capability smoke (added 2026-05-12): `scripts/smoke_mcp_capabilities.sh` perform
 - `model: sonnet` is the canonical short form for reviewer subagents.
 - Slash command frontmatter: `description`, `argument-hint`, optional `context: fork` and `agent: <name>`. Bare `model:` on a slash command is silently ignored without `context: fork` - pair them or delegate via `agent:`.
 - Conventional Commits, ≤72 char subjects, atomic commits per logical unit.
-  Separate commits for source, tests/validators, docs/instructions,
-  license/metadata, generated artifacts, and Serena/fullrepo sync when it
-  improves history clarity. Do not rewrite already-pushed history without
-  explicit owner approval.
+- Separate source, tests/validators, docs/instructions, license/metadata, generated artifacts, and Serena/fullrepo sync commits when it improves history clarity. Do not rewrite already-pushed history without explicit owner approval.
 - All MCP server versions are pinned (stdio with `==X.Y.Z`; HTTP servers by URL).
 - `allowed-tools` may mix built-in tool names (`Read`, `Write`, `Edit`, `Grep`, `Glob`, `Bash`, `WebSearch`, `WebFetch`) and MCP wildcards (`mcp__plugin_rldyour-mcps_<server>__*`) in the same skill - pattern is validated by `claude plugin validate` and used by `serena-code-workflow`, `serena-memory-sync`, `lsp-routing`, `serena-lsp-integration`, `figma-to-code`, `ry-design`, `design-system-implementation`.
 
@@ -199,5 +193,3 @@ Beyond `claude plugin validate` and bootstrap commands documented in `./AGENTS.m
 - Plugin component cross-references (skills referencing scripts/agents/references) actually exist on disk.
 - Reviewer subagents (when invoked) produce read-only findings, never edit files.
 - This file stays under 200 lines.
-
-<!-- Living-doc note: when discovering a non-obvious Claude Code-specific fact during work, propose a CLAUDE.md edit in the same change. Treat CLAUDE.md like code - review when behavior drifts, prune regularly, test by observing whether Claude's behavior actually shifts. -->
