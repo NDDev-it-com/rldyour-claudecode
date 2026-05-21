@@ -15,6 +15,9 @@ Make every change precise, synchronized, maintainable, and consistent with the s
 - Trace all affected integration points before finalizing: routes, clients, schemas, DTOs, migrations, generated types, config, docs, and tests.
 - Preserve existing public contracts unless the task explicitly requires a breaking change.
 - Keep changes atomic and readable. Separate mechanical refactors from behavior changes.
+- Keep git history logical: separate implementation, tests/validators,
+  docs/instructions, license/metadata, generated artifacts, and Serena/fullrepo
+  sync when they are independently reviewable.
 - Prefer clear names over comments. Use comments only for why, constraints, non-obvious algorithms, or external contract reasons.
 - Remove obsolete code, stale branches, stale docs, dead feature flags, and outdated tests when they are in scope.
 - Keep generated files synchronized with their source commands or state why generation is unavailable.

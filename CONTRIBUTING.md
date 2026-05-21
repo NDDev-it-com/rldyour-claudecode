@@ -75,7 +75,10 @@ PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 python3 -m pytest tests/ -m "not integration"
   `perf`, `test`, `build`, `ci`, `chore`, `style`, `revert`.
 - **Atomic commits**: one logical change per commit. Separate mechanical
   refactors from behavior changes. Separate source / docs / Serena
-  knowledge.
+  knowledge. Split license/metadata, validators/tests, generated artifacts,
+  and fullrepo/Serena sync when they are independently reviewable.
+- **Published history**: do not rewrite already-pushed history without explicit
+  maintainer approval; use a follow-up commit instead.
 - **No** `--no-verify` unless explicitly requested by the maintainer.
 
 ### Quality gates
