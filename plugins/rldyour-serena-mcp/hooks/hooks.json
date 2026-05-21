@@ -107,19 +107,6 @@
           }
         ]
       }
-    ],
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "/bin/bash",
-            "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/stop_memory_sync.sh"],
-            "timeout": 10,
-            "statusMessage": "Checking Serena memory sync"
-          }
-        ]
-      }
     ]
   }
 }

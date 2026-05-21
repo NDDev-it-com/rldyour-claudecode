@@ -46,8 +46,8 @@
     {
       "name": "rldyour-serena-mcp",
       "source": "./plugins/rldyour-serena-mcp",
-      "description": "Семантический воркфлоу для кода через Serena MCP + синхронизация .serena памяти + хуки жизненного цикла (UserPromptSubmit/PreToolUse/PostToolUse/Stop).",
-      "version": "0.6.4",
+      "description": "Семантический воркфлоу через Serena MCP + .serena memory sync markers. UserPromptSubmit/PreToolUse/PostToolUse hooks only; Stop orchestration belongs to rldyour-flow.",
+      "version": "0.6.8",
       "author": {
         "name": "Danil Silantyev (github:rldyourmnd), CEO NDDev"
       },
@@ -150,7 +150,7 @@
       "name": "rldyour-flow",
       "source": "./plugins/rldyour-flow",
       "description": "Автономный SDLC-воркфлоу: ry-init/start/newp/review/deploy/sync + 6 reviewer subagents + post-task-sync + instruction-docs-sync. Хуки SessionStart/PreToolUse/PostToolUse/Stop. Fullrepo branch.",
-      "version": "0.6.5",
+      "version": "0.6.8",
       "author": {
         "name": "Danil Silantyev (github:rldyourmnd), CEO NDDev"
       },

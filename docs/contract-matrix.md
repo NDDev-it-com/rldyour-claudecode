@@ -100,7 +100,7 @@ This matrix is the human-readable projection of the machine-readable rldyour con
 | tool.pre.ci-advisory | Advisory guard for manual-first GitHub Actions usage | rldyour-flow | pre_tool_use_ci_advisory | tool.execute.before | `plugins/rldyour-flow/hooks/pre_tool_use_ci_advisory.sh` |
 | tool.post.serena-sync-required | Mark Serena sync as required after git history-changing commands | rldyour-serena-mcp | mark_sync_required | tool.execute.after | `plugins/rldyour-serena-mcp/hooks/mark_sync_required.sh` |
 | tool.post.commit-advice | Surface post-commit follow-up guidance | rldyour-flow | post_tool_use_commit_advice | tool.execute.after | `plugins/rldyour-flow/hooks/post_tool_use_commit_advice.sh` |
-| task.stop.memory-sync | Block final response when Serena memory sync is required | rldyour-serena-mcp | stop_memory_sync | task stop plugin event | `plugins/rldyour-serena-mcp/hooks/stop_memory_sync.sh` |
+| task.stop.memory-sync | Block final response when Serena memory sync is required via ordered flow dispatcher | rldyour-flow | stop_memory_sync | task stop plugin event | `plugins/rldyour-flow/hooks/stop_lifecycle_dispatcher.sh` |
 | task.stop.post-task-sync | Block final response when post-task sync is required | rldyour-flow | stop_post_task_sync | task stop plugin event | `plugins/rldyour-flow/hooks/stop_lifecycle_dispatcher.sh` |
 
 ## CI Baseline

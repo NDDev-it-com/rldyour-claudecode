@@ -41,7 +41,7 @@ blocker.
 
 | Workflow | Trigger | Purpose |
 | --- | --- | --- |
-| `release.yml` | tag push matching `marketplace--v*` or `rldyour-*--v*`, or `workflow_dispatch` | Validate release state + run full marketplace harness + emit `release-manifest.json` + create GitHub Release with evidence artefact. |
+| `release.yml` | numeric product tag push (`X.Y.Z`) or `workflow_dispatch` | Validate release state + run full marketplace harness + emit `release-manifest.json` + create GitHub Release with evidence artefact. |
 
 ## Cost policy (public repository)
 
