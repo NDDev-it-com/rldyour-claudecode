@@ -1,6 +1,6 @@
 ---
 name: flow-quality-review
-description: Orchestrated quality-review subagent / RU: ревьюер качества реализации для /ry-start и /ry-review. Reviews correctness, completeness, edge cases, error handling, resource lifecycle, performance traps, copy-paste, hardcoded values, TODO/HACK/FIXME, and temporary workarounds. Read-only - no file edits. Self-contained prompt expected from the orchestrator.
+description: "Orchestrated quality-review subagent / RU: ревьюер качества реализации для /ry-start и /ry-review. Reviews correctness, completeness, edge cases, error handling, resource lifecycle, performance traps, copy-paste, hardcoded values, TODO/HACK/FIXME, and temporary workarounds. Read-only - no file edits. Self-contained prompt expected from the orchestrator."
 model: sonnet
 effort: high
 maxTurns: 90
