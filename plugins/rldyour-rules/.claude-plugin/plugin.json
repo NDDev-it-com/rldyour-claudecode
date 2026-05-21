@@ -4,7 +4,7 @@
   "version": "0.6.3",
   "description": "Quality-first инженерные правила для Claude Code: clean architecture (FSD/VSA/Hexagonal), implementation discipline, dependency policy + supply chain (SLSA L2), verification gates (pyright/ruff/ESLint v9), AGENTS.md/.claude/CLAUDE.md, ADR (MADR 4.0.0), ry-rules-review.",
   "author": {
-    "name": "Danil Silantyev (github:rldyourmnd), CEO & Engineer NDDev",
+    "name": "Danil Silantyev (github:rldyourmnd), CEO NDDev",
     "url": "https://github.com/rldyourmnd"
   },
   "license": "AGPL-3.0-or-later",

@@ -2,7 +2,7 @@
 
 Thanks for your interest in `rldyour-claudecode`. This is a personal
 Claude Code plugin marketplace by Danil Silantyev (github:rldyourmnd),
-CEO & Engineer NDDev; PRs and Issues are welcome, but the bar is
+CEO NDDev; PRs and Issues are welcome, but the bar is
 "consistency with the existing architecture and quality-first invariants" -
 drive-by patches that don't fit the philosophy will be redirected or closed.
 

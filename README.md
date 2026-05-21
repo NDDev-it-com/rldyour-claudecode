@@ -1,6 +1,6 @@
 # rldyour-claudecode
 
-`rldyour-claudecode` is a personal Claude Code plugin marketplace authored by Danil Silantyev (github:rldyourmnd), CEO & Engineer NDDev. It is not a generic preset, not an automatic configuration takeover, and not a bundle of unrelated third-party opinions. It is a controlled catalog for the owner's own plugins, MCP servers, skills, subagents, slash commands, hooks, rules, and workflows.
+`rldyour-claudecode` is a personal Claude Code plugin marketplace authored by Danil Silantyev (github:rldyourmnd), CEO NDDev. It is not a generic preset, not an automatic configuration takeover, and not a bundle of unrelated third-party opinions. It is a controlled catalog for the owner's own plugins, MCP servers, skills, subagents, slash commands, hooks, rules, and workflows.
 
 Main principle: nothing is treated as enabled or correct unless the owner explicitly decides it.
 

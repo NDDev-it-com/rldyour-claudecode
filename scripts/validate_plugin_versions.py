@@ -20,7 +20,7 @@ from pathlib import Path
 
 
 EXPECTED_LICENSE = "AGPL-3.0-or-later"
-EXPECTED_AUTHOR = "Danil Silantyev (github:rldyourmnd), CEO & Engineer NDDev"
+EXPECTED_AUTHOR = "Danil Silantyev (github:rldyourmnd), CEO NDDev"
 
 
 def main() -> int:
