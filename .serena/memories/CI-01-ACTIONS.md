@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-22
-Last commit: e9f485c45f1d543f7fbfb1e36b285157f7100848 chore: bump Claude Code baseline
+Last commit: a519d10eb604bfb6c7988aa1fda43b3aeecc46e5 test: align Claude baseline fixture
 Scope: GitHub Actions and local CI policy
 Area: CI
 -->
@@ -21,14 +21,14 @@ GitHub Actions and local CI policy
 
 ## Last verified
 - date: 2026-05-22
-- commit: `e9f485c45f1d543f7fbfb1e36b285157f7100848`
-- checked by: Codex ry-start runtime baseline sync
+- commit: `a519d10eb604bfb6c7988aa1fda43b3aeecc46e5`
+- checked by: Codex ry-start baseline fixture sync
 
 ## Facts
 - CI memories record which checks prove repository integrity and which checks are intentionally lightweight.
 
 ## Evidence
-- `commit:e9f485c45f1d543f7fbfb1e36b285157f7100848`
+- `commit:a519d10eb604bfb6c7988aa1fda43b3aeecc46e5`
 - `path:.github/workflows`
 - `path:README.md`
 

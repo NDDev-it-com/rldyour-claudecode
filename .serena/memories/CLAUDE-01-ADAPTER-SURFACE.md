@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-22
-Last commit: e9f485c45f1d543f7fbfb1e36b285157f7100848 chore: bump Claude Code baseline
+Last commit: a519d10eb604bfb6c7988aa1fda43b3aeecc46e5 test: align Claude baseline fixture
 Scope: Claude Code adapter implementation surface
 Area: CLAUDE
 -->
@@ -21,14 +21,14 @@ Claude Code adapter implementation surface
 
 ## Last verified
 - date: 2026-05-22
-- commit: `e9f485c45f1d543f7fbfb1e36b285157f7100848`
-- checked by: Codex ry-start runtime baseline sync
+- commit: `a519d10eb604bfb6c7988aa1fda43b3aeecc46e5`
+- checked by: Codex ry-start baseline fixture sync
 
 ## Facts
 - Claude memories describe the Claude Code plugin marketplace, command, skill, hook, MCP, and LSP surfaces.
 
 ## Evidence
-- `commit:e9f485c45f1d543f7fbfb1e36b285157f7100848`
+- `commit:a519d10eb604bfb6c7988aa1fda43b3aeecc46e5`
 - `path:config/rldyour-contract.json`
 - `path:.claude-plugin/marketplace.json`
 
