@@ -142,6 +142,13 @@
       "opencode": { "kind": "command", "name": "ry-review", "invocation": "/ry-review" }
     },
     {
+      "id": "flow.repair",
+      "description": "Repository repair and semantic entropy normalization workflow",
+      "claude": { "kind": "command", "path": "plugins/rldyour-flow/commands/ry-repair.md", "invocation": "/rldyour-flow:ry-repair" },
+      "codex": { "kind": "skill", "name": "rldyour-flow:ry-repair", "invocation": "$rldyour-flow:ry-repair" },
+      "opencode": { "kind": "command", "name": "ry-repair", "invocation": "/ry-repair" }
+    },
+    {
       "id": "flow.deploy",
       "description": "Deploy workflow with local, GitHub, server, logs, and sync closure",
       "claude": { "kind": "command", "path": "plugins/rldyour-flow/commands/ry-deploy.md", "invocation": "/rldyour-flow:ry-deploy" },
@@ -282,6 +289,13 @@
       "claude": { "kind": "skill", "path": "plugins/rldyour-flow/skills/ry-review/SKILL.md", "name": "ry-review" },
       "codex": { "kind": "skill", "name": "rldyour-flow:ry-review" },
       "opencode": { "kind": "skill", "name": "ry-review" }
+    },
+    {
+      "id": "flow.ry-repair",
+      "description": "Repository repair and semantic entropy normalization",
+      "claude": { "kind": "skill", "path": "plugins/rldyour-flow/skills/ry-repair/SKILL.md", "name": "ry-repair" },
+      "codex": { "kind": "skill", "name": "rldyour-flow:ry-repair" },
+      "opencode": { "kind": "skill", "name": "ry-repair" }
     },
     {
       "id": "flow.ry-start",
