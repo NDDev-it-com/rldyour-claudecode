@@ -41,7 +41,7 @@ For very narrow tasks, prefer the matching subskill directly. Use `design-valida
 5. Use shadcn/ui MCP (`mcp__plugin_rldyour-mcps_shadcn__*`) for primitives, blocks, and registry-based components.
 6. Use ReactBits.dev only for purposeful motion or interactive effects that match the design.
 7. Implement code with Serena-first local code inspection when available (`get_symbols_overview`, `find_symbol`, `find_referencing_symbols`).
-8. Use `design-validation` and `rldyour-browser` to verify pixel-perfect layout, functionality, business logic, desktop/mobile, screenshots, and runtime health.
+8. Use `design-validation` and `rldyour-browser` to verify pixel-perfect layout, functionality, business logic, accessibility, desktop/mobile, screenshots, and runtime health.
 9. Fix mismatches and revalidate until the result is correct or the blocker is explicit.
 10. If durable architecture/design-system facts were created, update Serena memories through `serena-memory-sync`.
 

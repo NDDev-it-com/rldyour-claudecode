@@ -6,6 +6,26 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+## [0.6.6] - 2026-05-22
+
+### Changed
+
+- `rldyour-flow` now registers an ordered Stop lifecycle dispatcher for
+  Claude Code. The dispatcher drains hook stdin, runs Serena memory freshness
+  first, then runs Flow post-task sync checks with bounded child-process
+  timeouts.
+- `rldyour-flow` and `rldyour-design` skill text now explicitly references the
+  root policy contract concepts validated across adapters: current code,
+  deploy preflight/postflight, and accessibility checks.
+
+## [0.6.5] - 2026-05-21
+
+### Changed
+
+- `rldyour-mcps` now pins `shadcn@4.8.0`, the current stable shadcn MCP CLI
+  package on 2026-05-21, and mirrors that value in
+  `config/mcp-runtime-versions.env`.
+
 ## [0.6.4] - 2026-05-21
 
 ### Changed

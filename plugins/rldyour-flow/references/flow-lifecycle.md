@@ -57,6 +57,8 @@ Core order:
 
 The SessionStart hook is advisory and read-only. It adds compact state at session startup or resume so Claude Code knows whether repository sync, Serena memory freshness, docs, dirty files, or worktrees need attention. This context informs planning; it is not a blocker.
 
+The Stop lifecycle dispatcher drains stdin before any early exit, runs Serena and Flow children with bounded process-group timeouts, and uses local-only fullrepo status for the hook hot path. Stop must not fetch, push, publish, or perform remote fullrepo checks; those operations belong to explicit `flow-post-task-sync`, doctor, or validation commands.
+
 The PostToolUse commit advice hook is advisory and read-only. It checks recently created commits for conventional commit format, suspicious sensitive paths, runtime markers, browser evidence, and broad commit scope. It informs the next model step without rejecting the command.
 
 ## Fullrepo Branch Standard
