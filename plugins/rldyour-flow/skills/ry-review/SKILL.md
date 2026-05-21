@@ -19,6 +19,22 @@ Find real issues before merge or deploy. Default mode is report-only: do not edi
 6. Consolidate findings by severity and confidence. Validate uncertain findings with code evidence.
 7. Output Russian report with exact paths, impact, suggested fixes, and whether each finding is must-fix.
 
+## Review Target Parsing
+
+When the user asks for a time-window or history-based review, resolve the
+review target before dispatching reviewers:
+
+- `last N days` / `за последние N дней`: compute the exact commit range with
+  `git log --since`.
+- `since DATE` / `с DATE`: use the explicit date as the lower bound.
+- `PR #N` or `issue #N`: inspect the GitHub PR/issue and verify its relevance
+  against current code before treating it as a finding.
+- `branch vs main`: review the merge-base diff plus related commits.
+- `since last deploy`: identify the last verified deployment marker or ask for
+  it if the repository has no durable deploy record.
+
+Report the resolved commit range, PR/issue IDs, and any unresolved evidence gap.
+
 ## Reviewer Tracks
 
 Read `${CLAUDE_PLUGIN_ROOT}/references/reviewer-protocol.md`. These tracks are orchestrated by `ry-review` or `ry-start`; they are not broad implicit-entry skills.

@@ -1,20 +1,17 @@
 name: release
 
-# Fully automated release on tag push. Triggers on:
-#   - `marketplace--v<X.Y.Z>` (marketplace boundary tag)
-#   - `<plugin>--v<X.Y.Z>` (per-plugin tag)
-# Both tag families are created locally by the maintainer via
-# `claude plugin tag --push` (per-plugin) or manual `git tag -s` (marketplace);
-# this workflow validates the release state and creates the GitHub Release
-# with generated notes + release-manifest.json + release-evidence.tgz.
+# Fully automated release on numeric product tag push (`X.Y.Z`).
+# Claude plugin-scoped tags are historical implementation tags only; the
+# primary public GitHub Release tag must equal root VERSION exactly.
+# This workflow validates release state and creates the GitHub Release with
+# generated notes + release-manifest.json + release-evidence.tgz.
 #
 # SHA-pinned actions per OWASP A03:2025. Refresh via scripts/refresh_actions_pins.sh.
 
 on:
   push:
     tags:
-      - 'marketplace--v*'
-      - 'rldyour-*--v*'
+      - '[0-9]*.[0-9]*.[0-9]*'
   workflow_dispatch:
     inputs:
       version:

@@ -36,24 +36,26 @@ docs/release-process.md, `.github/workflows/release.yml` (G11).
 
 ## Considered Options
 
-- A: Single marketplace tag only. Loses per-plugin cache invalidation.
+- A: Single numeric product tag only. Loses per-plugin cache invalidation.
 - B: Per-plugin tags only. Loses aggregate release narrative.
 - C: Both - marketplace boundary tag `marketplace--vX.Y.Z` plus per-plugin
   tags `<plugin>--vX.Y.Z`, both pushed at release.
+- D: Numeric product tag `X.Y.Z` as the only GitHub Release trigger; optional
+  plugin-scoped tags remain implementation metadata and do not trigger release.
 
 ## Decision Outcome
 
-Chosen option: **C**. Tag conventions:
+Chosen option: **D**. Tag conventions:
 
-- `marketplace--v<X.Y.Z>` (e.g. `marketplace--v0.3.0`): manually
-  created via `git tag -s marketplace--v0.3.0 -m "..."` and pushed by
-  the maintainer. Triggers `.github/workflows/release.yml` (G11) which
-  validates release state and creates the GitHub Release with generated
-  notes + release-manifest.json + release-evidence.tgz.
+- `X.Y.Z` (e.g. `0.6.8`): primary product tag, manually created via
+  `git tag -s 0.6.8 -m "..."` when signing is available, or annotated
+  otherwise. This is the only tag family that triggers
+  `.github/workflows/release.yml`.
 - `<plugin-name>--v<X.Y.Z>` (e.g. `rldyour-flow--v0.3.0`): created via
   `claude plugin tag --push` (CC v2.1.118+). The CLI validates that
   `plugin.json` and the marketplace entry agree on version, refuses
-  dirty worktrees and pre-existing tags. Also triggers release.yml.
+  dirty worktrees and pre-existing tags. These tags are historical/cache
+  metadata only and do not trigger release.yml.
 
 Bump policy:
 
@@ -67,12 +69,13 @@ Bump policy:
 CHANGELOG (`Keep a Changelog 1.1.0`):
 - `[X.Y.Z] - YYYY-MM-DD` per release with `### Added / Changed / Fixed /
   Removed / Security` subsections. Reference-link block at file tail
-  `[X.Y.Z]: https://github.com/.../releases/tag/marketplace--vX.Y.Z`.
+  `[X.Y.Z]: https://github.com/.../releases/tag/X.Y.Z`.
 
 ### Consequences
 
-- Good: per-plugin cache invalidation works; aggregate release narrative
-  preserved.
+- Good: product release tags now match SemVer core (`X.Y.Z`) exactly across all
+  adapters; per-plugin cache tags remain available without becoming public
+  release coordinates.
 - Good: `scripts/validate_release_state.py` enforces parity (VERSION ==
   latest CHANGELOG section == marketplace.json top-level VERSION).
 - Good: signed tags via `git tag -s` give provenance; release.yml uses
