@@ -29,7 +29,7 @@ Engineering conclusions:
 
 - Skills should stay focused and use references/scripts for progressive disclosure.
 - Hooks should be deterministic and non-destructive; they should ask Claude Code to continue rather than silently mutating code.
-- Multiple Stop hooks run independently, so post-task sync must coordinate with Serena using state checks and loop markers (`stop_hook_active` field on stdin).
+- Multiple Stop hooks can run independently, so the registered Flow Stop hook uses `stop_lifecycle_dispatcher.sh` to run Serena before Flow while preserving state checks and loop markers (`stop_hook_active` field on stdin).
 - Subagents are useful for parallel reviews, but prompts must be self-contained and bounded.
 - `AGENTS.md` is the concise root project-instruction file (cross-tool standard, see https://agents.md/) while `.claude/CLAUDE.md` is the Claude Code-native deep project memory in rldyour projects. Keep both independently useful instead of reducing one to a thin import of the other.
 - `.git/info/exclude` is local exclude state, so it is appropriate for per-repository agent-only files that should exist locally but not in normal branch history.
