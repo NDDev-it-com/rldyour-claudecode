@@ -6,6 +6,11 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+### Changed
+
+- Dart SDK runtime pin now matches the Homebrew-installed Flutter/Dart owner
+  runtime (`Dart 3.12.0`).
+
 ## [0.6.9] - 2026-05-22
 
 ### Changed
