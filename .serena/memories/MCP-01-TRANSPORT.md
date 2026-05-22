@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-22
-Last commit: a519d10eb604bfb6c7988aa1fda43b3aeecc46e5 test: align Claude baseline fixture
+Last commit: 148c65c652fbc3e0b3a13db6eba20f2267932c49 chore: align dart sdk runtime pin
 Scope: MCP runtime transport and pin policy
 Area: MCP
 -->
@@ -21,15 +21,19 @@ MCP runtime transport and pin policy
 
 ## Last verified
 - date: 2026-05-22
-- commit: `a519d10eb604bfb6c7988aa1fda43b3aeecc46e5`
-- checked by: Codex ry-start baseline fixture sync
+- commit: `148c65c652fbc3e0b3a13db6eba20f2267932c49`
+- checked by: Codex ry-start Dart 3.12 runtime sync
 
 ## Facts
 - MCP memories record server ownership, transports, versions, and toolset constraints.
+- Dart/Flutter MCP is provided by the local Dart SDK. The Claude adapter now
+  pins the owner host runtime to Dart SDK `3.12.0` in
+  `config/mcp-runtime-versions.env`.
 
 ## Evidence
-- `commit:a519d10eb604bfb6c7988aa1fda43b3aeecc46e5`
+- `commit:148c65c652fbc3e0b3a13db6eba20f2267932c49`
 - `path:plugins/rldyour-mcps/.mcp.json`
+- `path:config/mcp-runtime-versions.env`
 - `path:README.md`
 
 ## Known pitfalls

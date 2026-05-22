@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-22
-Last commit: a519d10eb604bfb6c7988aa1fda43b3aeecc46e5 test: align Claude baseline fixture
+Last commit: 148c65c652fbc3e0b3a13db6eba20f2267932c49 chore: align dart sdk runtime pin
 Scope: release readiness, versioning, and artifact hygiene
 Area: RELEASE
 -->
@@ -23,16 +23,20 @@ release readiness, versioning, and artifact hygiene
 
 ## Last verified
 - date: 2026-05-22
-- commit: `a519d10eb604bfb6c7988aa1fda43b3aeecc46e5`
-- checked by: Codex ry-start baseline fixture sync
+- commit: `148c65c652fbc3e0b3a13db6eba20f2267932c49`
+- checked by: Codex ry-start Dart 3.12 runtime sync
 
 ## Facts
 - Release memories record numeric versioning, tags, CI gates, and clean artifact hygiene.
+- Commit `148c65c652fbc3e0b3a13db6eba20f2267932c49` updates unreleased Claude
+  runtime metadata for Dart SDK `3.12.0` and keeps the product version at
+  `0.6.9`.
 
 ## Evidence
-- `commit:a519d10eb604bfb6c7988aa1fda43b3aeecc46e5`
+- `commit:148c65c652fbc3e0b3a13db6eba20f2267932c49`
 - `path:VERSION`
 - `path:CHANGELOG.md`
+- `path:config/mcp-runtime-versions.env`
 - `path:.github/workflows/release.yml`
 
 ## Known pitfalls
