@@ -13,6 +13,11 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 - Dart SDK runtime pin now matches the Homebrew-installed Flutter/Dart owner
   runtime (`Dart 3.12.0`).
 
+### Fixed
+
+- CodeQL CI egress allowlist now includes `release-assets.githubusercontent.com`
+  so CodeQL bundle downloads work when the GitHub runner cache misses.
+
 ## [0.6.9] - 2026-05-22
 
 ### Changed
