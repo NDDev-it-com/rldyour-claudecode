@@ -22,9 +22,10 @@
     },
     "codex": {
       "profile": "rldyour-yolo",
+      "permission_model": "legacy_sandbox",
+      "permission_profiles_active": false,
       "approval_policy": "never",
-      "sandbox_mode": "danger-full-access",
-      "default_permissions": ":danger-no-sandbox"
+      "sandbox_mode": "danger-full-access"
     },
     "opencode": {
       "primary_permissions": {
