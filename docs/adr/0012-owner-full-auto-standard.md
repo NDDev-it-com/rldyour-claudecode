@@ -45,10 +45,11 @@ because it matches the owner's explicit policy and keeps each adapter native.
 
 The Claude contract now includes `runtime_policy.id =
 "owner-full-auto-standard"` with aliases `yolo`, `full-auto`, and
-`dangerously-skip-permissions`. Codex maps the policy to `rldyour-yolo`,
-`approval_policy = "never"`, `sandbox_mode = "danger-full-access"`, and
-`default_permissions = ":danger-no-sandbox"`. OpenCode maps it to primary
-`edit: "allow"` and `bash: "allow"` permissions.
+`dangerously-skip-permissions`. Codex maps the policy to `rldyour-yolo` through
+the legacy sandbox dialect: `approval_policy = "never"` and
+`sandbox_mode = "danger-full-access"` without an active `default_permissions`
+permission-profile field. OpenCode maps it to primary `edit: "allow"` and
+`bash: "allow"` permissions.
 
 ### Consequences
 

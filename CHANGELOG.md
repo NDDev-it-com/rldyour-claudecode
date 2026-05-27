@@ -8,7 +8,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ### Changed
 
-- Claude Code CLI baseline now tracks `2.1.150`, matching the current upstream
+- Claude Code CLI baseline now tracks `2.1.152`, matching the current upstream
   stable package and the refreshed owner runtime target.
 - Dart SDK runtime pin now matches the Homebrew-installed Flutter/Dart owner
   runtime (`Dart 3.12.0`).
