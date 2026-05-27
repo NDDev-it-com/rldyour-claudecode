@@ -110,7 +110,7 @@ def fake_repo(tmp_path: Path) -> Path:
     # both wildcard-blocked and wildcard-passes branches of validate_agent_tools.
     (tmp_path / "plugins" / "rldyour-mcps" / ".mcp.json").write_text(
         '{"mcpServers": {'
-        '"serena": {"command": "uvx", "args": ["serena-agent==1.5.1"]},'
+        '"serena": {"command": "uvx", "args": ["serena-agent==1.5.3"]},'
         '"context7": {"type": "http", "url": "https://example.com"}'
         '}}',
         encoding="utf-8",
