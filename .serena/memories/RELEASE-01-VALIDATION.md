@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-27
-Last commit: 1d8c2d951c1131e043989d8c4f5d2afa4f777b21 chore(release): bump config version to 0.7.0
+Last commit: 32b25d2346d2fc59c441edd24ef8454db879bf18 fix(installer): use current Claude marketplace source format
 Scope: release readiness, versioning, and artifact hygiene
 Area: RELEASE
 -->
@@ -23,7 +23,7 @@ release readiness, versioning, and artifact hygiene
 
 ## Last verified
 - date: 2026-05-27
-- commit: `1d8c2d951c1131e043989d8c4f5d2afa4f777b21`
+- commit: `32b25d2346d2fc59c441edd24ef8454db879bf18`
 - checked by: Codex ry-start version synchronization
 
 ## Facts
@@ -31,9 +31,14 @@ release readiness, versioning, and artifact hygiene
 - Commit `1d8c2d951c1131e043989d8c4f5d2afa4f777b21` bumps the product/config
   version to `0.7.0` in `VERSION`, `package.json`, `pyproject.toml`, and
   `CHANGELOG.md` without changing Claude runtime semantics.
+- Commit `32b25d2346d2fc59c441edd24ef8454db879bf18` updates
+  `scripts/install-rldyour-marketplace.sh` for the current Claude CLI
+  marketplace source format (`owner/repo`) and fixes final verification when
+  the refreshed marketplace intentionally reuses the canonical
+  `rldyour-claudecode` name.
 
 ## Evidence
-- `commit:1d8c2d951c1131e043989d8c4f5d2afa4f777b21`
+- `commit:32b25d2346d2fc59c441edd24ef8454db879bf18`
 - `path:VERSION`
 - `path:CHANGELOG.md`
 - `path:config/mcp-runtime-versions.env`
