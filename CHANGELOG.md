@@ -13,7 +13,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 - Dart SDK runtime pin now matches the Homebrew-installed Flutter/Dart owner
   runtime (`Dart 3.12.0`).
 - Shared MCP runtime pins now match current upstream stable packages:
-  `serena-agent==1.5.3`, `chrome-devtools-mcp@1.1.0`, and `shadcn@4.8.1`.
+  `serena-agent==1.5.3`, `chrome-devtools-mcp@1.1.1`, and `shadcn@4.8.1`.
 
 ### Fixed
 
