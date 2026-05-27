@@ -6,10 +6,23 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-05-27
+
 ### Changed
 
+- Claude Code CLI baseline now tracks `2.1.152`, matching the current upstream
+  stable package and the refreshed owner runtime target.
 - Dart SDK runtime pin now matches the Homebrew-installed Flutter/Dart owner
   runtime (`Dart 3.12.0`).
+- Shared MCP runtime pins now match current upstream stable packages:
+  `serena-agent==1.5.3`, `chrome-devtools-mcp@1.1.1`, and `shadcn@4.8.1`.
+
+### Fixed
+
+- CodeQL CI egress allowlist now includes `release-assets.githubusercontent.com`
+  so CodeQL bundle downloads work when the GitHub runner cache misses.
+- Gitleaks CI now retries Docker pull exit `125` infrastructure failures without
+  masking real gitleaks findings.
 
 ## [0.6.9] - 2026-05-22
 
@@ -2137,7 +2150,8 @@ Release boundary cut after the 2026-05-08..2026-05-12 wave of best-practice, MCP
   shell syntax checks, frontmatter presence verification on all skills,
   agents, and commands.
 
-[Unreleased]: https://github.com/NDDev-it-com/rldyour-claudecode/compare/0.6.9...HEAD
+[Unreleased]: https://github.com/NDDev-it-com/rldyour-claudecode/compare/0.7.0...HEAD
+[0.7.0]: https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/0.7.0
 [0.6.9]: https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/0.6.9
 [0.6.8]: https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/0.6.8
 [0.6.7]: https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/marketplace--v0.6.7

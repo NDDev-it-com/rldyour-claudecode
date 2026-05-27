@@ -3,7 +3,7 @@
     "serena": {
       "command": "uvx",
       "args": [
-        "--from", "serena-agent==1.5.1",
+        "--from", "serena-agent==1.5.3",
         "--python", "3.13",
         "--prerelease", "allow",
         "serena", "start-mcp-server",
@@ -34,7 +34,7 @@
     "chrome-devtools": {
       "command": "bunx",
       "args": [
-        "chrome-devtools-mcp@1.0.1",
+        "chrome-devtools-mcp@1.1.1",
         "--headless",
         "--isolated",
         "--no-usage-statistics",
@@ -68,7 +68,7 @@
     "shadcn": {
       "command": "bunx",
       "args": [
-        "shadcn@4.8.0",
+        "shadcn@4.8.1",
         "mcp"
       ]
     },

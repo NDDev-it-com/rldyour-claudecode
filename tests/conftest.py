@@ -44,7 +44,7 @@ def fake_repo(tmp_path: Path) -> Path:
         '{"name": "fixture-marketplace", "version": "0.4.0", '
         '"license": "AGPL-3.0-or-later", '
         '"author": {"name": "Danil Silantyev (github:rldyourmnd), CEO NDDev"}, '
-        '"devDependencies": {"@anthropic-ai/claude-code": "2.1.147"}}',
+        '"devDependencies": {"@anthropic-ai/claude-code": "2.1.152"}}',
         encoding="utf-8",
     )
     (tmp_path / "pyproject.toml").write_text(
@@ -110,7 +110,7 @@ def fake_repo(tmp_path: Path) -> Path:
     # both wildcard-blocked and wildcard-passes branches of validate_agent_tools.
     (tmp_path / "plugins" / "rldyour-mcps" / ".mcp.json").write_text(
         '{"mcpServers": {'
-        '"serena": {"command": "uvx", "args": ["serena-agent==1.5.1"]},'
+        '"serena": {"command": "uvx", "args": ["serena-agent==1.5.3"]},'
         '"context7": {"type": "http", "url": "https://example.com"}'
         '}}',
         encoding="utf-8",

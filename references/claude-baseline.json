@@ -1,17 +1,20 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "schema_version": 1,
-  "verified_on": "2026-05-21",
+  "verified_on": "2026-05-27",
   "baseline": {
     "claude_code": {
-      "version": "2.1.147",
+      "version": "2.1.152",
       "npm_package": "@anthropic-ai/claude-code",
       "ref": "https://code.claude.com/docs/en/changelog"
     },
     "required_runtime_fixes": [
       "mcp-pagination",
       "auto-mode-explicit-ask-user-question",
-      "stop-hook-background-tasks-and-session-crons-input"
+      "stop-hook-background-tasks-and-session-crons-input",
+      "skill-and-slash-command-disallowed-tools-frontmatter",
+      "sessionstart-reloadskills-output",
+      "message-display-hook-event"
     ]
   }
 }

@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-22
-Last commit: 148c65c652fbc3e0b3a13db6eba20f2267932c49 chore: align dart sdk runtime pin
+Last updated: 2026-05-27
+Last commit: 1d8c2d951c1131e043989d8c4f5d2afa4f777b21 chore(release): bump config version to 0.7.0
 Scope: release readiness, versioning, and artifact hygiene
 Area: RELEASE
 -->
@@ -22,18 +22,18 @@ release readiness, versioning, and artifact hygiene
 - `path:.github/workflows/release.yml`
 
 ## Last verified
-- date: 2026-05-22
-- commit: `148c65c652fbc3e0b3a13db6eba20f2267932c49`
-- checked by: Codex ry-start Dart 3.12 runtime sync
+- date: 2026-05-27
+- commit: `1d8c2d951c1131e043989d8c4f5d2afa4f777b21`
+- checked by: Codex ry-start version synchronization
 
 ## Facts
 - Release memories record numeric versioning, tags, CI gates, and clean artifact hygiene.
-- Commit `148c65c652fbc3e0b3a13db6eba20f2267932c49` updates unreleased Claude
-  runtime metadata for Dart SDK `3.12.0` and keeps the product version at
-  `0.6.9`.
+- Commit `1d8c2d951c1131e043989d8c4f5d2afa4f777b21` bumps the product/config
+  version to `0.7.0` in `VERSION`, `package.json`, `pyproject.toml`, and
+  `CHANGELOG.md` without changing Claude runtime semantics.
 
 ## Evidence
-- `commit:148c65c652fbc3e0b3a13db6eba20f2267932c49`
+- `commit:1d8c2d951c1131e043989d8c4f5d2afa4f777b21`
 - `path:VERSION`
 - `path:CHANGELOG.md`
 - `path:config/mcp-runtime-versions.env`
