@@ -73,7 +73,7 @@ def extract_pin(args: list[str]) -> str | None:
     Recognises three forms produced by `bunx`/`uvx`/native commands:
       1. Python-style `package==1.2.3` (uvx style).
       2. Scoped npm `@scope/name@1.2.3` (`bunx @anthropic-ai/mcp@1`).
-      3. Unscoped npm `name@1.2.3` (`bunx chrome-devtools-mcp@1.1.0`).
+      3. Unscoped npm `name@1.2.3` (`bunx chrome-devtools-mcp@1.1.1`).
 
     Returns the first matching token or `None` if none match.
     """
