@@ -9,7 +9,7 @@
 #   - CC with any other rldyour-* setup: left untouched. Only the explicit legacy names in
 #     LEGACY_MARKETPLACES are cleaned; everything else is the user's responsibility.
 #
-# Marketplace source: github:nddev-it-com/rldyour-claudecode. No local clone required.
+# Marketplace source: nddev-it-com/rldyour-claudecode. No local clone required.
 #
 # Usage:
 #   bash scripts/install-rldyour-marketplace.sh --dry-run                 # preview
@@ -31,7 +31,7 @@
 #   2  detect + remove any LEGACY marketplace: disable+uninstall its plugins, then marketplace remove
 #   3  jq-scrub settings.json: extraKnownMarketplaces + enabledPlugins entries pointing at legacy marketplaces
 #   4  filesystem cleanup: ~/.claude/plugins/cache/<legacy>/ subtrees and known leftover symlinks
-#   5  add github:nddev-it-com/rldyour-claudecode as a new marketplace
+#   5  add nddev-it-com/rldyour-claudecode as a new marketplace
 #   6  install 9 plugins from @rldyour-claudecode in dependency order
 #   7  verify final state and write migration-report.md into the backup directory
 
@@ -40,7 +40,7 @@ IFS=$'\n\t'
 unset CDPATH
 
 readonly NEW_MARKETPLACE="rldyour-claudecode"
-readonly NEW_MARKETPLACE_SOURCE="github:nddev-it-com/rldyour-claudecode"
+readonly NEW_MARKETPLACE_SOURCE="nddev-it-com/rldyour-claudecode"
 
 # Known legacy marketplace names that this installer cleans up. Add others here only when their
 # removal is safe and intended. Anything else is left untouched.
@@ -423,6 +423,9 @@ stage_7_verify() {
 
   local legacy
   for legacy in "${LEGACY_MARKETPLACES[@]}"; do
+    if [[ "$legacy" == "$NEW_MARKETPLACE" ]]; then
+      continue
+    fi
     if marketplace_registered "$legacy"; then
       err "legacy marketplace still present: $legacy"
       errors=$((errors + 1))
@@ -449,6 +452,9 @@ stage_7_verify() {
   fi
 
   for legacy in "${LEGACY_MARKETPLACES[@]}"; do
+    if [[ "$legacy" == "$NEW_MARKETPLACE" ]]; then
+      continue
+    fi
     local cache_dir="$PLUGINS_CACHE_DIR/$legacy"
     if [[ -d "$cache_dir" ]]; then
       err "legacy cache still present: $cache_dir"
@@ -459,6 +465,9 @@ stage_7_verify() {
   done
 
   for legacy in "${LEGACY_MARKETPLACES[@]}"; do
+    if [[ "$legacy" == "$NEW_MARKETPLACE" ]]; then
+      continue
+    fi
     local extra_present
     extra_present="$(jq -r --arg m "$legacy" '.extraKnownMarketplaces[$m] // empty' "$SETTINGS_PATH" 2>/dev/null || true)"
     if [[ -n "$extra_present" ]]; then
