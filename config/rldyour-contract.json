@@ -473,63 +473,63 @@
       "id": "session.start.worktree-bootstrap",
       "description": "Restore agent-only fullrepo context into new worktrees",
       "claude": { "plugin": "rldyour-flow", "event": "SessionStart", "script": "plugins/rldyour-flow/hooks/session_start_worktree_bootstrap.sh" },
-      "codex": { "name": "session_start_worktree_bootstrap", "status": "plugin hook when plugin_hooks=true and hook is trusted" },
+      "codex": { "name": "session_start_worktree_bootstrap", "status": "plugin hook when hooks/list reports trusted hook" },
       "opencode": { "name": "shell.env or startup plugin event", "status": "adapter-specific startup hook" }
     },
     {
       "id": "session.start.context",
       "description": "Load lightweight session context",
       "claude": { "plugin": "rldyour-flow", "event": "SessionStart", "script": "plugins/rldyour-flow/hooks/session_start_context.sh" },
-      "codex": { "name": "session_start_context", "status": "plugin hook when plugin_hooks=true and hook is trusted" },
+      "codex": { "name": "session_start_context", "status": "plugin hook when hooks/list reports trusted hook" },
       "opencode": { "name": "shell.env or startup plugin event", "status": "adapter-specific startup hook" }
     },
     {
       "id": "prompt.submit.sync-context",
       "description": "Inject Serena workflow context before prompt processing",
       "claude": { "plugin": "rldyour-serena-mcp", "event": "UserPromptSubmit", "script": "plugins/rldyour-serena-mcp/hooks/user_prompt_submit.sh" },
-      "codex": { "name": "user_prompt_submit", "status": "plugin hook when plugin_hooks=true and hook is trusted" },
+      "codex": { "name": "user_prompt_submit", "status": "plugin hook when hooks/list reports trusted hook" },
       "opencode": { "name": "prompt submit plugin event", "status": "adapter-specific prompt hook" }
     },
     {
       "id": "tool.pre.git-auto-sync-baseline",
       "description": "Record Serena baseline before git history-changing commands",
       "claude": { "plugin": "rldyour-serena-mcp", "event": "PreToolUse", "script": "plugins/rldyour-serena-mcp/hooks/prepare_auto_sync.sh" },
-      "codex": { "name": "prepare_auto_sync", "status": "plugin hook when plugin_hooks=true and hook is trusted" },
+      "codex": { "name": "prepare_auto_sync", "status": "plugin hook when hooks/list reports trusted hook" },
       "opencode": { "name": "tool.execute.before", "status": "plugin before-tool hook" }
     },
     {
       "id": "tool.pre.ci-advisory",
       "description": "Advisory guard for manual-first GitHub Actions usage",
       "claude": { "plugin": "rldyour-flow", "event": "PreToolUse", "script": "plugins/rldyour-flow/hooks/pre_tool_use_ci_advisory.sh" },
-      "codex": { "name": "pre_tool_use_ci_advisory", "status": "plugin hook when plugin_hooks=true and hook is trusted" },
+      "codex": { "name": "pre_tool_use_ci_advisory", "status": "plugin hook when hooks/list reports trusted hook" },
       "opencode": { "name": "tool.execute.before", "status": "plugin before-tool hook" }
     },
     {
       "id": "tool.post.serena-sync-required",
       "description": "Mark Serena sync as required after git history-changing commands",
       "claude": { "plugin": "rldyour-serena-mcp", "event": "PostToolUse", "script": "plugins/rldyour-serena-mcp/hooks/mark_sync_required.sh" },
-      "codex": { "name": "mark_sync_required", "status": "plugin hook when plugin_hooks=true and hook is trusted" },
+      "codex": { "name": "mark_sync_required", "status": "plugin hook when hooks/list reports trusted hook" },
       "opencode": { "name": "tool.execute.after", "status": "plugin after-tool hook" }
     },
     {
       "id": "tool.post.commit-advice",
       "description": "Surface post-commit follow-up guidance",
       "claude": { "plugin": "rldyour-flow", "event": "PostToolUse", "script": "plugins/rldyour-flow/hooks/post_tool_use_commit_advice.sh" },
-      "codex": { "name": "post_tool_use_commit_advice", "status": "plugin hook when plugin_hooks=true and hook is trusted" },
+      "codex": { "name": "post_tool_use_commit_advice", "status": "plugin hook when hooks/list reports trusted hook" },
       "opencode": { "name": "tool.execute.after", "status": "plugin after-tool hook" }
     },
     {
       "id": "task.stop.memory-sync",
       "description": "Block final response when Serena memory sync is required via ordered flow dispatcher",
       "claude": { "plugin": "rldyour-flow", "event": "Stop", "script": "plugins/rldyour-flow/hooks/stop_lifecycle_dispatcher.sh" },
-      "codex": { "name": "stop_memory_sync", "status": "plugin hook when plugin_hooks=true and hook is trusted" },
+      "codex": { "name": "stop_memory_sync", "status": "plugin hook when hooks/list reports trusted hook" },
       "opencode": { "name": "task stop plugin event", "status": "adapter-specific stop hook" }
     },
     {
       "id": "task.stop.post-task-sync",
       "description": "Block final response when post-task sync is required",
       "claude": { "plugin": "rldyour-flow", "event": "Stop", "script": "plugins/rldyour-flow/hooks/stop_lifecycle_dispatcher.sh" },
-      "codex": { "name": "stop_post_task_sync", "status": "plugin hook when plugin_hooks=true and hook is trusted" },
+      "codex": { "name": "stop_post_task_sync", "status": "plugin hook when hooks/list reports trusted hook" },
       "opencode": { "name": "task stop plugin event", "status": "adapter-specific stop hook" }
     }
   ],
