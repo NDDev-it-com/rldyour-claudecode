@@ -13,7 +13,9 @@ Checks:
 3. Each file is under the Anthropic-recommended 200-line cap. Soft warning
    for 200..300 lines, hard fail at 300+ (Anthropic empirical guidance:
    adherence drops past ~200 lines).
-4. No secret-looking strings in either file (lightweight scan against the
+4. Active version/count claims match package, baseline, runtime-env, and
+   filesystem inventory.
+5. No secret-looking strings in either file (lightweight scan against the
    patterns SECRET_RE in fullrepo_sync.py).
 
 Exit codes: 0 success, 1 hard failure.
@@ -22,6 +24,7 @@ Exit codes: 0 success, 1 hard failure.
 from __future__ import annotations
 
 import argparse
+import json
 import re
 import sys
 from pathlib import Path
@@ -38,9 +41,62 @@ SECRET_PATTERNS = [
 
 LINE_SOFT_CAP = 200
 LINE_HARD_CAP = 300
+FEATURE_FLOOR = "2.1.146"
+
+ACTIVE_STALE_CLAIMS = (
+    "claude_code_min_version:",
+    "Minimum Claude Code: v2.1.145",
+    "Current local CC: **v2.1.145**",
+    "pins CI/local floor to 2.1.145",
+)
 
 
-def check_file(path: Path) -> tuple[int, list[str]]:
+def read_package_pin(root: Path) -> str:
+    data = json.loads((root / "package.json").read_text(encoding="utf-8"))
+    return data["devDependencies"]["@anthropic-ai/claude-code"]
+
+
+def read_baseline_pin(root: Path) -> str:
+    data = json.loads((root / "references" / "claude-baseline.json").read_text(encoding="utf-8"))
+    return data["baseline"]["claude_code"]["version"]
+
+
+def read_env_pin(root: Path) -> str:
+    env_path = root / "config" / "mcp-runtime-versions.env"
+    for line in env_path.read_text(encoding="utf-8").splitlines():
+        if line.startswith("CLAUDE_CODE_MIN_VERSION="):
+            return line.split("=", 1)[1].strip()
+    raise ValueError(f"missing CLAUDE_CODE_MIN_VERSION in {env_path}")
+
+
+def inventory_counts(root: Path) -> dict[str, int]:
+    return {
+        "plugin_count": sum(1 for path in (root / "plugins").iterdir() if path.is_dir()),
+        "skill_count": sum(1 for _ in root.glob("plugins/*/skills/*/SKILL.md")),
+        "command_count": sum(1 for _ in root.glob("plugins/*/commands/*.md")),
+        "subagent_count": sum(1 for _ in root.glob("plugins/*/agents/*.md")),
+    }
+
+
+def check_runtime_sources(root: Path) -> tuple[int, list[str], str]:
+    issues: list[str] = []
+    package_pin = read_package_pin(root)
+    baseline_pin = read_baseline_pin(root)
+    env_pin = read_env_pin(root)
+    pins = {
+        "package.json": package_pin,
+        "references/claude-baseline.json": baseline_pin,
+        "config/mcp-runtime-versions.env": env_pin,
+    }
+    if len(set(pins.values())) != 1:
+        for source, version in pins.items():
+            issues.append(f"FAIL runtime pin mismatch: {source} -> {version}")
+        return 1, issues, package_pin
+    issues.append(f"OK runtime pin parity: Claude Code {package_pin}")
+    return 0, issues, package_pin
+
+
+def check_file(path: Path, root: Path, runtime_pin: str, counts: dict[str, int]) -> tuple[int, list[str]]:
     if not path.is_file():
         return 1, [f"FAIL missing: {path}"]
 
@@ -54,7 +110,9 @@ def check_file(path: Path) -> tuple[int, list[str]]:
         issues.append(f"FAIL empty: {path}")
         fail = 1
 
-    if not text.lstrip().startswith("#"):
+    is_markdown_doc = path.suffix.lower() == ".md"
+
+    if is_markdown_doc and not text.lstrip().startswith("#"):
         issues.append(f"FAIL no top-level heading: {path}")
         fail = 1
 
@@ -73,6 +131,30 @@ def check_file(path: Path) -> tuple[int, list[str]]:
             fail = 1
             break
 
+    for stale in ACTIVE_STALE_CLAIMS:
+        if stale in text:
+            issues.append(f"FAIL {path}: stale active Claude Code claim {stale!r}")
+            fail = 1
+
+    if path.name in {"AGENTS.md", "CLAUDE.md"} and "sync_contract:" in text:
+        expected_claims = {
+            "claude_code_runtime_pin": runtime_pin,
+            "claude_code_feature_floor": FEATURE_FLOOR,
+        }
+        for key, expected in expected_claims.items():
+            if f'{key}: "{expected}"' not in text:
+                issues.append(f"FAIL {path}: sync_contract missing {key}: {expected!r}")
+                fail = 1
+        for key, expected_count in counts.items():
+            if f"{key}: {expected_count}" not in text:
+                issues.append(f"FAIL {path}: sync_contract {key} does not match inventory ({expected_count})")
+                fail = 1
+
+    if path.match("*/.github/ISSUE_TEMPLATE/bug_report.yml"):
+        if f'placeholder: "{runtime_pin}"' not in text:
+            issues.append(f"FAIL {path}: bug-report Claude Code placeholder must match runtime pin {runtime_pin}")
+            fail = 1
+
     if fail == 0 and not issues:
         issues.append(f"OK {path}: {n} lines")
 
@@ -90,9 +172,16 @@ def main() -> int:
 
     root = Path(__file__).resolve().parent.parent
     targets = [root / "AGENTS.md", root / ".claude" / "CLAUDE.md"]
+    active_templates = [root / ".github" / "ISSUE_TEMPLATE" / "bug_report.yml"]
 
-    overall_fail = 0
-    for target in targets:
+    counts = inventory_counts(root)
+    rc, pin_issues, runtime_pin = check_runtime_sources(root)
+    overall_fail = rc
+    for line in pin_issues:
+        stream = sys.stderr if line.startswith("FAIL") else sys.stdout
+        print(line, file=stream)
+
+    for target in targets + active_templates:
         if not target.is_file():
             if args.require_agent_docs:
                 print(f"FAIL missing required doc: {target}", file=sys.stderr)
@@ -100,7 +189,7 @@ def main() -> int:
             else:
                 print(f"SKIP missing (not required): {target}")
             continue
-        rc, issues = check_file(target)
+        rc, issues = check_file(target, root, runtime_pin, counts)
         for line in issues:
             stream = sys.stderr if line.startswith("FAIL") else sys.stdout
             print(line, file=stream)
