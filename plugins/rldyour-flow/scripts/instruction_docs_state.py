@@ -144,8 +144,11 @@ def fullrepo_state(root: Path) -> dict[str, Any]:
     for candidate in candidates:
         if not candidate.is_file():
             continue
+        args = [sys.executable, str(candidate), "--status-json"]
+        if os.environ.get("RLDYOUR_FULLREPO_STATUS_LOCAL_ONLY") == "1":
+            args.append("--local-only")
         proc = subprocess.run(
-            [sys.executable, str(candidate), "--status-json"],
+            args,
             cwd=root,
             check=False,
             capture_output=True,

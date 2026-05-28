@@ -18,6 +18,11 @@ RUNTIME_IGNORED = {
     ".serena/.flow_sync_marker",
     ".serena/.flow_post_task_state.json",
 }
+UNTRACKED_BOOTSTRAP_IGNORED = {
+    ".serena/.gitignore",
+    ".serena/project.yml",
+    ".serena/project.local.yml",
+}
 
 DOC_FILES = ("AGENTS.md", ".claude/CLAUDE.md", "CLAUDE.md")
 PROTECTED_BRANCHES = {"main", "master", "develop", "development", "staging", "production", "prod", "fullrepo"}
@@ -38,10 +43,15 @@ def _porcelain_paths() -> list[str]:
     for line in raw.splitlines():
         if not line:
             continue
+        status = line[:2]
         path = line[3:].strip()
         if " -> " in path:
             path = path.split(" -> ", 1)[1]
-        if path and path not in RUNTIME_IGNORED:
+        if (
+            path
+            and path not in RUNTIME_IGNORED
+            and not (status == "??" and path in UNTRACKED_BOOTSTRAP_IGNORED)
+        ):
             paths.append(path)
     return sorted(paths)
 
@@ -177,14 +187,16 @@ def _resolve_sibling_plugin_script(plugin: str, relative: str) -> Path | None:
     here because this is a long-lived Python script with multiple call
     sites, not a one-shot shell expansion.
     """
-    repo_relative = Path(f"plugins/{plugin}/{relative}")
-    if repo_relative.is_file():
-        return repo_relative
+    candidates = [
+        Path(__file__).resolve().parents[1].parent / plugin / relative,
+        Path(f"plugins/{plugin}/{relative}"),
+    ]
     plugin_root_env = os.environ.get("CLAUDE_PLUGIN_ROOT")
     if plugin_root_env:
-        sibling = (Path(plugin_root_env) / ".." / plugin / relative).resolve()
-        if sibling.is_file():
-            return sibling
+        candidates.append((Path(plugin_root_env) / ".." / plugin / relative).resolve())
+    for candidate in candidates:
+        if candidate.is_file():
+            return candidate
     return None
 
 
@@ -204,12 +216,14 @@ def _serena_current() -> tuple[bool, dict[str, Any]]:
 
 def _self_plugin_script(relative: str) -> Path | None:
     """Find a script in this plugin (rldyour-flow) via repo-relative or CLAUDE_PLUGIN_ROOT."""
-    repo_relative = Path(f"plugins/rldyour-flow/{relative}")
-    if repo_relative.is_file():
-        return repo_relative
+    candidates = [
+        Path(__file__).resolve().parents[1] / relative,
+        Path(f"plugins/rldyour-flow/{relative}"),
+    ]
     plugin_root_env = os.environ.get("CLAUDE_PLUGIN_ROOT")
     if plugin_root_env:
-        candidate = (Path(plugin_root_env) / relative).resolve()
+        candidates.append((Path(plugin_root_env) / relative).resolve())
+    for candidate in candidates:
         if candidate.is_file():
             return candidate
     return None
@@ -219,8 +233,11 @@ def _fullrepo_state() -> dict[str, Any]:
     candidate = _self_plugin_script("scripts/fullrepo_sync.py")
     if candidate is None:
         return {}
+    args = [sys.executable, str(candidate), "--status-json"]
+    if os.environ.get("RLDYOUR_FLOW_STATE_LOCAL_ONLY") == "1":
+        args.append("--local-only")
     proc = subprocess.run(
-        [sys.executable, str(candidate), "--status-json"],
+        args,
         check=False,
         capture_output=True,
         text=True,
@@ -238,11 +255,15 @@ def _instruction_docs_state() -> dict[str, Any]:
     candidate = _self_plugin_script("scripts/instruction_docs_state.py")
     if candidate is None:
         return {}
+    env = os.environ.copy()
+    if os.environ.get("RLDYOUR_FLOW_STATE_LOCAL_ONLY") == "1":
+        env["RLDYOUR_FULLREPO_STATUS_LOCAL_ONLY"] = "1"
     proc = subprocess.run(
         [sys.executable, str(candidate), "--json"],
         check=False,
         capture_output=True,
         text=True,
+        env=env,
     )
     if proc.returncode != 0 or not proc.stdout.strip():
         return {}
@@ -273,6 +294,15 @@ def state() -> dict[str, Any]:
     worktree_agent_paths = fullrepo_state.get("worktree_agent_paths")
     if not isinstance(worktree_agent_paths, list):
         worktree_agent_paths = []
+    tracked_agent_paths = fullrepo_state.get("tracked_agent_paths")
+    if not isinstance(tracked_agent_paths, list):
+        tracked_agent_paths = []
+    has_fullrepo_context = bool(
+        worktree_agent_paths
+        or tracked_agent_paths
+        or fullrepo_state.get("remote_fullrepo_exists")
+        or fullrepo_state.get("local_fullrepo_sha")
+    )
     network_checked = bool(fullrepo_state.get("network_checked", True))
     remote_configured = bool(fullrepo_state.get("remote_configured", True))
     remote_missing_attention = bool(
@@ -282,7 +312,7 @@ def state() -> dict[str, Any]:
         and not bool(fullrepo_state.get("remote_fullrepo_exists", False))
     )
     fullrepo_needs_attention = bool(fullrepo_state) and (
-        not bool(fullrepo_state.get("exclude_installed", True))
+        (has_fullrepo_context and not bool(fullrepo_state.get("exclude_installed", True)))
         or remote_missing_attention
         or (bool(worktree_agent_paths) and not bool(fullrepo_state.get("fullrepo_matches_worktree", True)))
     )
