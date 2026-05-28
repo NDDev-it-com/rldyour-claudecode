@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/package.json",
   "name": "rldyour-claudecode",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "private": true,
   "description": "Claude Code plugin marketplace for rldyour SDLC flows: MCP/LSP, Serena memory, security review, browser/design workflows, and reviewer agents.",
   "license": "AGPL-3.0-or-later",
