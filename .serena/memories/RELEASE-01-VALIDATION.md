@@ -60,7 +60,7 @@ release readiness, versioning, and artifact hygiene
   `rldyour-claudecode` name.
 
 ## Evidence
-- `commit:bde7e6e551c9bff3c68cacd89702fca7206d9b71`
+- `commit:63abf7d4084cd892fea40e126d71cdd2ddf6d80e`
 - `path:VERSION`
 - `path:CHANGELOG.md`
 - `path:config/mcp-runtime-versions.env`

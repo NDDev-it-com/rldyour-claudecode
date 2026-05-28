@@ -28,7 +28,7 @@ quality-first engineering rules
 - Rules memories record non-negotiable quality, architecture, dependency, and verification discipline.
 
 ## Evidence
-- `commit:cf5b25eb348ff012a2bcbbd2e4e61308207d674e`
+- `commit:63abf7d4084cd892fea40e126d71cdd2ddf6d80e`
 - `path:plugins/rldyour-rules`
 - `path:README.md`
 

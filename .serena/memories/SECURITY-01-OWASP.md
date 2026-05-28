@@ -28,7 +28,7 @@ security posture and blocking/warning policy
 - Security memories record block/warn/review classes and defensive-only review policy.
 
 ## Evidence
-- `commit:cf5b25eb348ff012a2bcbbd2e4e61308207d674e`
+- `commit:63abf7d4084cd892fea40e126d71cdd2ddf6d80e`
 - `path:plugins/rldyour-security`
 - `path:README.md`
 

@@ -30,7 +30,7 @@ Serena memory, fullrepo, and knowledge sync policy
 - Serena memories record memory format, evidence, freshness, fullrepo, and runtime marker policy.
 
 ## Evidence
-- `commit:cf5b25eb348ff012a2bcbbd2e4e61308207d674e`
+- `commit:63abf7d4084cd892fea40e126d71cdd2ddf6d80e`
 - `path:plugins/rldyour-serena-mcp`
 - `path:.serena/project.yml`
 - `path:README.md`

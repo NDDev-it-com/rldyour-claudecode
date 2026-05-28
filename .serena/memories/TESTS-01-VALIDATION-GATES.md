@@ -37,7 +37,7 @@ validation gates and test suites
   1 skipped after the Stop hook loop-guard hardening.
 
 ## Evidence
-- `commit:2528040d67a5341d7b7feb2b447ebe9523713318`
+- `commit:63abf7d4084cd892fea40e126d71cdd2ddf6d80e`
 - `path:scripts`
 - `path:tests/test_flow_stop_state.py`
 - `path:.github/workflows`

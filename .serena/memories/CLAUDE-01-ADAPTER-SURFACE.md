@@ -28,7 +28,7 @@ Claude Code adapter implementation surface
 - Claude memories describe the Claude Code plugin marketplace, command, skill, hook, MCP, and LSP surfaces.
 
 ## Evidence
-- `commit:cf5b25eb348ff012a2bcbbd2e4e61308207d674e`
+- `commit:63abf7d4084cd892fea40e126d71cdd2ddf6d80e`
 - `path:config/rldyour-contract.json`
 - `path:.claude-plugin/marketplace.json`
 

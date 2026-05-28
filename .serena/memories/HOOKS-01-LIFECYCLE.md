@@ -39,7 +39,7 @@ deterministic hook lifecycle behavior
   checks in the hot path and reports `network_checked=false`.
 
 ## Evidence
-- `commit:2528040d67a5341d7b7feb2b447ebe9523713318`
+- `commit:63abf7d4084cd892fea40e126d71cdd2ddf6d80e`
 - `path:plugins/rldyour-flow/hooks`
 - `path:plugins/rldyour-flow/scripts/flow_post_task_state.py`
 - `path:plugins/rldyour-flow/scripts/fullrepo_sync.py`

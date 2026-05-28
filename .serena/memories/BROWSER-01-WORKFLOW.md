@@ -28,7 +28,7 @@ browser-visible validation and debugging workflows
 - Browser memories route UI and runtime validation through Playwright and Chrome DevTools when relevant.
 
 ## Evidence
-- `commit:cf5b25eb348ff012a2bcbbd2e4e61308207d674e`
+- `commit:63abf7d4084cd892fea40e126d71cdd2ddf6d80e`
 - `path:README.md`
 - `path:plugins/rldyour-browser`
 
