@@ -11,6 +11,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 - `scripts/install-rldyour-marketplace.sh` now writes Markdown list entries in
   the final install report without tripping Bash `printf` option parsing.
 
+## [1.0.2] - 2026-05-28
+
+### Fixed
+
+- Harden rldyour-flow Stop hook loop guard and local-only sync state checks.
+
 ## [1.0.1] - 2026-05-28
 
 ### Changed

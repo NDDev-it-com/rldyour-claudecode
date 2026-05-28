@@ -49,7 +49,7 @@ if [ ! -f "$STATE_SCRIPT" ]; then
   exit 0
 fi
 
-STATE_JSON=$("${PYTHON_BIN}" "$STATE_SCRIPT" 2>/dev/null || true)
+STATE_JSON=$(RLDYOUR_FLOW_STATE_LOCAL_ONLY=1 RLDYOUR_FULLREPO_STATUS_LOCAL_ONLY=1 "${PYTHON_BIN}" "$STATE_SCRIPT" 2>/dev/null || true)
 if [ -z "$STATE_JSON" ]; then
   exit 0
 fi
@@ -82,6 +82,16 @@ print("true" if payload.get("stop_hook_active") is True else "false")
 ' 2>/dev/null || echo "false")
 
 if [ "$STOP_HOOK_ACTIVE" = "true" ] && [ -f "$SYNC_MARKER" ] && [ "$(cat "$SYNC_MARKER" 2>/dev/null || true)" = "$FINGERPRINT" ]; then
+  "${PYTHON_BIN}" <<'PY'
+import json
+
+print(json.dumps({
+    "systemMessage": (
+        "rldyour-flow post-task sync was already requested for this state. "
+        "Allowing stop now to avoid a Stop-hook loop."
+    )
+}))
+PY
   exit 0
 fi
 

@@ -401,15 +401,18 @@ def bootstrap_init(remote: str, branch: str, dry_run: bool = False) -> None:
     print_status(payload, as_json=False)
 
 
-def status(remote: str, branch: str) -> dict[str, object]:
+def status(remote: str, branch: str, *, local_only: bool = False) -> dict[str, object]:
     root = repo_root()
-    has_remote = remote_configured(remote)
-    remote_sha = remote_branch_sha(remote, branch)
-    local_sha = local_ref_sha(f"refs/heads/{branch}")
     remote_ref = f"refs/remotes/{remote}/{branch}"
+    has_remote = remote_configured(remote)
+    remote_sha = local_ref_sha(remote_ref) if local_only else remote_branch_sha(remote, branch)
+    local_sha = local_ref_sha(f"refs/heads/{branch}")
     remote_tree = ""
-    if remote_sha and fetch_fullrepo(remote, branch):
-        remote_tree = ref_tree_sha(remote_ref)
+    if remote_sha:
+        if local_only:
+            remote_tree = ref_tree_sha(remote_ref)
+        elif fetch_fullrepo(remote, branch):
+            remote_tree = ref_tree_sha(remote_ref)
     local_tree = ref_tree_sha(f"refs/heads/{branch}") if local_sha else ""
     expected_tree, agent_paths = build_fullrepo_tree(root)
     comparison_tree = remote_tree or local_tree
@@ -421,7 +424,7 @@ def status(remote: str, branch: str) -> dict[str, object]:
         "remote": remote,
         "remote_configured": has_remote,
         "fullrepo_branch": branch,
-        "network_checked": True,
+        "network_checked": not local_only,
         "remote_fullrepo_exists": bool(remote_sha),
         "remote_fullrepo_sha": remote_sha[:12] if remote_sha else "",
         "remote_fullrepo_tree": remote_tree,
@@ -449,6 +452,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--remote", default=DEFAULT_REMOTE)
     parser.add_argument("--branch", default=FULLREPO_BRANCH)
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument(
+        "--local-only",
+        action="store_true",
+        help="For status checks, use existing local refs only and do not fetch or query the remote.",
+    )
     actions = parser.add_mutually_exclusive_group(required=True)
     actions.add_argument("--status", action="store_true")
     actions.add_argument("--status-json", action="store_true")
@@ -465,7 +473,7 @@ def main() -> int:
     try:
         repo_root()
         if args.status or args.status_json:
-            print_status(status(args.remote, args.branch), as_json=args.status_json)
+            print_status(status(args.remote, args.branch, local_only=args.local_only), as_json=args.status_json)
         elif args.install_exclude:
             install_exclude(dry_run=args.dry_run)
         elif args.restore:
