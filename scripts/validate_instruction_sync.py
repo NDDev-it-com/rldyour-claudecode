@@ -70,9 +70,15 @@ def extract_claims(text: str) -> dict[str, object]:
                 file=sys.stderr,
             )
             continue
-        if isinstance(data, dict) and "claims" in data and isinstance(data["claims"], dict):
-            for key, value in data["claims"].items():
+        if not isinstance(data, dict):
+            continue
+        raw_claims = data.get("claims")
+        if isinstance(raw_claims, dict):
+            for key, value in raw_claims.items():
                 claims[str(key)] = value
+            continue
+        for key, value in data.items():
+            claims[str(key)] = value
     return claims
 
 
