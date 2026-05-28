@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-28
-Last commit: 0d43f7eb9934bfd73e4eaf2f33799deed47c14be
+Last commit: 2528040d67a5341d7b7feb2b447ebe9523713318
 Scope: deterministic hook lifecycle behavior
 Area: HOOKS
 -->
@@ -21,7 +21,7 @@ deterministic hook lifecycle behavior
 
 ## Last verified
 - date: 2026-05-28
-- commit: `0d43f7eb9934bfd73e4eaf2f33799deed47c14be`
+- commit: `2528040d67a5341d7b7feb2b447ebe9523713318`
 - checked by: Codex ry-start Claude Stop hook loop-guard hardening
 
 ## Facts
@@ -39,7 +39,7 @@ deterministic hook lifecycle behavior
   checks in the hot path and reports `network_checked=false`.
 
 ## Evidence
-- `commit:0d43f7eb9934bfd73e4eaf2f33799deed47c14be`
+- `commit:2528040d67a5341d7b7feb2b447ebe9523713318`
 - `path:plugins/rldyour-flow/hooks`
 - `path:plugins/rldyour-flow/scripts/flow_post_task_state.py`
 - `path:plugins/rldyour-flow/scripts/fullrepo_sync.py`

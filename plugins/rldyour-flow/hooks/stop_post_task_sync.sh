@@ -54,77 +54,77 @@ if [ -z "$STATE_JSON" ]; then
   exit 0
 fi
 
-SERENA_CURRENT=$(printf "%s" "$STATE_JSON" | "${PYTHON_BIN}" -c 'import json,sys; print("true" if json.load(sys.stdin).get("serena_current") else "false")' 2>/dev/null || echo "true")
-NEEDS_SYNC=$(printf "%s" "$STATE_JSON" | "${PYTHON_BIN}" -c 'import json,sys; print("true" if json.load(sys.stdin).get("needs_flow_sync") else "false")' 2>/dev/null || echo "false")
-FINGERPRINT=$(printf "%s" "$STATE_JSON" | "${PYTHON_BIN}" -c 'import json,sys; print(json.load(sys.stdin).get("fingerprint", ""))' 2>/dev/null || true)
-HEAD_SHA=$(printf "%s" "$STATE_JSON" | "${PYTHON_BIN}" -c 'import json,sys; print(json.load(sys.stdin).get("head_sha", ""))' 2>/dev/null || true)
-
-# Serena owns memory freshness. Flow waits for Serena Stop hook to finish first.
-if [ "$SERENA_CURRENT" != "true" ]; then
-  exit 0
-fi
-
-if [ "$NEEDS_SYNC" != "true" ] || [ -z "$FINGERPRINT" ]; then
-  rm -f "$SYNC_MARKER" .serena/.flow_post_task_state.json
-  exit 0
-fi
-
-STOP_HOOK_ACTIVE=$(printf "%s" "$HOOK_INPUT" | "${PYTHON_BIN}" -c '
+STATE_JSON="$STATE_JSON" HOOK_INPUT="$HOOK_INPUT" SYNC_MARKER="$SYNC_MARKER" "${PYTHON_BIN}" <<'PY'
 import json
+import os
 import sys
+from pathlib import Path
 
 try:
-    payload = json.load(sys.stdin)
+    payload = json.loads(os.environ.get("HOOK_INPUT", "") or "{}")
 except Exception:
     payload = {}
 
-print("true" if payload.get("stop_hook_active") is True else "false")
-' 2>/dev/null || echo "false")
+try:
+    state = json.loads(os.environ.get("STATE_JSON", "") or "{}")
+except Exception:
+    raise SystemExit(0)
 
-if [ "$STOP_HOOK_ACTIVE" = "true" ] && [ -f "$SYNC_MARKER" ] && [ "$(cat "$SYNC_MARKER" 2>/dev/null || true)" = "$FINGERPRINT" ]; then
-  "${PYTHON_BIN}" <<'PY'
-import json
+serena_current = bool(state.get("serena_current"))
+needs_sync = bool(state.get("needs_flow_sync"))
+fingerprint = str(state.get("fingerprint") or "")
+head_sha = str(state.get("head_sha") or "")
+sync_marker = Path(os.environ.get("SYNC_MARKER", ".serena/.flow_sync_marker"))
+state_path = Path(".serena/.flow_post_task_state.json")
 
-print(json.dumps({
-    "systemMessage": (
-        "rldyour-flow post-task sync was already requested for this state. "
-        "Allowing stop now to avoid a Stop-hook loop."
-    )
-}))
-PY
-  exit 0
-fi
+# Serena owns memory freshness. Flow waits for Serena Stop hook to finish first.
+if not serena_current:
+    raise SystemExit(0)
 
-mkdir -p .serena
-printf "%s\n" "$FINGERPRINT" > "$SYNC_MARKER"
-printf "%s" "$STATE_JSON" > .serena/.flow_post_task_state.json
+if not needs_sync or not fingerprint:
+    sync_marker.unlink(missing_ok=True)
+    state_path.unlink(missing_ok=True)
+    raise SystemExit(0)
 
-SUMMARY=$(printf "%s" "$STATE_JSON" | "${PYTHON_BIN}" -c '
-import json
-import sys
+if payload.get("stop_hook_active") is True and sync_marker.is_file():
+    try:
+        marker = sync_marker.read_text(encoding="utf-8").strip()
+    except OSError:
+        marker = ""
+    if marker == fingerprint:
+        print(json.dumps({
+            "systemMessage": (
+                "rldyour-flow post-task sync was already requested for this state. "
+                "Allowing stop now to avoid a Stop-hook loop."
+            )
+        }))
+        raise SystemExit(0)
 
-payload = json.load(sys.stdin)
-fullrepo_state = payload.get("fullrepo_state", {})
+sync_marker.parent.mkdir(parents=True, exist_ok=True)
+sync_marker.write_text(fingerprint + "\n", encoding="utf-8")
+state_path.write_text(json.dumps(state, ensure_ascii=False), encoding="utf-8")
+
+fullrepo_state = state.get("fullrepo_state", {})
 if not isinstance(fullrepo_state, dict):
     fullrepo_state = {}
-instruction_docs_state = payload.get("instruction_docs_state", {})
+instruction_docs_state = state.get("instruction_docs_state", {})
 if not isinstance(instruction_docs_state, dict):
     instruction_docs_state = {}
 tracked_agent_paths = fullrepo_state.get("tracked_agent_paths", [])
 if not isinstance(tracked_agent_paths, list):
     tracked_agent_paths = []
-branch_cleanup_state = payload.get("branch_cleanup_state", {})
+branch_cleanup_state = state.get("branch_cleanup_state", {})
 if not isinstance(branch_cleanup_state, dict):
     branch_cleanup_state = {}
-print(json.dumps({
-    "branch": payload.get("branch"),
-    "head": payload.get("head_sha"),
-    "dirty_files": payload.get("dirty_files", []),
-    "doc_files_present": payload.get("doc_files_present", []),
-    "doc_files_changed": payload.get("doc_files_changed", []),
-    "ahead": payload.get("ahead", 0),
-    "behind": payload.get("behind", 0),
-    "worktree_count": payload.get("worktree_count", 0),
+summary = json.dumps({
+    "branch": state.get("branch"),
+    "head": state.get("head_sha"),
+    "dirty_files": state.get("dirty_files", []),
+    "doc_files_present": state.get("doc_files_present", []),
+    "doc_files_changed": state.get("doc_files_changed", []),
+    "ahead": state.get("ahead", 0),
+    "behind": state.get("behind", 0),
+    "worktree_count": state.get("worktree_count", 0),
     "instruction_docs": {
         "required": instruction_docs_state.get("required_docs", []),
         "present": instruction_docs_state.get("present_docs", []),
@@ -145,13 +145,12 @@ print(json.dumps({
         "worktree_cleanup_candidates": branch_cleanup_state.get("worktree_cleanup_candidates", []),
         "needs_cleanup": bool(branch_cleanup_state.get("needs_cleanup")),
     },
-}, ensure_ascii=False, indent=2))
-')
+}, ensure_ascii=False, indent=2)
 
-MESSAGE="[RLDYOUR-FLOW POST-TASK SYNC REQUIRED] Serena memories are current for HEAD ${HEAD_SHA:-unknown}; now synchronize project docs and git state.
+message = f"""[RLDYOUR-FLOW POST-TASK SYNC REQUIRED] Serena memories are current for HEAD {head_sha or 'unknown'}; now synchronize project docs and git state.
 
 Current state:
-${SUMMARY}
+{summary}
 
 Continue this turn and run the flow-post-task-sync workflow now.
 
@@ -164,7 +163,8 @@ Required order:
 6. Push/synchronize with GitHub using git/gh when an upstream exists.
 7. Restore or install .git/info/exclude for agent-only files, keep normal branch history clean, and publish fullrepo with safe --force-with-lease when agent-only files exist.
 8. Clean merged worktrees and merged local/remote workflow branches only after confirming they are merged and safe to remove. Leave protected branches such as main and fullrepo.
-9. Stop again after sync or report the exact blocker."
+9. Stop again after sync or report the exact blocker."""
 
-echo "$MESSAGE" >&2
-exit 2
+print(message, file=sys.stderr)
+raise SystemExit(2)
+PY

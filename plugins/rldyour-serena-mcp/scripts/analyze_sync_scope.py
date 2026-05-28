@@ -52,6 +52,7 @@ SERENA_RUNTIME_FILES = (
     ".serena/.dirty_stop_ack",
     ".serena/.flow_sync_marker",
     ".serena/.flow_post_task_state.json",
+    ".serena/.stop_lifecycle_timeout_marker",
 )
 
 AGENT_INSTRUCTION_FILES = (

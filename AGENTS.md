@@ -91,7 +91,7 @@ Reviewer output uses a **file-first transport contract** (full text in `referenc
 
 ## Hooks Lifecycle
 
-Two plugins coordinate hooks. `flow.stop_post_task_sync.sh` derives `serena_current` by calling `plugins/rldyour-serena-mcp/scripts/serena_memory_state.py`; it does not consume output from the Serena Stop hook.
+Two plugins coordinate hooks. `rldyour-flow` owns the single registered Claude Stop hook through `hooks/stop_lifecycle_dispatcher.sh`; the dispatcher runs the Serena memory child check before the Flow post-task child check. `flow.stop_post_task_sync.sh` derives `serena_current` by calling `plugins/rldyour-serena-mcp/scripts/serena_memory_state.py`; it does not consume output from a separately registered Serena Stop hook.
 
 | Event | Owner | Script | Timeout |
 |---|---|---|---|
@@ -101,10 +101,9 @@ Two plugins coordinate hooks. `flow.stop_post_task_sync.sh` derives `serena_curr
 | PostToolUse:Bash | rldyour-flow | `hooks/post_tool_use_commit_advice.sh` | 5s |
 | SessionStart | rldyour-flow | `hooks/session_start_worktree_bootstrap.sh` | 30s |
 | SessionStart | rldyour-flow | `hooks/session_start_context.sh` | 5s |
-| Stop | rldyour-serena-mcp | `hooks/stop_memory_sync.sh` | 10s |
-| Stop | rldyour-flow | `hooks/stop_post_task_sync.sh` | 10s |
+| Stop | rldyour-flow | `hooks/stop_lifecycle_dispatcher.sh` | 45s |
 
-Most hooks are advisory and exit `0`; Stop hooks are advisory enforcement gates that write guidance to stderr and block with `exit 2` when memory or post-task sync is required. Flow Stop state is local-only in the hook hot path (`RLDYOUR_FLOW_STATE_LOCAL_ONLY=1`) and repeated `stop_hook_active=true` fingerprints are allowed to stop with a system message instead of looping. The single hook that performs a bounded worktree mutation is `session_start_worktree_bootstrap.sh` - it runs `fullrepo_sync.py --restore` (never `--publish`, never touches origin) only when an agent-only marker is missing in the active worktree. Skip flags: `RLDYOUR_SKIP_FLOW_SESSION_CONTEXT`, `RLDYOUR_SKIP_FLOW_COMMIT_ADVICE`, `RLDYOUR_SKIP_STOP_GATES`, `RLDYOUR_SKIP_FLOW_SYNC`, `RLDYOUR_SKIP_SERENA_SYNC`, `RLDYOUR_SKIP_WORKTREE_BOOTSTRAP`.
+Most hooks are advisory and exit `0`; the registered Stop dispatcher is an advisory enforcement gate that writes guidance to stderr and blocks with `exit 2` when memory or post-task sync is required. Flow Stop state is local-only in the hook hot path (`RLDYOUR_FLOW_STATE_LOCAL_ONLY=1`) and repeated `stop_hook_active=true` fingerprints are allowed to stop with a system message instead of looping. The dispatcher also writes `.serena/.stop_lifecycle_timeout_marker` so a repeated identical child timeout cannot loop forever. The single hook that performs a bounded worktree mutation is `session_start_worktree_bootstrap.sh` - it runs `fullrepo_sync.py --restore` (never `--publish`, never touches origin) only when an agent-only marker is missing in the active worktree. Skip flags: `RLDYOUR_SKIP_FLOW_SESSION_CONTEXT`, `RLDYOUR_SKIP_FLOW_COMMIT_ADVICE`, `RLDYOUR_SKIP_STOP_GATES`, `RLDYOUR_SKIP_FLOW_SYNC`, `RLDYOUR_SKIP_SERENA_SYNC`, `RLDYOUR_SKIP_WORKTREE_BOOTSTRAP`.
 
 ## Worktree Workflow
 

@@ -63,7 +63,7 @@ Reviewer output transport is **file-first** since rldyour-flow `0.2.2`: each rev
 
 ## Hooks Lifecycle
 
-Two plugins coordinate hooks. `flow.stop_post_task_sync.sh` derives `serena_current` by calling `plugins/rldyour-serena-mcp/scripts/serena_memory_state.py` before running its own gate. Loop guard: `.serena/.flow_sync_marker` writes a fingerprint of (HEAD, dirty files, ahead/behind, branch, Serena freshness). If `stop_hook_active=true` and the fingerprint matches, the hook emits a compact system message and allows Stop. Flow Stop state runs with `RLDYOUR_FLOW_STATE_LOCAL_ONLY=1` / `RLDYOUR_FULLREPO_STATUS_LOCAL_ONLY=1` so the hook hot path never depends on remote fetch status; `flow_post_task_state.py` resolves installed sibling plugin scripts from `__file__` before repo-relative fallbacks, keeping direct diagnostics and real hook execution consistent.
+Two plugins coordinate hooks. `rldyour-flow` owns the single registered Claude Stop hook through `hooks/stop_lifecycle_dispatcher.sh`; the dispatcher runs the Serena memory child check before the Flow post-task child check. `flow.stop_post_task_sync.sh` derives `serena_current` by calling `plugins/rldyour-serena-mcp/scripts/serena_memory_state.py` before running its own gate. Loop guard: `.serena/.flow_sync_marker` writes a fingerprint of (HEAD, dirty files, ahead/behind, branch, Serena freshness). If `stop_hook_active=true` and the fingerprint matches, the hook emits a compact system message and allows Stop. Flow Stop state runs with `RLDYOUR_FLOW_STATE_LOCAL_ONLY=1` / `RLDYOUR_FULLREPO_STATUS_LOCAL_ONLY=1` so the hook hot path never depends on remote fetch status; `flow_post_task_state.py` resolves installed sibling plugin scripts from `__file__` before repo-relative fallbacks, keeping direct diagnostics and real hook execution consistent. The dispatcher also writes `.serena/.stop_lifecycle_timeout_marker` so repeated identical child timeouts are allowed on the second `stop_hook_active=true` pass instead of looping.
 
 | Event | Owner | Script | Timeout |
 |---|---|---|---|
@@ -73,12 +73,11 @@ Two plugins coordinate hooks. `flow.stop_post_task_sync.sh` derives `serena_curr
 | PostToolUse:Bash | rldyour-flow | `hooks/post_tool_use_commit_advice.sh` | 5s |
 | SessionStart | rldyour-flow | `hooks/session_start_worktree_bootstrap.sh` | 30s |
 | SessionStart | rldyour-flow | `hooks/session_start_context.sh` | 5s |
-| Stop | rldyour-serena-mcp | `hooks/stop_memory_sync.sh` | 10s |
-| Stop | rldyour-flow | `hooks/stop_post_task_sync.sh` | 10s |
+| Stop | rldyour-flow | `hooks/stop_lifecycle_dispatcher.sh` | 45s |
 
 Stop hooks are **advisory enforcement gates**, not executors. Pattern: hooks compute machine-readable state, block Stop (`exit 2`) until the orchestrator (`ry-start`, `flow-post-task-sync` skill, model in main session) brings the project to a clean final state. Hooks themselves do **not** push, merge, publish, or delete branches - those are high-blast-radius operations and live in the workflow executor under model judgement.
 
-Stop sequence: Serena Stop checks `serena_memory_state.py` first and blocks stale memories with `flow-memory-sync` guidance; Flow Stop then checks git/docs/fullrepo/cleanup state through `flow_post_task_state.py`; `.serena/.sync_marker` and `.serena/.flow_sync_marker` carry loop-guard fingerprints so repeated identical Stop gates do not loop forever. `tests/test_flow_stop_state.py` is the regression suite for direct installed-state invocation, local-only fullrepo status, and Stop hook loop-guard behavior from a subdirectory.
+Stop sequence: dispatcher child check `stop_memory_sync.sh` checks `serena_memory_state.py` first and blocks stale memories with `flow-memory-sync` guidance; dispatcher child check `stop_post_task_sync.sh` then checks git/docs/fullrepo/cleanup state through `flow_post_task_state.py`; `.serena/.sync_marker`, `.serena/.flow_sync_marker`, and `.serena/.stop_lifecycle_timeout_marker` carry loop-guard fingerprints so repeated identical Stop gates do not loop forever. `tests/test_flow_stop_state.py` is the regression suite for direct installed-state invocation, local-only fullrepo status, dispatcher timeout escape, and Stop hook loop-guard behavior from a subdirectory.
 
 The orchestrator (skill / model in main session) does the actual work: invoke `flow-memory-sync` subagent for memories, then run the `flow-post-task-sync` skill which handles checks → atomic commits → push → ff-merge into default branch → push default → fullrepo publish (`--force-with-lease`, only on `fullrepo`) → cleanup merged branches and worktrees.
 
