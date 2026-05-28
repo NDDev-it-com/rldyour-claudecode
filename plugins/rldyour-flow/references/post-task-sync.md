@@ -65,6 +65,7 @@ Runtime markers are ignored by git:
 
 - `.serena/.flow_sync_marker`
 - `.serena/.flow_post_task_state.json`
+- `.serena/.stop_lifecycle_timeout_marker`
 
 ## Commit Rules
 
