@@ -6,6 +6,11 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+### Fixed
+
+- `scripts/install-rldyour-marketplace.sh` now writes Markdown list entries in
+  the final install report without tripping Bash `printf` option parsing.
+
 ## [1.0.0] - 2026-05-28
 
 ### Changed
