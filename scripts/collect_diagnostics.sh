@@ -64,7 +64,7 @@ cp plugins/rldyour-serena-mcp/hooks/hooks.json "$BUNDLE_DIR/serena-hooks.json" 2
 cp config/mcp-runtime-versions.env "$BUNDLE_DIR/mcp-runtime-versions.env" 2>/dev/null || true
 
 # Recent runtime markers (these are in .gitignore but useful for triage).
-for marker in .serena/.sync_marker .serena/.flow_sync_marker .serena/.serena_sync_state.json .serena/.flow_post_task_state.json; do
+for marker in .serena/.sync_marker .serena/.flow_sync_marker .serena/.serena_sync_state.json .serena/.flow_post_task_state.json .serena/.stop_lifecycle_timeout_marker; do
   if [ -f "$marker" ]; then
     cp "$marker" "$BUNDLE_DIR/$(basename "$marker").snapshot" 2>/dev/null || true
   fi

@@ -11,6 +11,7 @@ FLOW_PLUGIN = REPO_ROOT / "plugins" / "rldyour-flow"
 FLOW_STATE = FLOW_PLUGIN / "scripts" / "flow_post_task_state.py"
 FULLREPO_SYNC = FLOW_PLUGIN / "scripts" / "fullrepo_sync.py"
 STOP_HOOK = FLOW_PLUGIN / "hooks" / "stop_post_task_sync.sh"
+DISPATCHER = FLOW_PLUGIN / "hooks" / "stop_lifecycle_dispatcher.sh"
 
 
 def run_git(repo: Path, *args: str) -> subprocess.CompletedProcess[str]:
@@ -119,3 +120,81 @@ def test_stop_post_task_loop_guard_works_from_subdirectory(tmp_path: Path) -> No
 
     assert second.returncode == 0
     assert "Allowing stop now to avoid a Stop-hook loop" in second.stdout
+
+
+def test_stop_lifecycle_dispatcher_loop_guard_preserves_stdout_json(tmp_path: Path) -> None:
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    head_short = init_repo(repo)
+    write_current_memory(repo, head_short)
+    workdir = repo / "src"
+    workdir.mkdir()
+    (repo / "pending.txt").write_text("dirty\n", encoding="utf-8")
+
+    first = subprocess.run(
+        ["bash", str(DISPATCHER)],
+        cwd=workdir,
+        input='{"stop_hook_active":false}',
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+
+    assert first.returncode == 2
+    assert "[RLDYOUR-FLOW POST-TASK SYNC REQUIRED]" in first.stderr
+
+    second = subprocess.run(
+        ["bash", str(DISPATCHER)],
+        cwd=workdir,
+        input='{"stop_hook_active":true}',
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+
+    assert second.returncode == 0
+    assert "Allowing stop now to avoid a Stop-hook loop" in second.stdout
+    assert second.stderr == ""
+
+
+def test_stop_lifecycle_dispatcher_timeout_loop_guard(tmp_path: Path) -> None:
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    init_repo(repo)
+    fake_serena = tmp_path / "fake-serena"
+    (fake_serena / "hooks").mkdir(parents=True)
+    (fake_serena / "hooks" / "stop_memory_sync.sh").write_text(
+        "#!/usr/bin/env bash\nsleep 5\n",
+        encoding="utf-8",
+    )
+
+    env = os.environ.copy()
+    env["RLDYOUR_SERENA_PLUGIN_ROOT"] = str(fake_serena)
+    env["RLDYOUR_STOP_SERENA_TIMEOUT"] = "0.1"
+
+    first = subprocess.run(
+        ["bash", str(DISPATCHER)],
+        cwd=repo,
+        env=env,
+        input='{"stop_hook_active":false}',
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+
+    assert first.returncode == 2
+    assert "[RLDYOUR-SERENA STOP CHECK TIMEOUT]" in first.stderr
+    assert (repo / ".serena/.stop_lifecycle_timeout_marker").is_file()
+
+    second = subprocess.run(
+        ["bash", str(DISPATCHER)],
+        cwd=repo,
+        env=env,
+        input='{"stop_hook_active":true}',
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+
+    assert second.returncode == 0
+    assert "Stop-hook timeout loop" in second.stdout

@@ -160,6 +160,9 @@ python3 scripts/validate_docs_canon.py
 step "AGENTS.md <-> .claude/CLAUDE.md sync_contract drift"
 python3 scripts/validate_instruction_sync.py
 
+step "Hook docs vs registered hooks"
+python3 scripts/validate_hook_docs_against_json.py
+
 step "Release state parity (VERSION + CHANGELOG + manifests + tag)"
 python3 scripts/validate_release_state.py
 
