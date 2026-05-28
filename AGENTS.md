@@ -1,6 +1,6 @@
 # AGENTS.md - rldyour-claude
 
-Claude Code plugin marketplace for rldyour SDLC flows: MCP/LSP, Serena memory, security review, browser/design workflows, and reviewer agents. The repository ships nine plugins that compose an opinionated SDLC, semantic-code, MCP transport, security, browser, design, LSP, and rules layer for Claude Code. There is no runtime application code - every artifact in this repo is plugin metadata, skills, slash commands, agents, hooks, scripts, and references.
+rldyour AI CLI configuration for Claude Code: plugin marketplace, MCP/LSP, Serena memory, security review, browser/design workflows, and reviewer agents. The repository ships nine plugins that compose an opinionated SDLC, semantic-code, MCP transport, security, browser, design, LSP, and rules layer for Claude Code. There is no runtime application code - every artifact in this repo is plugin metadata, skills, slash commands, agents, hooks, scripts, and references.
 
 This `AGENTS.md` is the concise root project-instruction file for any AI agent working in this repository - cross-tool standard governed by the Linux Foundation Agentic AI Foundation (AAIF) since 2025-12-09 (see https://agents.md/). The deep Claude Code-native memory lives in `./.claude/CLAUDE.md` and contains subagent matrix, hook canon, skill-listing budget, frontmatter conventions, and Don't/Done rules that other AI tools don't need.
 
@@ -14,7 +14,7 @@ claims:
   reviewer_transport_marker: RLDYOUR_REPORT_EOF
   reviewer_report_dir_template: ".serena/reviews/<run_id>/"
   reviewer_run_id_format: "<UTC-ISO-compact>-<git-short-sha>"
-  claude_code_runtime_pin: "2.1.153"
+  claude_code_runtime_pin: "2.1.154"
   claude_code_feature_floor: "2.1.146"
   skill_listing_budget_fraction: 0.04
   max_skill_description_chars: 1536
@@ -68,7 +68,7 @@ OpenAI Codex CLI reads `AGENTS.md` before starting work and runs commands listed
 - Tag releases: `claude plugin tag --push` (v2.1.118+). Convention: `<plugin-name>--v<version>` and `marketplace--v<version>`.
 - Inspect plugin inventory + projected context cost: `claude plugin details <name>` (v2.1.139+; v2.1.142 adds LSP).
 - Cross-tool contract gate: `python3 scripts/validate_contract.py && python3 scripts/generate_contract_matrix.py --check`.
-- **Claude Code runtime pin: v2.1.153. Feature compatibility floor: v2.1.146+.** The package pin in `package.json`, `references/claude-baseline.json`, and `config/mcp-runtime-versions.env` is the release/runtime source of truth. The floor covers every feature used by the marketplace: `opus[1m]` (v2.1.111+, account-gated), `alwaysLoad` (v2.1.121+), hook `if` filter (v2.1.118+), exec-form `args` (v2.1.139+), marketplace `displayName` support (v2.1.143+), Stop/SubagentStop `background_tasks` and `session_crons` input fields (v2.1.145+), Auto mode `AskUserQuestion` behavior needed by decision gates (v2.1.146+), `disallowed-tools`, `SessionStart.reloadSkills`, `MessageDisplay`, `skipLfs`, status-line terminal-size env, and `claude agents` native command/bundled skill autocomplete through v2.1.153.
+- **Claude Code runtime pin: v2.1.154. Feature compatibility floor: v2.1.146+.** The package pin in `package.json`, `references/claude-baseline.json`, and `config/mcp-runtime-versions.env` is the release/runtime source of truth. The floor covers every feature used by the marketplace: `opus[1m]` for Opus 4.8 extended context (v2.1.154+, account-gated), `alwaysLoad` (v2.1.121+), hook `if` filter (v2.1.118+), exec-form `args` (v2.1.139+), marketplace `displayName` support (v2.1.143+), Stop/SubagentStop `background_tasks` and `session_crons` input fields (v2.1.145+), Auto mode `AskUserQuestion` behavior needed by decision gates (v2.1.146+), `disallowed-tools`, `SessionStart.reloadSkills`, `MessageDisplay`, `skipLfs`, status-line terminal-size env, `claude agents` native command/bundled skill autocomplete, Opus 4.8 alias support, dynamic workflows, streaming tool execution default, and piped MCP pending-approval reporting through v2.1.154.
 - Bootstrap a fresh checkout: `bash scripts/bootstrap_check.sh` (fullrepo restore + claude validate + required env + dart SDK + pre-push hook advisory).
 - Audit git/branch/worktree: `bash plugins/rldyour-flow/scripts/git_sync_audit.sh`.
 - Quality checks for consumer projects: `bash plugins/rldyour-flow/scripts/detect_project_checks.sh`. LSP health: `bash plugins/rldyour-lsps/scripts/check_lsps.sh`. This repository has no runtime test suite by design.
@@ -169,7 +169,7 @@ Current dependency graph:
 - LSP / diagnostics / refactoring: route through `plugins/rldyour-lsps/skills/lsp-routing/SKILL.md`.
 - Browser validation, debugging, performance: `plugins/rldyour-browser/skills/*`.
 - Figma → code: `plugins/rldyour-design/skills/figma-to-code/SKILL.md`.
-- Deep research: `/rldyour-explore:ry-explore` slash command runs `agents/ry-explore.md` (opus[1m], max effort, isolated context).
+- Deep research: `/rldyour-explore:ry-explore` slash command runs `agents/ry-explore.md` (`opus[1m]`, Opus 4.8 1M where available, max effort, isolated context).
 - Defensive security review: `/rldyour-security:ry-sec-review`.
 - Architecture/quality/consistency/integration/verification/security review for an existing diff: `/rldyour-flow:ry-review`.
 

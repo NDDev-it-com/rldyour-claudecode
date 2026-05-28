@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-28
-Last commit: 12db0e862933c4b51450bf6c56000ca6424855d9 chore(release): claude 1.0.6
+Last updated: 2026-05-29
+Last commit: 63abf7d4084cd892fea40e126d71cdd2ddf6d80e chore(release): claude 1.1.0
 Scope: canonical implementation and naming patterns
 Area: PATTERNS
 -->
@@ -20,9 +20,9 @@ canonical implementation and naming patterns
 - `path:config/rldyour-contract.json`
 
 ## Last verified
-- date: 2026-05-28
-- commit: `12db0e862933c4b51450bf6c56000ca6424855d9`
-- checked by: Codex ry-start Claude CI stabilization
+- date: 2026-05-29
+- commit: `63abf7d4084cd892fea40e126d71cdd2ddf6d80e`
+- checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
 - Pattern memories record canonical naming, routing, versioning, and implementation patterns.

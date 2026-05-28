@@ -1,6 +1,6 @@
 # Claude Code Surface Adoption
 
-Verified: 2026-05-28
+Verified: 2026-05-29
 
 Source of truth:
 - Runtime baseline: `references/claude-baseline.json`
@@ -20,6 +20,11 @@ Source of truth:
 | npm auto-update diagnostics and `/doctor` update reporting | 2.1.153 | Adopt operationally | Keep the package pin in `package.json`; use `/doctor` and `claude --version` in installed-runtime checks when local update failures are suspected. | `scripts/validate_release_state.py` |
 | status line `COLUMNS`/`LINES` env | 2.1.153 | Future | No custom status-line integration currently depends on terminal dimensions. | `scripts/validate_claude_surface_adoption.py` |
 | `claude agents` native command and bundled skill autocomplete | 2.1.153 | Adopt implicitly | Existing agent names remain explicit. No config migration is required. | `scripts/validate_agent_tools.py` |
+| Opus 4.8 via `opus` and `opus[1m]` aliases | 2.1.154 | Adopted | Keep `ry-explore` on `model: opus[1m]`; on Anthropic API the alias resolves to Opus 4.8, and Claude Code v2.1.154+ is the minimum runtime for that target. | `scripts/validate_claude_surface_adoption.py` |
+| Dynamic workflows and `/workflows` | 2.1.154 | Future | Preserve rldyour-flow as the marketplace SDLC orchestrator until Claude dynamic workflows have a tested adapter boundary and release policy. | `scripts/validate_claude_surface_adoption.py` |
+| Streaming tool execution enabled by default | 2.1.154 | Adopt implicitly | No config migration is required; existing hooks and reviewer file-first output must continue to treat tool output as bounded evidence. | `scripts/validate_claude_surface_adoption.py` |
+| Piped `claude mcp list`/`get` pending-approval reporting | 2.1.154 | Adopt operationally | Keep MCP approval checks in installed-runtime diagnostics; do not auto-approve `.mcp.json` from static validators. | `scripts/validate_claude_surface_adoption.py` |
+| Plugin `defaultEnabled: false` metadata | 2.1.154 | Future | All first-party rldyour plugins remain enabled by the owner marketplace installer; add this only for optional plugins with explicit owner approval. | `scripts/validate_claude_surface_adoption.py` |
 
 ## AskUserQuestion And Owner Full-Auto
 
@@ -38,5 +43,5 @@ fabricates owner decisions.
 
 `scripts/validate_claude_surface_adoption.py` requires this file to contain an
 explicit decision for every runtime surface listed in
-`references/claude-baseline.json` and every Claude Code `2.1.153` surface that
+`references/claude-baseline.json` and every Claude Code `2.1.154` surface that
 affects this adapter's plugin, skill, hook, or marketplace behavior.

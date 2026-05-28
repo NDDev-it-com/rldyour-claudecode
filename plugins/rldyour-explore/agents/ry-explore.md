@@ -97,7 +97,7 @@ If multiple findings, repeat the Finding section per finding. Always include the
 
 - **Every factual claim has a source.** No exceptions.
 - **Distinguish doc vs code vs blog.** "Stated in docs" ≠ "demonstrated in code" ≠ "claimed in blog".
-- **Date and version every claim that can age.** "As of 2026-05-…", "vX.Y.Z", "Opus 4.7 only".
+- **Date and version every claim that can age.** "As of 2026-05-29", "vX.Y.Z", "Opus 4.8 requires Claude Code v2.1.154+".
 - **Surface contradictions** between sources rather than choosing silently.
 - **Confidence labels are non-negotiable.** Every finding carries one.
 

@@ -10,7 +10,7 @@ claims:
   reviewer_transport_marker: RLDYOUR_REPORT_EOF
   reviewer_report_dir_template: ".serena/reviews/<run_id>/"
   reviewer_run_id_format: "<UTC-ISO-compact>-<git-short-sha>"
-  claude_code_runtime_pin: "2.1.153"
+  claude_code_runtime_pin: "2.1.154"
   claude_code_feature_floor: "2.1.146"
   skill_listing_budget_fraction: 0.04
   max_skill_description_chars: 1536
@@ -122,9 +122,9 @@ Patterns verified against `anthropics/claude-plugins-official` snapshot `1a2f18b
 - **`alwaysLoad: true` for critical-path MCP servers** - community pattern in `tractorjuice/arc-kit`, `OMARVII/claude-alloy`, `darkroomengineering/cc-settings`. Our restraint (only `serena`) is appropriate scoping.
 - **Tag convention `<plugin-name>--v<version>`** - Anthropic-canonical via `claude plugin tag --push` (docs `code.claude.com/docs/en/plugin-dependencies`). Anthropic's own plugins-official marketplace doesn't apply tags yet, but the documented convention is the canonical one.
 
-## Changelog Adoption (v2.1.133 -> v2.1.153)
+## Changelog Adoption (v2.1.133 -> v2.1.154)
 
-Verified against `code.claude.com/docs/en/changelog`, `references/claude-baseline.json`, `package.json`, and local `claude --version` on 2026-05-28. Runtime pin: **v2.1.153**. Feature compatibility floor: **v2.1.146+**.
+Verified against `code.claude.com/docs/en/changelog`, `code.claude.com/docs/en/model-config`, `references/claude-baseline.json`, `package.json`, and npm package metadata on 2026-05-29. Runtime pin: **v2.1.154**. Feature compatibility floor: **v2.1.146+**.
 
 Adopted:
 - v2.1.105 - `maxSkillDescriptionChars` and `skillListingBudgetFraction` user settings (Anthropic + claudekit-cli baseline is `0.03`; this repo recommends `0.04` - see Skill Listing Budget section above for the bilingual-description rationale). Per-entry skill description cap `1,536` chars, used by all 33 skills.
@@ -136,9 +136,10 @@ Adopted:
 Available, not adopted:
 - v2.1.133 `worktree.baseRef: "head"` - user-side setting (`~/.claude/settings.json`); recommendation documented in AGENTS.md Worktree Workflow but not forced. `ry-explore` uses `context: fork`, not `isolation: worktree`.
 - v2.1.133 hook input `effort.level` + `$CLAUDE_EFFORT` env var in Bash - could enrich hook telemetry; not yet wired into `flow_post_task_state.py` or `serena_memory_state.py`.
-- v2.1.142-2.1.146 refreshed the operational floor: agent CLI flags, HTTP `MCP_TOOL_TIMEOUT` fix, plugin dependency enforcement, `/plugin` context-cost/component previews, background/worktree/MCP pagination fixes, stricter `claude plugin validate`, and Auto mode `AskUserQuestion` behavior needed by decision gates. This repo keeps the feature compatibility floor at v2.1.146+ and the runtime pin at v2.1.153.
+- v2.1.142-2.1.146 refreshed the operational floor: agent CLI flags, HTTP `MCP_TOOL_TIMEOUT` fix, plugin dependency enforcement, `/plugin` context-cost/component previews, background/worktree/MCP pagination fixes, stricter `claude plugin validate`, and Auto mode `AskUserQuestion` behavior needed by decision gates. This repo keeps the feature compatibility floor at v2.1.146+ and the runtime pin at v2.1.154.
 - v2.1.152 - `disallowed-tools` frontmatter for skills and slash commands, `/reload-skills`, `SessionStart.reloadSkills`, and `MessageDisplay` hook event are tracked in `references/claude-surface-adoption.md`.
 - v2.1.153 - `skipLfs` marketplace-source option, npm update diagnostics in `/doctor`, status-line `COLUMNS`/`LINES`, and `claude agents` native command/bundled skill autocomplete are tracked in `references/claude-surface-adoption.md`.
+- v2.1.154 - Opus 4.8 support, dynamic workflows, Opus 4.8 fast mode, default streaming tool execution, `defaultEnabled: false` plugin metadata, and safer piped MCP pending-approval reporting are tracked in `references/claude-surface-adoption.md`.
 - v2.1.141 `claude agents --cwd <path>` and `terminalSequence` hook field were added; hook and daemon regressions were fixed.
 - v2.1.139 hook `args: string[]` exec-form **adopted** in v0.5.0 (commit `614bdcf`): all 8 hooks switched from shell-form `command: "bash ${CLAUDE_PLUGIN_ROOT}/..."` to exec-form `command: "bash", args: ["${CLAUDE_PLUGIN_ROOT}/hooks/X.sh"]`. Verified 2026-05-17 against `code.claude.com/docs/en/hooks` which explicitly recommends exec-form for any hook with path placeholders.
 - v2.1.139 `PostToolUse` `continueOnBlock: true` - our PostToolUse hooks are advisory-only (`exit 0` always), nothing to "block on".
@@ -158,7 +159,7 @@ Capability smoke (added 2026-05-12): `scripts/smoke_mcp_capabilities.sh` perform
 - Russian user-facing communication; English repository artifacts. Skill `description` fields are Russian-leading (English keywords appended).
 - Skill frontmatter: `name`, `description` (recommended). Optional: `when_to_use`, `argument-hint`, `allowed-tools`, `disable-model-invocation`, `user-invocable`, `model`, `effort`, `paths`, `context: fork`, `agent`.
 - Agent frontmatter: `name`, `description`, `model`, `effort`, `maxTurns`, `color`. Tool access: prefer explicit `tools:` allowlist (canonical Anthropic pattern, used by all 6 flow reviewer agents + ry-explore for future-proof read-only enforcement); `disallowedTools:` denylist is legacy and still works (used by `flow-memory-sync` which has narrow Serena memory MCP needs). Optional: `skills`, `memory`, `background`, `isolation`, `initialPrompt`.
-- `model: opus[1m]` is the canonical bracketed form for Opus 4.7 1M context (used by `ry-explore`); requires CC **v2.1.111+**.
+- `model: opus[1m]` is the canonical bracketed alias for the latest Opus 1M context on Claude Code. On Anthropic API it resolves to Opus 4.8 and requires CC **v2.1.154+**; `[1m]` availability remains account/plan-dependent.
 - `model: sonnet` is the canonical short form for reviewer subagents.
 - Slash command frontmatter: `description`, `argument-hint`, optional `context: fork` and `agent: <name>`. Bare `model:` on a slash command is silently ignored without `context: fork` - pair them or delegate via `agent:`.
 - Conventional Commits, ≤72 char subjects, atomic commits per logical unit.

@@ -7,6 +7,18 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 ## [Unreleased]
 
 
+## [1.1.0] - 2026-05-29
+
+### Changed
+
+- Adopt Claude Code 2.1.154 and Opus 4.8 runtime metadata.
+
+## [1.0.7] - 2026-05-29
+
+### Changed
+
+- Standardize release automation and repository descriptions.
+
 ## [1.0.6] - 2026-05-29
 
 ### Changed

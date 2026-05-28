@@ -1,7 +1,6 @@
 # Contributing
 
-Thanks for your interest in `rldyour-claudecode`. This is the Claude Code
-plugin marketplace for rldyour SDLC flows, maintained by Danil Silantyev
+Thanks for your interest in `rldyour-claudecode`. This is the rldyour AI CLI configuration for Claude Code: plugin marketplace, MCP/LSP, Serena memory, security review, browser/design workflows, and reviewer agents. It is maintained by Danil Silantyev
 (github:rldyourmnd), CEO NDDev; PRs and Issues are welcome, but the bar is
 "consistency with the existing architecture and quality-first invariants" -
 drive-by patches that don't fit the philosophy will be redirected or closed.

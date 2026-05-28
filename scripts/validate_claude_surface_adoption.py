@@ -24,7 +24,19 @@ REQUIRED_2_1_153_SURFACES = (
     "`claude agents`",
 )
 
+REQUIRED_2_1_154_SURFACES = (
+    "Opus 4.8",
+    "Dynamic workflows",
+    "Streaming tool execution",
+    "pending-approval",
+    "`defaultEnabled: false`",
+)
+
 VALID_DECISIONS = ("Adopt", "Adopted", "Future", "Intentionally unused")
+
+
+def version_tuple(version: str) -> tuple[int, ...]:
+    return tuple(int(part) for part in version.split("."))
 
 
 def main() -> int:
@@ -41,10 +53,15 @@ def main() -> int:
         if expected and expected not in text:
             errors.append(f"{ADOPTION.relative_to(ROOT)} missing decision for {key}")
 
-    if version == "2.1.153":
+    parsed_version = version_tuple(str(version))
+    if parsed_version >= version_tuple("2.1.153"):
         for marker in REQUIRED_2_1_153_SURFACES:
             if marker not in text:
                 errors.append(f"{ADOPTION.relative_to(ROOT)} missing 2.1.153 surface {marker}")
+    if parsed_version >= version_tuple("2.1.154"):
+        for marker in REQUIRED_2_1_154_SURFACES:
+            if marker not in text:
+                errors.append(f"{ADOPTION.relative_to(ROOT)} missing 2.1.154 surface {marker}")
 
     for line in text.splitlines():
         if not line.startswith("| `") and not line.startswith("| `/"):

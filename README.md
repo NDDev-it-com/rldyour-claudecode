@@ -1,6 +1,6 @@
 # rldyour-claudecode
 
-`rldyour-claudecode` is a Claude Code plugin marketplace for rldyour SDLC flows: MCP/LSP, Serena memory, security review, browser/design workflows, and reviewer agents. It is authored by Danil Silantyev (github:rldyourmnd), CEO NDDev. It is not a generic preset, not an automatic configuration takeover, and not a bundle of unrelated third-party opinions. It is a controlled catalog for the owner's own plugins, MCP servers, skills, subagents, slash commands, hooks, rules, and workflows.
+`rldyour-claudecode` is a rldyour AI CLI configuration for Claude Code: plugin marketplace, MCP/LSP, Serena memory, security review, browser/design workflows, and reviewer agents. It is authored by Danil Silantyev (github:rldyourmnd), CEO NDDev. It is not a generic preset, not an automatic configuration takeover, and not a bundle of unrelated third-party opinions. It is a controlled catalog for the owner's own plugins, MCP servers, skills, subagents, slash commands, hooks, rules, and workflows.
 
 Main principle: nothing is treated as enabled or correct unless the owner explicitly decides it.
 
@@ -27,15 +27,15 @@ This project and all first-party marketplace plugins are licensed under the GNU 
 
 | Plugin | Version | Skills | Commands | Agents | Hooks | Scripts | References | MCP | LSP |
 |---|---|---|---|---|---|---|---|---|---|
-| `rldyour-mcps` | `1.0.6` | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 0 |
-| `rldyour-explore` | `1.0.6` | 2 | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| `rldyour-serena-mcp` | `1.0.6` | 2 | 0 | 1 | 4 | 3 | 0 | 0 | 0 |
-| `rldyour-security` | `1.0.6` | 2 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| `rldyour-browser` | `1.0.6` | 3 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| `rldyour-design` | `1.0.6` | 5 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| `rldyour-lsps` | `1.0.6` | 4 | 0 | 0 | 0 | 2 | 3 | 0 | 1 |
-| `rldyour-flow` | `1.0.6` | 8 | 7 | 6 | 6 | 7 | 7 | 0 | 0 |
-| `rldyour-rules` | `1.0.6` | 7 | 1 | 0 | 0 | 0 | 6 | 0 | 0 |
+| `rldyour-mcps` | `1.1.0` | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 0 |
+| `rldyour-explore` | `1.1.0` | 2 | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
+| `rldyour-serena-mcp` | `1.1.0` | 2 | 0 | 1 | 4 | 3 | 0 | 0 | 0 |
+| `rldyour-security` | `1.1.0` | 2 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
+| `rldyour-browser` | `1.1.0` | 3 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| `rldyour-design` | `1.1.0` | 5 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
+| `rldyour-lsps` | `1.1.0` | 4 | 0 | 0 | 0 | 2 | 3 | 0 | 1 |
+| `rldyour-flow` | `1.1.0` | 8 | 7 | 6 | 6 | 7 | 7 | 0 | 0 |
+| `rldyour-rules` | `1.1.0` | 7 | 1 | 0 | 0 | 0 | 6 | 0 | 0 |
 
 <!-- inventory:end -->
 
@@ -175,7 +175,7 @@ Reference documents:
 
 ## Minimum Claude Code Version
 
-**v2.1.153** as the pinned CI/runtime baseline and **v2.1.146+** as the feature compatibility floor. This covers every Claude Code feature used by the marketplace: `opus[1m]` bracketed extended-context syntax (v2.1.111+; `[1m]` availability remains account/plan-dependent and `/model` omits it when unavailable), `alwaysLoad: true` MCP option (v2.1.121+), `claude plugin tag --push` (v2.1.118+), hook `if` filter (v2.1.118+), exec-form hook `args` (v2.1.139+), `displayName` marketplace entries (v2.1.143+), Stop/SubagentStop `background_tasks` and `session_crons` input fields (v2.1.145+), MCP pagination fixes, Auto mode `AskUserQuestion` behavior needed by decision gates (v2.1.146+), `disallowed-tools` frontmatter for skills/slash commands, `SessionStart` `reloadSkills` output, and the `MessageDisplay` hook event (v2.1.152), `skipLfs` marketplace-source option, status line terminal-size env (`COLUMNS`/`LINES`), and `claude agents` native command/bundled skill autocomplete (v2.1.153), `maxSkillDescriptionChars` and `skillListingBudgetFraction` user settings (v2.1.105+), `skillOverrides` (v2.1.129+; plugin skills exempt), `experimental.{themes,monitors}` wrapper (v2.1.129+).
+**v2.1.154** as the pinned CI/runtime baseline and **v2.1.146+** as the feature compatibility floor. This covers every Claude Code feature used by the marketplace: `opus[1m]` for Opus 4.8 extended context (v2.1.154+; `[1m]` availability remains account/plan-dependent and `/model` omits it when unavailable), `alwaysLoad: true` MCP option (v2.1.121+), `claude plugin tag --push` (v2.1.118+), hook `if` filter (v2.1.118+), exec-form hook `args` (v2.1.139+), `displayName` marketplace entries (v2.1.143+), Stop/SubagentStop `background_tasks` and `session_crons` input fields (v2.1.145+), MCP pagination fixes, Auto mode `AskUserQuestion` behavior needed by decision gates (v2.1.146+), `disallowed-tools` frontmatter for skills/slash commands, `SessionStart` `reloadSkills` output, and the `MessageDisplay` hook event (v2.1.152), `skipLfs` marketplace-source option, status line terminal-size env (`COLUMNS`/`LINES`), `claude agents` native command/bundled skill autocomplete (v2.1.153), Opus 4.8 support, dynamic workflows, default streaming tool execution, `defaultEnabled: false` plugin metadata, piped MCP pending-approval reporting (v2.1.154), `maxSkillDescriptionChars` and `skillListingBudgetFraction` user settings (v2.1.105+), `skillOverrides` (v2.1.129+; plugin skills exempt), `experimental.{themes,monitors}` wrapper (v2.1.129+).
 
 ## Support And Feedback
 

@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-28
-Last commit: 12db0e862933c4b51450bf6c56000ca6424855d9 chore(release): claude 1.0.6
+Last updated: 2026-05-29
+Last commit: 63abf7d4084cd892fea40e126d71cdd2ddf6d80e chore(release): claude 1.1.0
 Scope: release readiness, versioning, and artifact hygiene
 Area: RELEASE
 -->
@@ -22,13 +22,13 @@ release readiness, versioning, and artifact hygiene
 - `path:.github/workflows/release.yml`
 
 ## Last verified
-- date: 2026-05-28
-- commit: `12db0e862933c4b51450bf6c56000ca6424855d9`
-- checked by: Codex ry-start Claude Stop hook loop-guard hardening
+- date: 2026-05-29
+- commit: `63abf7d4084cd892fea40e126d71cdd2ddf6d80e`
+- checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
 - Release memories record numeric versioning, tags, CI gates, and clean artifact hygiene.
-- Current product/config version is `1.0.6`; `VERSION`, `package.json`,
+- Current product/config version is `1.1.0`; `VERSION`, `package.json`,
   `pyproject.toml`, and `CHANGELOG.md` are the source of truth for the
   adapter-local SemVer state.
 - Release `1.0.0` adopted Claude Code `2.1.153` and the refreshed common MCP
@@ -39,6 +39,16 @@ release readiness, versioning, and artifact hygiene
   `__file__`, Stop state runs in local-only mode, fullrepo status can avoid
   network checks during hooks, and repeated `stop_hook_active=true` fingerprints
   emit a system message then allow Stop instead of looping.
+- Release `1.0.7` aligns active repository descriptions with the root
+  `config/repository-description-policy.json` template, standardizes the
+  `workflow_dispatch` release input as `version`, creates or reuses numeric
+  tags during manual release runs, publishes GitHub Releases through `gh
+  release create/upload`, and refreshes generated inventory before release
+  validation.
+- Release `1.1.0` adopts the Claude Code `2.1.154` baseline required for
+  Opus 4.8 targeting, keeps `ry-explore` on the Claude-native `opus[1m]`
+  selector, and updates active model/runtime metadata from verified package
+  and official model-config evidence.
 - Historical release evidence:
 - Commit `1d8c2d951c1131e043989d8c4f5d2afa4f777b21` bumps the product/config
   version to `0.7.0` in `VERSION`, `package.json`, `pyproject.toml`, and
@@ -50,7 +60,7 @@ release readiness, versioning, and artifact hygiene
   `rldyour-claudecode` name.
 
 ## Evidence
-- `commit:12db0e862933c4b51450bf6c56000ca6424855d9`
+- `commit:bde7e6e551c9bff3c68cacd89702fca7206d9b71`
 - `path:VERSION`
 - `path:CHANGELOG.md`
 - `path:config/mcp-runtime-versions.env`

@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-28
-Last commit: 12db0e862933c4b51450bf6c56000ca6424855d9 chore(release): claude 1.0.6
+Last updated: 2026-05-29
+Last commit: 63abf7d4084cd892fea40e126d71cdd2ddf6d80e chore(release): claude 1.1.0
 Scope: MCP runtime transport and pin policy
 Area: MCP
 -->
@@ -20,9 +20,9 @@ MCP runtime transport and pin policy
 - `path:README.md`
 
 ## Last verified
-- date: 2026-05-28
-- commit: `12db0e862933c4b51450bf6c56000ca6424855d9`
-- checked by: Codex ry-start Claude CI stabilization
+- date: 2026-05-29
+- commit: `63abf7d4084cd892fea40e126d71cdd2ddf6d80e`
+- checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
 - MCP memories record server ownership, transports, versions, and toolset constraints.
