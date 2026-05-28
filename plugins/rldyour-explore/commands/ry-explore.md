@@ -1,5 +1,5 @@
 ---
-description: "Запустить глубокое исследование через ry-explore (Opus 4.7 1M, max effort). Run deep multi-source research with the ry-explore agent."
+description: "Запустить глубокое исследование через ry-explore (Opus 4.8 1M via opus[1m], max effort). Run deep multi-source research with the ry-explore agent."
 argument-hint: <topic>
 context: fork
 agent: ry-explore
