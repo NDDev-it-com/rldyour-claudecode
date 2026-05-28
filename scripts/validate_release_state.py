@@ -158,7 +158,7 @@ def validate_root_metadata_parity(root: Path, version: str) -> list[str]:
     return errors
 
 
-def validate_manifest_parity(root: Path) -> list[str]:
+def validate_manifest_parity(root: Path, version: str) -> list[str]:
     errors: list[str] = []
     marketplace = json.loads((root / ".claude-plugin" / "marketplace.json").read_text(encoding="utf-8"))
     entries = {p["name"]: p for p in marketplace.get("plugins", [])}
@@ -174,6 +174,10 @@ def validate_manifest_parity(root: Path) -> list[str]:
         if name != plugin_dir.name:
             errors.append(f"{plugin_dir.name}: plugin.json name={name!r} differs from directory")
         manifest_version = manifest.get("version")
+        if manifest_version != version:
+            errors.append(
+                f"{name}: plugin.json version={manifest_version!r} does not match VERSION={version!r}"
+            )
         entry = entries.get(name)
         if entry is None:
             errors.append(f"{name}: present in plugins/ but missing from marketplace.json")
@@ -261,7 +265,7 @@ def main() -> int:
 
     failures.extend(validate_version_vs_changelog(root))
     failures.extend(validate_root_metadata_parity(root, version))
-    failures.extend(validate_manifest_parity(root))
+    failures.extend(validate_manifest_parity(root, version))
     failures.extend(validate_release_manifest(root, version))
 
     for entry in validate_tag_alignment(root, version):
