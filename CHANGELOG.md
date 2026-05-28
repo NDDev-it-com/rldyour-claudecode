@@ -7,6 +7,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 ## [Unreleased]
 
 
+## [1.0.6] - 2026-05-29
+
+### Changed
+
+- Refresh Claude release inventory after Stop lifecycle validator.
+
 ## [1.0.5] - 2026-05-29
 
 ### Changed
