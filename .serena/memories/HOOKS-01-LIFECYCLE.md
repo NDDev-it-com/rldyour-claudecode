@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-22
-Last commit: a519d10eb604bfb6c7988aa1fda43b3aeecc46e5 test: align Claude baseline fixture
+Last updated: 2026-05-28
+Last commit: ad97d9deb65b76cea82052322b9e6cee86af0407 fix(installer): guard report markdown printf
 Scope: deterministic hook lifecycle behavior
 Area: HOOKS
 -->
@@ -20,15 +20,15 @@ deterministic hook lifecycle behavior
 - `path:scripts/smoke_hooks.sh`
 
 ## Last verified
-- date: 2026-05-22
-- commit: `a519d10eb604bfb6c7988aa1fda43b3aeecc46e5`
-- checked by: Codex ry-start baseline fixture sync
+- date: 2026-05-28
+- commit: `ad97d9deb65b76cea82052322b9e6cee86af0407`
+- checked by: Codex system sync after Claude installer report fix
 
 ## Facts
 - Hook memories record bounded, deterministic lifecycle behavior and the authoritative Stop owner.
 
 ## Evidence
-- `commit:a519d10eb604bfb6c7988aa1fda43b3aeecc46e5`
+- `commit:ad97d9deb65b76cea82052322b9e6cee86af0407`
 - `path:plugins/rldyour-flow/hooks`
 - `path:scripts/smoke_hooks.sh`
 

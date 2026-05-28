@@ -6,6 +6,20 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+### Fixed
+
+- `scripts/install-rldyour-marketplace.sh` now writes Markdown list entries in
+  the final install report without tripping Bash `printf` option parsing.
+
+## [1.0.0] - 2026-05-28
+
+### Changed
+
+- Claude Code CLI baseline now tracks `2.1.153`, matching the current upstream
+  stable package on the 2026-05-28 release-hardening sweep.
+- Shared MCP runtime pins now track `semgrep==1.164.0` and `shadcn@4.8.2`;
+  the Semgrep CI container digest was refreshed in lockstep.
+
 ## [0.7.0] - 2026-05-27
 
 ### Changed
@@ -2150,7 +2164,8 @@ Release boundary cut after the 2026-05-08..2026-05-12 wave of best-practice, MCP
   shell syntax checks, frontmatter presence verification on all skills,
   agents, and commands.
 
-[Unreleased]: https://github.com/NDDev-it-com/rldyour-claudecode/compare/0.7.0...HEAD
+[Unreleased]: https://github.com/NDDev-it-com/rldyour-claudecode/compare/1.0.0...HEAD
+[1.0.0]: https://github.com/NDDev-it-com/rldyour-claudecode/compare/0.7.0...1.0.0
 [0.7.0]: https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/0.7.0
 [0.6.9]: https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/0.6.9
 [0.6.8]: https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/0.6.8

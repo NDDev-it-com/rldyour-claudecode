@@ -30,7 +30,7 @@ jobs:
       contents: read
     steps:
       - name: Harden runner (egress block + explicit allowlist)
-        uses: step-security/harden-runner@ab7a9404c0f3da075243ca237b5fac12c98deaa5  # v2.19.3
+        uses: step-security/harden-runner@9af89fc71515a100421586dfdb3dc9c984fbf411  # v2.19.4
         with:
           egress-policy: block
           allowed-endpoints: >
@@ -94,7 +94,7 @@ jobs:
     steps:
       - name: Harden runner (egress block + explicit allowlist)
         if: runner.os == 'Linux'  # harden-runner is Linux-only (per ADR-0010)
-        uses: step-security/harden-runner@ab7a9404c0f3da075243ca237b5fac12c98deaa5  # v2.19.3
+        uses: step-security/harden-runner@9af89fc71515a100421586dfdb3dc9c984fbf411  # v2.19.4
         with:
           egress-policy: block
           allowed-endpoints: >
@@ -290,6 +290,9 @@ jobs:
 
       - name: Claude Code docs canon drift
         run: python3 scripts/validate_docs_canon.py
+
+      - name: Claude Code surface adoption decisions
+        run: python3 scripts/validate_claude_surface_adoption.py
 
       - name: AGENTS.md <-> .claude/CLAUDE.md sync_contract drift
         run: python3 scripts/validate_instruction_sync.py

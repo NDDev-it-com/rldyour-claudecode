@@ -7,7 +7,7 @@ name: semgrep
 # (which itself requires GHAS for private repos), so findings show up in
 # the job log + summary and CI fails on any non-INFO finding.
 #
-# Semgrep version pinned to 1.163.0 (matches plugins/rldyour-mcps/.mcp.json
+# Semgrep version pinned to 1.164.0 (matches plugins/rldyour-mcps/.mcp.json
 # Semgrep MCP server pin and config/mcp-runtime-versions.env). Bumping the
 # CLI version here should track the MCP pin.
 
@@ -35,18 +35,18 @@ jobs:
     permissions:
       contents: read
     container:
-      # Digest-pinned semgrep/semgrep:1.163.0 (matches local MCP server pin in
+      # Digest-pinned semgrep/semgrep:1.164.0 (matches local MCP server pin in
       # plugins/rldyour-mcps/.mcp.json + config/mcp-runtime-versions.env).
-      # Resolved 2026-05-16 via Docker Hub v2 manifest API. To re-resolve:
-      #   curl -s https://hub.docker.com/v2/repositories/semgrep/semgrep/tags/1.163.0/ | jq -r '.digest'
+      # Resolved 2026-05-28 via Docker Hub v2 manifest API. To re-resolve:
+      #   curl -s https://hub.docker.com/v2/repositories/semgrep/semgrep/tags/1.164.0/ | jq -r '.digest'
       # Or:
-      #   docker pull semgrep/semgrep:1.163.0 && docker inspect --format='{{index .RepoDigests 0}}' semgrep/semgrep:1.163.0
-      # The tag '1.163.0' is mutable upstream; the @sha256 suffix is the immutable manifest-list digest.
+      #   docker pull semgrep/semgrep:1.164.0 && docker inspect --format='{{index .RepoDigests 0}}' semgrep/semgrep:1.164.0
+      # The tag '1.164.0' is mutable upstream; the @sha256 suffix is the immutable manifest-list digest.
       # OWASP A03:2025 supply-chain hardening - closes wave-3 security F-1.
-      image: semgrep/semgrep:1.163.0@sha256:7cad2bc2d1e44f87f0bf4be6d1fa23aa90fb72015bebc89fb91385d813987a03
+      image: semgrep/semgrep:1.164.0@sha256:207983631beecdbe7fa29196c7f4a7a5f29033933cdb76c687ce4a672e07618d
     steps:
       - name: Harden runner (egress block + explicit allowlist)
-        uses: step-security/harden-runner@ab7a9404c0f3da075243ca237b5fac12c98deaa5  # v2.19.3
+        uses: step-security/harden-runner@9af89fc71515a100421586dfdb3dc9c984fbf411  # v2.19.4
         with:
           egress-policy: block
           allowed-endpoints: >
