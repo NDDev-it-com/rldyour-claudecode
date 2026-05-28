@@ -495,11 +495,11 @@ stage_7_verify() {
   if [[ -n "$REPORT_PATH" ]]; then
     {
       printf '# rldyour-claudecode install report\n\n'
-      printf '- Timestamp: %s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-      printf '- Marketplace: %s (%s)\n' "$NEW_MARKETPLACE" "$NEW_MARKETPLACE_SOURCE"
-      printf '- Plugins installed: %d\n' "$new_count"
-      printf '- Legacy cleaned: %s\n' "${LEGACY_MARKETPLACES[*]}"
-      printf '- Backup: %s\n\n' "$BACKUP_DIR"
+      printf -- '- Timestamp: %s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+      printf -- '- Marketplace: %s (%s)\n' "$NEW_MARKETPLACE" "$NEW_MARKETPLACE_SOURCE"
+      printf -- '- Plugins installed: %d\n' "$new_count"
+      printf -- '- Legacy cleaned: %s\n' "${LEGACY_MARKETPLACES[*]}"
+      printf -- '- Backup: %s\n\n' "$BACKUP_DIR"
       printf '## Verification\n\nAll assertions passed.\n\n'
       printf '## Recovery\n\n'
       printf 'To restore the previous state:\n\n'
