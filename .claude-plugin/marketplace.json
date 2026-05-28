@@ -5,7 +5,7 @@
     "name": "Danil Silantyev (github:rldyourmnd), CEO NDDev",
     "url": "https://github.com/rldyourmnd"
   },
-  "description": "Personal Claude Code plugin marketplace by Danil Silantyev (github:rldyourmnd), CEO NDDev - SDLC flow, Serena, MCP, security, browser, design, LSP, rules. Персональный маркетплейс плагинов Claude Code: SDLC flow, Serena, MCP, безопасность, браузер, дизайн, LSP, правила.",
+  "description": "Claude Code plugin marketplace for rldyour SDLC flows: MCP/LSP, Serena memory, security review, browser/design workflows, and reviewer agents. RU: маркетплейс плагинов Claude Code для rldyour SDLC: Serena, MCP/LSP, безопасность, браузер/дизайн и reviewer agents.",
   "plugins": [
     {
       "name": "rldyour-mcps",

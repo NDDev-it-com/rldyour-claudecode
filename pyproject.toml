@@ -5,7 +5,7 @@
 # give Pyright a stable settings anchor.
 name = "rldyour-claudecode"
 version = "1.0.0"
-description = "Personal Claude Code plugin marketplace (metadata + infrastructure scripts)"
+description = "Claude Code plugin marketplace for rldyour SDLC flows: MCP/LSP, Serena memory, security review, browser/design workflows, and reviewer agents."
 requires-python = ">=3.12"
 license = "AGPL-3.0-or-later"
 license-files = ["LICENSE"]
