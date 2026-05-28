@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-22
-Last commit: a519d10eb604bfb6c7988aa1fda43b3aeecc46e5 test: align Claude baseline fixture
+Last updated: 2026-05-28
+Last commit: cf5b25eb348ff012a2bcbbd2e4e61308207d674e test: avoid brittle Claude sync claim count
 Scope: verified current technical debt
 Area: TECHDEBT
 -->
@@ -20,15 +20,15 @@ verified current technical debt
 - `path:CHANGELOG.md`
 
 ## Last verified
-- date: 2026-05-22
-- commit: `a519d10eb604bfb6c7988aa1fda43b3aeecc46e5`
-- checked by: Codex ry-start baseline fixture sync
+- date: 2026-05-28
+- commit: `cf5b25eb348ff012a2bcbbd2e4e61308207d674e`
+- checked by: Codex ry-start Claude CI stabilization
 
 ## Facts
 - Technical debt memories record verified open debt only when it has code/config evidence.
 
 ## Evidence
-- `commit:a519d10eb604bfb6c7988aa1fda43b3aeecc46e5`
+- `commit:cf5b25eb348ff012a2bcbbd2e4e61308207d674e`
 - `path:README.md`
 - `path:CHANGELOG.md`
 

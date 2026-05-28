@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-22
-Last commit: 148c65c652fbc3e0b3a13db6eba20f2267932c49 chore: align dart sdk runtime pin
+Last updated: 2026-05-28
+Last commit: cf5b25eb348ff012a2bcbbd2e4e61308207d674e test: avoid brittle Claude sync claim count
 Scope: MCP runtime transport and pin policy
 Area: MCP
 -->
@@ -20,9 +20,9 @@ MCP runtime transport and pin policy
 - `path:README.md`
 
 ## Last verified
-- date: 2026-05-22
-- commit: `148c65c652fbc3e0b3a13db6eba20f2267932c49`
-- checked by: Codex ry-start Dart 3.12 runtime sync
+- date: 2026-05-28
+- commit: `cf5b25eb348ff012a2bcbbd2e4e61308207d674e`
+- checked by: Codex ry-start Claude CI stabilization
 
 ## Facts
 - MCP memories record server ownership, transports, versions, and toolset constraints.
@@ -31,7 +31,7 @@ MCP runtime transport and pin policy
   `config/mcp-runtime-versions.env`.
 
 ## Evidence
-- `commit:148c65c652fbc3e0b3a13db6eba20f2267932c49`
+- `commit:cf5b25eb348ff012a2bcbbd2e4e61308207d674e`
 - `path:plugins/rldyour-mcps/.mcp.json`
 - `path:config/mcp-runtime-versions.env`
 - `path:README.md`

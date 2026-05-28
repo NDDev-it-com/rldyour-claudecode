@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-22
-Last commit: a519d10eb604bfb6c7988aa1fda43b3aeecc46e5 test: align Claude baseline fixture
+Last updated: 2026-05-28
+Last commit: cf5b25eb348ff012a2bcbbd2e4e61308207d674e test: avoid brittle Claude sync claim count
 Scope: validation gates and test suites
 Area: TESTS
 -->
@@ -22,15 +22,17 @@ validation gates and test suites
 - `path:README.md`
 
 ## Last verified
-- date: 2026-05-22
-- commit: `a519d10eb604bfb6c7988aa1fda43b3aeecc46e5`
-- checked by: Codex ry-start baseline fixture sync
+- date: 2026-05-28
+- commit: `cf5b25eb348ff012a2bcbbd2e4e61308207d674e`
+- checked by: Codex ry-start Claude CI stabilization
 
 ## Facts
 - Test memories record which suites and smoke tests prove the touched behavior.
+- Current `tests/test_validate_instruction_docs.py` and `tests/test_validate_instruction_sync.py` cover Claude active instruction runtime-pin checks, fixture runtime baseline sources, and non-brittle sync claim counts.
+- `uv run --with pytest python -m pytest` passed locally with 143 passed and 1 skipped after the Claude instruction validator stabilization.
 
 ## Evidence
-- `commit:a519d10eb604bfb6c7988aa1fda43b3aeecc46e5`
+- `commit:cf5b25eb348ff012a2bcbbd2e4e61308207d674e`
 - `path:scripts`
 - `path:.github/workflows`
 - `path:README.md`

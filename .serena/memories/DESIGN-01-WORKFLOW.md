@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-22
-Last commit: a519d10eb604bfb6c7988aa1fda43b3aeecc46e5 test: align Claude baseline fixture
+Last updated: 2026-05-28
+Last commit: cf5b25eb348ff012a2bcbbd2e4e61308207d674e test: avoid brittle Claude sync claim count
 Scope: design, UI, Figma, and visual validation workflow
 Area: DESIGN
 -->
@@ -20,15 +20,15 @@ design, UI, Figma, and visual validation workflow
 - `path:plugins/rldyour-design`
 
 ## Last verified
-- date: 2026-05-22
-- commit: `a519d10eb604bfb6c7988aa1fda43b3aeecc46e5`
-- checked by: Codex ry-start baseline fixture sync
+- date: 2026-05-28
+- commit: `cf5b25eb348ff012a2bcbbd2e4e61308207d674e`
+- checked by: Codex ry-start Claude CI stabilization
 
 ## Facts
 - Design memories record Figma, tokens, component reuse, accessibility, and browser evidence requirements.
 
 ## Evidence
-- `commit:a519d10eb604bfb6c7988aa1fda43b3aeecc46e5`
+- `commit:cf5b25eb348ff012a2bcbbd2e4e61308207d674e`
 - `path:README.md`
 - `path:plugins/rldyour-design`
 

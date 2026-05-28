@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-22
-Last commit: a519d10eb604bfb6c7988aa1fda43b3aeecc46e5 test: align Claude baseline fixture
+Last updated: 2026-05-28
+Last commit: cf5b25eb348ff012a2bcbbd2e4e61308207d674e test: avoid brittle Claude sync claim count
 Scope: instruction docs and durable operator documentation
 Area: DOCS
 -->
@@ -22,15 +22,17 @@ instruction docs and durable operator documentation
 - `path:README.md`
 
 ## Last verified
-- date: 2026-05-22
-- commit: `a519d10eb604bfb6c7988aa1fda43b3aeecc46e5`
-- checked by: Codex ry-start baseline fixture sync
+- date: 2026-05-28
+- commit: `cf5b25eb348ff012a2bcbbd2e4e61308207d674e`
+- checked by: Codex ry-start Claude CI stabilization
 
 ## Facts
 - Docs memories record which instruction and operator docs must change after durable behavior changes.
+- `scripts/validate_instruction_docs.py` validates active Claude runtime-pin claims against `package.json`, `references/claude-baseline.json`, and `config/mcp-runtime-versions.env`.
+- `scripts/validate_instruction_sync.py` accepts both nested `claims` and top-level sync-contract keys, while still failing semantic drift for shared keys.
 
 ## Evidence
-- `commit:a519d10eb604bfb6c7988aa1fda43b3aeecc46e5`
+- `commit:cf5b25eb348ff012a2bcbbd2e4e61308207d674e`
 - `path:AGENTS.md`
 - `path:.claude/CLAUDE.md`
 - `path:README.md`

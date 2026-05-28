@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-27
-Last commit: 32b25d2346d2fc59c441edd24ef8454db879bf18 fix(installer): use current Claude marketplace source format
+Last updated: 2026-05-28
+Last commit: cf5b25eb348ff012a2bcbbd2e4e61308207d674e test: avoid brittle Claude sync claim count
 Scope: release readiness, versioning, and artifact hygiene
 Area: RELEASE
 -->
@@ -22,9 +22,9 @@ release readiness, versioning, and artifact hygiene
 - `path:.github/workflows/release.yml`
 
 ## Last verified
-- date: 2026-05-27
-- commit: `32b25d2346d2fc59c441edd24ef8454db879bf18`
-- checked by: Codex ry-start version synchronization
+- date: 2026-05-28
+- commit: `cf5b25eb348ff012a2bcbbd2e4e61308207d674e`
+- checked by: Codex ry-start Claude CI stabilization
 
 ## Facts
 - Release memories record numeric versioning, tags, CI gates, and clean artifact hygiene.
@@ -38,7 +38,7 @@ release readiness, versioning, and artifact hygiene
   `rldyour-claudecode` name.
 
 ## Evidence
-- `commit:32b25d2346d2fc59c441edd24ef8454db879bf18`
+- `commit:cf5b25eb348ff012a2bcbbd2e4e61308207d674e`
 - `path:VERSION`
 - `path:CHANGELOG.md`
 - `path:config/mcp-runtime-versions.env`
