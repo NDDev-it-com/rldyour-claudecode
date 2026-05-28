@@ -15,8 +15,8 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version to dry-run validate (e.g. 0.3.0). Does not push tags or releases.'
-        required: false
+        description: 'Version to release from VERSION (numeric SemVer X.Y.Z). Creates the tag when dispatching manually.'
+        required: true
         type: string
 
 permissions: {}
@@ -88,8 +88,7 @@ jobs:
       - name: Validate release state
         run: python3 scripts/validate_release_state.py
 
-      - name: Dry-run version check (workflow_dispatch only)
-        if: github.event_name == 'workflow_dispatch' && inputs.version != ''
+      - name: Validate release version
         # Inputs interpolation moved to env: per OWASP A05:2025 (security review F-3).
         # Inline ${{ inputs.version }} in `run:` would template-expand into bash
         # source where any shell-metacharacter in the input would alter command
@@ -97,25 +96,33 @@ jobs:
         # only be read, not parsed as code.
         env:
           VERSION_INPUT: ${{ inputs.version }}
+          EVENT_NAME: ${{ github.event_name }}
+          REF_NAME: ${{ github.ref_name }}
         run: |
           set -euo pipefail
+          if [ "$EVENT_NAME" = "push" ]; then
+            RELEASE_VERSION="$REF_NAME"
+          else
+            RELEASE_VERSION="$VERSION_INPUT"
+          fi
           # Reject inputs that are not bare SemVer X.Y.Z (extra guard since
           # VERSION_INPUT enters shell context as $VAR not template).
-          if ! printf '%s' "$VERSION_INPUT" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$'; then
-            echo "Invalid VERSION_INPUT (not bare SemVer): $VERSION_INPUT" >&2
+          if ! printf '%s' "$RELEASE_VERSION" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "Invalid release version (not bare SemVer): $RELEASE_VERSION" >&2
             exit 1
           fi
           CURRENT="$(cat VERSION)"
-          if [ "$CURRENT" != "$VERSION_INPUT" ]; then
-            echo "VERSION file is $CURRENT but dry-run asked for $VERSION_INPUT" >&2
+          if [ "$CURRENT" != "$RELEASE_VERSION" ]; then
+            echo "VERSION file is $CURRENT but release asked for $RELEASE_VERSION" >&2
             exit 1
           fi
           # `grep -F --` treats the argument as a fixed string and stops option
           # parsing - safe with shell variables even after SemVer validation above.
-          if ! grep -qF -- "## [$VERSION_INPUT] - " CHANGELOG.md; then
-            echo "CHANGELOG.md missing [$VERSION_INPUT] entry" >&2
+          if ! grep -qF -- "## [$RELEASE_VERSION] - " CHANGELOG.md; then
+            echo "CHANGELOG.md missing [$RELEASE_VERSION] entry" >&2
             exit 1
           fi
+          echo "RELEASE_VERSION=$RELEASE_VERSION" >> "$GITHUB_ENV"
 
       - name: Generate release manifest
         run: |
@@ -129,19 +136,37 @@ jobs:
       - name: Upload release manifest artifact
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
         with:
-          name: release-manifest-${{ github.ref_name }}
+          name: release-manifest-${{ env.RELEASE_VERSION }}
           path: release-evidence/release-manifest.json
           if-no-files-found: error
           retention-days: 90
 
-      - name: Create GitHub Release (tag push only)
-        if: github.event_name == 'push'
+      - name: Create release tag (workflow_dispatch only)
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          set -euo pipefail
+          if git rev-parse -q --verify "refs/tags/${RELEASE_VERSION}" >/dev/null; then
+            echo "Tag ${RELEASE_VERSION} already exists locally"
+          else
+            git tag "${RELEASE_VERSION}"
+            git push origin "refs/tags/${RELEASE_VERSION}"
+          fi
+
+      - name: Publish GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          gh release create "${GITHUB_REF_NAME}" \
-            --generate-notes \
-            --verify-tag \
-            release-evidence/release-manifest.json \
-            release-evidence.tgz
+          if gh release view "${RELEASE_VERSION}" >/dev/null 2>&1; then
+            gh release upload "${RELEASE_VERSION}" \
+              release-evidence/release-manifest.json \
+              release-evidence.tgz \
+              --clobber
+          else
+            gh release create "${RELEASE_VERSION}" \
+              --generate-notes \
+              --verify-tag \
+              --title "${RELEASE_VERSION}" \
+              release-evidence/release-manifest.json \
+              release-evidence.tgz
+          fi
