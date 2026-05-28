@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-28
-Last commit: ece8d844c2696c92d7a938601258340cab91147b chore(release): claude 1.0.5
+Last commit: 12db0e862933c4b51450bf6c56000ca6424855d9 chore(release): claude 1.0.6
 Scope: browser-visible validation and debugging workflows
 Area: BROWSER
 -->
@@ -21,7 +21,7 @@ browser-visible validation and debugging workflows
 
 ## Last verified
 - date: 2026-05-28
-- commit: `ece8d844c2696c92d7a938601258340cab91147b`
+- commit: `12db0e862933c4b51450bf6c56000ca6424855d9`
 - checked by: Codex ry-start Claude CI stabilization
 
 ## Facts
