@@ -7,6 +7,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 ## [Unreleased]
 
 
+## [1.0.4] - 2026-05-28
+
+### Fixed
+
+- Synchronize Stop lifecycle timeout marker with marketplace policy boundary validation.
+
 ## [1.0.3] - 2026-05-28
 
 ### Fixed
