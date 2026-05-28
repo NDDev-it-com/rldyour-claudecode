@@ -3,7 +3,7 @@
   "name": "rldyour-claudecode",
   "version": "1.0.0",
   "private": true,
-  "description": "Personal Claude Code plugin marketplace. This package.json exists only to pin @anthropic-ai/claude-code (so Dependabot can track drift via npm ecosystem) and to provide a single source of truth for the CLI version used by CI. The repository itself has no Node.js source code.",
+  "description": "Claude Code plugin marketplace for rldyour SDLC flows: MCP/LSP, Serena memory, security review, browser/design workflows, and reviewer agents.",
   "license": "AGPL-3.0-or-later",
   "repository": {
     "type": "git",

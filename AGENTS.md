@@ -1,6 +1,6 @@
 # AGENTS.md - rldyour-claude
 
-Personal Claude Code plugin marketplace by `rldyourmnd`. The repository ships nine plugins that compose an opinionated SDLC, semantic-code, MCP transport, security, browser, design, LSP, and rules layer for Claude Code. There is no runtime application code - every artifact in this repo is plugin metadata, skills, slash commands, agents, hooks, scripts, and references.
+Claude Code plugin marketplace for rldyour SDLC flows: MCP/LSP, Serena memory, security review, browser/design workflows, and reviewer agents. The repository ships nine plugins that compose an opinionated SDLC, semantic-code, MCP transport, security, browser, design, LSP, and rules layer for Claude Code. There is no runtime application code - every artifact in this repo is plugin metadata, skills, slash commands, agents, hooks, scripts, and references.
 
 This `AGENTS.md` is the concise root project-instruction file for any AI agent working in this repository - cross-tool standard governed by the Linux Foundation Agentic AI Foundation (AAIF) since 2025-12-09 (see https://agents.md/). The deep Claude Code-native memory lives in `./.claude/CLAUDE.md` and contains subagent matrix, hook canon, skill-listing budget, frontmatter conventions, and Don't/Done rules that other AI tools don't need.
 
