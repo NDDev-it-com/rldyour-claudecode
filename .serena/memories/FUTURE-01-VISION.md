@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-28
-Last commit: ad97d9deb65b76cea82052322b9e6cee86af0407 fix(installer): guard report markdown printf
+Last updated: 2026-05-22
+Last commit: a519d10eb604bfb6c7988aa1fda43b3aeecc46e5 test: align Claude baseline fixture
 Scope: future architecture direction and scalability gravity
 Area: FUTURE
 -->
@@ -20,15 +20,15 @@ future architecture direction and scalability gravity
 - `path:config/rldyour-contract.json`
 
 ## Last verified
-- date: 2026-05-28
-- commit: `ad97d9deb65b76cea82052322b9e6cee86af0407`
-- checked by: Codex system sync after Claude installer report fix
+- date: 2026-05-22
+- commit: `a519d10eb604bfb6c7988aa1fda43b3aeecc46e5`
+- checked by: Codex ry-start baseline fixture sync
 
 ## Facts
 - Future memories record architectural trajectory and scale direction, not transient task queues.
 
 ## Evidence
-- `commit:ad97d9deb65b76cea82052322b9e6cee86af0407`
+- `commit:a519d10eb604bfb6c7988aa1fda43b3aeecc46e5`
 - `path:README.md`
 - `path:config/rldyour-contract.json`
 

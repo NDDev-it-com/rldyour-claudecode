@@ -14,13 +14,14 @@ claims:
   reviewer_transport_marker: RLDYOUR_REPORT_EOF
   reviewer_report_dir_template: ".serena/reviews/<run_id>/"
   reviewer_run_id_format: "<UTC-ISO-compact>-<git-short-sha>"
-  claude_code_min_version: "2.1.145"
+  claude_code_runtime_pin: "2.1.153"
+  claude_code_feature_floor: "2.1.146"
   skill_listing_budget_fraction: 0.04
   max_skill_description_chars: 1536
   fullrepo_branch: fullrepo
   plugin_count: 9
-  skill_count: 32
-  command_count: 10
+  skill_count: 33
+  command_count: 11
   subagent_count: 8
 -->
 
@@ -67,7 +68,7 @@ OpenAI Codex CLI reads `AGENTS.md` before starting work and runs commands listed
 - Tag releases: `claude plugin tag --push` (v2.1.118+). Convention: `<plugin-name>--v<version>` and `marketplace--v<version>`.
 - Inspect plugin inventory + projected context cost: `claude plugin details <name>` (v2.1.139+; v2.1.142 adds LSP).
 - Cross-tool contract gate: `python3 scripts/validate_contract.py && python3 scripts/generate_contract_matrix.py --check`.
-- **Minimum Claude Code: v2.1.145+** (matches the CI pin read from `package.json`). Used features: `opus[1m]` (v2.1.111+, account-gated), `alwaysLoad` (v2.1.121+), hook `if` filter (v2.1.118+), exec-form `args` (v2.1.139+), marketplace `displayName` support (v2.1.143+), `maxSkillDescriptionChars` + `skillListingBudgetFraction` (v2.1.105+), `skillOverrides` (v2.1.129+, plugin skills exempt).
+- **Claude Code runtime pin: v2.1.153. Feature compatibility floor: v2.1.146+.** The package pin in `package.json`, `references/claude-baseline.json`, and `config/mcp-runtime-versions.env` is the release/runtime source of truth. The floor covers every feature used by the marketplace: `opus[1m]` (v2.1.111+, account-gated), `alwaysLoad` (v2.1.121+), hook `if` filter (v2.1.118+), exec-form `args` (v2.1.139+), marketplace `displayName` support (v2.1.143+), Stop/SubagentStop `background_tasks` and `session_crons` input fields (v2.1.145+), Auto mode `AskUserQuestion` behavior needed by decision gates (v2.1.146+), `disallowed-tools`, `SessionStart.reloadSkills`, `MessageDisplay`, `skipLfs`, status-line terminal-size env, and `claude agents` native command/bundled skill autocomplete through v2.1.153.
 - Bootstrap a fresh checkout: `bash scripts/bootstrap_check.sh` (fullrepo restore + claude validate + required env + dart SDK + pre-push hook advisory).
 - Audit git/branch/worktree: `bash plugins/rldyour-flow/scripts/git_sync_audit.sh`.
 - Quality checks for consumer projects: `bash plugins/rldyour-flow/scripts/detect_project_checks.sh`. LSP health: `bash plugins/rldyour-lsps/scripts/check_lsps.sh`. This repository has no runtime test suite by design.
@@ -140,7 +141,7 @@ Subcommands:
 
 ## MCP Transport (`rldyour-mcps/.mcp.json`)
 
-13 pinned servers (full pin source: `config/mcp-runtime-versions.env`): `serena-agent==1.5.3` with `alwaysLoad: true` (v2.1.121+), `@modelcontextprotocol/server-sequential-thinking@2025.12.18`, `@playwright/mcp@0.0.75`, `chrome-devtools-mcp@1.1.1`, `@upstash/context7-mcp@2.2.5`, `semgrep==1.163.0`, `shadcn@4.8.1`, host binaries `github-mcp-server` (1.0.5) + `dart` (3.12.0); HTTP: `deepwiki`, `grep`, `figma`, `openai-docs`. Required env: `CONTEXT7_API_KEY`, `GITHUB_PERSONAL_ACCESS_TOKEN`. GitHub MCP uses local stdio (not Copilot-gated HTTP).
+13 pinned servers (full pin source: `config/mcp-runtime-versions.env`): `serena-agent==1.5.3` with `alwaysLoad: true` (v2.1.121+), `@modelcontextprotocol/server-sequential-thinking@2025.12.18`, `@playwright/mcp@0.0.75`, `chrome-devtools-mcp@1.1.1`, `@upstash/context7-mcp@2.2.5`, `semgrep==1.164.0`, `shadcn@4.8.2`, host binaries `github-mcp-server` (1.0.5) + `dart` (3.12.0); HTTP: `deepwiki`, `grep`, `figma`, `openai-docs`. Required env: `CONTEXT7_API_KEY`, `GITHUB_PERSONAL_ACCESS_TOKEN`. GitHub MCP uses local stdio (not Copilot-gated HTTP).
 
 Timeout knobs are env-only: `MCP_TIMEOUT`, `MCP_TOOL_TIMEOUT` (v2.1.142+ for HTTP/SSE). Per-server `startup_timeout_sec`/`tool_timeout_sec` keys are NOT documented and silently ignored - do not add them.
 

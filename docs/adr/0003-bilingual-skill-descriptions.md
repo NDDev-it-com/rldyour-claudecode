@@ -15,7 +15,7 @@ maintainer to use a non-native language for daily work.
 
 The skill-listing budget (`skillListingBudgetFraction`, default `0.01` =
 1% of context window with 8000-char fallback) truncates descriptions when
-the total exceeds budget. With 32 skills and Russian-leading bilingual
+the total exceeds budget. With 33 skills and Russian-leading bilingual
 descriptions averaging ~400 chars per entry (vs ~250 for pure English),
 the default budget truncates tail-end descriptions and Claude can no
 longer auto-trigger them.
@@ -39,7 +39,7 @@ Evidence: README.md:9-15, .claude/CLAUDE.md skill-listing-budget section,
 
 ## Decision Outcome
 
-Chosen option: **C**. All 32 skill descriptions follow the pattern:
+Chosen option: **C**. All 33 skill descriptions follow the pattern:
 
 ```
 "<RU-leading text>. Используй для: <RU trigger phrases>. EN triggers:
@@ -48,7 +48,7 @@ Chosen option: **C**. All 32 skill descriptions follow the pattern:
 
 Combined with `skillListingBudgetFraction: 0.04` (4%) and
 `maxSkillDescriptionChars: 1536` user settings, this gives ~12.8K chars of
-total skill-listing budget at 32 skills - room for both growth and
+total skill-listing budget at 33 skills - room for both growth and
 bilingual cost. The `0.04` value is bumped above the Anthropic+claudekit
 baseline `0.03` specifically because of the bilingual cost.
 

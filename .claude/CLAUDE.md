@@ -10,13 +10,14 @@ claims:
   reviewer_transport_marker: RLDYOUR_REPORT_EOF
   reviewer_report_dir_template: ".serena/reviews/<run_id>/"
   reviewer_run_id_format: "<UTC-ISO-compact>-<git-short-sha>"
-  claude_code_min_version: "2.1.145"
+  claude_code_runtime_pin: "2.1.153"
+  claude_code_feature_floor: "2.1.146"
   skill_listing_budget_fraction: 0.04
   max_skill_description_chars: 1536
   fullrepo_branch: fullrepo
   plugin_count: 9
-  skill_count: 32
-  command_count: 10
+  skill_count: 33
+  command_count: 11
   subagent_count: 8
 -->
 
@@ -27,7 +28,7 @@ claims:
 ```
 rldyour-mcps         transport     0 skills • 0 cmds • 0 agents • 0 hooks  • .mcp.json (13 pinned servers)
 rldyour-serena-mcp   semantic      2 skills • 0 cmds • 1 agent  • 4 hooks
-rldyour-flow         SDLC          7 skills • 6 cmds • 6 agents • 4 hooks  • 7 scripts • 7 references
+rldyour-flow         SDLC          8 skills • 7 cmds • 6 agents • 4 hooks  • 7 scripts • 7 references
 rldyour-explore      research      2 skills • 1 cmd  • 1 agent  • 0 hooks
 rldyour-security     security      2 skills • 1 cmd  • 0 agents • 0 hooks
 rldyour-browser      browser       3 skills • 0 cmds • 0 agents • 0 hooks
@@ -36,7 +37,7 @@ rldyour-lsps         lsp           4 skills • 0 cmds • 0 agents • 0 hooks 
 rldyour-rules        rules         7 skills • 1 cmd  • 0 agents • 0 hooks  • 6 references
 ```
 
-Total: 32 skills, 10 slash commands, 8 subagents. Slash commands (SDLC + tool-routing), plugin dependency graph, MCP transport detail, and fullrepo branch policy are listed in `./AGENTS.md`.
+Total: 33 skills, 11 slash commands, 8 subagents. Slash commands (SDLC + tool-routing), plugin dependency graph, MCP transport detail, and fullrepo branch policy are listed in `./AGENTS.md`.
 
 ## Subagent Frontmatter Matrix
 
@@ -85,7 +86,7 @@ Skip flags during local debugging: `RLDYOUR_SKIP_FLOW_SESSION_CONTEXT=1` (Sessio
 
 ## Skill Listing Budget
 
-Per-entry combined `description` + `when_to_use` cap: **1,536 chars** (raised from 250 in CC v2.1.128). Aggregate budget defaults to **1% of context window** with 8,000-char fallback. With 32+ skills the default budget truncates tail-end descriptions and Claude can no longer auto-trigger them.
+Per-entry combined `description` + `when_to_use` cap: **1,536 chars** (raised from 250 in CC v2.1.128). Aggregate budget defaults to **1% of context window** with 8,000-char fallback. With 33+ skills the default budget truncates tail-end descriptions and Claude can no longer auto-trigger them.
 
 User-side fix in `~/.claude/settings.json`:
 
@@ -96,7 +97,7 @@ User-side fix in `~/.claude/settings.json`:
 }
 ```
 
-`maxSkillDescriptionChars` and `skillListingBudgetFraction` were added in CC **v2.1.105+**. `skillListingBudgetFraction` is a decimal fraction in `(0, 1]`. Runtime override: `SLASH_COMMAND_TOOL_CHAR_BUDGET` env var (raw chars). The separate `skillOverrides` map (`"on" | "name-only" | "user-invocable-only" | "off"`) was added in **v2.1.129+** and does **not** affect plugin-shipped skills - manage those through `/plugin` instead. The `0.04` (4%) value is bumped above the claudekit-cli baseline `0.03` (verified 2026-05-15) because our bilingual Russian-leading + English-triggers description format averages ~400 chars per entry vs ~250 for pure-English plugins; at 32 skills our total skill-listing token cost is ~12.8K chars and `0.03` of 200K-token Sonnet sessions truncates tail-end auto-trigger descriptions. `opus[1m]` 1M-token sessions have room at 0.03 too, but 0.04 covers both cases.
+`maxSkillDescriptionChars` and `skillListingBudgetFraction` were added in CC **v2.1.105+**. `skillListingBudgetFraction` is a decimal fraction in `(0, 1]`. Runtime override: `SLASH_COMMAND_TOOL_CHAR_BUDGET` env var (raw chars). The separate `skillOverrides` map (`"on" | "name-only" | "user-invocable-only" | "off"`) was added in **v2.1.129+** and does **not** affect plugin-shipped skills - manage those through `/plugin` instead. The `0.04` (4%) value is bumped above the claudekit-cli baseline `0.03` (verified 2026-05-15) because our bilingual Russian-leading + English-triggers description format averages ~400 chars per entry vs ~250 for pure-English plugins; at 33 skills our total skill-listing token cost is ~13.2K chars and `0.03` of 200K-token Sonnet sessions truncates tail-end auto-trigger descriptions. `opus[1m]` 1M-token sessions have room at 0.03 too, but 0.04 covers both cases.
 
 Plugin-side levers used in this repo:
 - `disable-model-invocation: true` on **4 skills** (`skills/ry-deploy/SKILL.md`, `skills/ry-newp/SKILL.md`, `skills/ry-rules-review/SKILL.md`, `skills/ry-sec-review/SKILL.md`) - slash-only, freeing budget for auto-triggered skills.
@@ -122,12 +123,12 @@ Patterns verified against `anthropics/claude-plugins-official` snapshot `1a2f18b
 - **`alwaysLoad: true` for critical-path MCP servers** - community pattern in `tractorjuice/arc-kit`, `OMARVII/claude-alloy`, `darkroomengineering/cc-settings`. Our restraint (only `serena`) is appropriate scoping.
 - **Tag convention `<plugin-name>--v<version>`** - Anthropic-canonical via `claude plugin tag --push` (docs `code.claude.com/docs/en/plugin-dependencies`). Anthropic's own plugins-official marketplace doesn't apply tags yet, but the documented convention is the canonical one.
 
-## Changelog Adoption (v2.1.133 → v2.1.145)
+## Changelog Adoption (v2.1.133 -> v2.1.153)
 
-Verified against `code.claude.com/docs/en/changelog` for v2.1.133-v2.1.145 on 2026-05-20. Current local CC: **v2.1.145** (`claude --version`).
+Verified against `code.claude.com/docs/en/changelog`, `references/claude-baseline.json`, `package.json`, and local `claude --version` on 2026-05-28. Runtime pin: **v2.1.153**. Feature compatibility floor: **v2.1.146+**.
 
 Adopted:
-- v2.1.105 - `maxSkillDescriptionChars` and `skillListingBudgetFraction` user settings (Anthropic + claudekit-cli baseline is `0.03`; this repo recommends `0.04` - see Skill Listing Budget section above for the bilingual-description rationale). Per-entry skill description cap `1,536` chars, used by all 32 skills.
+- v2.1.105 - `maxSkillDescriptionChars` and `skillListingBudgetFraction` user settings (Anthropic + claudekit-cli baseline is `0.03`; this repo recommends `0.04` - see Skill Listing Budget section above for the bilingual-description rationale). Per-entry skill description cap `1,536` chars, used by all 33 skills.
 - v2.1.121 - `alwaysLoad: true` on `serena` MCP server.
 - v2.1.118 - `claude plugin tag --push` for release tagging (canonical, `<plugin>--v<version>`).
 - v2.1.129 - `skillOverrides` map (`"on" | "name-only" | "user-invocable-only" | "off"`); does NOT apply to plugin skills - manage those through `/plugin`. `experimental.{themes,monitors}` wrapper available (we declare neither).
@@ -136,7 +137,9 @@ Adopted:
 Available, not adopted:
 - v2.1.133 `worktree.baseRef: "head"` - user-side setting (`~/.claude/settings.json`); recommendation documented in AGENTS.md Worktree Workflow but not forced. `ry-explore` uses `context: fork`, not `isolation: worktree`.
 - v2.1.133 hook input `effort.level` + `$CLAUDE_EFFORT` env var in Bash - could enrich hook telemetry; not yet wired into `flow_post_task_state.py` or `serena_memory_state.py`.
-- v2.1.142-2.1.145 refreshed the operational floor: agent CLI flags, HTTP `MCP_TOOL_TIMEOUT` fix, plugin dependency enforcement, `/plugin` context-cost/component previews, background/worktree/MCP pagination fixes, and stricter `claude plugin validate`; this repo pins CI/local floor to 2.1.145.
+- v2.1.142-2.1.146 refreshed the operational floor: agent CLI flags, HTTP `MCP_TOOL_TIMEOUT` fix, plugin dependency enforcement, `/plugin` context-cost/component previews, background/worktree/MCP pagination fixes, stricter `claude plugin validate`, and Auto mode `AskUserQuestion` behavior needed by decision gates. This repo keeps the feature compatibility floor at v2.1.146+ and the runtime pin at v2.1.153.
+- v2.1.152 - `disallowed-tools` frontmatter for skills and slash commands, `/reload-skills`, `SessionStart.reloadSkills`, and `MessageDisplay` hook event are tracked in `references/claude-surface-adoption.md`.
+- v2.1.153 - `skipLfs` marketplace-source option, npm update diagnostics in `/doctor`, status-line `COLUMNS`/`LINES`, and `claude agents` native command/bundled skill autocomplete are tracked in `references/claude-surface-adoption.md`.
 - v2.1.141 `claude agents --cwd <path>` and `terminalSequence` hook field were added; hook and daemon regressions were fixed.
 - v2.1.139 hook `args: string[]` exec-form **adopted** in v0.5.0 (commit `614bdcf`): all 8 hooks switched from shell-form `command: "bash ${CLAUDE_PLUGIN_ROOT}/..."` to exec-form `command: "bash", args: ["${CLAUDE_PLUGIN_ROOT}/hooks/X.sh"]`. Verified 2026-05-17 against `code.claude.com/docs/en/hooks` which explicitly recommends exec-form for any hook with path placeholders.
 - v2.1.139 `PostToolUse` `continueOnBlock: true` - our PostToolUse hooks are advisory-only (`exit 0` always), nothing to "block on".

@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-28
-Last commit: ad97d9deb65b76cea82052322b9e6cee86af0407 fix(installer): guard report markdown printf
+Last updated: 2026-05-22
+Last commit: a519d10eb604bfb6c7988aa1fda43b3aeecc46e5 test: align Claude baseline fixture
 Scope: instruction docs and durable operator documentation
 Area: DOCS
 -->
@@ -22,15 +22,15 @@ instruction docs and durable operator documentation
 - `path:README.md`
 
 ## Last verified
-- date: 2026-05-28
-- commit: `ad97d9deb65b76cea82052322b9e6cee86af0407`
-- checked by: Codex system sync after Claude installer report fix
+- date: 2026-05-22
+- commit: `a519d10eb604bfb6c7988aa1fda43b3aeecc46e5`
+- checked by: Codex ry-start baseline fixture sync
 
 ## Facts
 - Docs memories record which instruction and operator docs must change after durable behavior changes.
 
 ## Evidence
-- `commit:ad97d9deb65b76cea82052322b9e6cee86af0407`
+- `commit:a519d10eb604bfb6c7988aa1fda43b3aeecc46e5`
 - `path:AGENTS.md`
 - `path:.claude/CLAUDE.md`
 - `path:README.md`
