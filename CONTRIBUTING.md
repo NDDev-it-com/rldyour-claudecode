@@ -1,8 +1,8 @@
 # Contributing
 
-Thanks for your interest in `rldyour-claudecode`. This is a personal
-Claude Code plugin marketplace by Danil Silantyev (github:rldyourmnd),
-CEO NDDev; PRs and Issues are welcome, but the bar is
+Thanks for your interest in `rldyour-claudecode`. This is the Claude Code
+plugin marketplace for rldyour SDLC flows, maintained by Danil Silantyev
+(github:rldyourmnd), CEO NDDev; PRs and Issues are welcome, but the bar is
 "consistency with the existing architecture and quality-first invariants" -
 drive-by patches that don't fit the philosophy will be redirected or closed.
 

@@ -2,7 +2,9 @@
 
 ## Supported Versions
 
-This is a personal Claude Code plugin marketplace. Only the latest
+This is the Claude Code plugin marketplace for rldyour SDLC flows: MCP/LSP,
+Serena memory, security review, browser/design workflows, and reviewer agents.
+Only the latest
 marketplace release boundary tag (`marketplace--v<MAJOR>.<MINOR>.<PATCH>`)
 receives security fixes. Each plugin carries its own `<plugin>--v<X.Y.Z>`
 tag aligned with the marketplace boundary.
