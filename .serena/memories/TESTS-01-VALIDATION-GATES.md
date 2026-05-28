@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-28
-Last commit: cf5b25eb348ff012a2bcbbd2e4e61308207d674e test: avoid brittle Claude sync claim count
+Last commit: 0d43f7eb9934bfd73e4eaf2f33799deed47c14be
 Scope: validation gates and test suites
 Area: TESTS
 -->
@@ -12,6 +12,7 @@ validation gates and test suites
 
 ## Current source of truth
 - `path:scripts`
+- `path:tests/test_flow_stop_state.py`
 - `path:.github/workflows`
 - `path:README.md`
 
@@ -23,17 +24,22 @@ validation gates and test suites
 
 ## Last verified
 - date: 2026-05-28
-- commit: `cf5b25eb348ff012a2bcbbd2e4e61308207d674e`
-- checked by: Codex ry-start Claude CI stabilization
+- commit: `0d43f7eb9934bfd73e4eaf2f33799deed47c14be`
+- checked by: Codex ry-start Claude Stop hook loop-guard hardening
 
 ## Facts
 - Test memories record which suites and smoke tests prove the touched behavior.
 - Current `tests/test_validate_instruction_docs.py` and `tests/test_validate_instruction_sync.py` cover Claude active instruction runtime-pin checks, fixture runtime baseline sources, and non-brittle sync claim counts.
-- `uv run --with pytest python -m pytest` passed locally with 143 passed and 1 skipped after the Claude instruction validator stabilization.
+- `tests/test_flow_stop_state.py` covers direct installed `flow_post_task_state.py`
+  invocation without `CLAUDE_PLUGIN_ROOT`, `fullrepo_sync.py --status-json
+  --local-only`, and Stop hook loop-guard behavior from a subdirectory.
+- `uv run --with pytest python -m pytest` passed locally with 146 passed and
+  1 skipped after the Stop hook loop-guard hardening.
 
 ## Evidence
-- `commit:cf5b25eb348ff012a2bcbbd2e4e61308207d674e`
+- `commit:0d43f7eb9934bfd73e4eaf2f33799deed47c14be`
 - `path:scripts`
+- `path:tests/test_flow_stop_state.py`
 - `path:.github/workflows`
 - `path:README.md`
 

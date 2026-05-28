@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-28
-Last commit: 6a297078820f084b99342311132a419233cc9e66
+Last commit: 0d43f7eb9934bfd73e4eaf2f33799deed47c14be
 Scope: release readiness, versioning, and artifact hygiene
 Area: RELEASE
 -->
@@ -23,17 +23,22 @@ release readiness, versioning, and artifact hygiene
 
 ## Last verified
 - date: 2026-05-28
-- commit: `6a297078820f084b99342311132a419233cc9e66`
-- checked by: Codex ry-start skill/runtime-discovery hardening
+- commit: `0d43f7eb9934bfd73e4eaf2f33799deed47c14be`
+- checked by: Codex ry-start Claude Stop hook loop-guard hardening
 
 ## Facts
 - Release memories record numeric versioning, tags, CI gates, and clean artifact hygiene.
-- Current product/config version is `1.0.1`; `VERSION`, `package.json`,
+- Current product/config version is `1.0.2`; `VERSION`, `package.json`,
   `pyproject.toml`, and `CHANGELOG.md` are the source of truth for the
   adapter-local SemVer state.
 - Release `1.0.0` adopted Claude Code `2.1.153` and the refreshed common MCP
   policy; release `1.0.1` synchronizes internal plugin and index versions with
   the adapter release without changing Claude runtime semantics.
+- Release `1.0.2` hardens the rldyour-flow Stop post-task sync gate: direct
+  installed-script invocation now resolves sibling plugin scripts from
+  `__file__`, Stop state runs in local-only mode, fullrepo status can avoid
+  network checks during hooks, and repeated `stop_hook_active=true` fingerprints
+  emit a system message then allow Stop instead of looping.
 - Historical release evidence:
 - Commit `1d8c2d951c1131e043989d8c4f5d2afa4f777b21` bumps the product/config
   version to `0.7.0` in `VERSION`, `package.json`, `pyproject.toml`, and
@@ -45,7 +50,7 @@ release readiness, versioning, and artifact hygiene
   `rldyour-claudecode` name.
 
 ## Evidence
-- `commit:6a297078820f084b99342311132a419233cc9e66`
+- `commit:0d43f7eb9934bfd73e4eaf2f33799deed47c14be`
 - `path:VERSION`
 - `path:CHANGELOG.md`
 - `path:config/mcp-runtime-versions.env`

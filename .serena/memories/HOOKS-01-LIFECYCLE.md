@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-28
-Last commit: cf5b25eb348ff012a2bcbbd2e4e61308207d674e test: avoid brittle Claude sync claim count
+Last commit: 0d43f7eb9934bfd73e4eaf2f33799deed47c14be
 Scope: deterministic hook lifecycle behavior
 Area: HOOKS
 -->
@@ -21,15 +21,28 @@ deterministic hook lifecycle behavior
 
 ## Last verified
 - date: 2026-05-28
-- commit: `cf5b25eb348ff012a2bcbbd2e4e61308207d674e`
-- checked by: Codex ry-start Claude CI stabilization
+- commit: `0d43f7eb9934bfd73e4eaf2f33799deed47c14be`
+- checked by: Codex ry-start Claude Stop hook loop-guard hardening
 
 ## Facts
 - Hook memories record bounded, deterministic lifecycle behavior and the authoritative Stop owner.
+- `plugins/rldyour-flow/hooks/stop_post_task_sync.sh` is an advisory gate:
+  it may block with `exit 2`, but if Claude sends `stop_hook_active=true` and
+  `.serena/.flow_sync_marker` already matches the current fingerprint, it
+  exits `0` with a system message to avoid a Stop-hook loop.
+- `plugins/rldyour-flow/scripts/flow_post_task_state.py` resolves sibling
+  installed plugin scripts from its own `__file__` path before repo-relative
+  fallbacks, so direct installed-script diagnostics and real hook execution use
+  the same Serena/fullrepo state sources.
+- Stop hook state sets `RLDYOUR_FLOW_STATE_LOCAL_ONLY=1` and
+  `RLDYOUR_FULLREPO_STATUS_LOCAL_ONLY=1`; fullrepo status avoids fetch/network
+  checks in the hot path and reports `network_checked=false`.
 
 ## Evidence
-- `commit:cf5b25eb348ff012a2bcbbd2e4e61308207d674e`
+- `commit:0d43f7eb9934bfd73e4eaf2f33799deed47c14be`
 - `path:plugins/rldyour-flow/hooks`
+- `path:plugins/rldyour-flow/scripts/flow_post_task_state.py`
+- `path:plugins/rldyour-flow/scripts/fullrepo_sync.py`
 - `path:scripts/smoke_hooks.sh`
 
 ## Known pitfalls

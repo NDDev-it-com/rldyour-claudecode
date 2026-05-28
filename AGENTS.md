@@ -104,7 +104,7 @@ Two plugins coordinate hooks. `flow.stop_post_task_sync.sh` derives `serena_curr
 | Stop | rldyour-serena-mcp | `hooks/stop_memory_sync.sh` | 10s |
 | Stop | rldyour-flow | `hooks/stop_post_task_sync.sh` | 10s |
 
-Most hooks are advisory and exit `0`; Stop hooks are advisory enforcement gates that write guidance to stderr and block with `exit 2` when memory or post-task sync is required. The single hook that performs a bounded worktree mutation is `session_start_worktree_bootstrap.sh` - it runs `fullrepo_sync.py --restore` (never `--publish`, never touches origin) only when an agent-only marker is missing in the active worktree. Skip flags: `RLDYOUR_SKIP_FLOW_SESSION_CONTEXT`, `RLDYOUR_SKIP_FLOW_COMMIT_ADVICE`, `RLDYOUR_SKIP_STOP_GATES`, `RLDYOUR_SKIP_FLOW_SYNC`, `RLDYOUR_SKIP_SERENA_SYNC`, `RLDYOUR_SKIP_WORKTREE_BOOTSTRAP`.
+Most hooks are advisory and exit `0`; Stop hooks are advisory enforcement gates that write guidance to stderr and block with `exit 2` when memory or post-task sync is required. Flow Stop state is local-only in the hook hot path (`RLDYOUR_FLOW_STATE_LOCAL_ONLY=1`) and repeated `stop_hook_active=true` fingerprints are allowed to stop with a system message instead of looping. The single hook that performs a bounded worktree mutation is `session_start_worktree_bootstrap.sh` - it runs `fullrepo_sync.py --restore` (never `--publish`, never touches origin) only when an agent-only marker is missing in the active worktree. Skip flags: `RLDYOUR_SKIP_FLOW_SESSION_CONTEXT`, `RLDYOUR_SKIP_FLOW_COMMIT_ADVICE`, `RLDYOUR_SKIP_STOP_GATES`, `RLDYOUR_SKIP_FLOW_SYNC`, `RLDYOUR_SKIP_SERENA_SYNC`, `RLDYOUR_SKIP_WORKTREE_BOOTSTRAP`.
 
 ## Worktree Workflow
 
