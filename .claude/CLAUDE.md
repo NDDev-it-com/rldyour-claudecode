@@ -152,7 +152,7 @@ Smoke-script footgun (documented for future maintainers): `scripts/smoke_fullrep
 
 Capability-smoke hardening (added 2026-05-13, v0.1.2): `scripts/smoke_mcp_capabilities.sh` no longer treats HTTP 401/403 as blanket PASS for `HTTP_AUTH_GATED` servers - that shortcut hid the GitHub Copilot entitlement failure. Now performs real MCP `initialize` JSON-RPC handshake over HTTP, parses both `application/json` and `text/event-stream` bodies, requires `result.serverInfo.name`. Classification: 401 without auth → SKIP, 401 with auth → FAIL ("token rejected"), 403 → FAIL with explicit remediation hint, 200 without `serverInfo` → FAIL ("silent-misconfig catch"). `figma` is the only remaining `HTTP_AUTH_GATED` entry (accepts 200 without `serverInfo` pre-session).
 
-Capability smoke (added 2026-05-12): `scripts/smoke_mcp_capabilities.sh` performs JSON-RPC `initialize` + `tools/list` per server (stdio spawn or HTTP POST) and asserts a non-empty tool set. Latest focused 2026-05-20 checks: Serena `1.5.1` reports 27 tools, Chrome DevTools `1.0.1` reports 29 tools, and GitHub MCP `1.0.5` reports 40 tools. All workflow tools we use are present.
+Capability smoke (added 2026-05-12): `scripts/smoke_mcp_capabilities.sh` performs JSON-RPC `initialize` + `tools/list` per server (stdio spawn or HTTP POST) and asserts a non-empty tool set. Historical focused smoke evidence from 2026-05-20 used older MCP pins; current source of truth is `config/mcp-runtime-versions.env` plus the root `config/mcp-version-policy.json`, and `scripts/check_mcp_runtime_versions.py` verifies the active Serena, Chrome DevTools, GitHub MCP, and related MCP pins before release.
 
 ## Engineering Conventions
 

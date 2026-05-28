@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-28
-Last commit: cf5b25eb348ff012a2bcbbd2e4e61308207d674e test: avoid brittle Claude sync claim count
+Last commit: 6a297078820f084b99342311132a419233cc9e66
 Scope: release readiness, versioning, and artifact hygiene
 Area: RELEASE
 -->
@@ -23,11 +23,18 @@ release readiness, versioning, and artifact hygiene
 
 ## Last verified
 - date: 2026-05-28
-- commit: `cf5b25eb348ff012a2bcbbd2e4e61308207d674e`
-- checked by: Codex ry-start Claude CI stabilization
+- commit: `6a297078820f084b99342311132a419233cc9e66`
+- checked by: Codex ry-start skill/runtime-discovery hardening
 
 ## Facts
 - Release memories record numeric versioning, tags, CI gates, and clean artifact hygiene.
+- Current product/config version is `1.0.1`; `VERSION`, `package.json`,
+  `pyproject.toml`, and `CHANGELOG.md` are the source of truth for the
+  adapter-local SemVer state.
+- Release `1.0.0` adopted Claude Code `2.1.153` and the refreshed common MCP
+  policy; release `1.0.1` synchronizes internal plugin and index versions with
+  the adapter release without changing Claude runtime semantics.
+- Historical release evidence:
 - Commit `1d8c2d951c1131e043989d8c4f5d2afa4f777b21` bumps the product/config
   version to `0.7.0` in `VERSION`, `package.json`, `pyproject.toml`, and
   `CHANGELOG.md` without changing Claude runtime semantics.
@@ -38,7 +45,7 @@ release readiness, versioning, and artifact hygiene
   `rldyour-claudecode` name.
 
 ## Evidence
-- `commit:cf5b25eb348ff012a2bcbbd2e4e61308207d674e`
+- `commit:6a297078820f084b99342311132a419233cc9e66`
 - `path:VERSION`
 - `path:CHANGELOG.md`
 - `path:config/mcp-runtime-versions.env`
