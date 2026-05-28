@@ -7,6 +7,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 ## [Unreleased]
 
 
+## [1.0.5] - 2026-05-29
+
+### Changed
+
+- Harden Claude Stop lifecycle docs and validation.
+
 ## [1.0.4] - 2026-05-28
 
 ### Fixed

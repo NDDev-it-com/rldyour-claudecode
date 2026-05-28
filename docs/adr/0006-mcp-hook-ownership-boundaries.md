@@ -46,13 +46,14 @@ Chosen option: **C**. Hard invariants:
   GitHub) live in `plugins/rldyour-mcps/.mcp.json`.
 - **Only `rldyour-flow` and `rldyour-serena-mcp` declare `hooks/hooks.json`**.
   `rldyour-serena-mcp` owns memory-sync lifecycle (UserPromptSubmit,
-  PreToolUse:Bash with `if` filter, PostToolUse:Bash with `if` filter,
-  Stop). `rldyour-flow` owns SDLC orchestration lifecycle
-  (SessionStart×2, PostToolUse:Bash with `if` filter, Stop).
-- **Stop chain ordering**: Serena Stop fires first (memory freshness
-  gate), flow Stop second (post-task sync gate). Flow Stop calls
-  `serena_memory_state.py` directly rather than depending on the Serena
-  hook's output.
+  PreToolUse:Bash with `if` filter, PostToolUse:Bash with `if` filter).
+  `rldyour-flow` owns SDLC orchestration lifecycle (SessionStart×2,
+  PostToolUse:Bash with `if` filter, Stop).
+- **Stop chain ordering**: Claude registers one Stop hook, the
+  `rldyour-flow` dispatcher. The dispatcher invokes the Serena memory child
+  gate first, then the Flow post-task child gate. Flow still calls
+  `serena_memory_state.py` directly for current-state checks rather than
+  depending on child gate stdout.
 
 All other plugins:
 
@@ -66,7 +67,7 @@ All other plugins:
   ordering.
 - Good: cache invalidation localized (MCP bump → `rldyour-mcps` cache
   only).
-- Good: Stop chain ordering deterministic.
+- Good: Stop chain ordering deterministic through one registered dispatcher.
 - Bad: cross-plugin dependency lookups required (e.g.,
   `flow_post_task_state.py` reaches into `rldyour-serena-mcp` via
   `$(git rev-parse --show-toplevel)/plugins/rldyour-serena-mcp/scripts/...`).
