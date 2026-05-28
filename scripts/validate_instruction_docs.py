@@ -80,9 +80,13 @@ def inventory_counts(root: Path) -> dict[str, int]:
 
 def check_runtime_sources(root: Path) -> tuple[int, list[str], str]:
     issues: list[str] = []
-    package_pin = read_package_pin(root)
-    baseline_pin = read_baseline_pin(root)
-    env_pin = read_env_pin(root)
+    try:
+        package_pin = read_package_pin(root)
+        baseline_pin = read_baseline_pin(root)
+        env_pin = read_env_pin(root)
+    except (FileNotFoundError, KeyError, ValueError, json.JSONDecodeError) as exc:
+        issues.append(f"FAIL runtime pin source unreadable: {exc}")
+        return 1, issues, ""
     pins = {
         "package.json": package_pin,
         "references/claude-baseline.json": baseline_pin,
@@ -181,13 +185,23 @@ def main() -> int:
         stream = sys.stderr if line.startswith("FAIL") else sys.stdout
         print(line, file=stream)
 
-    for target in targets + active_templates:
+    for target in targets:
         if not target.is_file():
             if args.require_agent_docs:
                 print(f"FAIL missing required doc: {target}", file=sys.stderr)
                 overall_fail = 1
             else:
                 print(f"SKIP missing (not required): {target}")
+            continue
+        rc, issues = check_file(target, root, runtime_pin, counts)
+        for line in issues:
+            stream = sys.stderr if line.startswith("FAIL") else sys.stdout
+            print(line, file=stream)
+        overall_fail |= rc
+
+    for target in active_templates:
+        if not target.is_file():
+            print(f"SKIP missing active template: {target}")
             continue
         rc, issues = check_file(target, root, runtime_pin, counts)
         for line in issues:
