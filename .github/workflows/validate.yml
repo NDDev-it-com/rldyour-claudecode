@@ -291,6 +291,9 @@ jobs:
       - name: Claude Code docs canon drift
         run: python3 scripts/validate_docs_canon.py
 
+      - name: Claude Code surface adoption decisions
+        run: python3 scripts/validate_claude_surface_adoption.py
+
       - name: AGENTS.md <-> .claude/CLAUDE.md sync_contract drift
         run: python3 scripts/validate_instruction_sync.py
 
