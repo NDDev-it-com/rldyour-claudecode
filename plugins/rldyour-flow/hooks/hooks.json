@@ -74,7 +74,7 @@
             "type": "command",
             "command": "/bin/bash",
             "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/stop_lifecycle_dispatcher.sh"],
-            "timeout": 15,
+          "timeout": 45,
             "statusMessage": "Checking ordered Serena and flow post-task sync"
           }
         ]

@@ -15,7 +15,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 STATE_SCRIPT="$SCRIPT_DIR/serena_memory_state.py"
 
 KNOWLEDGE_PATTERN='^.. \.serena/(memories|plans|research)(/|$)'
-RUNTIME_PATTERN='^.. \.serena/(\.sync_marker|\.serena_sync_state\.json|\.auto_sync_head|\.active_workflow_intent\.json|\.dirty_stop_ack|\.flow_sync_marker|\.flow_post_task_state\.json)$'
+RUNTIME_PATTERN='^.. \.serena/(\.sync_marker|\.serena_sync_state\.json|\.auto_sync_head|\.active_workflow_intent\.json|\.dirty_stop_ack|\.flow_sync_marker|\.flow_post_task_state\.json|\.stop_lifecycle_timeout_marker)$'
 
 STATUS=$(git status --porcelain -uall 2>/dev/null | grep -vE "$RUNTIME_PATTERN" || true)
 if [ -z "$STATUS" ]; then
@@ -30,7 +30,7 @@ if [ -z "$STATUS" ]; then
   fi
   MEMORY_MATCHES_HEAD=$(printf "%s" "$STATE_JSON" | python3 -c 'import json,sys; print("true" if json.load(sys.stdin).get("memory_matches_head") else "false")' 2>/dev/null || echo "false")
   if [ "$MEMORY_MATCHES_HEAD" = "true" ]; then
-    rm -f .serena/.sync_marker .serena/.serena_sync_state.json .serena/.auto_sync_head
+    rm -f .serena/.sync_marker .serena/.serena_sync_state.json .serena/.auto_sync_head .serena/.stop_lifecycle_timeout_marker
     echo "Serena knowledge is current; removed runtime sync markers"
     exit 0
   fi
@@ -80,7 +80,7 @@ if [ -z "$TRACKED_KNOWLEDGE" ]; then
     echo "Refusing to acknowledge fullrepo-managed Serena knowledge because memories do not match HEAD" >&2
     exit 1
   fi
-  rm -f .serena/.sync_marker .serena/.serena_sync_state.json .serena/.auto_sync_head
+  rm -f .serena/.sync_marker .serena/.serena_sync_state.json .serena/.auto_sync_head .serena/.stop_lifecycle_timeout_marker
   echo "Serena knowledge is fullrepo-managed; removed runtime sync markers without committing to the current branch"
   exit 0
 fi
@@ -92,4 +92,4 @@ if git diff --cached --quiet -- "${KNOWLEDGE_PATHS[@]}"; then
 fi
 
 git commit -m "chore(serena): sync project knowledge after ${HEAD_SHORT}"
-rm -f .serena/.sync_marker .serena/.serena_sync_state.json .serena/.auto_sync_head
+rm -f .serena/.sync_marker .serena/.serena_sync_state.json .serena/.auto_sync_head .serena/.stop_lifecycle_timeout_marker

@@ -53,70 +53,68 @@ if [ -z "$STATE_JSON" ]; then
   exit 0
 fi
 
-IS_CURRENT=$(printf "%s" "$STATE_JSON" | "${PYTHON_BIN}" -c 'import json,sys; print("true" if json.load(sys.stdin).get("is_current") else "false")' 2>/dev/null || echo "false")
-HEAD_SHA=$(printf "%s" "$STATE_JSON" | "${PYTHON_BIN}" -c 'import json,sys; print(json.load(sys.stdin).get("head_sha", ""))' 2>/dev/null || true)
-NEWEST_SHA=$(printf "%s" "$STATE_JSON" | "${PYTHON_BIN}" -c 'import json,sys; print(json.load(sys.stdin).get("newest_synced_sha", ""))' 2>/dev/null || true)
-ANALYSIS_SOURCE=$(printf "%s" "$STATE_JSON" | "${PYTHON_BIN}" -c 'import json,sys; print(json.load(sys.stdin).get("analysis_source", "none"))' 2>/dev/null || echo "none")
-
-if [ "$IS_CURRENT" = "true" ]; then
-  rm -f "$SYNC_MARKER" .serena/.serena_sync_state.json
-  exit 0
-fi
-
-if [ -z "$HEAD_SHA" ]; then
-  exit 0
-fi
-
-STOP_HOOK_ACTIVE=$(printf "%s" "$HOOK_INPUT" | "${PYTHON_BIN}" -c '
+STATE_JSON="$STATE_JSON" HOOK_INPUT="$HOOK_INPUT" SYNC_MARKER="$SYNC_MARKER" COMMIT_SCRIPT="$COMMIT_SCRIPT" "${PYTHON_BIN}" <<'PY'
 import json
+import os
+import subprocess
 import sys
+from pathlib import Path
 
 try:
-    payload = json.load(sys.stdin)
+    hook_payload = json.loads(os.environ.get("HOOK_INPUT", "") or "{}")
 except Exception:
-    payload = {}
+    hook_payload = {}
 
-print("true" if payload.get("stop_hook_active") is True else "false")
-' 2>/dev/null || echo "false")
+try:
+    payload = json.loads(os.environ.get("STATE_JSON", "") or "{}")
+except Exception:
+    raise SystemExit(0)
 
-MARKER_FINGERPRINT="${HEAD_SHA}:${NEWEST_SHA:-none}"
+is_current = bool(payload.get("is_current"))
+head_sha = str(payload.get("head_sha") or "")
+newest_sha = str(payload.get("newest_synced_sha") or "")
+analysis_source = str(payload.get("analysis_source") or "none")
+sync_marker = Path(os.environ.get("SYNC_MARKER", ".serena/.sync_marker"))
 
-if [ "$STOP_HOOK_ACTIVE" = "true" ] && [ -f "$SYNC_MARKER" ] && [ "$(cat "$SYNC_MARKER" 2>/dev/null || true)" = "$MARKER_FINGERPRINT" ]; then
-  exit 0
-fi
+if is_current:
+    sync_marker.unlink(missing_ok=True)
+    Path(".serena/.serena_sync_state.json").unlink(missing_ok=True)
+    raise SystemExit(0)
 
-mkdir -p .serena
-printf "%s\n" "$MARKER_FINGERPRINT" > "$SYNC_MARKER"
+if not head_sha:
+    raise SystemExit(0)
 
-COMMITS="(no prior synced memory commit metadata)"
-if [ -n "$NEWEST_SHA" ]; then
-  COMMITS=$(git log --oneline "${NEWEST_SHA}..HEAD" 2>/dev/null || echo "(unable to compute commit range)")
-fi
+marker_fingerprint = f"{head_sha}:{newest_sha or 'none'}"
+if hook_payload.get("stop_hook_active") is True and sync_marker.is_file():
+    try:
+        marker = sync_marker.read_text(encoding="utf-8").strip()
+    except OSError:
+        marker = ""
+    if marker == marker_fingerprint:
+        raise SystemExit(0)
 
-NON_KNOWLEDGE_FILES=$(printf "%s" "$STATE_JSON" | "${PYTHON_BIN}" -c '
-import json
-import sys
+sync_marker.parent.mkdir(parents=True, exist_ok=True)
+sync_marker.write_text(marker_fingerprint + "\n", encoding="utf-8")
 
-payload = json.load(sys.stdin)
+commits = "(no prior synced memory commit metadata)"
+if newest_sha:
+    proc = subprocess.run(
+        ["git", "log", "--oneline", f"{newest_sha}..HEAD"],
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    commits = proc.stdout.strip() if proc.returncode == 0 else "(unable to compute commit range)"
+    if not commits:
+        commits = "(no commits in range)"
+
 files = payload.get("non_knowledge_changed_files_since_sync")
 if not files:
     files = payload.get("sync_state", {}).get("non_knowledge_changed_files")
 if not files:
     files = payload.get("sync_state", {}).get("changed_files", []) or payload.get("changed_files_since_sync", [])
-print("\n".join(str(item) for item in files))
-' 2>/dev/null || true)
+non_knowledge_files = "\n".join(str(item) for item in files) if files else "unknown"
 
-SYNC_CONTEXT=$(printf "%s" "$STATE_JSON" | "${PYTHON_BIN}" -c '
-import json
-import sys
-
-head_sha = sys.argv[1]
-newest_sha = sys.argv[2]
-analysis_source = sys.argv[3] if len(sys.argv) > 3 else "none"
-try:
-    payload = json.load(sys.stdin)
-except Exception:
-    payload = {}
 sync_state = payload.get("sync_state", {}) or {}
 analysis = payload.get("analysis") or {}
 analysis_by_payload = sync_state.get("analysis") or {}
@@ -149,39 +147,40 @@ if candidates:
     lines.append("- Memory targets: " + ", ".join(candidates))
 if high_impact:
     lines.append("- High-priority areas: " + ", ".join(sorted(high_impact)))
-print("\n".join(lines))
-' "$HEAD_SHA" "$NEWEST_SHA" "$ANALYSIS_SOURCE")
+sync_context = "\n".join(lines)
 
-MESSAGE="[RLDYOUR-SERENA SYNC REQUIRED] Project knowledge is stale for HEAD ${HEAD_SHA}.
+commit_script = os.environ.get("COMMIT_SCRIPT", "commit_serena_knowledge.sh")
+message = f"""[RLDYOUR-SERENA SYNC REQUIRED] Project knowledge is stale for HEAD {head_sha}.
 
-Last synced memory commit: ${NEWEST_SHA:-none}
+Last synced memory commit: {newest_sha or 'none'}
 
 Relevant commits:
-${COMMITS}
+{commits}
 
-${SYNC_CONTEXT}
+{sync_context}
 
 Changed non-Serena-knowledge files:
-${NON_KNOWLEDGE_FILES:-unknown}
+{non_knowledge_files}
 
 Continue this turn and run the serena-memory-sync workflow now.
 
 Preferred path - invoke the flow-memory-sync subagent:
 
-  Agent({
-    description: 'Sync Serena memories against HEAD ${HEAD_SHA}',
+  Agent({{
+    description: 'Sync Serena memories against HEAD {head_sha}',
     subagent_type: 'rldyour-serena-mcp:flow-memory-sync',
-    prompt: 'Synchronize numbered .serena/memories against HEAD ${HEAD_SHA}. Newest synced commit: ${NEWEST_SHA:-none}. Changed non-knowledge files: ${NON_KNOWLEDGE_FILES:-unknown}. Use CORE-01-INDEX.md as the memory map when present and keep names in AREA-01-SLUG.md form. Follow the agent definition strictly: source-of-truth hierarchy = code > tests > git diff > existing memories; never speculate; cite or omit; emit final JSON report.'
-  })
+    prompt: 'Synchronize numbered .serena/memories against HEAD {head_sha}. Newest synced commit: {newest_sha or 'none'}. Changed non-knowledge files: {non_knowledge_files}. Use CORE-01-INDEX.md as the memory map when present and keep names in AREA-01-SLUG.md form. Follow the agent definition strictly: source-of-truth hierarchy = code > tests > git diff > existing memories; never speculate; cite or omit; emit final JSON report.'
+  }})
 
-The flow-memory-sync subagent has narrow tool access (Serena memory tools + Read/Grep/Glob/Bash; Edit/Write/NotebookEdit are disallowed in its frontmatter). It enforces fact-only updates with anti-hallucination guards and runs ${COMMIT_SCRIPT} at the end.
+The flow-memory-sync subagent has narrow tool access (Serena memory tools + Read/Grep/Glob/Bash; Edit/Write/NotebookEdit are disallowed in its frontmatter). It enforces fact-only updates with anti-hallucination guards and runs {commit_script} at the end.
 
 Fallback path (if the subagent is not available - e.g. plugin not yet reloaded):
 1. Use Serena MCP for code inspection: check_onboarding_performed -> list_memories -> read_memory(relevant) -> get_symbols_overview -> find_symbol(include_body=false) -> find_symbol(include_body=true only where needed) -> find_referencing_symbols -> search_for_pattern.
 2. Update .serena/memories with high-signal fact-only English content. Use numbered topic files (AREA-01-SLUG.md) and update CORE-01-INDEX.md when adding, renaming, or splitting memories. Code, git diff, and tests are the source of truth.
-3. Each touched memory must contain a 'Last commit: ${HEAD_SHA}' line so the state script recognises sync via direct-head-reference.
-4. Run ${COMMIT_SCRIPT} to acknowledge sync state and clear runtime markers.
-5. Stop again after the sync or report the exact blocker."
+3. Each touched memory must contain a 'Last commit: {head_sha}' line so the state script recognises sync via direct-head-reference.
+4. Run {commit_script} to acknowledge sync state and clear runtime markers.
+5. Stop again after the sync or report the exact blocker."""
 
-echo "$MESSAGE" >&2
-exit 2
+print(message, file=sys.stderr)
+raise SystemExit(2)
+PY

@@ -29,7 +29,7 @@ Leave the project in a synchronized, documented, committed state. This skill run
 8. Keep normal branch history clean from agent-only files. Ensure `.git/info/exclude` contains the rldyour fullrepo block and move tracked agent-only files out of the current branch with `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/fullrepo_sync.py --migrate-main` only when the project is ready for that migration.
 9. Publish the complete project snapshot to `fullrepo` through `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/fullrepo_sync.py --publish`. This uses safe `--force-with-lease`, not a blind force push.
 10. Remove merged local and remote branches/worktrees only after verifying they are merged into `main` and no open PR depends on them. Leave protected branches such as `main` and `fullrepo`; report any ambiguous branch ownership instead of deleting silently.
-11. Remove `.serena/.flow_sync_marker` and `.serena/.flow_post_task_state.json` after successful sync.
+11. Remove `.serena/.flow_sync_marker`, `.serena/.flow_post_task_state.json`, and `.serena/.stop_lifecycle_timeout_marker` after successful sync.
 
 ## Loop Guard
 

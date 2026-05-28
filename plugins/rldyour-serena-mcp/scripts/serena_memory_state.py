@@ -69,6 +69,7 @@ RUNTIME_IGNORED = {
     ".serena/.dirty_stop_ack",
     ".serena/.flow_sync_marker",
     ".serena/.flow_post_task_state.json",
+    ".serena/.stop_lifecycle_timeout_marker",
 }
 LAST_COMMIT_RE = re.compile(r"^Last commit:\s+([a-f0-9]{7,40})\b", re.MULTILINE)
 

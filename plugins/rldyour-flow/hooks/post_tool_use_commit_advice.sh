@@ -171,7 +171,7 @@ for path in files:
         break
 
 runtime_patterns = [
-    re.compile(r"^\.serena/\.(flow_sync_marker|flow_post_task_state\.json|sync_marker|serena_sync_state\.json|auto_sync_head|active_workflow_intent\.json|dirty_stop_ack)$"),
+    re.compile(r"^\.serena/\.(flow_sync_marker|flow_post_task_state\.json|stop_lifecycle_timeout_marker|sync_marker|serena_sync_state\.json|auto_sync_head|active_workflow_intent\.json|dirty_stop_ack)$"),
     re.compile(r"^browser/.*\.(png|jpg|jpeg|webp|gif)$", re.IGNORECASE),
 ]
 for path in files:

@@ -37,7 +37,7 @@ Do not create memory noise for trivial formatting, purely mechanical edits, curr
 
 In normal product repositories, these knowledge files are agent-only context. They are restored from and published to `fullrepo`, then ignored through `.git/info/exclude` instead of being committed to `main`. Repositories that are themselves agent tooling may intentionally track selected `.serena` knowledge files when they are part of the product source of truth.
 
-Local/runtime files must not be committed or published by this plugin: `.serena/cache/`, `.serena/.gitignore`, `.serena/project.local.yml`, `.serena/.sync_marker`, `.serena/.serena_sync_state.json`, `.serena/.auto_sync_head`, `.serena/.active_workflow_intent.json`, `.serena/.dirty_stop_ack`, `.serena/.flow_sync_marker`, `.serena/.flow_post_task_state.json`.
+Local/runtime files must not be committed or published by this plugin: `.serena/cache/`, `.serena/.gitignore`, `.serena/project.local.yml`, `.serena/.sync_marker`, `.serena/.serena_sync_state.json`, `.serena/.auto_sync_head`, `.serena/.active_workflow_intent.json`, `.serena/.dirty_stop_ack`, `.serena/.flow_sync_marker`, `.serena/.flow_post_task_state.json`, `.serena/.stop_lifecycle_timeout_marker`.
 
 ## Memory Structure
 
