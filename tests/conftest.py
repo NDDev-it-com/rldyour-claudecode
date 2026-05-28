@@ -63,13 +63,23 @@ def fake_repo(tmp_path: Path) -> Path:
         "# fixture\n\n<!-- inventory:begin -->\n<!-- inventory:end -->\n",
         encoding="utf-8",
     )
+    sync_contract = (
+        "<!-- sync_contract:\n"
+        'claude_code_runtime_pin: "2.1.153"\n'
+        'claude_code_feature_floor: "2.1.146"\n'
+        "plugin_count: 3\n"
+        "skill_count: 0\n"
+        "command_count: 0\n"
+        "subagent_count: 0\n"
+        "-->\n"
+    )
     (tmp_path / "AGENTS.md").write_text(
-        "# AGENTS\n\n<!-- sync_contract:\nclaims:\n  shared: 'value-a'\n-->\n",
+        f"# AGENTS\n\n{sync_contract}",
         encoding="utf-8",
     )
     (tmp_path / ".claude").mkdir()
     (tmp_path / ".claude" / "CLAUDE.md").write_text(
-        "# CLAUDE\n\n<!-- sync_contract:\nclaims:\n  shared: 'value-a'\n-->\n",
+        f"# CLAUDE\n\n{sync_contract}",
         encoding="utf-8",
     )
     (tmp_path / ".claude-plugin").mkdir()
@@ -118,6 +128,16 @@ def fake_repo(tmp_path: Path) -> Path:
 
     config_dir = tmp_path / "config"
     config_dir.mkdir()
+    references_dir = tmp_path / "references"
+    references_dir.mkdir()
+    (references_dir / "claude-baseline.json").write_text(
+        '{"baseline": {"claude_code": {"version": "2.1.153"}}}',
+        encoding="utf-8",
+    )
+    (config_dir / "mcp-runtime-versions.env").write_text(
+        "CLAUDE_CODE_MIN_VERSION=2.1.153\n",
+        encoding="utf-8",
+    )
     (config_dir / "cc-canon.json").write_text(
         '{"forbidden_tokens": {"oldName": "newName"},'
         ' "version_floors": {"foo": {"floor": "v2.0+", "wrong_floors": ["v1.9"]}}}',
