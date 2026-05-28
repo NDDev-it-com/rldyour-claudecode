@@ -25,6 +25,7 @@ EXPECTED_AUTHOR = "Danil Silantyev (github:rldyourmnd), CEO NDDev"
 
 def main() -> int:
     root = Path(__file__).resolve().parent.parent
+    product_version = (root / "VERSION").read_text(encoding="utf-8").strip()
     marketplace_path = root / ".claude-plugin" / "marketplace.json"
     if not marketplace_path.is_file():
         print(f"FAIL marketplace manifest missing: {marketplace_path}", file=sys.stderr)
@@ -79,6 +80,15 @@ def main() -> int:
 
         if not plugin_version:
             print(f"FAIL {name}: plugin.json missing 'version'", file=sys.stderr)
+            fail = 1
+            continue
+
+        if plugin_version != product_version:
+            print(
+                f"FAIL {name}: plugin.json version {plugin_version!r} "
+                f"must match VERSION {product_version!r}",
+                file=sys.stderr,
+            )
             fail = 1
             continue
 
