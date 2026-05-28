@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-28
-Last commit: 2528040d67a5341d7b7feb2b447ebe9523713318
+Last commit: ece8d844c2696c92d7a938601258340cab91147b chore(release): claude 1.0.5
 Scope: release readiness, versioning, and artifact hygiene
 Area: RELEASE
 -->
@@ -23,12 +23,12 @@ release readiness, versioning, and artifact hygiene
 
 ## Last verified
 - date: 2026-05-28
-- commit: `2528040d67a5341d7b7feb2b447ebe9523713318`
+- commit: `ece8d844c2696c92d7a938601258340cab91147b`
 - checked by: Codex ry-start Claude Stop hook loop-guard hardening
 
 ## Facts
 - Release memories record numeric versioning, tags, CI gates, and clean artifact hygiene.
-- Current product/config version is `1.0.4`; `VERSION`, `package.json`,
+- Current product/config version is `1.0.5`; `VERSION`, `package.json`,
   `pyproject.toml`, and `CHANGELOG.md` are the source of truth for the
   adapter-local SemVer state.
 - Release `1.0.0` adopted Claude Code `2.1.153` and the refreshed common MCP
@@ -50,7 +50,7 @@ release readiness, versioning, and artifact hygiene
   `rldyour-claudecode` name.
 
 ## Evidence
-- `commit:2528040d67a5341d7b7feb2b447ebe9523713318`
+- `commit:ece8d844c2696c92d7a938601258340cab91147b`
 - `path:VERSION`
 - `path:CHANGELOG.md`
 - `path:config/mcp-runtime-versions.env`

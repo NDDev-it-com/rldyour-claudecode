@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-28
-Last commit: 2528040d67a5341d7b7feb2b447ebe9523713318
+Last commit: ece8d844c2696c92d7a938601258340cab91147b chore(release): claude 1.0.5
 Scope: validation gates and test suites
 Area: TESTS
 -->
@@ -24,7 +24,7 @@ validation gates and test suites
 
 ## Last verified
 - date: 2026-05-28
-- commit: `2528040d67a5341d7b7feb2b447ebe9523713318`
+- commit: `ece8d844c2696c92d7a938601258340cab91147b`
 - checked by: Codex ry-start Claude Stop hook loop-guard hardening
 
 ## Facts

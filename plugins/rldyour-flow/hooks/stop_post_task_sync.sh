@@ -77,7 +77,7 @@ head_sha = str(state.get("head_sha") or "")
 sync_marker = Path(os.environ.get("SYNC_MARKER", ".serena/.flow_sync_marker"))
 state_path = Path(".serena/.flow_post_task_state.json")
 
-# Serena owns memory freshness. Flow waits for Serena Stop hook to finish first.
+# Serena owns memory freshness. The dispatcher runs that child gate before this one.
 if not serena_current:
     raise SystemExit(0)
 

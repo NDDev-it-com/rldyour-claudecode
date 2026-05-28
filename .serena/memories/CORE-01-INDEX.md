@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-28
-Last commit: cf5b25eb348ff012a2bcbbd2e4e61308207d674e test: avoid brittle Claude sync claim count
+Last commit: ece8d844c2696c92d7a938601258340cab91147b chore(release): claude 1.0.5
 Scope: repository identity and source-of-truth map
 Area: CORE
 -->
@@ -23,7 +23,7 @@ repository identity and source-of-truth map
 
 ## Last verified
 - date: 2026-05-28
-- commit: `cf5b25eb348ff012a2bcbbd2e4e61308207d674e`
+- commit: `ece8d844c2696c92d7a938601258340cab91147b`
 - checked by: Codex ry-start Claude CI stabilization
 
 ## Facts
