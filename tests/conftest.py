@@ -65,12 +65,14 @@ def fake_repo(tmp_path: Path) -> Path:
     )
     sync_contract = (
         "<!-- sync_contract:\n"
-        'claude_code_runtime_pin: "2.1.153"\n'
-        'claude_code_feature_floor: "2.1.146"\n'
-        "plugin_count: 3\n"
-        "skill_count: 0\n"
-        "command_count: 0\n"
-        "subagent_count: 0\n"
+        "claims:\n"
+        '  shared: "value-a"\n'
+        '  claude_code_runtime_pin: "2.1.153"\n'
+        '  claude_code_feature_floor: "2.1.146"\n'
+        "  plugin_count: 3\n"
+        "  skill_count: 0\n"
+        "  command_count: 0\n"
+        "  subagent_count: 0\n"
         "-->\n"
     )
     (tmp_path / "AGENTS.md").write_text(
