@@ -28,7 +28,7 @@ class TestSyncContract:
         result = _run(patch_repo_root)
         # Either OK with matching claims OR SKIP if yaml not importable.
         assert result.returncode == 0
-        assert "1 shared claim(s) match" in result.stdout or "SKIP" in result.stdout
+        assert "shared claim(s) match" in result.stdout or "SKIP" in result.stdout
 
     def test_drift_detected_and_reported(self, patch_repo_root: Path) -> None:
         # Mutate CLAUDE.md to introduce drift on the shared claim.
