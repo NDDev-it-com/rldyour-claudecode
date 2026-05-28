@@ -69,7 +69,7 @@ silently to a malicious version.
 - SHA-pinned GitHub Actions (`uses: owner/repo@<40-hex-sha>  # tag`).
 - `scripts/refresh_actions_pins.sh` re-resolves tags to fresh SHAs via
   `gh api`.
-- Docker images digest-pinned (`semgrep/semgrep:1.163.0@sha256:7cad2bc2...`).
+- Docker images digest-pinned (`semgrep/semgrep:1.164.0@sha256:2079836...`).
 - All 13 MCP servers pinned per ADR-0007.
 - `actions/dependabot` + `.github/dependabot.yml` for github-actions and
   npm ecosystems.
