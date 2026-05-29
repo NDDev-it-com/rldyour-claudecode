@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-29
-Last commit: 63abf7d4084cd892fea40e126d71cdd2ddf6d80e chore(release): claude 1.1.0
+Last commit: cbab06d96f803f0a819b9aaa6f3bdfc2b42f4708 chore(release): claude 1.1.1
 Scope: GitHub Actions and local CI policy
 Area: CI
 -->
@@ -21,14 +21,14 @@ GitHub Actions and local CI policy
 
 ## Last verified
 - date: 2026-05-29
-- commit: `63abf7d4084cd892fea40e126d71cdd2ddf6d80e`
+- commit: `cbab06d96f803f0a819b9aaa6f3bdfc2b42f4708`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
 - CI memories record which checks prove repository integrity and which checks are intentionally lightweight.
 
 ## Evidence
-- `commit:63abf7d4084cd892fea40e126d71cdd2ddf6d80e`
+- `commit:cbab06d96f803f0a819b9aaa6f3bdfc2b42f4708`
 - `path:.github/workflows`
 - `path:README.md`
 
