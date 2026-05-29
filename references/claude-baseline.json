@@ -4,7 +4,7 @@
   "verified_on": "2026-05-29",
   "baseline": {
     "claude_code": {
-      "version": "2.1.154",
+      "version": "2.1.156",
       "npm_package": "@anthropic-ai/claude-code",
       "ref": "https://code.claude.com/docs/en/changelog",
       "model_config_ref": "https://code.claude.com/docs/en/model-config"
@@ -19,7 +19,8 @@
       "opus-4-8-model-alias-and-1m-context",
       "dynamic-workflows",
       "streaming-tool-execution-default",
-      "mcp-pending-approval-piped-output"
+      "mcp-pending-approval-piped-output",
+      "opus-4-8-thinking-block-api-hotfix"
     ]
   }
 }
