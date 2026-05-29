@@ -7,6 +7,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 ## [Unreleased]
 
 
+## [1.1.4] - 2026-05-29
+
+### Changed
+
+- Clarify ry-start workflow hybrid state and smoke validation.
+
 ## [1.1.3] - 2026-05-29
 
 ### Fixed

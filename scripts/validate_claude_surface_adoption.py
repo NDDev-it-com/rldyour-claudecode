@@ -37,7 +37,7 @@ REQUIRED_2_1_156_SURFACES = (
     "`2.1.156`",
 )
 
-VALID_DECISIONS = ("Adopt", "Adopted", "Future", "Intentionally unused")
+VALID_DECISIONS = ("Adopt", "Adopted", "Future", "Hybrid", "Intentionally unused")
 
 
 def version_tuple(version: str) -> tuple[int, ...]:
@@ -70,6 +70,10 @@ def main() -> int:
         for line in text.splitlines():
             if "Dynamic workflows" in line and "| Future |" in line:
                 errors.append(f"{ADOPTION.relative_to(ROOT)} must adopt Dynamic workflows for ry-start")
+            if "Dynamic workflows" in line and "Hybrid pending native workflow" not in line:
+                errors.append(
+                    f"{ADOPTION.relative_to(ROOT)} must mark Dynamic workflows as hybrid pending native workflow"
+                )
     if parsed_version >= version_tuple("2.1.156"):
         for marker in REQUIRED_2_1_156_SURFACES:
             if marker not in text:
