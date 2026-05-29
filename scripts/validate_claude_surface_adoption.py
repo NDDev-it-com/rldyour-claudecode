@@ -32,6 +32,11 @@ REQUIRED_2_1_154_SURFACES = (
     "`defaultEnabled: false`",
 )
 
+REQUIRED_2_1_156_SURFACES = (
+    "thinking-block API hotfix",
+    "`2.1.156`",
+)
+
 VALID_DECISIONS = ("Adopt", "Adopted", "Future", "Intentionally unused")
 
 
@@ -62,6 +67,13 @@ def main() -> int:
         for marker in REQUIRED_2_1_154_SURFACES:
             if marker not in text:
                 errors.append(f"{ADOPTION.relative_to(ROOT)} missing 2.1.154 surface {marker}")
+        for line in text.splitlines():
+            if "Dynamic workflows" in line and "| Future |" in line:
+                errors.append(f"{ADOPTION.relative_to(ROOT)} must adopt Dynamic workflows for ry-start")
+    if parsed_version >= version_tuple("2.1.156"):
+        for marker in REQUIRED_2_1_156_SURFACES:
+            if marker not in text:
+                errors.append(f"{ADOPTION.relative_to(ROOT)} missing 2.1.156 surface {marker}")
 
     for line in text.splitlines():
         if not line.startswith("| `") and not line.startswith("| `/"):
