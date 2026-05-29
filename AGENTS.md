@@ -1,6 +1,6 @@
 # AGENTS.md - rldyour-claude
 
-Personal Claude Code plugin marketplace by `rldyourmnd`. The repository ships nine plugins that compose an opinionated SDLC, semantic-code, MCP transport, security, browser, design, LSP, and rules layer for Claude Code. There is no runtime application code - every artifact in this repo is plugin metadata, skills, slash commands, agents, hooks, scripts, and references.
+rldyour AI CLI configuration for Claude Code: plugin marketplace, MCP/LSP, Serena memory, security review, browser/design workflows, and reviewer agents. The repository ships nine plugins that compose an opinionated SDLC, semantic-code, MCP transport, security, browser, design, LSP, and rules layer for Claude Code. There is no runtime application code - every artifact in this repo is plugin metadata, skills, slash commands, agents, hooks, scripts, and references.
 
 This `AGENTS.md` is the concise root project-instruction file for any AI agent working in this repository - cross-tool standard governed by the Linux Foundation Agentic AI Foundation (AAIF) since 2025-12-09 (see https://agents.md/). The deep Claude Code-native memory lives in `./.claude/CLAUDE.md` and contains subagent matrix, hook canon, skill-listing budget, frontmatter conventions, and Don't/Done rules that other AI tools don't need.
 
@@ -68,7 +68,7 @@ OpenAI Codex CLI reads `AGENTS.md` before starting work and runs commands listed
 - Tag releases: `claude plugin tag --push` (v2.1.118+). Convention: `<plugin-name>--v<version>` and `marketplace--v<version>`.
 - Inspect plugin inventory + projected context cost: `claude plugin details <name>` (v2.1.139+; v2.1.142 adds LSP).
 - Cross-tool contract gate: `python3 scripts/validate_contract.py && python3 scripts/generate_contract_matrix.py --check`.
-- **Minimum Claude Code: v2.1.154+** (matches the CI pin read from `package.json`). Used features: `opus[1m]` (v2.1.111+, account-gated), `alwaysLoad` (v2.1.121+), hook `if` filter (v2.1.118+), exec-form `args` (v2.1.139+), marketplace `displayName` support (v2.1.143+), `maxSkillDescriptionChars` + `skillListingBudgetFraction` (v2.1.105+), `skillOverrides` (v2.1.129+, plugin skills exempt).
+- **Claude Code runtime pin: v2.1.154. Feature compatibility floor: v2.1.146+.** The package pin in `package.json`, `references/claude-baseline.json`, and `config/mcp-runtime-versions.env` is the release/runtime source of truth. The floor covers every feature used by the marketplace: `opus[1m]` for Opus 4.8 extended context (v2.1.154+, account-gated), `alwaysLoad` (v2.1.121+), hook `if` filter (v2.1.118+), exec-form `args` (v2.1.139+), marketplace `displayName` support (v2.1.143+), Stop/SubagentStop `background_tasks` and `session_crons` input fields (v2.1.145+), Auto mode `AskUserQuestion` behavior needed by decision gates (v2.1.146+), `disallowed-tools`, `SessionStart.reloadSkills`, `MessageDisplay`, `skipLfs`, status-line terminal-size env, `claude agents` native command/bundled skill autocomplete, Opus 4.8 alias support, dynamic workflows, streaming tool execution default, and piped MCP pending-approval reporting through v2.1.154.
 - Bootstrap a fresh checkout: `bash scripts/bootstrap_check.sh` (fullrepo restore + claude validate + required env + dart SDK + pre-push hook advisory).
 - Audit git/branch/worktree: `bash plugins/rldyour-flow/scripts/git_sync_audit.sh`.
 - Quality checks for consumer projects: `bash plugins/rldyour-flow/scripts/detect_project_checks.sh`. LSP health: `bash plugins/rldyour-lsps/scripts/check_lsps.sh`. This repository has no runtime test suite by design.
@@ -91,7 +91,7 @@ Reviewer output uses a **file-first transport contract** (full text in `referenc
 
 ## Hooks Lifecycle
 
-Two plugins coordinate hooks. `flow.stop_post_task_sync.sh` derives `serena_current` by calling `plugins/rldyour-serena-mcp/scripts/serena_memory_state.py`; it does not consume output from the Serena Stop hook.
+Two plugins coordinate hooks. `rldyour-flow` owns the single registered Claude Stop hook through `hooks/stop_lifecycle_dispatcher.sh`; the dispatcher runs the Serena memory child check before the Flow post-task child check. `flow.stop_post_task_sync.sh` derives `serena_current` by calling `plugins/rldyour-serena-mcp/scripts/serena_memory_state.py`; it does not depend on a separate Serena hook registration.
 
 | Event | Owner | Script | Timeout |
 |---|---|---|---|
@@ -101,10 +101,9 @@ Two plugins coordinate hooks. `flow.stop_post_task_sync.sh` derives `serena_curr
 | PostToolUse:Bash | rldyour-flow | `hooks/post_tool_use_commit_advice.sh` | 5s |
 | SessionStart | rldyour-flow | `hooks/session_start_worktree_bootstrap.sh` | 30s |
 | SessionStart | rldyour-flow | `hooks/session_start_context.sh` | 5s |
-| Stop | rldyour-serena-mcp | `hooks/stop_memory_sync.sh` | 10s |
-| Stop | rldyour-flow | `hooks/stop_post_task_sync.sh` | 10s |
+| Stop | rldyour-flow | `hooks/stop_lifecycle_dispatcher.sh` | 45s |
 
-Most hooks are advisory and exit `0`; Stop hooks are advisory enforcement gates that write guidance to stderr and block with `exit 2` when memory or post-task sync is required. The single hook that performs a bounded worktree mutation is `session_start_worktree_bootstrap.sh` - it runs `fullrepo_sync.py --restore` (never `--publish`, never touches origin) only when an agent-only marker is missing in the active worktree. Skip flags: `RLDYOUR_SKIP_FLOW_SESSION_CONTEXT`, `RLDYOUR_SKIP_FLOW_COMMIT_ADVICE`, `RLDYOUR_SKIP_STOP_GATES`, `RLDYOUR_SKIP_FLOW_SYNC`, `RLDYOUR_SKIP_SERENA_SYNC`, `RLDYOUR_SKIP_WORKTREE_BOOTSTRAP`.
+Most hooks are advisory and exit `0`; the registered Stop dispatcher is an advisory enforcement gate that writes guidance to stderr and blocks with `exit 2` when memory or post-task sync is required. Flow Stop state is local-only in the hook hot path (`RLDYOUR_FLOW_STATE_LOCAL_ONLY=1`) and repeated `stop_hook_active=true` fingerprints are allowed to stop with a system message instead of looping. The dispatcher also writes `.serena/.stop_lifecycle_timeout_marker` so a repeated identical child timeout cannot loop forever. The single hook that performs a bounded worktree mutation is `session_start_worktree_bootstrap.sh` - it runs `fullrepo_sync.py --restore` (never `--publish`, never touches origin) only when an agent-only marker is missing in the active worktree. Skip flags: `RLDYOUR_SKIP_FLOW_SESSION_CONTEXT`, `RLDYOUR_SKIP_FLOW_COMMIT_ADVICE`, `RLDYOUR_SKIP_STOP_GATES`, `RLDYOUR_SKIP_FLOW_SYNC`, `RLDYOUR_SKIP_SERENA_SYNC`, `RLDYOUR_SKIP_WORKTREE_BOOTSTRAP`.
 
 ## Worktree Workflow
 
@@ -141,7 +140,7 @@ Subcommands:
 
 ## MCP Transport (`rldyour-mcps/.mcp.json`)
 
-13 pinned servers (full pin source: `config/mcp-runtime-versions.env`): `serena-agent==1.5.3` with `alwaysLoad: true` (v2.1.121+), `@modelcontextprotocol/server-sequential-thinking@2025.12.18`, `@playwright/mcp@0.0.75`, `chrome-devtools-mcp@1.1.1`, `@upstash/context7-mcp@2.2.5`, `semgrep==1.163.0`, `shadcn@4.8.1`, host binaries `github-mcp-server` (1.0.5) + `dart` (3.12.0); HTTP: `deepwiki`, `grep`, `figma`, `openai-docs`. Required env: `CONTEXT7_API_KEY`, `GITHUB_PERSONAL_ACCESS_TOKEN`. GitHub MCP uses local stdio (not Copilot-gated HTTP).
+13 pinned servers (full pin source: `config/mcp-runtime-versions.env`): `serena-agent==1.5.3` with `alwaysLoad: true` (v2.1.121+), `@modelcontextprotocol/server-sequential-thinking@2025.12.18`, `@playwright/mcp@0.0.75`, `chrome-devtools-mcp@1.1.1`, `@upstash/context7-mcp@2.2.5`, `semgrep==1.164.0`, `shadcn@4.8.2`, host binaries `github-mcp-server` (1.1.0) + `dart` (3.12.0); HTTP: `deepwiki`, `grep`, `figma`, `openai-docs`. Required env: `CONTEXT7_API_KEY`, `GITHUB_PERSONAL_ACCESS_TOKEN`. GitHub MCP uses local stdio (not Copilot-gated HTTP).
 
 Timeout knobs are env-only: `MCP_TIMEOUT`, `MCP_TOOL_TIMEOUT` (v2.1.142+ for HTTP/SSE). Per-server `startup_timeout_sec`/`tool_timeout_sec` keys are NOT documented and silently ignored - do not add them.
 
@@ -170,7 +169,7 @@ Current dependency graph:
 - LSP / diagnostics / refactoring: route through `plugins/rldyour-lsps/skills/lsp-routing/SKILL.md`.
 - Browser validation, debugging, performance: `plugins/rldyour-browser/skills/*`.
 - Figma → code: `plugins/rldyour-design/skills/figma-to-code/SKILL.md`.
-- Deep research: `/rldyour-explore:ry-explore` slash command runs `agents/ry-explore.md` (opus[1m], max effort, isolated context).
+- Deep research: `/rldyour-explore:ry-explore` slash command runs `agents/ry-explore.md` (`opus[1m]`, Opus 4.8 1M where available, max effort, isolated context).
 - Defensive security review: `/rldyour-security:ry-sec-review`.
 - Architecture/quality/consistency/integration/verification/security review for an existing diff: `/rldyour-flow:ry-review`.
 

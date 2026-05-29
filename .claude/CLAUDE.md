@@ -28,7 +28,7 @@ claims:
 ```
 rldyour-mcps         transport     0 skills • 0 cmds • 0 agents • 0 hooks  • .mcp.json (13 pinned servers)
 rldyour-serena-mcp   semantic      2 skills • 0 cmds • 1 agent  • 4 hooks
-rldyour-flow         SDLC          7 skills • 6 cmds • 6 agents • 4 hooks  • 7 scripts • 7 references
+rldyour-flow         SDLC          8 skills • 7 cmds • 6 agents • 4 hooks  • 7 scripts • 7 references
 rldyour-explore      research      2 skills • 1 cmd  • 1 agent  • 0 hooks
 rldyour-security     security      2 skills • 1 cmd  • 0 agents • 0 hooks
 rldyour-browser      browser       3 skills • 0 cmds • 0 agents • 0 hooks
@@ -37,7 +37,7 @@ rldyour-lsps         lsp           4 skills • 0 cmds • 0 agents • 0 hooks 
 rldyour-rules        rules         7 skills • 1 cmd  • 0 agents • 0 hooks  • 6 references
 ```
 
-Total: 32 skills, 10 slash commands, 8 subagents. Slash commands (SDLC + tool-routing), plugin dependency graph, MCP transport detail, and fullrepo branch policy are listed in `./AGENTS.md`.
+Total: 33 skills, 11 slash commands, 8 subagents. Slash commands (SDLC + tool-routing), plugin dependency graph, MCP transport detail, and fullrepo branch policy are listed in `./AGENTS.md`.
 
 ## Subagent Frontmatter Matrix
 
@@ -59,11 +59,11 @@ Reviewer output transport is **file-first** since rldyour-flow `0.2.2`: each rev
 
 | flow-memory-sync (rldyour-serena-mcp) | sonnet | high | 36 | yellow | fact-only Serena memory sync, invoked by orchestrator when Stop hook advisory triggers |
 
-`flow-memory-sync` is a plugin-shipped subagent with narrow tool access (Serena memory tools - `write_memory`/`edit_memory`/`delete_memory`/`rename_memory` - plus read-only `Read`/`Grep`/`Glob`/`Bash`; `disallowedTools: [Edit, Write, NotebookEdit]`). Anti-hallucination contract enforced via body: source-of-truth hierarchy code > tests > git diff > existing memories; citation required per claim; removal-first principle for unverifiable claims; `Last commit: <HEAD_SHA>` line mandatory in every touched memory; `commit_serena_knowledge.sh` runs internally; final JSON report. Memory files are a numbered knowledge base: `CORE-01-INDEX.md` is the map and topics use `AREA-01-SLUG.md` (`SERENA-01-MEMORY-SYNC.md`, `TECHDEBT-01-NOW.md`). Invocation pattern: when the Serena Stop hook emits its advisory, the orchestrator (model in main session, or `flow-post-task-sync` skill workflow step 1) calls `Agent({subagent_type: 'rldyour-serena-mcp:flow-memory-sync', prompt: ...})` with HEAD context - keeping high-blast-radius operations under workflow control rather than letting hooks fire them silently.
+`flow-memory-sync` is a plugin-shipped subagent with narrow tool access (Serena memory tools - `write_memory`/`edit_memory`/`delete_memory`/`rename_memory` - plus read-only `Read`/`Grep`/`Glob`/`Bash`; `disallowedTools: [Edit, Write, NotebookEdit]`). Anti-hallucination contract enforced via body: source-of-truth hierarchy code > tests > git diff > existing memories; citation required per claim; removal-first principle for unverifiable claims; `Last commit: <HEAD_SHA>` line mandatory in every touched memory; `commit_serena_knowledge.sh` runs internally; final JSON report. Memory files are a numbered knowledge base: `CORE-01-INDEX.md` is the map and topics use `AREA-01-SLUG.md` (`SERENA-01-MEMORY-SYNC.md`, `TECHDEBT-01-NOW.md`). Invocation pattern: when the dispatcher Serena memory child gate emits its advisory, the orchestrator (model in main session, or `flow-post-task-sync` skill workflow step 1) calls `Agent({subagent_type: 'rldyour-serena-mcp:flow-memory-sync', prompt: ...})` with HEAD context - keeping high-blast-radius operations under workflow control rather than letting hooks fire them silently.
 
 ## Hooks Lifecycle
 
-Two plugins coordinate hooks. `flow.stop_post_task_sync.sh` derives `serena_current` by calling `plugins/rldyour-serena-mcp/scripts/serena_memory_state.py` before running its own gate. Loop guard: `.serena/.flow_sync_marker` writes a fingerprint of (HEAD, dirty files, ahead/behind, branch, Serena freshness). If `stop_hook_active=true` and the fingerprint matches, the hook allows stop.
+Two plugins coordinate hooks. `rldyour-flow` owns the single registered Claude Stop hook through `hooks/stop_lifecycle_dispatcher.sh`; the dispatcher runs the Serena memory child check before the Flow post-task child check. `flow.stop_post_task_sync.sh` derives `serena_current` by calling `plugins/rldyour-serena-mcp/scripts/serena_memory_state.py` before running its own gate. Loop guard: `.serena/.flow_sync_marker` writes a fingerprint of (HEAD, dirty files, ahead/behind, branch, Serena freshness). If `stop_hook_active=true` and the fingerprint matches, the hook emits a compact system message and allows Stop. Flow Stop state runs with `RLDYOUR_FLOW_STATE_LOCAL_ONLY=1` / `RLDYOUR_FULLREPO_STATUS_LOCAL_ONLY=1` so the hook hot path never depends on remote fetch status; `flow_post_task_state.py` resolves installed sibling plugin scripts from `__file__` before repo-relative fallbacks, keeping direct diagnostics and real hook execution consistent. The dispatcher also writes `.serena/.stop_lifecycle_timeout_marker` so repeated identical child timeouts are allowed on the second `stop_hook_active=true` pass instead of looping.
 
 | Event | Owner | Script | Timeout |
 |---|---|---|---|
@@ -73,20 +73,19 @@ Two plugins coordinate hooks. `flow.stop_post_task_sync.sh` derives `serena_curr
 | PostToolUse:Bash | rldyour-flow | `hooks/post_tool_use_commit_advice.sh` | 5s |
 | SessionStart | rldyour-flow | `hooks/session_start_worktree_bootstrap.sh` | 30s |
 | SessionStart | rldyour-flow | `hooks/session_start_context.sh` | 5s |
-| Stop | rldyour-serena-mcp | `hooks/stop_memory_sync.sh` | 10s |
-| Stop | rldyour-flow | `hooks/stop_post_task_sync.sh` | 10s |
+| Stop | rldyour-flow | `hooks/stop_lifecycle_dispatcher.sh` | 45s |
 
 Stop hooks are **advisory enforcement gates**, not executors. Pattern: hooks compute machine-readable state, block Stop (`exit 2`) until the orchestrator (`ry-start`, `flow-post-task-sync` skill, model in main session) brings the project to a clean final state. Hooks themselves do **not** push, merge, publish, or delete branches - those are high-blast-radius operations and live in the workflow executor under model judgement.
 
-Stop sequence: Serena Stop checks `serena_memory_state.py` first and blocks stale memories with `flow-memory-sync` guidance; Flow Stop then checks git/docs/fullrepo/cleanup state through `flow_post_task_state.py`; `.serena/.sync_marker` and `.serena/.flow_sync_marker` carry loop-guard fingerprints so repeated identical Stop gates do not loop forever.
+Stop sequence: dispatcher child check `stop_memory_sync.sh` checks `serena_memory_state.py` first and blocks stale memories with `flow-memory-sync` guidance; dispatcher child check `stop_post_task_sync.sh` then checks git/docs/fullrepo/cleanup state through `flow_post_task_state.py`; `.serena/.sync_marker`, `.serena/.flow_sync_marker`, and `.serena/.stop_lifecycle_timeout_marker` carry loop-guard fingerprints so repeated identical Stop gates do not loop forever. `tests/test_flow_stop_state.py` is the regression suite for direct installed-state invocation, local-only fullrepo status, dispatcher timeout escape, and Stop hook loop-guard behavior from a subdirectory.
 
 The orchestrator (skill / model in main session) does the actual work: invoke `flow-memory-sync` subagent for memories, then run the `flow-post-task-sync` skill which handles checks → atomic commits → push → ff-merge into default branch → push default → fullrepo publish (`--force-with-lease`, only on `fullrepo`) → cleanup merged branches and worktrees.
 
-Skip flags during local debugging: `RLDYOUR_SKIP_FLOW_SESSION_CONTEXT=1` (SessionStart context), `RLDYOUR_SKIP_WORKTREE_BOOTSTRAP=1` (SessionStart worktree bootstrap), `RLDYOUR_SKIP_FLOW_COMMIT_ADVICE=1` (PostToolUse:Bash flow), `RLDYOUR_SKIP_STOP_GATES=1` (both Stop hooks), `RLDYOUR_SKIP_FLOW_SYNC=1` (flow Stop only), `RLDYOUR_SKIP_SERENA_SYNC=1` (Serena Stop only).
+Skip flags during local debugging: `RLDYOUR_SKIP_FLOW_SESSION_CONTEXT=1` (SessionStart context), `RLDYOUR_SKIP_WORKTREE_BOOTSTRAP=1` (SessionStart worktree bootstrap), `RLDYOUR_SKIP_FLOW_COMMIT_ADVICE=1` (PostToolUse:Bash flow), `RLDYOUR_SKIP_STOP_GATES=1` (registered dispatcher and all child Stop gates), `RLDYOUR_SKIP_FLOW_SYNC=1` (Flow child gate only), `RLDYOUR_SKIP_SERENA_SYNC=1` (Serena memory child gate only).
 
 ## Skill Listing Budget
 
-Per-entry combined `description` + `when_to_use` cap: **1,536 chars** (raised from 250 in CC v2.1.128). Aggregate budget defaults to **1% of context window** with 8,000-char fallback. With 32+ skills the default budget truncates tail-end descriptions and Claude can no longer auto-trigger them.
+Per-entry combined `description` + `when_to_use` cap: **1,536 chars** (raised from 250 in CC v2.1.128). Aggregate budget defaults to **1% of context window** with 8,000-char fallback. With 33+ skills the default budget truncates tail-end descriptions and Claude can no longer auto-trigger them.
 
 User-side fix in `~/.claude/settings.json`:
 
@@ -97,7 +96,7 @@ User-side fix in `~/.claude/settings.json`:
 }
 ```
 
-`maxSkillDescriptionChars` and `skillListingBudgetFraction` were added in CC **v2.1.105+**. `skillListingBudgetFraction` is a decimal fraction in `(0, 1]`. Runtime override: `SLASH_COMMAND_TOOL_CHAR_BUDGET` env var (raw chars). The separate `skillOverrides` map (`"on" | "name-only" | "user-invocable-only" | "off"`) was added in **v2.1.129+** and does **not** affect plugin-shipped skills - manage those through `/plugin` instead. The `0.04` (4%) value is bumped above the claudekit-cli baseline `0.03` (verified 2026-05-15) because our bilingual Russian-leading + English-triggers description format averages ~400 chars per entry vs ~250 for pure-English plugins; at 32 skills our total skill-listing token cost is ~12.8K chars and `0.03` of 200K-token Sonnet sessions truncates tail-end auto-trigger descriptions. `opus[1m]` 1M-token sessions have room at 0.03 too, but 0.04 covers both cases.
+`maxSkillDescriptionChars` and `skillListingBudgetFraction` were added in CC **v2.1.105+**. `skillListingBudgetFraction` is a decimal fraction in `(0, 1]`. Runtime override: `SLASH_COMMAND_TOOL_CHAR_BUDGET` env var (raw chars). The separate `skillOverrides` map (`"on" | "name-only" | "user-invocable-only" | "off"`) was added in **v2.1.129+** and does **not** affect plugin-shipped skills - manage those through `/plugin` instead. The `0.04` (4%) value is bumped above the claudekit-cli baseline `0.03` (verified 2026-05-15) because our bilingual Russian-leading + English-triggers description format averages ~400 chars per entry vs ~250 for pure-English plugins; at 33 skills our total skill-listing token cost is ~13.2K chars and `0.03` of 200K-token Sonnet sessions truncates tail-end auto-trigger descriptions. `opus[1m]` 1M-token sessions have room at 0.03 too, but 0.04 covers both cases.
 
 Plugin-side levers used in this repo:
 - `disable-model-invocation: true` on **4 skills** (`skills/ry-deploy/SKILL.md`, `skills/ry-newp/SKILL.md`, `skills/ry-rules-review/SKILL.md`, `skills/ry-sec-review/SKILL.md`) - slash-only, freeing budget for auto-triggered skills.
@@ -123,12 +122,12 @@ Patterns verified against `anthropics/claude-plugins-official` snapshot `1a2f18b
 - **`alwaysLoad: true` for critical-path MCP servers** - community pattern in `tractorjuice/arc-kit`, `OMARVII/claude-alloy`, `darkroomengineering/cc-settings`. Our restraint (only `serena`) is appropriate scoping.
 - **Tag convention `<plugin-name>--v<version>`** - Anthropic-canonical via `claude plugin tag --push` (docs `code.claude.com/docs/en/plugin-dependencies`). Anthropic's own plugins-official marketplace doesn't apply tags yet, but the documented convention is the canonical one.
 
-## Changelog Adoption (v2.1.133 → v2.1.145)
+## Changelog Adoption (v2.1.133 -> v2.1.154)
 
-Verified against `code.claude.com/docs/en/changelog` for v2.1.133-v2.1.154 on 2026-05-29. Current local CC: **v2.1.154** (`claude --version`).
+Verified against `code.claude.com/docs/en/changelog`, `code.claude.com/docs/en/model-config`, `references/claude-baseline.json`, `package.json`, and npm package metadata on 2026-05-29. Runtime pin: **v2.1.154**. Feature compatibility floor: **v2.1.146+**.
 
 Adopted:
-- v2.1.105 - `maxSkillDescriptionChars` and `skillListingBudgetFraction` user settings (Anthropic + claudekit-cli baseline is `0.03`; this repo recommends `0.04` - see Skill Listing Budget section above for the bilingual-description rationale). Per-entry skill description cap `1,536` chars, used by all 32 skills.
+- v2.1.105 - `maxSkillDescriptionChars` and `skillListingBudgetFraction` user settings (Anthropic + claudekit-cli baseline is `0.03`; this repo recommends `0.04` - see Skill Listing Budget section above for the bilingual-description rationale). Per-entry skill description cap `1,536` chars, used by all 33 skills.
 - v2.1.121 - `alwaysLoad: true` on `serena` MCP server.
 - v2.1.118 - `claude plugin tag --push` for release tagging (canonical, `<plugin>--v<version>`).
 - v2.1.129 - `skillOverrides` map (`"on" | "name-only" | "user-invocable-only" | "off"`); does NOT apply to plugin skills - manage those through `/plugin`. `experimental.{themes,monitors}` wrapper available (we declare neither).
@@ -137,27 +136,30 @@ Adopted:
 Available, not adopted:
 - v2.1.133 `worktree.baseRef: "head"` - user-side setting (`~/.claude/settings.json`); recommendation documented in AGENTS.md Worktree Workflow but not forced. `ry-explore` uses `context: fork`, not `isolation: worktree`.
 - v2.1.133 hook input `effort.level` + `$CLAUDE_EFFORT` env var in Bash - could enrich hook telemetry; not yet wired into `flow_post_task_state.py` or `serena_memory_state.py`.
-- v2.1.142-2.1.153 refreshed the operational floor: agent CLI flags, HTTP `MCP_TOOL_TIMEOUT` fix, plugin dependency enforcement, `/plugin` context-cost/component previews, background/worktree/MCP pagination fixes, and stricter `claude plugin validate`; this repo pins CI/local floor to 2.1.154.
+- v2.1.142-2.1.146 refreshed the operational floor: agent CLI flags, HTTP `MCP_TOOL_TIMEOUT` fix, plugin dependency enforcement, `/plugin` context-cost/component previews, background/worktree/MCP pagination fixes, stricter `claude plugin validate`, and Auto mode `AskUserQuestion` behavior needed by decision gates. This repo keeps the feature compatibility floor at v2.1.146+ and the runtime pin at v2.1.154.
+- v2.1.152 - `disallowed-tools` frontmatter for skills and slash commands, `/reload-skills`, `SessionStart.reloadSkills`, and `MessageDisplay` hook event are tracked in `references/claude-surface-adoption.md`.
+- v2.1.153 - `skipLfs` marketplace-source option, npm update diagnostics in `/doctor`, status-line `COLUMNS`/`LINES`, and `claude agents` native command/bundled skill autocomplete are tracked in `references/claude-surface-adoption.md`.
+- v2.1.154 - Opus 4.8 support, dynamic workflows, Opus 4.8 fast mode, default streaming tool execution, `defaultEnabled: false` plugin metadata, and safer piped MCP pending-approval reporting are tracked in `references/claude-surface-adoption.md`.
 - v2.1.141 `claude agents --cwd <path>` and `terminalSequence` hook field were added; hook and daemon regressions were fixed.
 - v2.1.139 hook `args: string[]` exec-form **adopted** in v0.5.0 (commit `614bdcf`): all 8 hooks switched from shell-form `command: "bash ${CLAUDE_PLUGIN_ROOT}/..."` to exec-form `command: "bash", args: ["${CLAUDE_PLUGIN_ROOT}/hooks/X.sh"]`. Verified 2026-05-17 against `code.claude.com/docs/en/hooks` which explicitly recommends exec-form for any hook with path placeholders.
 - v2.1.139 `PostToolUse` `continueOnBlock: true` - our PostToolUse hooks are advisory-only (`exit 0` always), nothing to "block on".
 - v2.1.139 stdio MCP env receives `${CLAUDE_PROJECT_DIR}` - no current server needs project-root context.
 - v2.1.139 `claude plugin details <name>` - diagnostic only (see AGENTS.md Validation And Setup).
 
-GitHub MCP transport (changed in v0.1.2, 2026-05-13): switched from HTTP `api.githubcopilot.com/mcp/` (Copilot-entitlement-gated; non-Copilot accounts get `HTTP 403 "unauthorized: not authorized to use this Copilot feature"` on `initialize`) to local stdio `github-mcp-server stdio --toolsets=repos,issues,pull_requests,users,context`. Host binary is the Homebrew bottle `github-mcp-server` pinned at v1.0.5 in `config/mcp-runtime-versions.env`; PAT scopes `repo` + `read:org` are sufficient, no Copilot subscription required. `scripts/check_mcp_runtime_versions.py` enforces version parity by probing `github-mcp-server --version` rather than parsing `.mcp.json` args. `anthropics/claude-plugins-official` keeps the HTTP endpoint as their canonical pattern for Copilot users - we cannot mirror that without an allowlist.
+GitHub MCP transport (changed in v0.1.2, 2026-05-13): switched from HTTP `api.githubcopilot.com/mcp/` (Copilot-entitlement-gated; non-Copilot accounts get `HTTP 403 "unauthorized: not authorized to use this Copilot feature"` on `initialize`) to local stdio `github-mcp-server stdio --toolsets=repos,issues,pull_requests,users,context`. Host binary is the Homebrew bottle `github-mcp-server` pinned at v1.1.0 in `config/mcp-runtime-versions.env`; PAT scopes `repo` + `read:org` are sufficient, no Copilot subscription required. `scripts/check_mcp_runtime_versions.py` enforces version parity by probing `github-mcp-server --version` rather than parsing `.mcp.json` args. `anthropics/claude-plugins-official` keeps the HTTP endpoint as their canonical pattern for Copilot users - we cannot mirror that without an allowlist.
 
 Smoke-script footgun (documented for future maintainers): `scripts/smoke_fullrepo_sync.sh` calls `fullrepo_sync.py --bootstrap-init`, which restores agent-only worktree files (AGENTS.md, .claude/CLAUDE.md, .serena/**) from `origin/fullrepo`. Run smoke **before** editing agent-only files in a session, or re-apply edits after smoke completes; otherwise in-progress changes are silently reverted.
 
 Capability-smoke hardening (added 2026-05-13, v0.1.2): `scripts/smoke_mcp_capabilities.sh` no longer treats HTTP 401/403 as blanket PASS for `HTTP_AUTH_GATED` servers - that shortcut hid the GitHub Copilot entitlement failure. Now performs real MCP `initialize` JSON-RPC handshake over HTTP, parses both `application/json` and `text/event-stream` bodies, requires `result.serverInfo.name`. Classification: 401 without auth → SKIP, 401 with auth → FAIL ("token rejected"), 403 → FAIL with explicit remediation hint, 200 without `serverInfo` → FAIL ("silent-misconfig catch"). `figma` is the only remaining `HTTP_AUTH_GATED` entry (accepts 200 without `serverInfo` pre-session).
 
-Capability smoke (added 2026-05-12): `scripts/smoke_mcp_capabilities.sh` performs JSON-RPC `initialize` + `tools/list` per server (stdio spawn or HTTP POST) and asserts a non-empty tool set. Latest focused 2026-05-29 checks: Serena `1.5.3` reports 29 tools, Chrome DevTools `1.1.1` reports 29 tools, and GitHub MCP `1.0.5` reports 40 tools. All workflow tools we use are present.
+Capability smoke (added 2026-05-12): `scripts/smoke_mcp_capabilities.sh` performs JSON-RPC `initialize` + `tools/list` per server (stdio spawn or HTTP POST) and asserts a non-empty tool set. Historical focused smoke evidence from 2026-05-20 used older MCP pins; current source of truth is `config/mcp-runtime-versions.env` plus the root `config/mcp-version-policy.json`, and `scripts/check_mcp_runtime_versions.py` verifies the active Serena, Chrome DevTools, GitHub MCP, and related MCP pins before release.
 
 ## Engineering Conventions
 
 - Russian user-facing communication; English repository artifacts. Skill `description` fields are Russian-leading (English keywords appended).
 - Skill frontmatter: `name`, `description` (recommended). Optional: `when_to_use`, `argument-hint`, `allowed-tools`, `disable-model-invocation`, `user-invocable`, `model`, `effort`, `paths`, `context: fork`, `agent`.
 - Agent frontmatter: `name`, `description`, `model`, `effort`, `maxTurns`, `color`. Tool access: prefer explicit `tools:` allowlist (canonical Anthropic pattern, used by all 6 flow reviewer agents + ry-explore for future-proof read-only enforcement); `disallowedTools:` denylist is legacy and still works (used by `flow-memory-sync` which has narrow Serena memory MCP needs). Optional: `skills`, `memory`, `background`, `isolation`, `initialPrompt`.
-- `model: opus[1m]` is the canonical bracketed form for Opus 4.7 1M context (used by `ry-explore`); requires CC **v2.1.111+**.
+- `model: opus[1m]` is the canonical bracketed alias for the latest Opus 1M context on Claude Code. On Anthropic API it resolves to Opus 4.8 and requires CC **v2.1.154+**; `[1m]` availability remains account/plan-dependent.
 - `model: sonnet` is the canonical short form for reviewer subagents.
 - Slash command frontmatter: `description`, `argument-hint`, optional `context: fork` and `agent: <name>`. Bare `model:` on a slash command is silently ignored without `context: fork` - pair them or delegate via `agent:`.
 - Conventional Commits, ≤72 char subjects, atomic commits per logical unit.
