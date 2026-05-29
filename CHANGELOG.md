@@ -7,6 +7,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 ## [Unreleased]
 
 
+## [1.1.5] - 2026-05-29
+
+### Changed
+
+- Refresh Claude release inventory after ry-start workflow hardening.
+
 ## [1.1.4] - 2026-05-29
 
 ### Changed
