@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-29
-Last commit: f78a246df180e912fd4090f89f25f8b74b16e80c chore(runtime): bump claude code baseline to 2.1.156
+Last commit: 6c432ca58735319802d7511b7e0c8493f76675f3 fix(flow): preserve ry-start command skill delegation
 Scope: release readiness, versioning, and artifact hygiene
 Area: RELEASE
 -->
@@ -23,12 +23,12 @@ release readiness, versioning, and artifact hygiene
 
 ## Last verified
 - date: 2026-05-29
-- commit: `f78a246df180e912fd4090f89f25f8b74b16e80c`
+- commit: `6c432ca58735319802d7511b7e0c8493f76675f3`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
 - Release memories record numeric versioning, tags, CI gates, and clean artifact hygiene.
-- Current product/config version is `1.1.2`; `VERSION`, `package.json`,
+- Current product/config version is `1.1.3`; `VERSION`, `package.json`,
   `pyproject.toml`, and `CHANGELOG.md` are the source of truth for the
   adapter-local SemVer state.
 - Release `1.0.0` adopted Claude Code `2.1.153` and the refreshed common MCP
@@ -56,6 +56,9 @@ release readiness, versioning, and artifact hygiene
   thinking-block API hotfix in the surface matrix, and adds the
   `ry-start-workflow` boundary contract while keeping `/rldyour-flow:ry-start`
   as the stable plugin entrypoint.
+- Release `1.1.3` preserves the slash-command thin-wrapper invariant by
+  restoring the required `ry-start` skill delegation phrase in the
+  workflow-aware `/rldyour-flow:ry-start` shim.
 - Historical release evidence:
 - Commit `1d8c2d951c1131e043989d8c4f5d2afa4f777b21` bumps the product/config
   version to `0.7.0` in `VERSION`, `package.json`, `pyproject.toml`, and
@@ -67,7 +70,7 @@ release readiness, versioning, and artifact hygiene
   `rldyour-claudecode` name.
 
 ## Evidence
-- `commit:f78a246df180e912fd4090f89f25f8b74b16e80c`
+- `commit:6c432ca58735319802d7511b7e0c8493f76675f3`
 - `path:VERSION`
 - `path:CHANGELOG.md`
 - `path:config/mcp-runtime-versions.env`

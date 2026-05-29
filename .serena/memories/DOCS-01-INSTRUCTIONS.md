@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-29
-Last commit: f78a246df180e912fd4090f89f25f8b74b16e80c chore(runtime): bump claude code baseline to 2.1.156
+Last commit: 6c432ca58735319802d7511b7e0c8493f76675f3 fix(flow): preserve ry-start command skill delegation
 Scope: instruction docs and durable operator documentation
 Area: DOCS
 -->
@@ -23,7 +23,7 @@ instruction docs and durable operator documentation
 
 ## Last verified
 - date: 2026-05-29
-- commit: `f78a246df180e912fd4090f89f25f8b74b16e80c`
+- commit: `6c432ca58735319802d7511b7e0c8493f76675f3`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
@@ -32,7 +32,7 @@ instruction docs and durable operator documentation
 - `scripts/validate_instruction_sync.py` accepts both nested `claims` and top-level sync-contract keys, while still failing semantic drift for shared keys.
 
 ## Evidence
-- `commit:f78a246df180e912fd4090f89f25f8b74b16e80c`
+- `commit:6c432ca58735319802d7511b7e0c8493f76675f3`
 - `path:AGENTS.md`
 - `path:.claude/CLAUDE.md`
 - `path:README.md`
