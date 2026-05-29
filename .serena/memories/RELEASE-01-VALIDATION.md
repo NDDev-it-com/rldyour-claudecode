@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-29
-Last commit: cbab06d96f803f0a819b9aaa6f3bdfc2b42f4708 chore(release): claude 1.1.1
+Last commit: f78a246df180e912fd4090f89f25f8b74b16e80c chore(runtime): bump claude code baseline to 2.1.156
 Scope: release readiness, versioning, and artifact hygiene
 Area: RELEASE
 -->
@@ -23,12 +23,12 @@ release readiness, versioning, and artifact hygiene
 
 ## Last verified
 - date: 2026-05-29
-- commit: `cbab06d96f803f0a819b9aaa6f3bdfc2b42f4708`
+- commit: `f78a246df180e912fd4090f89f25f8b74b16e80c`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
 - Release memories record numeric versioning, tags, CI gates, and clean artifact hygiene.
-- Current product/config version is `1.1.1`; `VERSION`, `package.json`,
+- Current product/config version is `1.1.2`; `VERSION`, `package.json`,
   `pyproject.toml`, and `CHANGELOG.md` are the source of truth for the
   adapter-local SemVer state.
 - Release `1.0.0` adopted Claude Code `2.1.153` and the refreshed common MCP
@@ -52,6 +52,10 @@ release readiness, versioning, and artifact hygiene
 - Release `1.1.1` refreshes the local `github-mcp-server` host-binary pin to
   `1.1.0` in `config/mcp-runtime-versions.env`, matching the installed
   Homebrew binary and GitHub MCP Server release.
+- Release `1.1.2` pins Claude Code `2.1.156`, records the Opus 4.8
+  thinking-block API hotfix in the surface matrix, and adds the
+  `ry-start-workflow` boundary contract while keeping `/rldyour-flow:ry-start`
+  as the stable plugin entrypoint.
 - Historical release evidence:
 - Commit `1d8c2d951c1131e043989d8c4f5d2afa4f777b21` bumps the product/config
   version to `0.7.0` in `VERSION`, `package.json`, `pyproject.toml`, and
@@ -63,7 +67,7 @@ release readiness, versioning, and artifact hygiene
   `rldyour-claudecode` name.
 
 ## Evidence
-- `commit:cbab06d96f803f0a819b9aaa6f3bdfc2b42f4708`
+- `commit:f78a246df180e912fd4090f89f25f8b74b16e80c`
 - `path:VERSION`
 - `path:CHANGELOG.md`
 - `path:config/mcp-runtime-versions.env`

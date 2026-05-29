@@ -7,6 +7,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 ## [Unreleased]
 
 
+## [1.1.2] - 2026-05-29
+
+### Changed
+
+- Adopt Claude Code 2.1.156 and the ry-start workflow boundary.
+
 ## [1.1.1] - 2026-05-29
 
 ### Changed
