@@ -13,6 +13,9 @@ adapter pins `2.1.156` to include the Opus 4.8 thinking-block API hotfix. The
 stable owner entrypoint remains `/rldyour-flow:ry-start`.
 
 Native workflow policy:
+- Current state: hybrid pending native saved workflow. No `.claude/workflows/`
+  artifact is committed until Claude Code generates and saves it through the
+  installed `/workflows` runtime.
 - Prefer the project workflow command `ry-start-workflow` when a saved
   `.claude/workflows/` projection exists and installed-runtime smoke proves it
   is discoverable.
