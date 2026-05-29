@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-29
-Last commit: 6c432ca58735319802d7511b7e0c8493f76675f3 fix(flow): preserve ry-start command skill delegation
+Last commit: 30610a53cdab6d0308e41358dc379a41e14e69ca chore(release): claude 1.1.5
 Scope: security posture and blocking/warning policy
 Area: SECURITY
 -->
@@ -21,14 +21,14 @@ security posture and blocking/warning policy
 
 ## Last verified
 - date: 2026-05-29
-- commit: `6c432ca58735319802d7511b7e0c8493f76675f3`
+- commit: `30610a53cdab6d0308e41358dc379a41e14e69ca`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
 - Security memories record block/warn/review classes and defensive-only review policy.
 
 ## Evidence
-- `commit:6c432ca58735319802d7511b7e0c8493f76675f3`
+- `commit:30610a53cdab6d0308e41358dc379a41e14e69ca`
 - `path:plugins/rldyour-security`
 - `path:README.md`
 

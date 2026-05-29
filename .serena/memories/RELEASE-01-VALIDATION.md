@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-29
-Last commit: 6c432ca58735319802d7511b7e0c8493f76675f3 fix(flow): preserve ry-start command skill delegation
+Last commit: 30610a53cdab6d0308e41358dc379a41e14e69ca chore(release): claude 1.1.5
 Scope: release readiness, versioning, and artifact hygiene
 Area: RELEASE
 -->
@@ -23,14 +23,20 @@ release readiness, versioning, and artifact hygiene
 
 ## Last verified
 - date: 2026-05-29
-- commit: `6c432ca58735319802d7511b7e0c8493f76675f3`
+- commit: `30610a53cdab6d0308e41358dc379a41e14e69ca`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
 - Release memories record numeric versioning, tags, CI gates, and clean artifact hygiene.
-- Current product/config version is `1.1.3`; `VERSION`, `package.json`,
+- Current product/config version is `1.1.5`; `VERSION`, `package.json`,
   `pyproject.toml`, and `CHANGELOG.md` are the source of truth for the
   adapter-local SemVer state.
+- Release `1.1.5` preserves the workflow-aware `/rldyour-flow:ry-start`
+  hybrid shim, refreshes release inventory after the `1.1.4` CI failure, and
+  publishes a non-draft GitHub Release whose tag resolves to the current
+  adapter head.
+
+## Historical evidence
 - Release `1.0.0` adopted Claude Code `2.1.153` and the refreshed common MCP
   policy; release `1.0.1` synchronizes internal plugin and index versions with
   the adapter release without changing Claude runtime semantics.
@@ -59,6 +65,8 @@ release readiness, versioning, and artifact hygiene
 - Release `1.1.3` preserves the slash-command thin-wrapper invariant by
   restoring the required `ry-start` skill delegation phrase in the
   workflow-aware `/rldyour-flow:ry-start` shim.
+- Release `1.1.4` was superseded by `1.1.5` after the GitHub release workflow
+  correctly rejected stale README inventory.
 - Historical release evidence:
 - Commit `1d8c2d951c1131e043989d8c4f5d2afa4f777b21` bumps the product/config
   version to `0.7.0` in `VERSION`, `package.json`, `pyproject.toml`, and
@@ -70,7 +78,7 @@ release readiness, versioning, and artifact hygiene
   `rldyour-claudecode` name.
 
 ## Evidence
-- `commit:6c432ca58735319802d7511b7e0c8493f76675f3`
+- `commit:30610a53cdab6d0308e41358dc379a41e14e69ca`
 - `path:VERSION`
 - `path:CHANGELOG.md`
 - `path:config/mcp-runtime-versions.env`

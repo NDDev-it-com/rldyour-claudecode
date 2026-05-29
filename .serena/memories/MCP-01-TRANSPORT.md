@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-29
-Last commit: 6c432ca58735319802d7511b7e0c8493f76675f3 fix(flow): preserve ry-start command skill delegation
+Last commit: 30610a53cdab6d0308e41358dc379a41e14e69ca chore(release): claude 1.1.5
 Scope: MCP runtime transport and pin policy
 Area: MCP
 -->
@@ -21,7 +21,7 @@ MCP runtime transport and pin policy
 
 ## Last verified
 - date: 2026-05-29
-- commit: `6c432ca58735319802d7511b7e0c8493f76675f3`
+- commit: `30610a53cdab6d0308e41358dc379a41e14e69ca`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
@@ -31,7 +31,7 @@ MCP runtime transport and pin policy
   `config/mcp-runtime-versions.env`.
 
 ## Evidence
-- `commit:6c432ca58735319802d7511b7e0c8493f76675f3`
+- `commit:30610a53cdab6d0308e41358dc379a41e14e69ca`
 - `path:plugins/rldyour-mcps/.mcp.json`
 - `path:config/mcp-runtime-versions.env`
 - `path:README.md`

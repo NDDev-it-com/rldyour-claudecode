@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-29
-Last commit: 6c432ca58735319802d7511b7e0c8493f76675f3 fix(flow): preserve ry-start command skill delegation
+Last commit: 30610a53cdab6d0308e41358dc379a41e14e69ca chore(release): claude 1.1.5
 Scope: quality-first engineering rules
 Area: RULES
 -->
@@ -21,14 +21,14 @@ quality-first engineering rules
 
 ## Last verified
 - date: 2026-05-29
-- commit: `6c432ca58735319802d7511b7e0c8493f76675f3`
+- commit: `30610a53cdab6d0308e41358dc379a41e14e69ca`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
 - Rules memories record non-negotiable quality, architecture, dependency, and verification discipline.
 
 ## Evidence
-- `commit:6c432ca58735319802d7511b7e0c8493f76675f3`
+- `commit:30610a53cdab6d0308e41358dc379a41e14e69ca`
 - `path:plugins/rldyour-rules`
 - `path:README.md`
 

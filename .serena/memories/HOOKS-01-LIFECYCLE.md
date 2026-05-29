@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-29
-Last commit: 6c432ca58735319802d7511b7e0c8493f76675f3 fix(flow): preserve ry-start command skill delegation
+Last commit: 30610a53cdab6d0308e41358dc379a41e14e69ca chore(release): claude 1.1.5
 Scope: deterministic hook lifecycle behavior
 Area: HOOKS
 -->
@@ -21,7 +21,7 @@ deterministic hook lifecycle behavior
 
 ## Last verified
 - date: 2026-05-29
-- commit: `6c432ca58735319802d7511b7e0c8493f76675f3`
+- commit: `30610a53cdab6d0308e41358dc379a41e14e69ca`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
@@ -39,7 +39,7 @@ deterministic hook lifecycle behavior
   checks in the hot path and reports `network_checked=false`.
 
 ## Evidence
-- `commit:6c432ca58735319802d7511b7e0c8493f76675f3`
+- `commit:30610a53cdab6d0308e41358dc379a41e14e69ca`
 - `path:plugins/rldyour-flow/hooks`
 - `path:plugins/rldyour-flow/scripts/flow_post_task_state.py`
 - `path:plugins/rldyour-flow/scripts/fullrepo_sync.py`
