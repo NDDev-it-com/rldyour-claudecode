@@ -7,12 +7,6 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 ## [Unreleased]
 
 
-## [1.1.1] - 2026-05-29
-
-### Changed
-
-- Refresh GitHub MCP Server host-binary pin to 1.1.0.
-
 ## [1.1.0] - 2026-05-29
 
 ### Changed

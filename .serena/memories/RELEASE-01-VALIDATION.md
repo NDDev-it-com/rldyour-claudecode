@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-29
-Last commit: cbab06d96f803f0a819b9aaa6f3bdfc2b42f4708 chore(release): claude 1.1.1
+Last commit: 63abf7d
 Scope: release readiness, versioning, and artifact hygiene
 Area: RELEASE
 -->
@@ -23,44 +23,30 @@ release readiness, versioning, and artifact hygiene
 
 ## Last verified
 - date: 2026-05-29
-- commit: `cbab06d96f803f0a819b9aaa6f3bdfc2b42f4708`
-- checked by: Codex ry-start automated release and metadata sync
+- commit: `63abf7d4084cd892fea40e126d71cdd2ddf6d80e`
+- checked by: Codex system sync after Claude installer report fix
 
 ## Facts
 - Release memories record numeric versioning, tags, CI gates, and clean artifact hygiene.
-- Current product/config version is `1.1.0`; `VERSION`, `package.json`,
-  `pyproject.toml`, and `CHANGELOG.md` are the source of truth for the
-  adapter-local SemVer state.
-- Release `1.0.0` adopted Claude Code `2.1.153` and the refreshed common MCP
-  policy; release `1.0.1` synchronizes internal plugin and index versions with
-  the adapter release without changing Claude runtime semantics.
-- Release `1.0.2` hardens the rldyour-flow Stop post-task sync gate: direct
-  installed-script invocation now resolves sibling plugin scripts from
-  `__file__`, Stop state runs in local-only mode, fullrepo status can avoid
-  network checks during hooks, and repeated `stop_hook_active=true` fingerprints
-  emit a system message then allow Stop instead of looping.
-- Release `1.0.7` aligns active repository descriptions with the root
-  `config/repository-description-policy.json` template, standardizes the
-  `workflow_dispatch` release input as `version`, creates or reuses numeric
-  tags during manual release runs, publishes GitHub Releases through `gh
-  release create/upload`, and refreshes generated inventory before release
-  validation.
-- Release `1.1.0` adopts the Claude Code `2.1.154` baseline required for
-  Opus 4.8 targeting, keeps `ry-explore` on the Claude-native `opus[1m]`
-  selector, and updates active model/runtime metadata from verified package
-  and official model-config evidence.
-- Historical release evidence:
+- Current product/config version is `1.1.0`; the `VERSION`, `CHANGELOG.md`, and
+  release workflow checks are aligned to this value.
 - Commit `1d8c2d951c1131e043989d8c4f5d2afa4f777b21` bumps the product/config
   version to `0.7.0` in `VERSION`, `package.json`, `pyproject.toml`, and
   `CHANGELOG.md` without changing Claude runtime semantics.
+- Commit `63abf7d4084cd892fea40e126d71cdd2ddf6d80e` updates runtime pin floor
+  claims in `.claude/CLAUDE.md` and aligns core release metadata for `1.1.0`
+  after runtime metadata standardization.
 - Commit `32b25d2346d2fc59c441edd24ef8454db879bf18` updates
   `scripts/install-rldyour-marketplace.sh` for the current Claude CLI
   marketplace source format (`owner/repo`) and fixes final verification when
   the refreshed marketplace intentionally reuses the canonical
   `rldyour-claudecode` name.
+- Commit `ad97d9deb65b76cea82052322b9e6cee86af0407` fixes the final install
+  report writer so Markdown list entries use `printf --` and do not trip Bash
+  option parsing after a successful marketplace install.
 
 ## Evidence
-- `commit:cbab06d96f803f0a819b9aaa6f3bdfc2b42f4708`
+- `commit:ad97d9deb65b76cea82052322b9e6cee86af0407`
 - `path:VERSION`
 - `path:CHANGELOG.md`
 - `path:config/mcp-runtime-versions.env`

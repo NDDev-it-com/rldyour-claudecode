@@ -1,6 +1,6 @@
 <!-- Memory Metadata
 Last updated: 2026-05-29
-Last commit: cbab06d96f803f0a819b9aaa6f3bdfc2b42f4708 chore(release): claude 1.1.1
+Last commit: 63abf7d
 Scope: repository identity and source-of-truth map
 Area: CORE
 -->
@@ -23,14 +23,14 @@ repository identity and source-of-truth map
 
 ## Last verified
 - date: 2026-05-29
-- commit: `cbab06d96f803f0a819b9aaa6f3bdfc2b42f4708`
-- checked by: Codex ry-start automated release and metadata sync
+- commit: `63abf7d4084cd892fea40e126d71cdd2ddf6d80e`
+- checked by: Codex system sync after Claude installer report fix
 
 ## Facts
 - Core memories index repository identity, source-of-truth files, and the current validation map.
 
 ## Evidence
-- `commit:cbab06d96f803f0a819b9aaa6f3bdfc2b42f4708`
+- `commit:63abf7d4084cd892fea40e126d71cdd2ddf6d80e`
 - `path:README.md`
 - `path:VERSION`
 - `path:CHANGELOG.md`
