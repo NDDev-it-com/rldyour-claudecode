@@ -1,10 +1,10 @@
 # Reviewer Protocol
 
-Reviewer tracks are designed to run as parallel subagents when `ry-start` or `ry-review` explicitly invokes the review phase. They live as `agents/flow-*-review.md` (not skills) per Claude Code May-2026 best practice for orchestrated-only review tracks.
+Reviewer tracks are designed to run as parallel subagents when `ry-review` or an explicit-review `ry-start` request invokes the review phase. They live as `agents/flow-*-review.md` (not skills) per Claude Code May-2026 best practice for orchestrated-only review tracks.
 
 ## Subagent Permission
 
-The user explicitly approved subagent usage when invoking `/ry-start` or `/ry-review`. Each spawned subagent must receive a self-contained prompt with task, scope, diff, constraints, expected output, and read-only status.
+The user explicitly approves subagent usage through `/ry-review` or through `/ry-start` only when the prompt also asks for review, audit, security review, rules review, or reviewer subagents. Each spawned subagent must receive a self-contained prompt with task, scope, diff, constraints, expected output, and read-only status.
 
 ## Tracks
 
@@ -41,7 +41,7 @@ To stay safe regardless of upstream behavior, every reviewer subagent in this ma
 
 ### Run ID and report directory
 
-The orchestrator (`ry-start` or `ry-review` skill body) generates one `run_id` per review wave and passes it inside each reviewer prompt:
+The explicit-review orchestrator (`ry-start` or `ry-review` skill body) generates one `run_id` per review wave and passes it inside each reviewer prompt:
 
 ```
 run_id    = <UTC-ISO-compact>-<git-short-sha>
@@ -90,7 +90,7 @@ Notes: any blocker, error, or constraint encountered while writing the report.
 
 ### Orchestrator read contract
 
-The orchestrator (`ry-start` or `ry-review` skill body) after subagent completion:
+The explicit-review orchestrator (`ry-start` or `ry-review` skill body) after subagent completion:
 
 1. Reads each reviewer summary from the agent result.
 2. Aggregates counts across all reviewers.
@@ -108,7 +108,7 @@ The orchestrator (`ry-start` or `ry-review` skill body) after subagent completio
 
 ## Parent Integration
 
-The parent workflow (`ry-start` or `ry-review`) consolidates all findings, resolves contradictions with code evidence, fixes accepted findings, then reruns only the reviewer tracks that found problems.
+The parent explicit-review workflow (`ry-start` or `ry-review`) consolidates all findings, resolves contradictions with code evidence, fixes accepted findings, then reruns only the reviewer tracks that found problems.
 
 ## Why agents, not skills
 
@@ -127,4 +127,4 @@ As of May 2026, `disable-model-invocation: true` on plugin skills has known limi
   - `flow-verification-review`: `pink`
   - `flow-security-review`: `red`
 
-Orchestrators (`ry-start`, `ry-review`) invoke them via prose body delegation in their workflow steps.
+Explicit-review orchestrators (`ry-start`, `ry-review`) invoke them via prose body delegation in their workflow steps.
