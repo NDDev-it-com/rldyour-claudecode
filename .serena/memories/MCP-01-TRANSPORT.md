@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-30
 Last verified: 2026-05-30
-Last commit: 6b22b412eb45fc7a351acccae50e24fb194530ce ci: harden public free workflow coverage
+Last commit: 7ea3f9ef22aa5c4d99931ae754c9e2dbc550a0e6 ci: harden public release supply chain
 Scope: MCP runtime transport and pin policy
 Area: MCP
 -->
@@ -22,7 +22,7 @@ MCP runtime transport and pin policy
 
 ## Last verified
 - date: 2026-05-30
-- commit: `6b22b412eb45fc7a351acccae50e24fb194530ce`
+- commit: `7ea3f9ef22aa5c4d99931ae754c9e2dbc550a0e6`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
@@ -32,7 +32,7 @@ MCP runtime transport and pin policy
   `config/mcp-runtime-versions.env`.
 
 ## Evidence
-- `commit:6b22b412eb45fc7a351acccae50e24fb194530ce`
+- `commit:7ea3f9ef22aa5c4d99931ae754c9e2dbc550a0e6`
 - `path:plugins/rldyour-mcps/.mcp.json`
 - `path:config/mcp-runtime-versions.env`
 - `path:README.md`

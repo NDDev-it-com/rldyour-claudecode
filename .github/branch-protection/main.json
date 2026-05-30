@@ -1,0 +1,29 @@
+{
+  "branch": "main",
+  "maintainer_access": "maintainer can administer; required checks still apply to pushes",
+  "required_status_checks": [
+    "claude plugin validate",
+    "Python + shell + JSON syntax + smoke (ubuntu-latest)",
+    "Python + shell + JSON syntax + smoke (macos-latest)",
+    "analyze (python)",
+    "analyze (actions)",
+    "gitleaks scan",
+    "Semgrep OSS scan"
+  ],
+  "strict_required_status_checks": true,
+  "allow_force_pushes": false,
+  "allow_deletions": false,
+  "require_linear_history": true,
+  "required_pull_request_reviews": {
+    "required_approving_review_count": 0,
+    "dismiss_stale_reviews": false,
+    "require_code_owner_review": false
+  },
+  "enforce_admins": false,
+  "notes": [
+    "This file documents the desired branch protection state for the public main branch.",
+    "Apply it through GitHub Settings -> Branches or through a ruleset matching this shape.",
+    "Required status checks are selected from workflows that run on every pull request to main.",
+    "Path-filtered or scheduled-only jobs are intentionally not required here because GitHub branch protection waits for required checks even when a workflow is not triggered."
+  ]
+}

@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-30
 Last verified: 2026-05-30
-Last commit: 6b22b412eb45fc7a351acccae50e24fb194530ce ci: harden public free workflow coverage
+Last commit: 7ea3f9ef22aa5c4d99931ae754c9e2dbc550a0e6 ci: harden public release supply chain
 Scope: future architecture direction and scalability gravity
 Area: FUTURE
 -->
@@ -22,14 +22,14 @@ future architecture direction and scalability gravity
 
 ## Last verified
 - date: 2026-05-30
-- commit: `6b22b412eb45fc7a351acccae50e24fb194530ce`
+- commit: `7ea3f9ef22aa5c4d99931ae754c9e2dbc550a0e6`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
 - Future memories record architectural trajectory and scale direction, not transient task queues.
 
 ## Evidence
-- `commit:6b22b412eb45fc7a351acccae50e24fb194530ce`
+- `commit:7ea3f9ef22aa5c4d99931ae754c9e2dbc550a0e6`
 - `path:README.md`
 - `path:config/rldyour-contract.json`
 

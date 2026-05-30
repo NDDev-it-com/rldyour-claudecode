@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-30
 Last verified: 2026-05-30
-Last commit: 6b22b412eb45fc7a351acccae50e24fb194530ce ci: harden public free workflow coverage
+Last commit: 7ea3f9ef22aa5c4d99931ae754c9e2dbc550a0e6 ci: harden public release supply chain
 Scope: validation gates and test suites
 Area: TESTS
 -->
@@ -25,7 +25,7 @@ validation gates and test suites
 
 ## Last verified
 - date: 2026-05-30
-- commit: `6b22b412eb45fc7a351acccae50e24fb194530ce`
+- commit: `7ea3f9ef22aa5c4d99931ae754c9e2dbc550a0e6`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
@@ -38,7 +38,7 @@ validation gates and test suites
   1 skipped after the Stop hook loop-guard hardening.
 
 ## Evidence
-- `commit:6b22b412eb45fc7a351acccae50e24fb194530ce`
+- `commit:7ea3f9ef22aa5c4d99931ae754c9e2dbc550a0e6`
 - `path:scripts`
 - `path:tests/test_flow_stop_state.py`
 - `path:.github/workflows`
