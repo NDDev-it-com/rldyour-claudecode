@@ -52,7 +52,7 @@ def _write_minimal_contract(repo: Path) -> None:
 
     contract = {
         "schema_version": 1,
-        "verified_on": "2026-05-21",
+        "verified_on": "2026-05-30",
         "owner_repo": "fixture",
         "adapters": ["claude", "codex", "opencode"],
         "domains": [
