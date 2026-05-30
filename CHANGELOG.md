@@ -7,6 +7,18 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 ## [Unreleased]
 
 
+## [1.1.8] - 2026-05-30
+
+### Fixed
+
+- Remove stale Claude model claim after hardening release.
+
+## [1.1.7] - 2026-05-30
+
+### Fixed
+
+- Harden Claude and OpenCode release gates.
+
 ## [1.1.6] - 2026-05-30
 
 ### Changed

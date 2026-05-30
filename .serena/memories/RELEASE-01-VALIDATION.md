@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-30
 Last verified: 2026-05-30
-Last commit: 0c671dfef74150237bce92332ce0218b2e23b9a3 chore(release): claude 1.1.6
+Last commit: 65095d0dea64d267500877189faf22c7850ba2c2 chore(release): claude 1.1.8
 Scope: release readiness, versioning, and artifact hygiene
 Area: RELEASE
 -->
@@ -24,16 +24,18 @@ release readiness, versioning, and artifact hygiene
 
 ## Last verified
 - date: 2026-05-30
-- commit: `0c671dfef74150237bce92332ce0218b2e23b9a3`
+- commit: `65095d0dea64d267500877189faf22c7850ba2c2`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
 - Release memories record numeric versioning, tags, CI gates, and clean artifact hygiene.
-- Current product/config version is `1.1.6`; `VERSION`, `package.json`,
+- Current product/config version is `1.1.8`; `VERSION`, `package.json`,
   `pyproject.toml`, and `CHANGELOG.md` are the source of truth for the
   adapter-local SemVer state.
-- Release `1.1.6` refreshes the Claude Code runtime baseline to `2.1.158`,
-  preserves the workflow-aware `/rldyour-flow:ry-start` hybrid shim, and
+- Release `1.1.8` enforces latest Claude Code surface adoption decisions,
+  keeps the Claude Code runtime baseline at `2.1.158`,
+  removes stale active Opus claims from release metadata, preserves the
+  workflow-aware `/rldyour-flow:ry-start` hybrid shim, and
   publishes a non-draft GitHub Release whose tag resolves to the current
   adapter head.
 
@@ -79,7 +81,7 @@ release readiness, versioning, and artifact hygiene
   `rldyour-claudecode` name.
 
 ## Evidence
-- `commit:0c671dfef74150237bce92332ce0218b2e23b9a3`
+- `commit:65095d0dea64d267500877189faf22c7850ba2c2`
 - `path:VERSION`
 - `path:CHANGELOG.md`
 - `path:config/mcp-runtime-versions.env`

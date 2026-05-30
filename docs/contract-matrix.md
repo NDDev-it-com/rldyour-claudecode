@@ -5,7 +5,7 @@
 This matrix is the human-readable projection of the machine-readable rldyour contract. It documents how the same business mechanism maps to Claude Code, Codex, and OpenCode. The local validator proves the Claude Code adapter against files in this repository and requires non-local adapters to be explicitly mapped or marked adapter-specific.
 
 - Schema version: `1`
-- Verified on: `2026-05-21`
+- Verified on: `2026-05-30`
 - Owner repository: `NDDev-it-com/rldyour-claudecode`
 
 ## Domains
