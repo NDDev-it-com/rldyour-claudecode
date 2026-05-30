@@ -7,6 +7,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 ## [Unreleased]
 
 
+## [1.1.9] - 2026-05-30
+
+### Changed
+
+- Make `ry-start` reviewer fanout explicit-opt-in while keeping `ry-review` reviewer orchestration available.
+
 ## [1.1.8] - 2026-05-30
 
 ### Fixed
