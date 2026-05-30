@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-30
 Last verified: 2026-05-30
-Last commit: 30610a53cdab6d0308e41358dc379a41e14e69ca chore(release): claude 1.1.5
+Last commit: 0c671dfef74150237bce92332ce0218b2e23b9a3 chore(release): claude 1.1.6
 Scope: release readiness, versioning, and artifact hygiene
 Area: RELEASE
 -->
@@ -24,49 +24,49 @@ release readiness, versioning, and artifact hygiene
 
 ## Last verified
 - date: 2026-05-30
-- commit: `30610a53cdab6d0308e41358dc379a41e14e69ca`
+- commit: `0c671dfef74150237bce92332ce0218b2e23b9a3`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
 - Release memories record numeric versioning, tags, CI gates, and clean artifact hygiene.
-- Current product/config version is `1.1.5`; `VERSION`, `package.json`,
+- Current product/config version is `1.1.6`; `VERSION`, `package.json`,
   `pyproject.toml`, and `CHANGELOG.md` are the source of truth for the
   adapter-local SemVer state.
-- Release `1.1.5` preserves the workflow-aware `/rldyour-flow:ry-start`
+- Release `1.1.6` preserves the workflow-aware `/rldyour-flow:ry-start`
   hybrid shim, refreshes release inventory after the `1.1.4` CI failure, and
   publishes a non-draft GitHub Release whose tag resolves to the current
   adapter head.
 
 ## Historical evidence
-- Release `1.1.5` adopted Claude Code `2.1.153` and the refreshed common MCP
+- Release `1.1.6` adopted Claude Code `2.1.153` and the refreshed common MCP
   policy; release `1.0.1` synchronizes internal plugin and index versions with
   the adapter release without changing Claude runtime semantics.
-- Release `1.1.5` hardens the rldyour-flow Stop post-task sync gate: direct
+- Release `1.1.6` hardens the rldyour-flow Stop post-task sync gate: direct
   installed-script invocation now resolves sibling plugin scripts from
   `__file__`, Stop state runs in local-only mode, fullrepo status can avoid
   network checks during hooks, and repeated `stop_hook_active=true` fingerprints
   emit a system message then allow Stop instead of looping.
-- Release `1.1.5` aligns active repository descriptions with the root
+- Release `1.1.6` aligns active repository descriptions with the root
   `config/repository-description-policy.json` template, standardizes the
   `workflow_dispatch` release input as `version`, creates or reuses numeric
   tags during manual release runs, publishes GitHub Releases through `gh
   release create/upload`, and refreshes generated inventory before release
   validation.
-- Release `1.1.5` adopts the Claude Code `2.1.154` baseline required for
+- Release `1.1.6` adopts the Claude Code `2.1.154` baseline required for
   Opus 4.8 targeting, keeps `ry-explore` on the Claude-native `opus[1m]`
   selector, and updates active model/runtime metadata from verified package
   and official model-config evidence.
-- Release `1.1.5` refreshes the local `github-mcp-server` host-binary pin to
+- Release `1.1.6` refreshes the local `github-mcp-server` host-binary pin to
   `1.1.0` in `config/mcp-runtime-versions.env`, matching the installed
   Homebrew binary and GitHub MCP Server release.
-- Release `1.1.5` pins Claude Code `2.1.156`, records the Opus 4.8
+- Release `1.1.6` pins Claude Code `2.1.156`, records the Opus 4.8
   thinking-block API hotfix in the surface matrix, and adds the
   `ry-start-workflow` boundary contract while keeping `/rldyour-flow:ry-start`
   as the stable plugin entrypoint.
-- Release `1.1.5` preserves the slash-command thin-wrapper invariant by
+- Release `1.1.6` preserves the slash-command thin-wrapper invariant by
   restoring the required `ry-start` skill delegation phrase in the
   workflow-aware `/rldyour-flow:ry-start` shim.
-- Release `1.1.5` was superseded by `1.1.5` after the GitHub release workflow
+- Release `1.1.6` was superseded by `1.1.5` after the GitHub release workflow
   correctly rejected stale README inventory.
 - Historical release evidence:
 - Commit `1d8c2d951c1131e043989d8c4f5d2afa4f777b21` bumps the product/config
@@ -79,7 +79,7 @@ release readiness, versioning, and artifact hygiene
   `rldyour-claudecode` name.
 
 ## Evidence
-- `commit:30610a53cdab6d0308e41358dc379a41e14e69ca`
+- `commit:0c671dfef74150237bce92332ce0218b2e23b9a3`
 - `path:VERSION`
 - `path:CHANGELOG.md`
 - `path:config/mcp-runtime-versions.env`

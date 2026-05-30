@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-30
 Last verified: 2026-05-30
-Last commit: 30610a53cdab6d0308e41358dc379a41e14e69ca chore(release): claude 1.1.5
+Last commit: 0c671dfef74150237bce92332ce0218b2e23b9a3 chore(release): claude 1.1.6
 Scope: MCP runtime transport and pin policy
 Area: MCP
 -->
@@ -22,7 +22,7 @@ MCP runtime transport and pin policy
 
 ## Last verified
 - date: 2026-05-30
-- commit: `30610a53cdab6d0308e41358dc379a41e14e69ca`
+- commit: `0c671dfef74150237bce92332ce0218b2e23b9a3`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
@@ -32,7 +32,7 @@ MCP runtime transport and pin policy
   `config/mcp-runtime-versions.env`.
 
 ## Evidence
-- `commit:30610a53cdab6d0308e41358dc379a41e14e69ca`
+- `commit:0c671dfef74150237bce92332ce0218b2e23b9a3`
 - `path:plugins/rldyour-mcps/.mcp.json`
 - `path:config/mcp-runtime-versions.env`
 - `path:README.md`

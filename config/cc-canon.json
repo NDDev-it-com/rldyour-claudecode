@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "_description": "Claude Code canonical terminology database for validate_docs_canon.py. Update when Claude Code introduces new settings, deprecates names, or changes version floors. Verified date is recorded so downstream readers can judge staleness.",
-  "verified_on": "2026-05-29",
-  "cc_version_at_verification": "2.1.156",
+  "verified_on": "2026-05-30",
+  "cc_version_at_verification": "2.1.158",
   "forbidden_tokens": {
     "skillListingMaxDescChars": "maxSkillDescriptionChars"
   },
