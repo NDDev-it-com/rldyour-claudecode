@@ -4,7 +4,7 @@
 # infrastructure scripts under scripts/ and plugins/*/scripts/, and to
 # give Pyright a stable settings anchor.
 name = "rldyour-claudecode"
-version = "1.1.5"
+version = "1.1.6"
 description = "rldyour AI CLI configuration for Claude Code: plugin marketplace, MCP/LSP, Serena memory, security review, browser/design workflows, and reviewer agents."
 requires-python = ">=3.12"
 license = "AGPL-3.0-or-later"

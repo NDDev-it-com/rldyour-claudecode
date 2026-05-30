@@ -1,6 +1,6 @@
 # ry-start Workflow Contract
 
-Last verified: 2026-05-29
+Last verified: 2026-05-30
 
 Source of truth:
 - Root lifecycle standard: `../../docs/standards/ry-start-lifecycle-standard.md`
@@ -9,7 +9,8 @@ Source of truth:
 - Fallback skill: `plugins/rldyour-flow/skills/ry-start/SKILL.md`
 
 Claude Code `2.1.154` introduced dynamic workflows and `/workflows`; this
-adapter pins `2.1.156` to include the Opus 4.8 thinking-block API hotfix. The
+adapter pins `2.1.158` to track the current npm `latest` while retaining the
+Opus 4.8 thinking-block API hotfix introduced in `2.1.156`. The
 stable owner entrypoint remains `/rldyour-flow:ry-start`.
 
 Native workflow policy:
