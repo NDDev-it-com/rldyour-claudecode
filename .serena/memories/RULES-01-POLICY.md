@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-30
 Last verified: 2026-05-30
-Last commit: c8fbb5bc07031d65625b5c32417fe464cd62f8c7 chore(release): claude 1.1.9 (source)
+Last commit: 1a9814acc066a3c693a8f2813455714b3edc83d4 fix: harden Russian-first Claude routing metadata
 Scope: quality-first engineering rules
 Area: RULES
 -->
@@ -22,14 +22,14 @@ quality-first engineering rules
 
 ## Last verified
 - date: 2026-05-30
-- commit: `c8fbb5bc07031d65625b5c32417fe464cd62f8c7`
+- commit: `1a9814acc066a3c693a8f2813455714b3edc83d4`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
 - Rules memories record non-negotiable quality, architecture, dependency, and verification discipline.
 
 ## Evidence
-- `commit:c8fbb5bc07031d65625b5c32417fe464cd62f8c7`
+- `commit:1a9814acc066a3c693a8f2813455714b3edc83d4`
 - `path:plugins/rldyour-rules`
 - `path:README.md`
 

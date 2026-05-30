@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-30
 Last verified: 2026-05-30
-Last commit: c8fbb5bc07031d65625b5c32417fe464cd62f8c7 chore(release): claude 1.1.9 (source)
+Last commit: 1a9814acc066a3c693a8f2813455714b3edc83d4 fix: harden Russian-first Claude routing metadata
 Scope: repository identity and source-of-truth map
 Area: CORE
 -->
@@ -24,14 +24,14 @@ repository identity and source-of-truth map
 
 ## Last verified
 - date: 2026-05-30
-- commit: `c8fbb5bc07031d65625b5c32417fe464cd62f8c7`
+- commit: `1a9814acc066a3c693a8f2813455714b3edc83d4`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
 - Core memories index repository identity, source-of-truth files, and the current validation map.
 
 ## Evidence
-- `commit:c8fbb5bc07031d65625b5c32417fe464cd62f8c7`
+- `commit:1a9814acc066a3c693a8f2813455714b3edc83d4`
 - `path:README.md`
 - `path:VERSION`
 - `path:CHANGELOG.md`

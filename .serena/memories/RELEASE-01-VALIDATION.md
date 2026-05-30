@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-30
 Last verified: 2026-05-30
-Last commit: c8fbb5bc07031d65625b5c32417fe464cd62f8c7 chore(release): claude 1.1.9 (source)
+Last commit: 1a9814acc066a3c693a8f2813455714b3edc83d4 fix: harden Russian-first Claude routing metadata
 Scope: release readiness, versioning, and artifact hygiene
 Area: RELEASE
 -->
@@ -24,20 +24,18 @@ release readiness, versioning, and artifact hygiene
 
 ## Last verified
 - date: 2026-05-30
-- commit: `c8fbb5bc07031d65625b5c32417fe464cd62f8c7`
+- commit: `1a9814acc066a3c693a8f2813455714b3edc83d4`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
 - Release memories record numeric versioning, tags, CI gates, and clean artifact hygiene.
-- Current product/config version is `1.1.9`; `VERSION`, `package.json`,
+- Current product/config version is `1.1.11`; `VERSION`, `package.json`,
   `pyproject.toml`, and `CHANGELOG.md` are the source of truth for the
   adapter-local SemVer state.
-- Release `1.1.9` enforces latest Claude Code surface adoption decisions,
-  keeps the Claude Code runtime baseline at `2.1.158`,
-  removes stale active Opus claims from release metadata, preserves the
-  workflow-aware `/rldyour-flow:ry-start` hybrid shim, and
-  publishes a non-draft GitHub Release whose tag resolves to the current
-  adapter head.
+- Release `1.1.11` keeps the Claude Code runtime baseline at `2.1.158`,
+  preserves the workflow-aware `/rldyour-flow:ry-start` hybrid shim, keeps
+  `ry-start` reviewer fanout explicit opt-in, and makes reviewer agent
+  descriptions Russian-first with compact English compatibility.
 
 ## Historical evidence
 - Release `1.1.9` adopted Claude Code `2.1.153` and the refreshed common MCP
@@ -81,7 +79,7 @@ release readiness, versioning, and artifact hygiene
   `rldyour-claudecode` name.
 
 ## Evidence
-- `commit:c8fbb5bc07031d65625b5c32417fe464cd62f8c7`
+- `commit:1a9814acc066a3c693a8f2813455714b3edc83d4`
 - `path:VERSION`
 - `path:CHANGELOG.md`
 - `path:config/mcp-runtime-versions.env`

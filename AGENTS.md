@@ -79,7 +79,7 @@ OpenAI Codex CLI reads `AGENTS.md` before starting work and runs commands listed
 Five orchestrated lifecycle skills plus one explicit sync command (Russian-leading descriptions) live in `rldyour-flow`:
 
 - `/rldyour-flow:ry-init` - read-only scope discovery and context pack.
-- `/rldyour-flow:ry-start` - full task lifecycle: init → research → plan → implement → quality gates → reviewers → post-task sync.
+- `/rldyour-flow:ry-start` - full task lifecycle: init → research → plan → implement → quality gates → post-task sync; reviewer fan-out only when explicitly requested.
 - `/rldyour-flow:ry-newp` - new project: skeptical intake → research → architecture docs → optional scaffold.
 - `/rldyour-flow:ry-review` - report-only deep review with 6 reviewer tracks.
 - `/rldyour-flow:ry-deploy` - deploy with local ↔ GitHub ↔ server sync, log checks, fix-forward.
@@ -175,7 +175,7 @@ Current dependency graph:
 
 ## Engineering Constraints
 
-- Russian user-facing language; English repository artifacts. Skill descriptions are Russian-leading with `EN triggers:` appended; budget set via `skillListingBudgetFraction: 0.04` in `./.claude/CLAUDE.md`.
+- Russian user-facing language; English repository artifacts. User-facing invocation metadata is Russian-leading with English compatibility: skill descriptions, command descriptions, and reviewer-agent descriptions. Skill-listing budget is set via `skillListingBudgetFraction: 0.04` in `./.claude/CLAUDE.md`.
 - Quality-first: no hacks, no fake checks, no swallowed errors. See `plugins/rldyour-rules/skills/quality-first-engineering/SKILL.md`.
 - Plugin boundary + dependency policy (SLSA L2 + SBOM + lockfile): `plugins/rldyour-rules/skills/architecture-boundaries/SKILL.md`, `plugins/rldyour-rules/references/dependency-policy.md`.
 - Conventional Commits for all changes; atomic commits per logical unit; ≤ 72-char subject.

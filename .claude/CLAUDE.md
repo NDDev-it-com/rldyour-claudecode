@@ -158,7 +158,7 @@ Capability smoke (added 2026-05-12): `scripts/smoke_mcp_capabilities.sh` perform
 
 ## Engineering Conventions
 
-- Russian user-facing communication; English repository artifacts. Skill `description` fields are Russian-leading (English keywords appended).
+- Russian user-facing communication; English repository artifacts. User-facing invocation metadata is Russian-leading with English compatibility: skill `description`, slash-command `description`, and reviewer-agent `description` fields.
 - Skill frontmatter: `name`, `description` (recommended). Optional: `when_to_use`, `argument-hint`, `allowed-tools`, `disable-model-invocation`, `user-invocable`, `model`, `effort`, `paths`, `context: fork`, `agent`.
 - Agent frontmatter: `name`, `description`, `model`, `effort`, `maxTurns`, `color`. Tool access: prefer explicit `tools:` allowlist (canonical Anthropic pattern, used by all 6 flow reviewer agents + ry-explore for future-proof read-only enforcement); `disallowedTools:` denylist is legacy and still works (used by `flow-memory-sync` which has narrow Serena memory MCP needs). Optional: `skills`, `memory`, `background`, `isolation`, `initialPrompt`.
 - `model: opus[1m]` is the canonical bracketed alias for the latest Opus 1M context on Claude Code. On Anthropic API it resolves to Opus 4.8 and requires CC **v2.1.154+**; `[1m]` availability remains account/plan-dependent.
