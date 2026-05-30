@@ -1,6 +1,6 @@
 ---
 name: flow-consistency-review
-description: "Orchestrated consistency-review subagent / RU: ревьюер консистентности для explicit /ry-start review или /ry-review. Reviews naming, style, imports, public API shape, and adherence to conventions from nearby code, AGENTS.md, .claude/CLAUDE.md, and Serena memories. Read-only - no file edits."
+description: "Ревьюер консистентности для explicit /ry-start review или /ry-review. EN: orchestrated read-only consistency-review subagent for naming, style, imports, public API shape, and local conventions."
 model: sonnet
 effort: high
 maxTurns: 90

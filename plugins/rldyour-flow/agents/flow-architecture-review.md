@@ -1,6 +1,6 @@
 ---
 name: flow-architecture-review
-description: "Orchestrated architecture-review subagent / RU: архитектурный ревьюер для explicit /ry-start review или /ry-review. Reviews boundaries, dependency direction, module shape, public API surface, and data flow against the detected architecture pattern. Read-only - no file edits. Self-contained prompt expected from the orchestrator."
+description: "Архитектурный ревьюер для explicit /ry-start review или /ry-review. EN: orchestrated read-only architecture-review subagent for boundaries, dependency direction, module shape, public API surface, and data flow."
 model: sonnet
 effort: high
 maxTurns: 90

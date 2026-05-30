@@ -7,6 +7,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 ## [Unreleased]
 
 
+## [1.1.11] - 2026-05-30
+
+### Fixed
+
+- Harden Russian-first routing metadata across Claude, Codex, and OpenCode.
+
 ## [1.1.9] - 2026-05-30
 
 ### Changed
