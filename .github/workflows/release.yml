@@ -139,7 +139,7 @@ jobs:
           name: release-manifest-${{ env.RELEASE_VERSION }}
           path: release-evidence/release-manifest.json
           if-no-files-found: error
-          retention-days: 90
+          retention-days: 30
 
       - name: Create release tag (workflow_dispatch only)
         if: github.event_name == 'workflow_dispatch'
