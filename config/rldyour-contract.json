@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "verified_on": "2026-05-21",
+  "verified_on": "2026-05-30",
   "owner_repo": "NDDev-it-com/rldyour-claudecode",
   "adapters": [
     "claude",
