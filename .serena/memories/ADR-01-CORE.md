@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-30
 Last verified: 2026-05-30
-Last commit: 1a9814acc066a3c693a8f2813455714b3edc83d4 fix: harden Russian-first Claude routing metadata
+Last commit: 6b22b412eb45fc7a351acccae50e24fb194530ce ci: harden public free workflow coverage
 Scope: architecture decisions and owner-approved policy changes
 Area: ADR
 -->
@@ -20,14 +20,14 @@ architecture decisions and owner-approved policy changes
 
 ## Last verified
 - date: 2026-05-30
-- commit: `1a9814acc066a3c693a8f2813455714b3edc83d4`
+- commit: `6b22b412eb45fc7a351acccae50e24fb194530ce`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
 - ADR memories record decisions and policy shape. Meaning changes require explicit owner approval.
 
 ## Evidence
-- `commit:1a9814acc066a3c693a8f2813455714b3edc83d4`
+- `commit:6b22b412eb45fc7a351acccae50e24fb194530ce`
 - `path:docs/adr`
 
 ## Known pitfalls

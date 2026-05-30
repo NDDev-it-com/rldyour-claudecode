@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-30
 Last verified: 2026-05-30
-Last commit: 1a9814acc066a3c693a8f2813455714b3edc83d4 fix: harden Russian-first Claude routing metadata
+Last commit: 6b22b412eb45fc7a351acccae50e24fb194530ce ci: harden public free workflow coverage
 Scope: deterministic hook lifecycle behavior
 Area: HOOKS
 -->
@@ -22,7 +22,7 @@ deterministic hook lifecycle behavior
 
 ## Last verified
 - date: 2026-05-30
-- commit: `1a9814acc066a3c693a8f2813455714b3edc83d4`
+- commit: `6b22b412eb45fc7a351acccae50e24fb194530ce`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
@@ -40,7 +40,7 @@ deterministic hook lifecycle behavior
   checks in the hot path and reports `network_checked=false`.
 
 ## Evidence
-- `commit:1a9814acc066a3c693a8f2813455714b3edc83d4`
+- `commit:6b22b412eb45fc7a351acccae50e24fb194530ce`
 - `path:plugins/rldyour-flow/hooks`
 - `path:plugins/rldyour-flow/scripts/flow_post_task_state.py`
 - `path:plugins/rldyour-flow/scripts/fullrepo_sync.py`

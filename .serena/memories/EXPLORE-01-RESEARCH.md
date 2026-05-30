@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-30
 Last verified: 2026-05-30
-Last commit: 1a9814acc066a3c693a8f2813455714b3edc83d4 fix: harden Russian-first Claude routing metadata
+Last commit: 6b22b412eb45fc7a351acccae50e24fb194530ce ci: harden public free workflow coverage
 Scope: source-backed research workflow
 Area: EXPLORE
 -->
@@ -22,14 +22,14 @@ source-backed research workflow
 
 ## Last verified
 - date: 2026-05-30
-- commit: `1a9814acc066a3c693a8f2813455714b3edc83d4`
+- commit: `6b22b412eb45fc7a351acccae50e24fb194530ce`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
 - Explore memories record when current source-backed research is required before implementation.
 
 ## Evidence
-- `commit:1a9814acc066a3c693a8f2813455714b3edc83d4`
+- `commit:6b22b412eb45fc7a351acccae50e24fb194530ce`
 - `path:plugins/rldyour-explore`
 - `path:README.md`
 

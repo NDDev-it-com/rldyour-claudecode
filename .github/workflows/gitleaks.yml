@@ -90,7 +90,7 @@ jobs:
           name: gitleaks-sarif-${{ github.run_id }}
           path: gitleaks-report.sarif
           if-no-files-found: ignore
-          retention-days: 30
+          retention-days: 14
 
       - name: Surface report on failure
         if: failure()
