@@ -32,8 +32,8 @@ release readiness, versioning, and artifact hygiene
 - Current product/config version is `1.1.6`; `VERSION`, `package.json`,
   `pyproject.toml`, and `CHANGELOG.md` are the source of truth for the
   adapter-local SemVer state.
-- Release `1.1.6` preserves the workflow-aware `/rldyour-flow:ry-start`
-  hybrid shim, refreshes release inventory after the `1.1.4` CI failure, and
+- Release `1.1.6` refreshes the Claude Code runtime baseline to `2.1.158`,
+  preserves the workflow-aware `/rldyour-flow:ry-start` hybrid shim, and
   publishes a non-draft GitHub Release whose tag resolves to the current
   adapter head.
 
@@ -59,14 +59,14 @@ release readiness, versioning, and artifact hygiene
 - Release `1.1.6` refreshes the local `github-mcp-server` host-binary pin to
   `1.1.0` in `config/mcp-runtime-versions.env`, matching the installed
   Homebrew binary and GitHub MCP Server release.
-- Release `1.1.6` pins Claude Code `2.1.156`, records the Opus 4.8
-  thinking-block API hotfix in the surface matrix, and adds the
+- Release `1.1.5` pinned Claude Code `2.1.156`, recorded the Opus 4.8
+  thinking-block API hotfix in the surface matrix, and added the
   `ry-start-workflow` boundary contract while keeping `/rldyour-flow:ry-start`
   as the stable plugin entrypoint.
-- Release `1.1.6` preserves the slash-command thin-wrapper invariant by
+- Release `1.1.5` preserves the slash-command thin-wrapper invariant by
   restoring the required `ry-start` skill delegation phrase in the
   workflow-aware `/rldyour-flow:ry-start` shim.
-- Release `1.1.6` was superseded by `1.1.5` after the GitHub release workflow
+- Release `1.1.4` was superseded by `1.1.5` after the GitHub release workflow
   correctly rejected stale README inventory.
 - Historical release evidence:
 - Commit `1d8c2d951c1131e043989d8c4f5d2afa4f777b21` bumps the product/config
