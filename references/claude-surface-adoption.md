@@ -1,6 +1,6 @@
 # Claude Code Surface Adoption
 
-Verified: 2026-05-29
+Verified: 2026-05-30
 
 Source of truth:
 - Runtime baseline: `references/claude-baseline.json`
@@ -25,7 +25,8 @@ Source of truth:
 | Streaming tool execution enabled by default | 2.1.154 | Adopt implicitly | No config migration is required; existing hooks and reviewer file-first output must continue to treat tool output as bounded evidence. | `scripts/validate_claude_surface_adoption.py` |
 | Piped `claude mcp list`/`get` pending-approval reporting | 2.1.154 | Adopt operationally | Keep MCP approval checks in installed-runtime diagnostics; do not auto-approve `.mcp.json` from static validators. | `scripts/validate_claude_surface_adoption.py` |
 | Plugin `defaultEnabled: false` metadata | 2.1.154 | Future | All first-party rldyour plugins remain enabled by the owner marketplace installer; add this only for optional plugins with explicit owner approval. | `scripts/validate_claude_surface_adoption.py` |
-| Opus 4.8 thinking-block API hotfix | 2.1.156 | Adopted | Pin package/runtime surfaces to Claude Code `2.1.156` and require installed-runtime smoke to report `claude --version` `2.1.156` or newer before declaring Opus 4.8 release readiness. | `scripts/validate_claude_surface_adoption.py` |
+| Opus 4.8 thinking-block API hotfix | 2.1.156 | Adopted | Preserve the hotfix introduced in `2.1.156`; pin package/runtime surfaces to Claude Code `2.1.158` and require installed-runtime smoke to report `claude --version` `2.1.158` or newer before declaring Opus 4.8 release readiness. | `scripts/validate_claude_surface_adoption.py` |
+| `.claude/skills` direct loading and plugin init workflow | 2.1.157 | Adopt operationally | Treat as compatible with the existing marketplace model; keep first-party release artifacts in marketplace plugins and use `.claude/skills` only for generated/runtime discovery bridges where the control plane owns them. | `scripts/validate_claude_surface_adoption.py` |
 
 ## AskUserQuestion And Owner Full-Auto
 
@@ -45,5 +46,5 @@ fabricates owner decisions.
 `scripts/validate_claude_surface_adoption.py` requires this file to contain an
 explicit decision for every runtime surface listed in
 `references/claude-baseline.json`, every Claude Code `2.1.154` workflow/model
-surface, and every pinned `2.1.156` Opus 4.8 hotfix surface that affects this
+surface, and every pinned `2.1.158` runtime surface that affects this
 adapter's plugin, skill, hook, or marketplace behavior.
