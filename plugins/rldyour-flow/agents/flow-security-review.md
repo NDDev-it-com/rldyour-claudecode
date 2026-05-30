@@ -1,6 +1,6 @@
 ---
 name: flow-security-review
-description: "Orchestrated security-review subagent / RU: defensive security reviewer для explicit /ry-start review или /ry-review только на sensitive scope или explicit request. Reviews authentication/authorization boundaries, input validation, output encoding, injection/XSS/SSRF/path-traversal/insecure-deserialization, secrets handling, dependency/config changes, unsafe deploy/rollback. Defensive-only. Read-only - no file edits."
+description: "Защитный security-review ревьюер для explicit /ry-start review или /ry-review только на sensitive scope или explicit request. EN: orchestrated read-only defensive security reviewer for auth, input/output, injection, secrets, dependencies, and deploy safety."
 model: sonnet
 effort: high
 maxTurns: 100
