@@ -37,6 +37,25 @@ REQUIRED_2_1_156_SURFACES = (
     "`2.1.156`",
 )
 
+REQUIRED_2_1_157_SURFACES = (
+    "`.claude/skills` direct loading",
+    "`claude plugin init`",
+    "`/plugin` autocomplete",
+    "`settings.json` `agent`",
+    "`EnterWorktree`",
+    "`OTEL_LOG_TOOL_DETAILS`",
+    "workflow keyword trigger",
+)
+
+REQUIRED_2_1_158_SURFACES = (
+    "`CLAUDE_CODE_ENABLE_AUTO_MODE=1`",
+    "Bedrock",
+    "Vertex",
+    "Foundry",
+    "Auto mode",
+    "Opus 4.8",
+)
+
 VALID_DECISIONS = ("Adopt", "Adopted", "Future", "Hybrid", "Intentionally unused")
 
 
@@ -78,6 +97,14 @@ def main() -> int:
         for marker in REQUIRED_2_1_156_SURFACES:
             if marker not in text:
                 errors.append(f"{ADOPTION.relative_to(ROOT)} missing 2.1.156 surface {marker}")
+    if parsed_version >= version_tuple("2.1.157"):
+        for marker in REQUIRED_2_1_157_SURFACES:
+            if marker not in text:
+                errors.append(f"{ADOPTION.relative_to(ROOT)} missing 2.1.157 surface {marker}")
+    if parsed_version >= version_tuple("2.1.158"):
+        for marker in REQUIRED_2_1_158_SURFACES:
+            if marker not in text:
+                errors.append(f"{ADOPTION.relative_to(ROOT)} missing 2.1.158 surface {marker}")
 
     for line in text.splitlines():
         if not line.startswith("| `") and not line.startswith("| `/"):
