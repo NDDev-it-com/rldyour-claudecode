@@ -1,6 +1,6 @@
 # GitHub Actions Workflows
 
-Eleven workflows split into three classes by trigger policy. The repository is
+Twelve workflows split into four classes by trigger policy. The repository is
 public, so standard GitHub-hosted runners do not consume the organization's
 paid private-repository Actions minutes. The split still keeps CI signal clear:
 required gates prove the repo is valid, while advisory gates surface upstream
@@ -21,6 +21,12 @@ These workflows must be green before any merge.
 | `actionlint.yml` | `actionlint` | Workflow YAML syntax + expression lint. PATH-filtered to `.github/workflows/**`. |
 
 Branch protection on `main` should require these (and only these) status checks.
+
+## Public supply-chain gate
+
+| Workflow | Trigger | Purpose |
+| --- | --- | --- |
+| `scorecard.yml` | push to `main`, weekly schedule, `workflow_dispatch`, `branch_protection_rule` | OpenSSF Scorecard SARIF for public supply-chain posture. |
 
 ## Advisory scheduled gates (cron + workflow_dispatch only)
 
@@ -59,6 +65,8 @@ To keep runs useful and lightweight:
 - `concurrency:` blocks cancel redundant runs on the same ref.
 - PATH-filtered triggers (`actionlint` on `.github/**`, `pytest` on
   `scripts/`/`tests/`) avoid running jobs for irrelevant changes.
+- Workflow artifacts set explicit short retention: diagnostics/SARIF keep 14
+  days, release evidence keeps 30 days.
 - Advisory workflows are scheduled off-peak (Sun/Mon early UTC) to spread
   API quota usage.
 

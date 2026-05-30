@@ -7,6 +7,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 ## [Unreleased]
 
 
+## [1.1.12] - 2026-05-30
+
+### Fixed
+
+- Harden public free CI policy with Scorecard and bounded artifact retention.
+
 ## [1.1.11] - 2026-05-30
 
 ### Fixed
