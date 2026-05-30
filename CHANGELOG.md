@@ -7,6 +7,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 ## [Unreleased]
 
 
+## [1.1.13] - 2026-05-30
+
+### Security
+
+- Harden public release supply-chain CI.
+
 ## [1.1.12] - 2026-05-30
 
 ### Fixed

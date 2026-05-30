@@ -1,11 +1,9 @@
 name: semgrep
 
-# Static analysis via Semgrep (OSS rules). Replaces CodeQL because the
-# repository does not have GitHub Advanced Security enabled (GHAS is a
-# paid add-on for private repos and the org/repo plan does not include it).
-# Semgrep runs as a CLI without requiring SARIF upload to the Security tab
-# (which itself requires GHAS for private repos), so findings show up in
-# the job log + summary and CI fails on any non-INFO finding.
+# Static analysis via Semgrep (OSS rules). This is defense-in-depth alongside
+# the public-free CodeQL/code-scanning workflow, not a replacement for CodeQL.
+# Findings show up in the job log + summary and CI fails on any non-INFO
+# finding.
 #
 # Semgrep version pinned to 1.164.0 (matches plugins/rldyour-mcps/.mcp.json
 # Semgrep MCP server pin and config/mcp-runtime-versions.env). Bumping the
