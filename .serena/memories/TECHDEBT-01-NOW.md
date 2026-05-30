@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-30
 Last verified: 2026-05-30
-Last commit: 65095d0dea64d267500877189faf22c7850ba2c2 chore(release): claude 1.1.8
+Last commit: c8fbb5bc07031d65625b5c32417fe464cd62f8c7 chore(release): claude 1.1.9 (source)
 Scope: verified current technical debt
 Area: TECHDEBT
 -->
@@ -22,14 +22,14 @@ verified current technical debt
 
 ## Last verified
 - date: 2026-05-30
-- commit: `65095d0dea64d267500877189faf22c7850ba2c2`
+- commit: `c8fbb5bc07031d65625b5c32417fe464cd62f8c7`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
 - Technical debt memories record verified open debt only when it has code/config evidence.
 
 ## Evidence
-- `commit:65095d0dea64d267500877189faf22c7850ba2c2`
+- `commit:c8fbb5bc07031d65625b5c32417fe464cd62f8c7`
 - `path:README.md`
 - `path:CHANGELOG.md`
 

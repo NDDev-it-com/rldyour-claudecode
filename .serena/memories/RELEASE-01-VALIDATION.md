@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-05-30
 Last verified: 2026-05-30
-Last commit: 65095d0dea64d267500877189faf22c7850ba2c2 chore(release): claude 1.1.8
+Last commit: c8fbb5bc07031d65625b5c32417fe464cd62f8c7 chore(release): claude 1.1.9 (source)
 Scope: release readiness, versioning, and artifact hygiene
 Area: RELEASE
 -->
@@ -24,15 +24,15 @@ release readiness, versioning, and artifact hygiene
 
 ## Last verified
 - date: 2026-05-30
-- commit: `65095d0dea64d267500877189faf22c7850ba2c2`
+- commit: `c8fbb5bc07031d65625b5c32417fe464cd62f8c7`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
 - Release memories record numeric versioning, tags, CI gates, and clean artifact hygiene.
-- Current product/config version is `1.1.8`; `VERSION`, `package.json`,
+- Current product/config version is `1.1.9`; `VERSION`, `package.json`,
   `pyproject.toml`, and `CHANGELOG.md` are the source of truth for the
   adapter-local SemVer state.
-- Release `1.1.8` enforces latest Claude Code surface adoption decisions,
+- Release `1.1.9` enforces latest Claude Code surface adoption decisions,
   keeps the Claude Code runtime baseline at `2.1.158`,
   removes stale active Opus claims from release metadata, preserves the
   workflow-aware `/rldyour-flow:ry-start` hybrid shim, and
@@ -40,35 +40,35 @@ release readiness, versioning, and artifact hygiene
   adapter head.
 
 ## Historical evidence
-- Release `1.1.6` adopted Claude Code `2.1.153` and the refreshed common MCP
+- Release `1.1.9` adopted Claude Code `2.1.153` and the refreshed common MCP
   policy; release `1.0.1` synchronizes internal plugin and index versions with
   the adapter release without changing Claude runtime semantics.
-- Release `1.1.6` hardens the rldyour-flow Stop post-task sync gate: direct
+- Release `1.1.9` hardens the rldyour-flow Stop post-task sync gate: direct
   installed-script invocation now resolves sibling plugin scripts from
   `__file__`, Stop state runs in local-only mode, fullrepo status can avoid
   network checks during hooks, and repeated `stop_hook_active=true` fingerprints
   emit a system message then allow Stop instead of looping.
-- Release `1.1.6` aligns active repository descriptions with the root
+- Release `1.1.9` aligns active repository descriptions with the root
   `config/repository-description-policy.json` template, standardizes the
   `workflow_dispatch` release input as `version`, creates or reuses numeric
   tags during manual release runs, publishes GitHub Releases through `gh
   release create/upload`, and refreshes generated inventory before release
   validation.
-- Release `1.1.6` adopts the Claude Code `2.1.154` baseline required for
+- Release `1.1.9` adopts the Claude Code `2.1.154` baseline required for
   Opus 4.8 targeting, keeps `ry-explore` on the Claude-native `opus[1m]`
   selector, and updates active model/runtime metadata from verified package
   and official model-config evidence.
-- Release `1.1.6` refreshes the local `github-mcp-server` host-binary pin to
+- Release `1.1.9` refreshes the local `github-mcp-server` host-binary pin to
   `1.1.0` in `config/mcp-runtime-versions.env`, matching the installed
   Homebrew binary and GitHub MCP Server release.
-- Release `1.1.6` pinned Claude Code `2.1.156`, recorded the Opus 4.8
+- Release `1.1.9` pinned Claude Code `2.1.156`, recorded the Opus 4.8
   thinking-block API hotfix in the surface matrix, and added the
   `ry-start-workflow` boundary contract while keeping `/rldyour-flow:ry-start`
   as the stable plugin entrypoint.
-- Release `1.1.6` preserves the slash-command thin-wrapper invariant by
+- Release `1.1.9` preserves the slash-command thin-wrapper invariant by
   restoring the required `ry-start` skill delegation phrase in the
   workflow-aware `/rldyour-flow:ry-start` shim.
-- Release `1.1.6` was superseded by `1.1.5` after the GitHub release workflow
+- Release `1.1.9` was superseded by `1.1.5` after the GitHub release workflow
   correctly rejected stale README inventory.
 - Historical release evidence:
 - Commit `1d8c2d951c1131e043989d8c4f5d2afa4f777b21` bumps the product/config
@@ -81,7 +81,7 @@ release readiness, versioning, and artifact hygiene
   `rldyour-claudecode` name.
 
 ## Evidence
-- `commit:65095d0dea64d267500877189faf22c7850ba2c2`
+- `commit:c8fbb5bc07031d65625b5c32417fe464cd62f8c7`
 - `path:VERSION`
 - `path:CHANGELOG.md`
 - `path:config/mcp-runtime-versions.env`
