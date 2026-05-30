@@ -11,7 +11,7 @@
       "name": "rldyour-mcps",
       "source": "./plugins/rldyour-mcps",
       "description": "Транспортный слой MCP - 13 серверов с зафиксированными версиями: Serena, Sequential Thinking, Playwright, Chrome DevTools, Context7, DeepWiki, Grep, Semgrep, shadcn, Dart/Flutter, Figma, OpenAI Docs, GitHub.",
-      "version": "1.1.12",
+      "version": "1.1.13",
       "author": {
         "name": "Danil Silantyev (github:rldyourmnd), CEO NDDev"
       },
@@ -27,7 +27,7 @@
       "name": "rldyour-explore",
       "source": "./plugins/rldyour-explore",
       "description": "Скиллы технического и веб-исследования + ry-explore субагент глубокого анализа (Opus 4.8 1M via opus[1m], max effort) через Context7/DeepWiki/Grep MCP. /ry-explore slash command included.",
-      "version": "1.1.12",
+      "version": "1.1.13",
       "author": {
         "name": "Danil Silantyev (github:rldyourmnd), CEO NDDev"
       },
@@ -47,7 +47,7 @@
       "name": "rldyour-serena-mcp",
       "source": "./plugins/rldyour-serena-mcp",
       "description": "Семантический воркфлоу через Serena MCP + .serena memory sync markers. UserPromptSubmit/PreToolUse/PostToolUse hooks only; Stop orchestration belongs to rldyour-flow.",
-      "version": "1.1.12",
+      "version": "1.1.13",
       "author": {
         "name": "Danil Silantyev (github:rldyourmnd), CEO NDDev"
       },
@@ -67,7 +67,7 @@
       "name": "rldyour-security",
       "source": "./plugins/rldyour-security",
       "description": "Безопасность по OWASP Top 10 2025 при реализации + защитный Mythos-style security review через /ry-sec-review slash command.",
-      "version": "1.1.12",
+      "version": "1.1.13",
       "author": {
         "name": "Danil Silantyev (github:rldyourmnd), CEO NDDev"
       },
@@ -86,7 +86,7 @@
       "name": "rldyour-browser",
       "source": "./plugins/rldyour-browser",
       "description": "Браузерные воркфлоу через Playwright и Chrome DevTools MCP - валидация UI/pixel-perfect/e2e, дебаг console/network/perf, маршрутизация. Skills-only - MCP transport from rldyour-mcps. Browser workflows.",
-      "version": "1.1.12",
+      "version": "1.1.13",
       "author": {
         "name": "Danil Silantyev (github:rldyourmnd), CEO NDDev"
       },
@@ -106,7 +106,7 @@
       "name": "rldyour-design",
       "source": "./plugins/rldyour-design",
       "description": "Сквозной дизайн-воркфлоу: Figma → код → токены → FSD → shadcn/ui → ReactBits → browser-валидация. 5 скиллов + /ry-design. Skills-only - MCP transport from rldyour-mcps.",
-      "version": "1.1.12",
+      "version": "1.1.13",
       "author": {
         "name": "Danil Silantyev (github:rldyourmnd), CEO NDDev"
       },
@@ -128,7 +128,7 @@
       "name": "rldyour-lsps",
       "source": "./plugins/rldyour-lsps",
       "description": "LSP-воркфлоу: маршрутизация, health-check, brew-first установка, Serena LSP integration. 4 skills + 2 scripts + 3 references. Покрывает Python/Rust/Dart/TS/Go/C++/Qt/YAML/Docker/HTML/CSS/Shell/JSON/TOML/Markdown.",
-      "version": "1.1.12",
+      "version": "1.1.13",
       "author": {
         "name": "Danil Silantyev (github:rldyourmnd), CEO NDDev"
       },
@@ -150,7 +150,7 @@
       "name": "rldyour-flow",
       "source": "./plugins/rldyour-flow",
       "description": "Автономный SDLC-воркфлоу: ry-init/start/newp/review/deploy/sync + 6 reviewer subagents + post-task-sync + instruction-docs-sync. Хуки SessionStart/PreToolUse/PostToolUse/Stop. Fullrepo branch.",
-      "version": "1.1.12",
+      "version": "1.1.13",
       "author": {
         "name": "Danil Silantyev (github:rldyourmnd), CEO NDDev"
       },
@@ -173,7 +173,7 @@
       "name": "rldyour-rules",
       "source": "./plugins/rldyour-rules",
       "description": "Quality-first инженерные правила: clean architecture (FSD/VSA/Hexagonal), implementation discipline, dependency policy + supply chain (SLSA L2), verification gates (pyright/ruff/ESLint v9), AGENTS.md/.claude/CLAUDE.md/MADR 4.0.0, /ry-rules-review.",
-      "version": "1.1.12",
+      "version": "1.1.13",
       "author": {
         "name": "Danil Silantyev (github:rldyourmnd), CEO NDDev"
       },
