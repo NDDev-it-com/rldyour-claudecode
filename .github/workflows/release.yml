@@ -4,7 +4,8 @@ name: release
 # Claude plugin-scoped tags are historical implementation tags only; the
 # primary public GitHub Release tag must equal root VERSION exactly.
 # This workflow validates release state and creates the GitHub Release with
-# generated notes + release-manifest.json + release-evidence.tgz.
+# generated notes, release-manifest.json, SPDX SBOM, SHA256SUMS, release
+# evidence bundle, and GitHub artifact attestations.
 #
 # SHA-pinned actions per OWASP A03:2025. Refresh via scripts/refresh_actions_pins.sh.
 
@@ -32,6 +33,8 @@ jobs:
     timeout-minutes: 15
     permissions:
       contents: write  # gh release create
+      id-token: write
+      attestations: write
     steps:
       - name: Harden runner (egress block + explicit allowlist)
         uses: step-security/harden-runner@9af89fc71515a100421586dfdb3dc9c984fbf411  # v2.19.4
@@ -48,6 +51,12 @@ jobs:
             nodejs.org:443
             files.pythonhosted.org:443
             pypi.org:443
+            fulcio.sigstore.dev:443
+            oauth2.sigstore.dev:443
+            rekor.sigstore.dev:443
+            sigstore-tuf-root.storage.googleapis.com:443
+            timestamp.sigstore.dev:443
+            tuf-repo-cdn.sigstore.dev:443
 
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
@@ -124,22 +133,96 @@ jobs:
           fi
           echo "RELEASE_VERSION=$RELEASE_VERSION" >> "$GITHUB_ENV"
 
-      - name: Generate release manifest
+      - name: Generate release manifest, SBOM, and checksums
         run: |
+          set -euo pipefail
           mkdir -p release-evidence
           python3 scripts/release_manifest.py > release-evidence/release-manifest.json
           cp CHANGELOG.md release-evidence/CHANGELOG.md
           cp VERSION release-evidence/VERSION
           cp -r docs release-evidence/docs
+          python3 - <<'PY' > release-evidence/sbom.spdx.json
+          import datetime as dt
+          import json
+
+          package = json.load(open("package.json", encoding="utf-8"))
+          version = open("VERSION", encoding="utf-8").read().strip()
+          dependencies = package.get("dependencies", {}) | package.get("devDependencies", {})
+          packages = [
+              {
+                  "name": package["name"],
+                  "SPDXID": "SPDXRef-Package-rldyour-claudecode",
+                  "versionInfo": version,
+                  "downloadLocation": "NOASSERTION",
+                  "filesAnalyzed": False,
+                  "licenseConcluded": package.get("license", "NOASSERTION"),
+                  "licenseDeclared": package.get("license", "NOASSERTION"),
+                  "copyrightText": "NOASSERTION",
+              }
+          ]
+          for index, (name, dep_version) in enumerate(sorted(dependencies.items()), start=1):
+              packages.append(
+                  {
+                      "name": name,
+                      "SPDXID": f"SPDXRef-Package-Dependency-{index}",
+                      "versionInfo": dep_version,
+                      "downloadLocation": "NOASSERTION",
+                      "filesAnalyzed": False,
+                      "licenseConcluded": "NOASSERTION",
+                      "licenseDeclared": "NOASSERTION",
+                      "copyrightText": "NOASSERTION",
+                  }
+              )
+          document = {
+              "spdxVersion": "SPDX-2.3",
+              "dataLicense": "CC0-1.0",
+              "SPDXID": "SPDXRef-DOCUMENT",
+              "name": f"rldyour-claudecode-{version}",
+              "documentNamespace": f"https://github.com/NDDev-it-com/rldyour-claudecode/releases/download/{version}/sbom.spdx.json",
+              "creationInfo": {
+                  "created": dt.datetime.now(dt.UTC).replace(microsecond=0).isoformat().replace("+00:00", "Z"),
+                  "creators": ["Tool: rldyour-claudecode-release-workflow"],
+              },
+              "packages": packages,
+              "relationships": [
+                  {
+                      "spdxElementId": "SPDXRef-DOCUMENT",
+                      "relationshipType": "DESCRIBES",
+                      "relatedSpdxElement": "SPDXRef-Package-rldyour-claudecode",
+                  }
+              ],
+          }
+          json.dump(document, open("/dev/stdout", "w", encoding="utf-8"), indent=2)
+          print()
+          PY
           tar -czf release-evidence.tgz release-evidence/
+          sha256sum \
+            release-evidence/release-manifest.json \
+            release-evidence/sbom.spdx.json \
+            release-evidence.tgz \
+            > SHA256SUMS
 
       - name: Upload release manifest artifact
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
         with:
           name: release-manifest-${{ env.RELEASE_VERSION }}
-          path: release-evidence/release-manifest.json
+          path: |
+            release-evidence/release-manifest.json
+            release-evidence/sbom.spdx.json
+            release-evidence.tgz
+            SHA256SUMS
           if-no-files-found: error
           retention-days: 30
+
+      - name: Attest release evidence bundle
+        uses: actions/attest@59d89421af93a897026c735860bf21b6eb4f7b26  # v4.1.0
+        with:
+          subject-path: release-evidence.tgz
+
+      - name: Attest generated SBOM
+        uses: actions/attest@59d89421af93a897026c735860bf21b6eb4f7b26  # v4.1.0
+        with:
+          subject-path: release-evidence/sbom.spdx.json
 
       - name: Create release tag (workflow_dispatch only)
         if: github.event_name == 'workflow_dispatch'
@@ -160,7 +243,9 @@ jobs:
           if gh release view "${RELEASE_VERSION}" >/dev/null 2>&1; then
             gh release upload "${RELEASE_VERSION}" \
               release-evidence/release-manifest.json \
+              release-evidence/sbom.spdx.json \
               release-evidence.tgz \
+              SHA256SUMS \
               --clobber
           else
             gh release create "${RELEASE_VERSION}" \
@@ -168,5 +253,7 @@ jobs:
               --verify-tag \
               --title "${RELEASE_VERSION}" \
               release-evidence/release-manifest.json \
-              release-evidence.tgz
+              release-evidence/sbom.spdx.json \
+              release-evidence.tgz \
+              SHA256SUMS
           fi
