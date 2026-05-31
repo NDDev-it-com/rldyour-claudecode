@@ -20,7 +20,6 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
-      security-events: write
       id-token: write
       contents: read
       actions: read
@@ -33,19 +32,18 @@ jobs:
       - name: Run analysis
         uses: ossf/scorecard-action@4eaacf0543bb3f2c246792bd56e8cdeffafb205a # v2.4.3
         with:
-          results_file: results.sarif
-          results_format: sarif
+          # Scorecard is a project-health signal, not a CodeQL/code-scanning
+          # vulnerability source. Keep the check and artifact, but do not upload
+          # Scorecard SARIF into code scanning where policy findings become
+          # persistent security alerts.
+          results_file: results.json
+          results_format: json
           publish_results: true
 
-      - name: Upload Scorecard SARIF (workflow artifact)
+      - name: Upload Scorecard results (workflow artifact)
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
         with:
           name: scorecard-results
-          path: results.sarif
+          path: results.json
           retention-days: 14
-
-      - name: Upload Scorecard SARIF (code scanning)
-        uses: github/codeql-action/upload-sarif@7211b7c8077ea37d8641b6271f6a365a22a5fbfa  # v4.36.0
-        with:
-          sarif_file: results.sarif
