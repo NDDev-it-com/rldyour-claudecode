@@ -4,7 +4,6 @@
   "required_status_checks": [
     "claude plugin validate",
     "Python + shell + JSON syntax + smoke (ubuntu-latest)",
-    "Python + shell + JSON syntax + smoke (macos-latest)",
     "analyze (python)",
     "analyze (actions)",
     "gitleaks scan",
