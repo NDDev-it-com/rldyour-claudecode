@@ -7,11 +7,17 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 ## [Unreleased]
 
 
+## [1.1.15] - 2026-05-31
+
+### Changed
+
+- Correct public-free GitHub Actions runner coverage and CI policy.
+
 ## [1.1.14] - 2026-05-31
 
 ### Changed
 
-- Align public adapter CI with Ubuntu-only zero-paid-risk runner policy.
+- Align public adapter CI with the then-current standard-runner cost guardrail.
 
 ## [1.1.13] - 2026-05-30
 
@@ -337,10 +343,9 @@ is exposed as a first-class `/rldyour-flow:ry-sync` command.
 **Post-public-toggle stabilisation patch.** The repository visibility
 toggle to public surfaced CI configuration drift that did not show up
 on the private runner. This patch closes the 4 remaining reviewer-wave
-follow-ups, fixes 2 harden-runner egress allowlist gaps that broke CI
-on the first public push, and clarifies that GitHub Secret Scanning +
-Push Protection are intentionally disabled (paid-tier feature blocked
-by organization enterprise policy - not a future TODO).
+follow-ups and fixes 2 harden-runner egress allowlist gaps that broke CI
+on the first public push. Later public-adapter policy requires live
+GitHub-native secret scanning checks from the private root control plane.
 
 No behavior changes to plugins; no API changes; PATCH bump per
 Keep a Changelog.
@@ -360,13 +365,10 @@ Keep a Changelog.
   the egress block rejected the connection with `curl exit 7`. Closes
   the first-public-push regression.
 - **`docs/security/threat-model.md`** "Known acceptable risks" section
-  rewritten: the prior "Push protection: configurable for public repos"
-  wording incorrectly implied future enablement. GitHub Secret Scanning
-  and Push Protection are paid-tier features intentionally kept disabled
-  by organization enterprise policy. Workflow-layer scanners
-  (gitleaks weekly + push/PR, Semgrep `p/secrets`, CodeQL, local
-  pre-push guard) deliver equivalent secret-scan risk-class coverage
-  without the paid-feature unlock.
+  rewritten for the earlier private-repo posture. Later public-adapter policy
+  supersedes this with GitHub-native public secret scanning expectations plus
+  workflow-layer scanners (gitleaks weekly + push/PR, Semgrep `p/secrets`,
+  CodeQL, local pre-push guard).
 - **`docs/adr/0008-ci-baseline-without-paid-addons.md`** "Bad: no GHAS
   push protection" entry rewritten with the same accept-risk framing.
   Removed "Future option: add push protection" line (the org policy is
@@ -467,7 +469,7 @@ tokens, no API keys in any tracked file across the full history.
   expansion: same Ubuntu + macOS strategy. Catches bash 3.2 vs 5.x
   compatibility issues, sed -i / find / readlink / awk userland
   differences. Timeout raised 8 → 12 min. `validate-marketplace`
-  job (Claude CLI plugin validate) stays Ubuntu-only - no userland
+  job (Claude CLI plugin validate) stays Ubuntu-hosted - no userland
   divergence in `claude plugin validate` execution path.
 - **`plugins/rldyour-flow/scripts/flow_post_task_state.py`** +
   **`plugins/rldyour-flow/scripts/instruction_docs_state.py`** +
