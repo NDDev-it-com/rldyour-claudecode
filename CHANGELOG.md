@@ -7,6 +7,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 ## [Unreleased]
 
 
+## [1.1.17] - 2026-05-31
+
+### Changed
+
+- Refresh shared MCP runtime pins to current validated upstream versions.
+
 ## [1.1.16] - 2026-05-31
 
 ### Fixed
@@ -95,7 +101,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ### Changed
 
-- Refresh GitHub MCP Server host-binary pin to 1.1.0.
+- Refresh GitHub MCP Server host-binary pin to 1.1.2.
 
 ## [1.1.0] - 2026-05-29
 
@@ -153,7 +159,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 - Claude Code CLI baseline now tracks `2.1.153`, matching the current upstream
   stable package on the 2026-05-28 release-hardening sweep.
-- Shared MCP runtime pins now track `semgrep==1.164.0` and `shadcn@4.8.2`;
+- Shared MCP runtime pins now track `semgrep==1.164.0` and `shadcn@4.9.0`;
   the Semgrep CI container digest was refreshed in lockstep.
 
 ## [0.7.0] - 2026-05-27
