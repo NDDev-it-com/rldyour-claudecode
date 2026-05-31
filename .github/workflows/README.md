@@ -19,6 +19,7 @@ These workflows must be green before any merge.
 | `codeql.yml` | `analyze` | CodeQL semantic analysis for Python and GitHub Actions. |
 | `dependency-review.yml` | `dependency-review` | Pull-request dependency diff review, failing on moderate-or-higher advisories. |
 | `actionlint.yml` | `actionlint` | Workflow YAML syntax + expression lint. PATH-filtered to `.github/workflows/**`. |
+| `cross-platform.yml` | `smoke` | Lightweight metadata/path smoke on standard Ubuntu, Windows, and macOS public runners. |
 
 Branch protection on `main` should require these (and only these) status checks.
 
@@ -37,7 +38,7 @@ feature work.
 | --- | --- | --- |
 | `claude-cli-drift.yml` | Mon 06:17 UTC | Compare pinned Claude Code CLI against npm latest. |
 | `dependency-check.yml` | Mon 06:00 UTC | MCP runtime version drift + upstream probes (`probe_mcp_upstream.py`). Egress allowlist covers npm/PyPI/brew/Google Storage. |
-| `cross-platform.yml` | Sun 04:00 UTC | Advisory smoke tests for hook and validation harness portability on Ubuntu. |
+| `cross-platform.yml` | Sun 04:00 UTC | Required lightweight metadata/path smoke across standard public runner OS families. |
 
 Manual trigger: `gh workflow run claude-cli-drift.yml` (or via the GitHub UI).
 Treat all three as **advisory**: a failure is a signal to act, not a merge
@@ -52,14 +53,14 @@ blocker.
 ## Cost policy (public repository)
 
 Public repositories using standard GitHub-hosted runners are free under GitHub
-Actions billing. Keep this repository public and avoid larger/self-hosted
-runners to preserve the zero-paid-minutes adapter policy.
+Actions billing. Keep this repository public and avoid larger, self-hosted,
+runner-group, ARC, private organization, or paid-size runner labels.
 
 To keep runs useful and lightweight:
-- All default, required, scheduled, and release workflows use Ubuntu standard
-  runners only. Architecture F-3 remains preserved: the prior
-  `pull_request: types: [labeled]` trigger for `cross-platform.yml` was removed
-  in 0.5.1 because it created skipped-run noise on unrelated labels.
+- `cross-platform.yml` covers standard Ubuntu, Windows, and macOS public
+  runners with lightweight metadata/path smoke. Heavy validation and release
+  workflows stay Ubuntu-hosted when the underlying script is OS-independent or
+  the required runtime/toolchain is Linux-oriented.
 - `concurrency:` blocks cancel redundant runs on the same ref.
 - PATH-filtered triggers (`actionlint` on `.github/**`, `pytest` on
   `scripts/`/`tests/`) avoid running jobs for irrelevant changes.
