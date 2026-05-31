@@ -1,44 +1,35 @@
-# ADR-0010: macOS runner egress trust gap is an accepted upstream limitation
+# ADR-0010: Former macOS runner egress trust gap
 
-- **Status**: accepted
+- **Status**: superseded
 - **Date**: 2026-05-17
 - **Decision-Makers**: rldyourmnd
 - **Related**: [ADR-0008](./0008-ci-baseline-without-paid-addons.md) (CI security baseline without paid add-ons)
 
 ## Context and Problem Statement
 
-`.github/workflows/cross-platform.yml` runs a smoke matrix on
-`ubuntu-latest` AND `macos-latest` to verify that shell scripts behave
-consistently on GNU userland (Linux) and BSD userland (macOS) - `sed -i`,
-`find`, `date`, and `readlink` differ between the two and have surfaced
-real bugs in earlier waves.
+This ADR records the historical decision that allowed a scheduled/manual
+`macos-latest` smoke job for BSD-vs-GNU shell portability. The current owner
+policy supersedes that decision: public adapter CI/CD must use Ubuntu standard
+runners only for default, required, scheduled, and release workflows.
 
-Every other workflow in the repo uses `step-security/harden-runner` with
+Every default workflow in the repo uses `step-security/harden-runner` with
 `egress-policy: block` and an explicit `allowed-endpoints` list per OWASP
-A02:2025 Security Misconfiguration. On `cross-platform.yml`, the macOS job
-ships without that egress block because **`step-security/harden-runner`
-does not support macOS runners** (per the action's upstream documentation
-at `https://github.com/step-security/harden-runner`; macOS support has
-been open since 2022 and remains "not on our roadmap").
+A02:2025 Security Misconfiguration. The previous macOS job shipped without
+that egress block because `step-security/harden-runner` did not support that
+runner family.
 
 The reviewer wave 2026-05-17T1448Z flagged this as Security F-1
 (MEDIUM, confidence 75): macOS jobs lack an enforced network egress policy.
 
-Evidence: `.github/workflows/cross-platform.yml` lines 42-58 (Harden Runner
-step guarded by `if: runner.os == 'Linux'`); upstream limitation documented
-in `step-security/harden-runner` README "Supported Platforms" table.
+Current evidence: `.github/workflows/cross-platform.yml` now runs only on
+`ubuntu-latest` and applies `step-security/harden-runner` unconditionally.
 
 ## Decision Drivers
 
-- Cross-platform smoke coverage is a real correctness gain (BSD vs GNU
-  userland differences are observed bugs, not theoretical).
-- macOS-runner egress enforcement is not currently available from any
-  GitHub Actions ecosystem alternative we trust.
-- Cost: GitHub-hosted macOS runners are 10x Linux multiplier; the
-  matrix already runs only on schedule + workflow_dispatch.
-- Threat model: this is a **personal-marketplace** repository; the macOS
-  job runs read-only validators + smoke scripts that do not write to any
-  external sink. The hijack surface is small.
+- Owner policy now prioritizes a uniform zero-paid-risk public adapter CI
+  surface over hosted OS parity in GitHub Actions.
+- Platform-specific shell portability remains a local maintainer validation
+  concern rather than a public required/scheduled CI concern.
 
 ## Considered Options
 
@@ -65,7 +56,7 @@ of their own (runner registration tokens, persistent worker process,
 auto-update reliability). Operational cost is high for a personal
 marketplace. macOS host maintenance burden.
 
-### Option 3: Accept the gap with documented mitigations (chosen)
+### Option 3: Accept the gap with documented mitigations (historical)
 
 Keep the GitHub-hosted macOS job. Document the gap as a known trust
 boundary. Apply non-egress mitigations:
@@ -78,7 +69,7 @@ boundary. Apply non-egress mitigations:
 - Job has `timeout-minutes: 10` so a runaway runner is bounded.
 - All actions used by the job are SHA-pinned per OWASP A03:2025.
 
-### Option 4: Wait for upstream macOS support
+### Option 4: Wait for upstream runner-family support
 
 Keep status quo until `step-security/harden-runner` ships macOS.
 
@@ -87,30 +78,32 @@ Keep status quo until `step-security/harden-runner` ships macOS.
 **Cons**: indefinite wait. Upstream has not committed to macOS support
 since 2022.
 
+### Option 5: Remove the runner-family gap (current)
+
+Remove the non-Ubuntu runner from public adapter CI and keep default checks on
+Ubuntu standard runners.
+
+**Pros**: uniform egress hardening, no runner-family ambiguity, simpler branch
+protection.
+
+**Cons**: hosted BSD-userland regressions are no longer caught by GitHub
+Actions and must be checked locally when needed.
+
 ## Decision Outcome
 
-**Chosen: Option 3** - accept the gap with documented mitigations.
-
-Rationale: cross-platform smoke coverage delivers concrete value; the
-trust gap is bounded (read-only validators, no secret access, no PR
-trigger, 10-minute timeout); the alternative options either remove the
-coverage or take on a larger security surface.
+**Current choice: Option 5** - remove the runner-family gap.
 
 ## Consequences
 
-- macOS smoke runs without enforced egress allowlist. Documented in
-  `.github/workflows/README.md` and in this ADR.
-- If `step-security/harden-runner` ships macOS, revisit and adopt within
-  one release.
-- If a real macOS-runner compromise occurs, this ADR is the audit trail.
-- This ADR is referenced from `.serena/memories/TECHDEBT-01-NOW.md`
-  R6.macOS-egress entry for cross-tool discoverability.
+- All public adapter workflow jobs in this repository use Ubuntu standard
+  runner labels.
+- The former egress trust gap is closed by removing the affected hosted runner
+  family from CI.
+- Platform-specific checks can still be run locally by the owner when a change
+  touches shell portability.
 
 ## Confirmation
 
-- `grep -A2 "egress-policy" .github/workflows/cross-platform.yml`
-  shows the Linux-only conditional.
-- `grep "macos-latest" .github/workflows/*.yml` confirms macOS appears
-  only in `cross-platform.yml`.
-- `gh workflow view cross-platform.yml --json` shows triggers limited
-  to `schedule + workflow_dispatch` post-0.5.1.
+- `grep "macos-latest" .github/workflows/*.yml` returns no workflow hits.
+- `grep -A2 "egress-policy" .github/workflows/cross-platform.yml` shows the
+  default hardened Ubuntu job.

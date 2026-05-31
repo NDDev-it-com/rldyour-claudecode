@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/package.json",
   "name": "rldyour-claudecode",
-  "version": "1.1.13",
+  "version": "1.1.14",
   "private": true,
   "description": "rldyour AI CLI configuration for Claude Code: plugin marketplace, MCP/LSP, Serena memory, security review, browser/design workflows, and reviewer agents.",
   "license": "AGPL-3.0-or-later",
