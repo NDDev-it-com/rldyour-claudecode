@@ -1,7 +1,7 @@
 <!-- Memory Metadata
-Last updated: 2026-05-30
-Last verified: 2026-05-30
-Last commit: 7ea3f9ef22aa5c4d99931ae754c9e2dbc550a0e6 ci: harden public release supply chain
+Last updated: 2026-05-31
+Last verified: 2026-05-31
+Last commit: 78ca11cbb0d7f2c5f22419ceb318f4417c8e5225 docs: refresh release inventory
 Scope: repository identity and source-of-truth map
 Area: CORE
 -->
@@ -23,15 +23,15 @@ repository identity and source-of-truth map
 - `path:CHANGELOG.md`
 
 ## Last verified
-- date: 2026-05-30
-- commit: `7ea3f9ef22aa5c4d99931ae754c9e2dbc550a0e6`
+- date: 2026-05-31
+- commit: `78ca11cbb0d7f2c5f22419ceb318f4417c8e5225`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
 - Core memories index repository identity, source-of-truth files, and the current validation map.
 
 ## Evidence
-- `commit:7ea3f9ef22aa5c4d99931ae754c9e2dbc550a0e6`
+- `commit:78ca11cbb0d7f2c5f22419ceb318f4417c8e5225`
 - `path:README.md`
 - `path:VERSION`
 - `path:CHANGELOG.md`

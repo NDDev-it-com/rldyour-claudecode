@@ -37,7 +37,7 @@ feature work.
 | --- | --- | --- |
 | `claude-cli-drift.yml` | Mon 06:17 UTC | Compare pinned Claude Code CLI against npm latest. |
 | `dependency-check.yml` | Mon 06:00 UTC | MCP runtime version drift + upstream probes (`probe_mcp_upstream.py`). Egress allowlist covers npm/PyPI/brew/Google Storage. |
-| `cross-platform.yml` | Sun 04:00 UTC | Smoke tests on Linux **and** macOS (BSD vs GNU userland surface). |
+| `cross-platform.yml` | Sun 04:00 UTC | Advisory smoke tests for hook and validation harness portability on Ubuntu. |
 
 Manual trigger: `gh workflow run claude-cli-drift.yml` (or via the GitHub UI).
 Treat all three as **advisory**: a failure is a signal to act, not a merge
@@ -56,12 +56,10 @@ Actions billing. Keep this repository public and avoid larger/self-hosted
 runners to preserve the zero-paid-minutes adapter policy.
 
 To keep runs useful and lightweight:
-- macOS runs only in `cross-platform.yml`, triggered by the Sunday schedule or
-  explicit `gh workflow run cross-platform.yml`. The default PR experience uses
-  Ubuntu only. (Architecture F-3 closure: the prior `pull_request:
-  types: [labeled]` trigger was removed in 0.5.1 because it created skipped-run
-  noise on every unrelated label add; manual operator gestures remain available
-  via `gh workflow run`.)
+- All default, required, scheduled, and release workflows use Ubuntu standard
+  runners only. Architecture F-3 remains preserved: the prior
+  `pull_request: types: [labeled]` trigger for `cross-platform.yml` was removed
+  in 0.5.1 because it created skipped-run noise on unrelated labels.
 - `concurrency:` blocks cancel redundant runs on the same ref.
 - PATH-filtered triggers (`actionlint` on `.github/**`, `pytest` on
   `scripts/`/`tests/`) avoid running jobs for irrelevant changes.
@@ -79,8 +77,7 @@ private-repository minutes and storage are billed to the repository owner.
 - Per-job `permissions: contents: read` (write where strictly necessary, e.g. release).
 - All third-party actions pinned by SHA, not by tag, per OWASP A03:2025.
 - `step-security/harden-runner` with `egress-policy: block` and an explicit
-  allowed-endpoints list on every Linux job. macOS skips harden-runner because
-  the action does not support macOS runners.
+  allowed-endpoints list on every default adapter job.
 - `concurrency: { group, cancel-in-progress: true }` on every workflow.
 
 ## Manual operator gestures

@@ -1,7 +1,7 @@
 <!-- Memory Metadata
-Last updated: 2026-05-30
-Last verified: 2026-05-30
-Last commit: 7ea3f9ef22aa5c4d99931ae754c9e2dbc550a0e6 ci: harden public release supply chain
+Last updated: 2026-05-31
+Last verified: 2026-05-31
+Last commit: 78ca11cbb0d7f2c5f22419ceb318f4417c8e5225 docs: refresh release inventory
 Scope: instruction docs and durable operator documentation
 Area: DOCS
 -->
@@ -23,8 +23,8 @@ instruction docs and durable operator documentation
 - `path:README.md`
 
 ## Last verified
-- date: 2026-05-30
-- commit: `7ea3f9ef22aa5c4d99931ae754c9e2dbc550a0e6`
+- date: 2026-05-31
+- commit: `78ca11cbb0d7f2c5f22419ceb318f4417c8e5225`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
@@ -33,7 +33,7 @@ instruction docs and durable operator documentation
 - `scripts/validate_instruction_sync.py` accepts both nested `claims` and top-level sync-contract keys, while still failing semantic drift for shared keys.
 
 ## Evidence
-- `commit:7ea3f9ef22aa5c4d99931ae754c9e2dbc550a0e6`
+- `commit:78ca11cbb0d7f2c5f22419ceb318f4417c8e5225`
 - `path:AGENTS.md`
 - `path:.claude/CLAUDE.md`
 - `path:README.md`

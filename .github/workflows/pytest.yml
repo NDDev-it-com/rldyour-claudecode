@@ -37,10 +37,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # Matrix coverage: Linux (canonical CI) + macOS (catches BSD vs GNU
-        # path/encoding/regex differences). Public repos get unlimited Actions
-        # minutes per GitHub billing, so macOS coverage is free here.
-        os: [ubuntu-latest, macos-latest]
+        # Owner zero-paid-risk CI policy: required/default public adapter
+        # tests run on Ubuntu standard runners only.
+        os: [ubuntu-latest]
         python-version: ['3.13']
     steps:
       - name: Harden runner (egress block + explicit allowlist)

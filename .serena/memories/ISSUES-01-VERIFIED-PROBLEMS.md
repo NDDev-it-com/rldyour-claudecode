@@ -1,7 +1,7 @@
 <!-- Memory Metadata
-Last updated: 2026-05-30
-Last verified: 2026-05-30
-Last commit: 7ea3f9ef22aa5c4d99931ae754c9e2dbc550a0e6 ci: harden public release supply chain
+Last updated: 2026-05-31
+Last verified: 2026-05-31
+Last commit: 78ca11cbb0d7f2c5f22419ceb318f4417c8e5225 docs: refresh release inventory
 Scope: GitHub issue and PR evidence policy
 Area: ISSUES
 -->
@@ -21,8 +21,8 @@ GitHub issue and PR evidence policy
 - `path:plugins/rldyour-flow/skills/ry-review`
 
 ## Last verified
-- date: 2026-05-30
-- commit: `7ea3f9ef22aa5c4d99931ae754c9e2dbc550a0e6`
+- date: 2026-05-31
+- commit: `78ca11cbb0d7f2c5f22419ceb318f4417c8e5225`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
@@ -30,7 +30,7 @@ GitHub issue and PR evidence policy
 - Status policy: issues and PRs are evidence only after verification against current code/config.
 
 ## Evidence
-- `commit:7ea3f9ef22aa5c4d99931ae754c9e2dbc550a0e6`
+- `commit:78ca11cbb0d7f2c5f22419ceb318f4417c8e5225`
 - `path:README.md`
 - `path:plugins/rldyour-flow/skills/ry-review`
 

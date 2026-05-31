@@ -1,14 +1,13 @@
 name: cross-platform
 
-# Cross-platform smoke tests on Linux + macOS. Verifies that shell scripts
-# (hooks + smoke + validation harness) behave consistently on GNU userland
-# (Ubuntu) and BSD userland (macOS), since `sed -i`, `find`, `date`,
-# `readlink` differ between the two.
+# Advisory smoke tests for shell hooks and validation harnesses. The owner
+# zero-paid-risk CI policy keeps public adapter workflows on Ubuntu standard
+# runners only; platform-specific checks are performed locally when needed.
 #
 # COST POLICY: this public repository uses standard GitHub-hosted runners, so
-# adapter CI does not consume paid private-repository Actions minutes. The
-# macOS matrix remains manual/scheduled to keep signal focused and queue noise
-# low. This workflow runs ONLY on:
+# adapter CI does not consume paid private-repository Actions minutes. This
+# workflow remains manual/scheduled to keep signal focused and queue noise low.
+# It runs ONLY on:
 #   - manual `workflow_dispatch` (operator request)
 #   - weekly schedule (Sunday 04:00 UTC, off-peak)
 #   - PR labelled `cross-platform` (opt-in only - not automatic on every PR)
@@ -50,10 +49,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest]
     steps:
-      - name: Harden runner (Ubuntu only - Harden Runner does not support macOS)
-        if: runner.os == 'Linux'
+      - name: Harden runner
         uses: step-security/harden-runner@9af89fc71515a100421586dfdb3dc9c984fbf411  # v2.19.4
         with:
           egress-policy: block
