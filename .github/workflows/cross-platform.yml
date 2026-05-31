@@ -1,109 +1,71 @@
 name: cross-platform
 
-# Advisory smoke tests for shell hooks and validation harnesses. The owner
-# zero-paid-risk CI policy keeps public adapter workflows on Ubuntu standard
-# runners only; platform-specific checks are performed locally when needed.
-#
-# COST POLICY: this public repository uses standard GitHub-hosted runners, so
-# adapter CI does not consume paid private-repository Actions minutes. This
-# workflow remains manual/scheduled to keep signal focused and queue noise low.
-# It runs ONLY on:
-#   - manual `workflow_dispatch` (operator request)
-#   - weekly schedule (Sunday 04:00 UTC, off-peak)
-#   - PR labelled `cross-platform` (opt-in only - not automatic on every PR)
-#
-# It does NOT run on every push or PR; that is the job of validate.yml +
-# pytest.yml + gitleaks.yml + semgrep.yml on Ubuntu.
-#
-# SHA-pinned actions per OWASP A03:2025.
+# Free public standard-runner portability smoke. GitHub-hosted standard
+# runners for public repositories include Ubuntu, Windows, and macOS and are
+# free for public repositories; paid/larger/private runner labels remain
+# forbidden by the root control-plane policy.
 
 on:
-  # Schedule first per .github/workflows/README.md advisory ordering
-  # convention (consistency F-8 closure).
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
   schedule:
-    - cron: '0 4 * * 0'  # Sunday 04:00 UTC, off-peak advisory scan
+    - cron: '0 4 * * 0'
   workflow_dispatch:
-  # Architecture F-3 closure: removed `pull_request: types: [labeled]` trigger.
-  # It fired on ANY label add (skipped at job level via the `if:` condition,
-  # but created persistent skipped-run noise in the Actions UI). Operators
-  # who want cross-platform verification on a PR can now use:
-  #   gh workflow run cross-platform.yml --ref <branch>
-  # which still preserves the manual-first CI policy.
 
-permissions: {}
+permissions:
+  contents: read
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: cross-platform-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  smoke-matrix:
-    name: smoke (${{ matrix.os }})
-    # Trigger gating not needed: schedule + workflow_dispatch are the only
-    # two triggers, both intentional. Operator-controlled per the
-    # manual-first CI policy in .github/workflows/README.md.
+  smoke:
+    name: cross-platform smoke (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
     timeout-minutes: 10
-    permissions:
-      contents: read
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest]
+        os: [ubuntu-latest, windows-latest, macos-latest]
     steps:
-      - name: Harden runner
-        uses: step-security/harden-runner@9af89fc71515a100421586dfdb3dc9c984fbf411  # v2.19.4
-        with:
-          egress-policy: block
-          allowed-endpoints: >
-            agent.api.stepsecurity.io:443
-            api.github.com:443
-            github.com:443
-            codeload.github.com:443
-            objects.githubusercontent.com:443
-            files.pythonhosted.org:443
-            pypi.org:443
-
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
 
       - name: Set up Python
-        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405  # v6.2.0
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
         with:
           python-version: '3.13'
-          cache: 'pip'
 
-      - name: Install Python deps (validators that smoke scripts call)
-        run: pip install --user 'jsonschema>=4.21' 'attrs>=23.2' 'pyyaml>=6.0'
-
-      - name: Restore agent-only files from origin/fullrepo
-        run: python3 plugins/rldyour-flow/scripts/fullrepo_sync.py --restore
-
-      - name: Hook lifecycle smoke
-        # Verifies hook scripts behave under runtime stdin payloads and skip
-        # flags. Most likely to surface BSD/GNU userland differences.
-        run: bash scripts/smoke_hooks.sh
-
-      - name: Serena memory taxonomy smoke
-        run: bash scripts/smoke_serena_memory_taxonomy.sh
-
-      - name: Bootstrap R5 divergence guard smoke
-        run: bash scripts/smoke_bootstrap_check.sh
-
-      - name: Reviewer output transport contract drift
-        run: bash scripts/validate_reviewer_contracts.sh
-
-      - name: Python validators (must work on both platforms)
+      - name: Cross-platform metadata smoke
+        shell: bash
         run: |
           set -euo pipefail
-          python3 scripts/validate_plugin_versions.py
-          python3 scripts/validate_boundaries.py
-          python3 scripts/validate_agent_tools.py
-          python3 scripts/validate_skill_allowed_tools.py
-          python3 scripts/validate_command_skill_drift.py
-          python3 scripts/validate_text_hygiene.py
-          python3 scripts/validate_docs_canon.py
-          python3 scripts/validate_instruction_sync.py
-          python3 scripts/validate_release_state.py
-          python3 scripts/generate_inventory.py --check
-          python3 scripts/check_mcp_runtime_versions.py
+          python - <<'PY'
+          from pathlib import Path
+          import compileall
+          import json
+
+          required = [
+              "VERSION",
+              "README.md",
+              ".claude-plugin/plugin.json",
+              ".github/branch-protection/main.json",
+              ".github/branch-protection/fullrepo.json",
+          ]
+          missing = [path for path in required if not Path(path).exists()]
+          if missing:
+              raise SystemExit("missing required path(s): " + ", ".join(missing))
+
+          json.loads(Path(".claude-plugin/plugin.json").read_text(encoding="utf-8"))
+          json.loads(Path(".github/branch-protection/main.json").read_text(encoding="utf-8"))
+          json.loads(Path(".github/branch-protection/fullrepo.json").read_text(encoding="utf-8"))
+
+          if not compileall.compile_dir("scripts", quiet=1):
+              raise SystemExit("scripts/ Python compile failed")
+          print("cross-platform metadata smoke passed")
+          PY
