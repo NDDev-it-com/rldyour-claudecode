@@ -7,6 +7,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 ## [Unreleased]
 
 
+## [1.1.18] - 2026-06-01
+
+### Security
+
+- Route Scorecard to JSON artifacts instead of code scanning alerts.
+
 ## [1.1.17] - 2026-05-31
 
 ### Changed
