@@ -53,7 +53,7 @@ jobs:
           required = [
               "VERSION",
               "README.md",
-              ".claude-plugin/plugin.json",
+              ".claude-plugin/marketplace.json",
               ".github/branch-protection/main.json",
               ".github/branch-protection/fullrepo.json",
           ]
@@ -61,7 +61,7 @@ jobs:
           if missing:
               raise SystemExit("missing required path(s): " + ", ".join(missing))
 
-          json.loads(Path(".claude-plugin/plugin.json").read_text(encoding="utf-8"))
+          json.loads(Path(".claude-plugin/marketplace.json").read_text(encoding="utf-8"))
           json.loads(Path(".github/branch-protection/main.json").read_text(encoding="utf-8"))
           json.loads(Path(".github/branch-protection/fullrepo.json").read_text(encoding="utf-8"))
 
