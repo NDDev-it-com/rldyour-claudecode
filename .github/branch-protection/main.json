@@ -7,16 +7,19 @@
     "analyze (python)",
     "analyze (actions)",
     "gitleaks scan",
-    "Semgrep OSS scan"
+    "Semgrep OSS scan",
+    "cross-platform smoke (ubuntu-latest)",
+    "cross-platform smoke (windows-latest)",
+    "cross-platform smoke (macos-latest)"
   ],
   "strict_required_status_checks": true,
   "allow_force_pushes": false,
   "allow_deletions": false,
   "require_linear_history": true,
   "required_pull_request_reviews": {
-    "required_approving_review_count": 0,
-    "dismiss_stale_reviews": false,
-    "require_code_owner_review": false
+    "required_approving_review_count": 1,
+    "dismiss_stale_reviews": true,
+    "require_code_owner_review": true
   },
   "enforce_admins": false,
   "notes": [

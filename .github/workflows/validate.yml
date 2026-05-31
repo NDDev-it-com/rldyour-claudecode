@@ -86,9 +86,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # Owner zero-paid-risk CI policy: required/default public adapter
-        # validation runs on Ubuntu standard runners only. Platform-specific
-        # smoke belongs outside required PR gates.
+        # Heavy validation remains Ubuntu-only; cross-platform.yml provides
+        # standard public Ubuntu/Windows/macOS smoke coverage.
         os: [ubuntu-latest]
     steps:
       - name: Harden runner (egress block + explicit allowlist)

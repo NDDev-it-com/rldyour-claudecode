@@ -37,8 +37,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # Owner zero-paid-risk CI policy: required/default public adapter
-        # tests run on Ubuntu standard runners only.
+        # Heavy pytest remains Ubuntu-only; cross-platform.yml provides
+        # standard public Ubuntu/Windows/macOS smoke coverage.
         os: [ubuntu-latest]
         python-version: ['3.13']
     steps:
