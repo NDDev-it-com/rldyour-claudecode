@@ -86,11 +86,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # Matrix coverage: Linux (canonical) + macOS (catches BSD vs GNU
-        # userland differences in sed -i, find, date, readlink, awk, bash
-        # 3.2 vs 5.x). Public repos have unlimited Actions minutes so
-        # macOS coverage on every PR is free.
-        os: [ubuntu-latest, macos-latest]
+        # Owner zero-paid-risk CI policy: required/default public adapter
+        # validation runs on Ubuntu standard runners only. Platform-specific
+        # smoke belongs outside required PR gates.
+        os: [ubuntu-latest]
     steps:
       - name: Harden runner (egress block + explicit allowlist)
         if: runner.os == 'Linux'  # harden-runner is Linux-only (per ADR-0010)

@@ -7,6 +7,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 ## [Unreleased]
 
 
+## [1.1.14] - 2026-05-31
+
+### Changed
+
+- Align public adapter CI with Ubuntu-only zero-paid-risk runner policy.
+
 ## [1.1.13] - 2026-05-30
 
 ### Security
