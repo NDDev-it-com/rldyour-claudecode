@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-31
-Last verified: 2026-05-31
+Last updated: 2026-06-01
+Last verified: 2026-06-01
 Last commit: 2594a00cf9b23c237e4008bbfe47925fa8528ea9 chore(release): claude 1.1.17 (other)
 Scope: GitHub Actions and local CI policy
 Area: CI
@@ -23,10 +23,18 @@ GitHub Actions and local CI policy
 ## Last verified
 - date: 2026-05-31
 - commit: `2594a00cf9b23c237e4008bbfe47925fa8528ea9`
-- checked by: Codex ry-start automated release and metadata sync
+- checked by: Codex ry-start docs/memory consistency audit
 
 ## Facts
 - CI memories record which checks prove repository integrity and which checks are intentionally lightweight.
+- Public adapter CI follows the root public/free policy: standard
+  GitHub-hosted Ubuntu, Windows, and macOS runner labels are allowed for
+  public repository smoke coverage, while paid/larger/private runner surfaces
+  are forbidden.
+- `cross-platform.yml` covers lightweight portability across
+  `ubuntu-latest`, `windows-latest`, and `macos-latest`; runtime-heavy Claude
+  and release checks remain on Ubuntu when the underlying validation is
+  OS-independent.
 
 ## Evidence
 - `commit:2594a00cf9b23c237e4008bbfe47925fa8528ea9`
