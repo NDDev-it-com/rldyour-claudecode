@@ -81,11 +81,12 @@ Cross-cutting:
   surface before tag push.
 - Bad: GHAS Dependabot security alerts not available; relying on
   Dependabot version-update PRs (free tier) for dependency drift.
-- Bad: no GitHub-native Secret Scanning / Push Protection on the repo
-  (organization enterprise policy intentionally keeps these paid-tier
-  features disabled). Mitigation: gitleaks workflow (full-history scan
-  on push, PR, and weekly schedule) + Semgrep `p/secrets` rule pack +
-  local pre-push guard (`plugins/rldyour-flow/scripts/local_git_ai_guard.sh`).
+- Historical private-repo limitation: GitHub-native secret scanning and push
+  protection were not treated as available during the original private-repo CI
+  design. Current public adapter policy supersedes this: GitHub Secret Scanning
+  is expected for public repositories, Push Protection is live-validated by the
+  root control plane, and the workflow layer keeps gitleaks full-history scans
+  plus Semgrep `p/secrets` as defense in depth.
 
 ## Confirmation
 
@@ -99,10 +100,9 @@ Cross-cutting:
 ## More Information
 
 - Related: ADR-0009 (release tag convention).
-- GitHub-native Secret Scanning + Push Protection: paid-tier add-on,
-  enterprise policy keeps them disabled. Workflow-layer secret scan
-  (gitleaks + Semgrep `p/secrets`) covers the same risk class without
-  the org-policy unlock.
+- Current public adapter secret posture: GitHub-native public-repository secret
+  scanning and push protection are required live settings, while gitleaks and
+  Semgrep secrets scanning remain workflow-layer defense in depth.
 
 ## Amendment 2026-05-18 (release 0.6.0): public repository unlocks CodeQL
 
@@ -129,3 +129,13 @@ Action taken in release 0.6.0:
 The original decision (no paid add-ons, no GHAS) still applies for
 contributors who fork this repository into a private repository -
 they will need to disable CodeQL or accept the GHAS billing surface.
+
+## Amendment 2026-05-31: public secret transition policy
+
+The public adapter release surface now treats GitHub-native secret scanning as
+available for public repositories and validates the live repository state from
+the private root control plane when an owner token is available. The owner's
+90-day post-private transition window is encoded as a local conservative
+monitoring control, not as a GitHub platform limitation. During that window the
+adapter keeps weekly full-history gitleaks coverage and the root policy tracks
+`public_since`, `monitor_until`, and live settings expectations.
