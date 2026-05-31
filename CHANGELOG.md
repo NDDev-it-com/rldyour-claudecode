@@ -7,6 +7,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 ## [Unreleased]
 
 
+## [1.1.16] - 2026-05-31
+
+### Fixed
+
+- Fix CI restore and Claude cross-platform smoke.
+
 ## [1.1.15] - 2026-05-31
 
 ### Changed
