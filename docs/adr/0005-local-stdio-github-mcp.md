@@ -47,7 +47,7 @@ Chosen option: **C**. `.mcp.json` registers:
 }
 ```
 
-The host binary is pinned via `GITHUB_MCP_SERVER_VERSION=1.1.0` in
+The host binary is pinned via `GITHUB_MCP_SERVER_VERSION=1.1.2` in
 `config/mcp-runtime-versions.env` and verified at runtime via
 `scripts/check_mcp_runtime_versions.py` (probes `github-mcp-server --version`
 and parses `Version:\s+(\S+)`).
