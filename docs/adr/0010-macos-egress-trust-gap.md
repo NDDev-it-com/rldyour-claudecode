@@ -1,4 +1,4 @@
-# ADR-0010: Former macOS runner egress trust gap
+# ADR-0010: macOS runner egress trust gap and current cross-platform smoke
 
 - **Status**: superseded
 - **Date**: 2026-05-17
@@ -7,10 +7,12 @@
 
 ## Context and Problem Statement
 
-This ADR records the historical decision that allowed a scheduled/manual
-`macos-latest` smoke job for BSD-vs-GNU shell portability. The current owner
-policy supersedes that decision: public adapter CI/CD must use Ubuntu standard
-runners only for default, required, scheduled, and release workflows.
+This ADR records the historical trust gap around hosted `macos-latest` jobs
+that existed before the current public-free CI model. The current owner policy
+supersedes the old removal-only decision: public adapter CI/CD may use standard
+public GitHub-hosted Ubuntu, Windows, and macOS runners, while larger,
+self-hosted, runner-group, ARC, private organization, and paid-size runner
+labels remain forbidden.
 
 Every default workflow in the repo uses `step-security/harden-runner` with
 `egress-policy: block` and an explicit `allowed-endpoints` list per OWASP
@@ -21,15 +23,16 @@ runner family.
 The reviewer wave 2026-05-17T1448Z flagged this as Security F-1
 (MEDIUM, confidence 75): macOS jobs lack an enforced network egress policy.
 
-Current evidence: `.github/workflows/cross-platform.yml` now runs only on
-`ubuntu-latest` and applies `step-security/harden-runner` unconditionally.
+Current evidence: `.github/workflows/cross-platform.yml` runs only lightweight
+metadata/path smoke on standard public runner labels. Heavy runtime/release
+jobs remain Ubuntu-hosted when the toolchain is OS-independent or Linux-only.
 
 ## Decision Drivers
 
-- Owner policy now prioritizes a uniform zero-paid-risk public adapter CI
-  surface over hosted OS parity in GitHub Actions.
-- Platform-specific shell portability remains a local maintainer validation
-  concern rather than a public required/scheduled CI concern.
+- Owner policy now prioritizes maximum free public GitHub Actions coverage
+  without paid/private runner labels.
+- Platform-specific path/archive/metadata portability is validated in public CI
+  through lightweight standard Ubuntu, Windows, and macOS smoke.
 
 ## Considered Options
 
@@ -78,32 +81,35 @@ Keep status quo until `step-security/harden-runner` ships macOS.
 **Cons**: indefinite wait. Upstream has not committed to macOS support
 since 2022.
 
-### Option 5: Remove the runner-family gap (current)
+### Option 5: Remove the hosted OS coverage gap with lightweight smoke (current)
 
-Remove the non-Ubuntu runner from public adapter CI and keep default checks on
-Ubuntu standard runners.
+Use standard public Ubuntu, Windows, and macOS runner labels only for a
+lightweight smoke job. Keep heavy runtime/release jobs on Ubuntu unless there
+is a concrete OS-specific validation need and a public-free implementation.
 
-**Pros**: uniform egress hardening, no runner-family ambiguity, simpler branch
-protection.
+**Pros**: free public OS coverage without paid/private runner labels; minimal
+macOS/Windows exposure because the job is read-only and metadata/path-focused.
 
-**Cons**: hosted BSD-userland regressions are no longer caught by GitHub
-Actions and must be checked locally when needed.
+**Cons**: hosted BSD/Windows regressions in heavy shell/runtime flows are still
+not fully exercised by GitHub Actions and must be checked locally when needed.
 
 ## Decision Outcome
 
-**Current choice: Option 5** - remove the runner-family gap.
+**Current choice: Option 5** - keep lightweight standard public OS smoke and
+forbid paid/private runner classes.
 
 ## Consequences
 
-- All public adapter workflow jobs in this repository use Ubuntu standard
-  runner labels.
-- The former egress trust gap is closed by removing the affected hosted runner
-  family from CI.
-- Platform-specific checks can still be run locally by the owner when a change
-  touches shell portability.
+- Public adapter workflows use only standard public GitHub-hosted runner labels.
+- `cross-platform.yml` covers Ubuntu, Windows, and macOS with read-only
+  metadata/path smoke.
+- Platform-specific heavy runtime checks can still be run locally by the owner
+  when a change touches shell/runtime portability.
 
 ## Confirmation
 
-- `grep "macos-latest" .github/workflows/*.yml` returns no workflow hits.
-- `grep -A2 "egress-policy" .github/workflows/cross-platform.yml` shows the
-  default hardened Ubuntu job.
+- `grep "macos-latest" .github/workflows/*.yml` returns only the lightweight
+  cross-platform smoke workflow.
+- Root `scripts/validate_public_ci_policy.py` allows standard public macOS and
+  Windows labels while rejecting larger, self-hosted, runner-group, ARC,
+  private organization, and paid-size labels.
