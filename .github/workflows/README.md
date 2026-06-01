@@ -27,7 +27,7 @@ Branch protection on `main` should require these (and only these) status checks.
 
 | Workflow | Trigger | Purpose |
 | --- | --- | --- |
-| `scorecard.yml` | push to `main`, weekly schedule, `workflow_dispatch`, `branch_protection_rule` | OpenSSF Scorecard SARIF for public supply-chain posture. |
+| `scorecard.yml` | push to `main`, weekly schedule, `workflow_dispatch`, `branch_protection_rule` | OpenSSF Scorecard JSON artifact/check-mode public supply-chain signal. |
 
 ## Advisory scheduled gates (cron + workflow_dispatch only)
 
