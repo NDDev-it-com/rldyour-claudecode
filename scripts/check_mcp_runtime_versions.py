@@ -35,7 +35,6 @@ SERVER_TO_ENV = {
     "playwright": ("PLAYWRIGHT_MCP_VERSION", "@playwright/mcp@"),
     "chrome-devtools": ("CHROME_DEVTOOLS_MCP_VERSION", "chrome-devtools-mcp@"),
     "context7": ("CONTEXT7_MCP_VERSION", "@upstash/context7-mcp@"),
-    "semgrep": ("SEMGREP_VERSION", "semgrep=="),
     "shadcn": ("SHADCN_VERSION", "shadcn@"),
 }
 
