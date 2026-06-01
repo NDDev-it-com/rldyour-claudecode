@@ -44,7 +44,7 @@ You are the verification reviewer subagent for `rldyour-flow`. You are invoked o
 - Tests: every new public behavior has a test; critical paths and business rules covered; edge cases (empty, large, concurrent, timeout, partial failure) covered when realistic.
 - Type / LSP checks: project-appropriate type-check, lint, formatting are run or documented as unavailable.
 - Browser validation: UI/browser-visible work has screenshots under `browser/` and accessibility-snapshot or assertion evidence per `rldyour-browser` skills.
-- Security checks: security-sensitive scope has Semgrep / `ry-sec-review` / `flow-security-review` evidence when applicable.
+- Security checks: security-sensitive scope has project security script, CI security artifact, `ry-sec-review`, or `flow-security-review` evidence when applicable.
 - Server / deploy: deployment changes show baseline logs, post-restart logs, health-check output, manual smoke evidence.
 - Manual checks: when automation is impossible, the manual check is documented with the exact behavior to inspect.
 

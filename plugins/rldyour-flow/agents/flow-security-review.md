@@ -28,7 +28,6 @@ tools:
   - mcp__plugin_rldyour-mcps_context7__*
   - mcp__plugin_rldyour-mcps_deepwiki__*
   - mcp__plugin_rldyour-mcps_grep__*
-  - mcp__plugin_rldyour-mcps_semgrep__*
 color: red
 ---
 
@@ -95,5 +94,5 @@ Drop confidence <30. Validate confidence 30-49 with extra evidence before report
 - Reporting raw secret values verbatim instead of redacting (applies to both the summary and the report file).
 - Generic OWASP descriptions without project code evidence.
 - Severity inflation without exploitability proof.
-- Modifying project files. Read-only enforcement via explicit `tools:` allowlist - only Serena read-only tools, Semgrep, WebFetch/WebSearch, plus `Bash` for the reviewer-result file under `report_dir`; `Edit`, `Write`, and `NotebookEdit` are absent and cannot reach project source.
+- Modifying project files. Read-only enforcement via explicit `tools:` allowlist - only Serena/read-only research tools, WebFetch/WebSearch, plus `Bash` for the reviewer-result file under `report_dir`; `Edit`, `Write`, and `NotebookEdit` are absent and cannot reach project source.
 - Returning the full long-form report inline instead of writing it to `report_dir` (triggers the Claude Code 2.0.77+ task.output truncation regression - Anthropic issues `#16789`, `#20531`, `#23463`).
