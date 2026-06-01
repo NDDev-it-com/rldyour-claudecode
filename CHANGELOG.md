@@ -7,6 +7,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 ## [Unreleased]
 
 
+## [1.1.21] - 2026-06-01
+
+### Changed
+
+- Remove the retired Semgrep MCP server from active adapter runtime, agent, and generated tool surfaces.
+
 ## [1.1.20] - 2026-06-01
 
 ### Fixed
