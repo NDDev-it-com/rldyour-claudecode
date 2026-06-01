@@ -84,7 +84,7 @@ BINARY_REQUIRED = {
 }
 
 # Servers slow to cold-start (uvx pulls ~80 packages on first run).
-UVX_SERVERS = {"serena", "semgrep"}
+UVX_SERVERS = {"serena"}
 
 # Servers that authenticate via a bearer header containing an ${ENV_VAR}
 # placeholder. If the var is empty after substitution we SKIP rather than FAIL;
