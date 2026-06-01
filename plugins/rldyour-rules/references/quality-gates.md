@@ -13,7 +13,7 @@ Run the checks that match the touched stack and risk:
 - Formatting checks when project-standard.
 - Generated artifact checks.
 - Migration checks.
-- Security checks (Semgrep MCP, project security scripts).
+- Security checks (project security scripts and CI security artifacts).
 - Browser checks for UI-visible work (Playwright + Chrome DevTools MCP).
 - Deploy checks for server changes.
 
