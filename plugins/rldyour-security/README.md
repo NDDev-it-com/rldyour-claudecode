@@ -19,4 +19,4 @@ The `flow-security-review` subagent in `rldyour-flow` is the orchestrated securi
 
 ## Dependencies
 
-`rldyour-mcps` (semgrep MCP server lives there).
+`rldyour-mcps` for shared research/code-intelligence transports; scanner evidence comes from project security scripts and CI artifacts.
