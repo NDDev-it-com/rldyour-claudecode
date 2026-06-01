@@ -20,7 +20,7 @@ Validation rules:
 Exit codes: 0 success, 1 on any validation error.
 
 Companion: TECHDEBT-01-NOW.md R4 documents the read-only-by-design invariant
-for context7, deepwiki, grep, semgrep MCP servers. This script is the
+for context7, deepwiki, and grep MCP servers. This script is the
 deterministic check that enforces it.
 """
 
@@ -67,7 +67,6 @@ KNOWN_BUILTIN_TOOLS: frozenset[str] = frozenset(
 #     Added 2026-05-17 closing security F-8 from review wave
 #     `2026-05-16T1859Z-61b913d`; no agent currently uses the wildcard but
 #     the set is now complete for all four read-only HTTP MCP servers.
-#   - semgrep: only scan/analyze tools (read).
 # Adding a new server to this set means asserting it has no write/edit/create/
 # delete/modify/insert/replace tools at runtime. Re-verify via
 # scripts/smoke_mcp_capabilities.sh when MCP servers bump versions.
@@ -77,7 +76,6 @@ READ_ONLY_BY_DESIGN_MCPS: frozenset[str] = frozenset(
         "deepwiki",
         "grep",
         "openai-docs",
-        "semgrep",
     }
 )
 
