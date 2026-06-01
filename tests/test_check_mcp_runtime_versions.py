@@ -2,7 +2,7 @@
 
 The validator has hardcoded SERVER_TO_ENV + HTTP_TO_ENV + SYSTEM_BINARY_TO_ENV
 mappings that target the real `plugins/rldyour-mcps/.mcp.json` server set.
-Building a complete synthetic fixture covering all 13 servers is more
+Building a complete synthetic fixture covering all 12 servers is more
 work than it's worth - this test file instead:
 
 1. Runs the validator against the live repository state (integration).

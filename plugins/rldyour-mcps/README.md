@@ -5,7 +5,7 @@ MCP transport layer for the `rldyour-claudecode` marketplace. Single-owner of `.
 ## What's inside
 
 - `0` skills, `0` slash commands, `0` agents, `0` hooks.
-- `.mcp.json` - 13 pinned MCP servers covering Serena, Sequential Thinking, Playwright, Chrome DevTools, Context7, DeepWiki, Grep, Semgrep, shadcn, Dart/Flutter, Figma, OpenAI Docs, GitHub.
+- `.mcp.json` - 12 pinned MCP servers covering Serena, Sequential Thinking, Playwright, Chrome DevTools, Context7, DeepWiki, Grep, shadcn, Dart/Flutter, Figma, OpenAI Docs, GitHub.
 - `.env.example` - required env vars: `CONTEXT7_API_KEY`, `GITHUB_PERSONAL_ACCESS_TOKEN`.
 
 ## Pinning policy

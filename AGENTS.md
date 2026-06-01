@@ -40,7 +40,7 @@ claims:
 ```
 .claude-plugin/marketplace.json
 plugins/
-  rldyour-mcps/        # transport - 13 pinned MCP servers (.mcp.json)
+  rldyour-mcps/        # transport - 12 pinned MCP servers (.mcp.json)
   rldyour-serena-mcp/  # Serena code workflow + memory sync + lifecycle hooks
   rldyour-flow/        # SDLC skills (ry-*) + reviewer subagents + hooks + scripts
   rldyour-explore/     # ry-explore agent + tech/web research skills
@@ -85,7 +85,7 @@ Five orchestrated lifecycle skills plus one explicit sync command (Russian-leadi
 - `/rldyour-flow:ry-deploy` - deploy with local ↔ GitHub ↔ server sync, log checks, fix-forward.
 - `/rldyour-flow:ry-sync` - public slash-command wrapper for `flow-post-task-sync` finalization: Serena freshness, instruction docs, checks, commits, push, `fullrepo`, cleanup.
 
-Reviewer subagents in `plugins/rldyour-flow/agents/flow-*-review.md`: all `model: sonnet`, `effort: high`, `maxTurns: 90` (security `100`), explicit `tools:` allowlist (`Read`, `Grep`, `Glob`, `Bash` + Serena/Context7/DeepWiki/Grep MCP; security track adds `WebFetch`, `WebSearch`, Semgrep). Distinct colors: blue/green/purple/orange/pink/red. Reviewer protocol details in `plugins/rldyour-flow/references/reviewer-protocol.md`.
+Reviewer subagents in `plugins/rldyour-flow/agents/flow-*-review.md`: all `model: sonnet`, `effort: high`, `maxTurns: 90` (security `100`), explicit `tools:` allowlist (`Read`, `Grep`, `Glob`, `Bash` + Serena/Context7/DeepWiki/Grep MCP; security track adds `WebFetch` and `WebSearch`). Distinct colors: blue/green/purple/orange/pink/red. Reviewer protocol details in `plugins/rldyour-flow/references/reviewer-protocol.md`.
 
 Reviewer output uses a **file-first transport contract** (full text in `references/reviewer-protocol.md` "Output Transport") to work around the Claude Code 2.0.77+ `task.output` regression (Anthropic issues [`#16789`](https://github.com/anthropics/claude-code/issues/16789), [`#20531`](https://github.com/anthropics/claude-code/issues/20531), [`#23463`](https://github.com/anthropics/claude-code/issues/23463)). Each reviewer writes the full report to `<report_dir>/<reviewer-name>.md` via `Bash` heredoc with marker `RLDYOUR_REPORT_EOF` and returns a compact summary ≤ 4 KB. 6 tracks × ≤ 4 KB = ≤ 24 KB; structurally prevents the overflow class. Orchestrator MUST `Read` per-reviewer report for every `critical`/`high` finding before disposition.
 
@@ -140,7 +140,7 @@ Subcommands:
 
 ## MCP Transport (`rldyour-mcps/.mcp.json`)
 
-13 pinned servers (full pin source: `config/mcp-runtime-versions.env`): `serena-agent==1.5.3` with `alwaysLoad: true` (v2.1.121+), `@modelcontextprotocol/server-sequential-thinking@2025.12.18`, `@playwright/mcp@0.0.75`, `chrome-devtools-mcp@1.1.1`, `@upstash/context7-mcp@2.2.5`, `semgrep==1.164.0`, `shadcn@4.9.0`, host binaries `github-mcp-server` (1.1.2) + `dart` (3.12.0); HTTP: `deepwiki`, `grep`, `figma`, `openai-docs`. Required env: `CONTEXT7_API_KEY`, `GITHUB_PERSONAL_ACCESS_TOKEN`. GitHub MCP uses local stdio (not Copilot-gated HTTP).
+12 pinned servers (full pin source: `config/mcp-runtime-versions.env`): `serena-agent==1.5.3` with `alwaysLoad: true` (v2.1.121+), `@modelcontextprotocol/server-sequential-thinking@2025.12.18`, `@playwright/mcp@0.0.75`, `chrome-devtools-mcp@1.1.1`, `@upstash/context7-mcp@2.2.5`, `shadcn@4.9.0`, host binaries `github-mcp-server` (1.1.2) + `dart` (3.12.0); HTTP: `deepwiki`, `grep`, `figma`, `openai-docs`. Required env: `CONTEXT7_API_KEY`, `GITHUB_PERSONAL_ACCESS_TOKEN`. GitHub MCP uses local stdio (not Copilot-gated HTTP).
 
 Timeout knobs are env-only: `MCP_TIMEOUT`, `MCP_TOOL_TIMEOUT` (v2.1.142+ for HTTP/SSE). Per-server `startup_timeout_sec`/`tool_timeout_sec` keys are NOT documented and silently ignored - do not add them.
 

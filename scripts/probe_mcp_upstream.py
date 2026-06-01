@@ -4,7 +4,7 @@
 Compares config/mcp-runtime-versions.env against:
 - npm registry for bunx servers (sequential-thinking, playwright, chrome-devtools,
   context7, shadcn)
-- PyPI JSON for uvx-installed packages (serena-agent, semgrep)
+- PyPI JSON for uvx-installed packages (serena-agent)
 - Homebrew formula JSON for system binaries (github-mcp-server)
 
 Each probe is best-effort: a network failure is reported as INFO, not FAIL.
@@ -30,7 +30,6 @@ HOMEBREW = "https://formulae.brew.sh/api/formula"
 # Maps env var -> (registry, package identifier).
 PROBES: tuple[tuple[str, str, str], ...] = (
     ("SERENA_AGENT_VERSION", "pypi", "serena-agent"),
-    ("SEMGREP_VERSION", "pypi", "semgrep"),
     ("SEQUENTIAL_THINKING_MCP_VERSION", "npm", "@modelcontextprotocol/server-sequential-thinking"),
     ("PLAYWRIGHT_MCP_VERSION", "npm", "@playwright/mcp"),
     ("CHROME_DEVTOOLS_MCP_VERSION", "npm", "chrome-devtools-mcp"),
