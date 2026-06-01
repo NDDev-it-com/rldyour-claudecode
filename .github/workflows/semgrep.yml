@@ -5,9 +5,8 @@ name: semgrep
 # Findings show up in the job log + summary and CI fails on any non-INFO
 # finding.
 #
-# Semgrep version pinned to 1.164.0 (matches plugins/rldyour-mcps/.mcp.json
-# Semgrep MCP server pin and config/mcp-runtime-versions.env). Bumping the
-# CLI version here should track the MCP pin.
+# Semgrep CLI container version is pinned independently from MCP runtime
+# policy. Bump this workflow intentionally and keep the digest immutable.
 
 on:
   push:
@@ -33,8 +32,7 @@ jobs:
     permissions:
       contents: read
     container:
-      # Digest-pinned semgrep/semgrep:1.164.0 (matches local MCP server pin in
-      # plugins/rldyour-mcps/.mcp.json + config/mcp-runtime-versions.env).
+      # Digest-pinned semgrep/semgrep:1.164.0 for CI-only static scanning.
       # Resolved 2026-05-28 via Docker Hub v2 manifest API. To re-resolve:
       #   curl -s https://hub.docker.com/v2/repositories/semgrep/semgrep/tags/1.164.0/ | jq -r '.digest'
       # Or:
