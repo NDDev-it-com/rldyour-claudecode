@@ -1,7 +1,7 @@
 <!-- Memory Metadata
-Last updated: 2026-06-01
-Last verified: 2026-06-01
-Last commit: 428aa8b8c50888bdcc731e2a3466262711984d53 chore(release): claude 1.1.21 (other)
+Last updated: 2026-06-02
+Last verified: 2026-06-02
+Last commit: def95cf7418e6313de69da81903d30d372bec111 chore(release): claude 1.1.22 (other)
 Scope: GitHub Actions and local CI policy
 Area: CI
 -->
@@ -21,8 +21,8 @@ GitHub Actions and local CI policy
 - `path:README.md`
 
 ## Last verified
-- date: 2026-06-01
-- commit: `428aa8b8c50888bdcc731e2a3466262711984d53`
+- date: 2026-06-02
+- commit: `def95cf7418e6313de69da81903d30d372bec111`
 - checked by: Codex ry-start docs/memory consistency audit
 
 ## Facts
@@ -37,7 +37,7 @@ GitHub Actions and local CI policy
   OS-independent.
 
 ## Evidence
-- `commit:428aa8b8c50888bdcc731e2a3466262711984d53`
+- `commit:def95cf7418e6313de69da81903d30d372bec111`
 - `path:.github/workflows`
 - `path:README.md`
 

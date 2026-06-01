@@ -3,15 +3,16 @@
 ## Supported Versions
 
 This is the rldyour AI CLI configuration for Claude Code: plugin marketplace, MCP/LSP, Serena memory, security review, browser/design workflows, and reviewer agents.
-Only the latest numeric product release tag (`<MAJOR>.<MINOR>.<PATCH>`)
-receives security fixes. Historical plugin-scoped tags are not the primary
-public GitHub Release coordinate. The current supported product release line
-is `1.1.x`.
+Only the current exact numeric product release tag receives security fixes.
+Historical plugin-scoped tags are not the primary public GitHub Release
+coordinate. The `1.1.x` line label tracks only the latest released patch, not
+every historical patch in the line.
 
 | Version | Supported |
 |---------|-----------|
-| Current `1.1.x` | yes |
-| Earlier minor / patch | no |
+| Current exact tag `1.1.22` | yes |
+| Older `1.1.*` tags | no; upgrade to current exact tag |
+| Older minor / major lines | no |
 
 When a security issue lands, the wave bumps every plugin to the same
 patch release (see `docs/release-process.md` and ADR-0009 for the

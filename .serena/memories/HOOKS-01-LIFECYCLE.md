@@ -1,7 +1,7 @@
 <!-- Memory Metadata
-Last updated: 2026-06-01
-Last verified: 2026-06-01
-Last commit: 428aa8b8c50888bdcc731e2a3466262711984d53 chore(release): claude 1.1.21 (other)
+Last updated: 2026-06-02
+Last verified: 2026-06-02
+Last commit: def95cf7418e6313de69da81903d30d372bec111 chore(release): claude 1.1.22 (other)
 Scope: deterministic hook lifecycle behavior
 Area: HOOKS
 -->
@@ -21,8 +21,8 @@ deterministic hook lifecycle behavior
 - `path:scripts/smoke_hooks.sh`
 
 ## Last verified
-- date: 2026-06-01
-- commit: `428aa8b8c50888bdcc731e2a3466262711984d53`
+- date: 2026-06-02
+- commit: `def95cf7418e6313de69da81903d30d372bec111`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
@@ -40,7 +40,7 @@ deterministic hook lifecycle behavior
   checks in the hot path and reports `network_checked=false`.
 
 ## Evidence
-- `commit:428aa8b8c50888bdcc731e2a3466262711984d53`
+- `commit:def95cf7418e6313de69da81903d30d372bec111`
 - `path:plugins/rldyour-flow/hooks`
 - `path:plugins/rldyour-flow/scripts/flow_post_task_state.py`
 - `path:plugins/rldyour-flow/scripts/fullrepo_sync.py`
