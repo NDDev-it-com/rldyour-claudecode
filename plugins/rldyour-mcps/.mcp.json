@@ -58,13 +58,6 @@
       "type": "http",
       "url": "https://mcp.grep.app"
     },
-    "semgrep": {
-      "command": "uvx",
-      "args": [
-        "--from", "semgrep==1.164.0",
-        "semgrep", "mcp"
-      ]
-    },
     "shadcn": {
       "command": "bunx",
       "args": [
