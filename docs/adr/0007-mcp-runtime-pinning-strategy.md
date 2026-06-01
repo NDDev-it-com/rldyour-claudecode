@@ -6,8 +6,8 @@
 
 ## Context and Problem Statement
 
-13 MCP servers (`rldyour-mcps`) span three transport types: stdio uvx
-(serena, semgrep), stdio bunx (sequential-thinking, playwright,
+12 MCP servers (`rldyour-mcps`) span three transport types: stdio uvx
+(serena), stdio bunx (sequential-thinking, playwright,
 chrome-devtools, context7, shadcn), HTTP (deepwiki, grep, figma,
 openai-docs), and stdio host binary (github, dart-flutter). Without
 explicit pinning, `@latest` semantics can flip a server's tool surface
@@ -22,7 +22,7 @@ Two source-of-truth files exist intentionally:
 
 Drift between these files is a real risk class (audit F-SYNC-01 originally
 flagged that dart-flutter was in `.mcp.json` but not in the env file or
-the checker - 12 of 13 servers enforceable).
+the checker - 11 of 12 servers enforceable before the host-binary rule).
 
 Evidence: `plugins/rldyour-mcps/.mcp.json:1-101`,
 `config/mcp-runtime-versions.env`, `scripts/check_mcp_runtime_versions.py`
@@ -65,7 +65,7 @@ must be run after a bump.
 
 ### Consequences
 
-- Good: 13/13 servers enforceable (post-G2 dart-flutter addition).
+- Good: 12/12 servers enforceable after removing the static-analysis MCP server.
 - Good: env file readable by humans + scripts without JSON parsing.
 - Good: pin=None silently passing is structurally prevented.
 - Bad: bumps require two-file edits. Mitigation: project rule documented
@@ -73,8 +73,8 @@ must be run after a bump.
 
 ## Confirmation
 
-- `python3 scripts/check_mcp_runtime_versions.py` reports OK for all 13
-  servers (7 stdio + 4 HTTP + 2 host binaries).
+- `python3 scripts/check_mcp_runtime_versions.py` reports OK for all 12
+  servers (6 stdio + 4 HTTP + 2 host binaries).
 - `bash scripts/smoke_mcp_runtime.sh` exits non-zero on any pin=None
   outside HOST_BINARY_ALLOWLIST.
 - `bash scripts/smoke_mcp_capabilities.sh --server <name>` performs MCP

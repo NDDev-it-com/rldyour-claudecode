@@ -40,9 +40,9 @@ mcp_owner + hook_owners fields.
 
 Chosen option: **C**. Hard invariants:
 
-- **Only `rldyour-mcps` declares `.mcp.json`**. The 13 pinned MCP servers
+- **Only `rldyour-mcps` declares `.mcp.json`**. The 12 pinned MCP servers
   (Serena, Sequential Thinking, Playwright, Chrome DevTools, Context7,
-  DeepWiki, Grep, Semgrep, shadcn, Dart/Flutter, Figma, OpenAI Docs,
+  DeepWiki, Grep, shadcn, Dart/Flutter, Figma, OpenAI Docs,
   GitHub) live in `plugins/rldyour-mcps/.mcp.json`.
 - **Only `rldyour-flow` and `rldyour-serena-mcp` declare `hooks/hooks.json`**.
   `rldyour-serena-mcp` owns memory-sync lifecycle (UserPromptSubmit,

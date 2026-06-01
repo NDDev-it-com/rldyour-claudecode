@@ -36,7 +36,7 @@ Policy and procedure for updating MCP runtime pins and Claude Code minimum versi
    ```bash
    scripts/smoke_mcp_capabilities.sh --server <name>           # targeted probe
    scripts/smoke_mcp_capabilities.sh --timeout 120             # full sweep (uvx cold-starts up to ~2m on first run)
-   scripts/smoke_mcp_capabilities.sh --skip-uvx                # fast subset (skips serena, semgrep)
+   scripts/smoke_mcp_capabilities.sh --skip-uvx                # fast subset (skips serena)
    ```
 
    The harness performs JSON-RPC `initialize` + `tools/list` against each server (stdio

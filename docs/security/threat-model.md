@@ -18,7 +18,7 @@ the user installs.
 | `plugins/rldyour-flow/hooks/*.sh` | `rldyour-flow` | Bash, runs in user session | Strict mode trio (`set -euo pipefail` + IFS + unset CDPATH); advisory-only (no push/merge/publish); `if` filters limit invocation to `Bash(git commit*)` family. |
 | `plugins/rldyour-serena-mcp/hooks/*.sh` | `rldyour-serena-mcp` | Bash, runs in user session | Same strict mode; Stop hook exits 2 advisory (no destructive ops); fingerprint loop guard. |
 | `plugins/rldyour-flow/scripts/fullrepo_sync.py` | `rldyour-flow` | Filesystem + git plumbing | `bootstrap_check.sh` divergence guard refuses `--bootstrap-init` when local agent-only files differ from `origin/fullrepo`; `--publish` uses `--force-with-lease` (not `--force`); `local_git_ai_guard.sh` pre-push blocks agent-only paths on product branches. |
-| `plugins/rldyour-mcps/.mcp.json` | `rldyour-mcps` | Spawns MCP servers (stdio + HTTP) | All 13 servers pinned (`==X.Y.Z` / `@X.Y.Z` / exact URL / host-binary version); `scripts/check_mcp_runtime_versions.py` enforces parity; `scripts/smoke_mcp_runtime.sh` HOST_BINARY_ALLOWLIST fails pin=None for unknown servers; `scripts/probe_mcp_upstream.py` weekly drift check. |
+| `plugins/rldyour-mcps/.mcp.json` | `rldyour-mcps` | Spawns MCP servers (stdio + HTTP) | All 12 servers pinned (`==X.Y.Z` / `@X.Y.Z` / exact URL / host-binary version); `scripts/check_mcp_runtime_versions.py` enforces parity; `scripts/smoke_mcp_runtime.sh` HOST_BINARY_ALLOWLIST fails pin=None for unknown servers; `scripts/probe_mcp_upstream.py` weekly drift check. |
 | `.github/workflows/*.yml` | CI | runs-on GitHub-hosted runners | SHA-pinned actions; `permissions: {}` top-level (deny-all); harden-runner egress block + explicit allowlist per workflow; `concurrency.cancel-in-progress` to bound minute spend. |
 | `scripts/*.{sh,py}` | repo root | Runs in local validation context | Strict mode trio in all shell scripts; Python scripts use stdlib only where possible (no pip dependency to validate locally except jsonschema for G9 schemas - graceful SKIP if unavailable). |
 
@@ -70,7 +70,7 @@ silently to a malicious version.
 - `scripts/refresh_actions_pins.sh` re-resolves tags to fresh SHAs via
   `gh api`.
 - Docker images digest-pinned (`semgrep/semgrep:1.164.0@sha256:2079836...`).
-- All 13 MCP servers pinned per ADR-0007.
+- All 12 MCP servers pinned per ADR-0007.
 - `actions/dependabot` + `.github/dependabot.yml` for github-actions and
   npm ecosystems.
 - `.github/workflows/claude-cli-drift.yml` weekly check for the Claude
