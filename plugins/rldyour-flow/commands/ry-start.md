@@ -6,7 +6,7 @@ argument-hint: <task>
 Полный lifecycle задачи: **$ARGUMENTS**
 
 This command is the stable front door for the rldyour lifecycle. On Claude Code
-`2.1.159+`, route workflow-worthy work to the project workflow command
+`2.1.160+`, route workflow-worthy work to the project workflow command
 `ry-start-workflow` when a saved `.claude/workflows/` projection is present.
 
 If `ry-start-workflow` is unavailable, Use the `ry-start` skill for this
