@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-06-02
 Last verified: 2026-06-02
-Last commit: def95cf7418e6313de69da81903d30d372bec111 chore(release): claude 1.1.22 (other)
+Last commit: 43d639a62ce7976f4ffc862cb4798ade44dab10b chore(release): claude 1.1.23
 Scope: browser-visible validation and debugging workflows
 Area: BROWSER
 -->
@@ -22,14 +22,14 @@ browser-visible validation and debugging workflows
 
 ## Last verified
 - date: 2026-06-02
-- commit: `def95cf7418e6313de69da81903d30d372bec111`
+- commit: `43d639a62ce7976f4ffc862cb4798ade44dab10b`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
 - Browser memories route UI and runtime validation through Playwright and Chrome DevTools when relevant.
 
 ## Evidence
-- `commit:def95cf7418e6313de69da81903d30d372bec111`
+- `commit:43d639a62ce7976f4ffc862cb4798ade44dab10b`
 - `path:README.md`
 - `path:plugins/rldyour-browser`
 
