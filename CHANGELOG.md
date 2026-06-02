@@ -7,6 +7,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 ## [Unreleased]
 
 
+## [1.1.23] - 2026-06-02
+
+### Changed
+
+- Refresh Claude Code runtime baseline to 2.1.160 with current upstream changelog evidence.
+
 ## [1.1.22] - 2026-06-02
 
 ### Fixed
