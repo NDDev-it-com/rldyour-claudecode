@@ -7,6 +7,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 ## [Unreleased]
 
 
+## [1.1.25] - 2026-06-02
+
+### Changed
+
+- Refresh MCP runtime pins for Context7 and shadcn current upstream releases.
+
 ## [1.1.24] - 2026-06-02
 
 ### Fixed
