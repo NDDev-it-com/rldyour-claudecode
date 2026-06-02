@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-06-02
 Last verified: 2026-06-02
-Last commit: c4f9ed55eba393526d04e4a49b2c61122da9efd5 chore(release): claude 1.1.24
+Last commit: 1e1641982f78dedbf61e959608c08186a8790bd4 chore(release): claude 1.1.25
 Scope: Claude Code adapter implementation surface
 Area: CLAUDE
 -->
@@ -22,14 +22,14 @@ Claude Code adapter implementation surface
 
 ## Last verified
 - date: 2026-06-02
-- commit: `c4f9ed55eba393526d04e4a49b2c61122da9efd5`
+- commit: `1e1641982f78dedbf61e959608c08186a8790bd4`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
 - Claude memories describe the Claude Code plugin marketplace, command, skill, hook, MCP, and LSP surfaces.
 
 ## Evidence
-- `commit:c4f9ed55eba393526d04e4a49b2c61122da9efd5`
+- `commit:1e1641982f78dedbf61e959608c08186a8790bd4`
 - `path:config/rldyour-contract.json`
 - `path:.claude-plugin/marketplace.json`
 

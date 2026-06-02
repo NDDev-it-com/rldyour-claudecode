@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-06-02
 Last verified: 2026-06-02
-Last commit: c4f9ed55eba393526d04e4a49b2c61122da9efd5 chore(release): claude 1.1.24
+Last commit: 1e1641982f78dedbf61e959608c08186a8790bd4 chore(release): claude 1.1.25
 Scope: quality-first engineering rules
 Area: RULES
 -->
@@ -22,14 +22,14 @@ quality-first engineering rules
 
 ## Last verified
 - date: 2026-06-02
-- commit: `c4f9ed55eba393526d04e4a49b2c61122da9efd5`
+- commit: `1e1641982f78dedbf61e959608c08186a8790bd4`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
 - Rules memories record non-negotiable quality, architecture, dependency, and verification discipline.
 
 ## Evidence
-- `commit:c4f9ed55eba393526d04e4a49b2c61122da9efd5`
+- `commit:1e1641982f78dedbf61e959608c08186a8790bd4`
 - `path:plugins/rldyour-rules`
 - `path:README.md`
 
