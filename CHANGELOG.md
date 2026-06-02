@@ -7,6 +7,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 ## [Unreleased]
 
 
+## [1.1.24] - 2026-06-02
+
+### Fixed
+
+- Regenerate Claude README inventory for the current marketplace version.
+
 ## [1.1.23] - 2026-06-02
 
 ### Changed
