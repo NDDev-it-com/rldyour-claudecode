@@ -69,7 +69,7 @@ silently to a malicious version.
 - SHA-pinned GitHub Actions (`uses: owner/repo@<40-hex-sha>  # tag`).
 - `scripts/refresh_actions_pins.sh` re-resolves tags to fresh SHAs via
   `gh api`.
-- Docker images digest-pinned (`semgrep/semgrep:1.164.0@sha256:2079836...`).
+- Docker images used by workflow scanners are digest-pinned.
 - All 12 MCP servers pinned per ADR-0007.
 - `actions/dependabot` + `.github/dependabot.yml` for github-actions and
   npm ecosystems.
@@ -87,8 +87,8 @@ silently to a malicious version.
   `pattern: "^https://"`).
 - Signed git tags for releases (`git tag -s`; ADR-0009);
   `gh release create --verify-tag` refuses unsigned tags.
-- No secrets in committed files (verified by `gitleaks.yml` + Semgrep
-  p/secrets pack + manual review).
+- No secrets in committed files (verified by `gitleaks.yml`, GitHub-native
+  public-repository secret scanning, and manual review).
 
 ### A05:2025 Injection
 
@@ -147,8 +147,8 @@ without detection.
   manifests parity before release.
 - Local pre-push guard (`local_git_ai_guard.sh`) blocks agent-only paths
   on product branches.
-- Semgrep narrowly excludes only `.serena/cache/**` + runtime markers;
-  `.serena/memories/**` is in scope (G12 closure).
+- Runtime marker exclusions are kept narrow; `.serena/memories/**` remains in
+  scope for text security review (G12 closure).
 
 ### A09:2025 Security Logging & Alerting Failures
 
@@ -201,18 +201,17 @@ Three boundaries exist:
   `.github/workflows/codeql.yml`. Dependabot security updates are
   enabled. The previous "no GHAS, no SARIF" framing applied to the
   private-repo configuration that drove the original CI baseline -
-  see ADR-0008 amendment 2026-05-18. CodeQL + Semgrep + gitleaks are
-  now three complementary security workflows; CodeQL covers semantic
-  taint flows + Actions workflow analysis, Semgrep covers pattern-based
-  SAST (OSS rule packs), gitleaks covers secret scanning. The repo's
-  defence-in-depth security stack is markedly stronger than the
-  pre-public baseline.
+  see ADR-0008 amendment 2026-05-18. CodeQL and gitleaks are complementary
+  workflow-layer security gates: CodeQL covers semantic taint flows and Actions
+  workflow analysis, while gitleaks covers secret scanning. The repo's
+  defence-in-depth security stack is markedly stronger than the pre-public
+  baseline.
 - **Public secret transition monitoring** (updated 2026-05-31): GitHub-native
   public-repository secret scanning and push protection are expected live
   settings and are checked from the private root control plane when an owner
   token is available. The adapter keeps workflow-layer coverage through
-  gitleaks weekly/on-push/on-PR full-history scans, Semgrep `p/secrets`, and
-  the local pre-push guard (`plugins/rldyour-flow/scripts/local_git_ai_guard.sh`).
+  gitleaks weekly/on-push/on-PR full-history scans and the local pre-push guard
+  (`plugins/rldyour-flow/scripts/local_git_ai_guard.sh`).
   The 90-day post-private monitoring window is a local conservative transition
   control, not a GitHub platform limitation.
 - **fullrepo `--force-with-lease`**: intentional per ADR-0001. Cannot

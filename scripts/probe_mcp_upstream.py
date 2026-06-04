@@ -57,11 +57,10 @@ def load_env(path: Path) -> dict[str, str]:
 
 def fetch_json(url: str, timeout: float = 10.0) -> dict[str, object] | None:
     # Hard scheme guard: urllib supports file:// and other local schemes by
-    # default (Semgrep finding dynamic-urllib-use-detected). All URLs in this
-    # script are constructed from hardcoded NPM_REGISTRY/PYPI/HOMEBREW base
-    # strings + hardcoded package names, but the static guard documents
-    # the intent and prevents future contributors from accidentally
-    # accepting a file:// URL through the same code path.
+    # default. All URLs in this script are constructed from hardcoded
+    # NPM_REGISTRY/PYPI/HOMEBREW base strings + hardcoded package names, but the
+    # static guard documents the intent and prevents future contributors from
+    # accidentally accepting a file:// URL through the same code path.
     if not url.startswith(("https://", "http://")):
         return None
     try:

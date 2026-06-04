@@ -16,9 +16,8 @@ CI must achieve a real security baseline without these paid features:
 SAST coverage, supply-chain hardening, secret scanning, and least-privilege
 workflow permissions.
 
-Evidence: `.github/workflows/semgrep.yml:1-13` (explicit "Semgrep replaces
-CodeQL because GHAS is not enabled"), `.github/workflows/validate.yml:16`
-(top-level `permissions: {}`), `.github/workflows/gitleaks.yml` (G11).
+Evidence: `.github/workflows/validate.yml:16` (top-level `permissions: {}`),
+`.github/workflows/gitleaks.yml` (G11), and the current public CodeQL gate.
 
 ## Decision Drivers
 
@@ -29,10 +28,9 @@ CodeQL because GHAS is not enabled"), `.github/workflows/validate.yml:16`
 ## Considered Options
 
 - A: Use CodeQL with SARIF upload. Requires GHAS, paid for private repos.
-- B: Use Semgrep with SARIF upload. SARIF still requires GHAS.
-- C: Semgrep OSS as CLI without SARIF upload; gitleaks as CLI without
-  SARIF upload; pin all actions to commit SHAs; harden-runner egress
-  block; least-privilege permissions.
+- B: Use a third-party pattern-SAST CLI with SARIF upload. SARIF still requires GHAS.
+- C: Use gitleaks as CLI without SARIF upload; pin all actions to commit SHAs;
+  harden-runner egress block; least-privilege permissions.
 
 ## Decision Outcome
 
@@ -42,12 +40,6 @@ Chosen option: **C**. The CI baseline:
   shell `bash -n` + frontmatter + 6 custom validators + reviewer contract
   drift + MCP runtime smoke + Serena taxonomy smoke + bootstrap divergence
   smoke. 19 steps total.
-- **`semgrep.yml`**: Semgrep OSS via digest-pinned Docker image
-  (`semgrep/semgrep:1.164.0@sha256:207983631beecdbe7fa29196c7f4a7a5f29033933cdb76c687ce4a672e07618d`,
-  matches the MCP pin). 6 OSS rule packs (`p/python`, `p/github-actions`,
-  `p/security-audit`, `p/secrets`, `p/owasp-top-ten`, `p/ci`). `--error`
-  fails CI on WARNING/ERROR findings. Findings surface in job log; no
-  SARIF upload.
 - **`gitleaks.yml`** (G11; bumped to v8.30.1 in 0.4.0): defence-in-depth
   secret scanner via official Docker image (`zricethezav/gitleaks:v8.30.1`,
   digest-pinned), `detect --redact` with full git history (fetch-depth: 0).
@@ -69,7 +61,7 @@ Cross-cutting:
 - **Top-level `permissions: {}`**: deny-all default; per-job permissions
   grant minimum scope (`contents: read` for validators,
   `contents: write` only for release.yml `gh release create`).
-- **Concurrency**: `cancel-in-progress: true` on validate/semgrep/actionlint;
+- **Concurrency**: `cancel-in-progress: true` on validate/actionlint;
   `cancel-in-progress: false` on release (releases must complete).
 
 ### Consequences
@@ -86,7 +78,7 @@ Cross-cutting:
   design. Current public adapter policy supersedes this: GitHub Secret Scanning
   is expected for public repositories, Push Protection is live-validated by the
   root control plane, and the workflow layer keeps gitleaks full-history scans
-  plus Semgrep `p/secrets` as defense in depth.
+  plus gitleaks as defense in depth.
 
 ## Confirmation
 
@@ -102,7 +94,7 @@ Cross-cutting:
 - Related: ADR-0009 (release tag convention).
 - Current public adapter secret posture: GitHub-native public-repository secret
   scanning and push protection are required live settings, while gitleaks and
-  Semgrep secrets scanning remain workflow-layer defense in depth.
+  gitleaks scans remain workflow-layer defense in depth.
 
 ## Amendment 2026-05-18 (release 0.6.0): public repository unlocks CodeQL
 
@@ -117,10 +109,9 @@ Action taken in release 0.6.0:
 
 - **Added** `.github/workflows/codeql.yml` running CodeQL on `python`
   and `actions` language matrix with `security-and-quality` query pack.
-- **Retained** Semgrep OSS, gitleaks, harden-runner, SHA pins,
-  `permissions: {}` baseline: CodeQL is additive, not a replacement.
-  Defence in depth via three complementary security workflows
-  (CodeQL = semantic, Semgrep = pattern SAST, gitleaks = secret scan)
+- **Retained** gitleaks, harden-runner, SHA pins, and the `permissions: {}`
+  baseline: CodeQL is additive, not a replacement. Defence in depth via
+  complementary security workflows (CodeQL = semantic, gitleaks = secret scan)
   is the new public-repo baseline.
 - **Threat-model document update**: `docs/security/threat-model.md`
   Section 4 to reflect CodeQL availability and add reference to

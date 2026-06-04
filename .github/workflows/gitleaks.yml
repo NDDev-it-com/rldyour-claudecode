@@ -1,9 +1,9 @@
 name: gitleaks
 
-# Defense-in-depth secret scanning on top of Semgrep p/secrets. Runs the
-# gitleaks OSS CLI inside its official Docker image. GitHub-native public
-# repository secret scanning is live-validated separately; this workflow keeps
-# full-history defense in depth and fails CI on non-allowlisted findings.
+# Defense-in-depth secret scanning with the gitleaks OSS CLI inside its
+# official Docker image. GitHub-native public repository secret scanning is
+# live-validated separately; this workflow keeps full-history defense in depth
+# and fails CI on non-allowlisted findings.
 #
 # Image pinned to a digest below; refresh occasionally via
 # `docker pull zricethezav/gitleaks:v8.30.1 && docker inspect --format='{{index .RepoDigests 0}}' zricethezav/gitleaks:v8.30.1`
