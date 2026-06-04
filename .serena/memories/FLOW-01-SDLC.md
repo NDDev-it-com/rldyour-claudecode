@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-06-04
 Last verified: 2026-06-04
-Last commit: d509ec3c2a038d714294f0767f8662d23007616c chore(runtime): update Claude Code baseline to 2.1.162
+Last commit: 2f30e0f8a1c9d479de425d039507267616d78c2b chore(runtime): update Claude Code baseline to 2.1.162
 Scope: rldyour SDLC command lifecycle
 Area: FLOW
 -->
@@ -20,14 +20,14 @@ rldyour SDLC command lifecycle
 
 ## Last verified
 - date: 2026-06-04
-- commit: `d509ec3c2a038d714294f0767f8662d23007616c`
+- commit: `2f30e0f8a1c9d479de425d039507267616d78c2b`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
 - Flow memories record ry-init, ry-start, ry-newp, ry-review, ry-repair, ry-deploy, and ry-sync behavior.
 
 ## Evidence
-- `commit:d509ec3c2a038d714294f0767f8662d23007616c`
+- `commit:2f30e0f8a1c9d479de425d039507267616d78c2b`
 - `path:plugins/rldyour-flow`
 
 ## Known pitfalls

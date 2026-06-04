@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-06-04
 Last verified: 2026-06-04
-Last commit: d509ec3c2a038d714294f0767f8662d23007616c chore(runtime): update Claude Code baseline to 2.1.162
+Last commit: 2f30e0f8a1c9d479de425d039507267616d78c2b chore(runtime): update Claude Code baseline to 2.1.162
 Scope: deterministic hook lifecycle behavior
 Area: HOOKS
 -->
@@ -22,7 +22,7 @@ deterministic hook lifecycle behavior
 
 ## Last verified
 - date: 2026-06-04
-- commit: `d509ec3c2a038d714294f0767f8662d23007616c`
+- commit: `2f30e0f8a1c9d479de425d039507267616d78c2b`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
@@ -40,7 +40,7 @@ deterministic hook lifecycle behavior
   checks in the hot path and reports `network_checked=false`.
 
 ## Evidence
-- `commit:d509ec3c2a038d714294f0767f8662d23007616c`
+- `commit:2f30e0f8a1c9d479de425d039507267616d78c2b`
 - `path:plugins/rldyour-flow/hooks`
 - `path:plugins/rldyour-flow/scripts/flow_post_task_state.py`
 - `path:plugins/rldyour-flow/scripts/fullrepo_sync.py`
