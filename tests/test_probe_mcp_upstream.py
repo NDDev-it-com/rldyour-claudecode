@@ -29,9 +29,8 @@ import probe_mcp_upstream  # noqa: E402
 
 class TestSchemeGuard:
     def test_file_scheme_rejected(self) -> None:
-        # The hard scheme guard is the security closure for the previous
-        # wave's Semgrep dynamic-urllib-use-detected finding. Any non-
-        # http/https URL must be silently dropped to None.
+        # The hard scheme guard closes the previous dynamic urllib finding.
+        # Any non-http/https URL must be silently dropped to None.
         assert probe_mcp_upstream.fetch_json("file:///etc/passwd") is None
 
     def test_javascript_scheme_rejected(self) -> None:

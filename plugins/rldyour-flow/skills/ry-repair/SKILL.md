@@ -20,7 +20,7 @@ For rldyour AI CLI configuration repositories, `/ry-repair` also verifies determ
 4. Inspect GitHub issues/PRs/history when available through MCP/app/CLI, then verify every issue against current code before treating it as a fact.
 5. Inspect MCP/LSP/tooling config, hook lifecycles, commands/skills/agents, CI gates, release manifests, and dependency baselines.
 6. When the root control plane is present, run `python3 scripts/ry_repair_sync.py --plan --target "$PWD"` and use `--check` before claiming local repo, system AI CLI config, Serena memory, or GitHub/fullrepo sync.
-7. Treat retired Semgrep server removal as system-wide: installed Claude/Codex/OpenCode configs and active agent/tool surfaces must be clean; Semgrep CLI/CI scanning remains separate unless the owner removes all Semgrep usage.
+7. Treat zero-active Semgrep policy as system-wide: installed Claude/Codex/OpenCode configs, active agent/tool surfaces, CI workflows, runtime pins, docs, and release gates must be clean. Keep only negative validators/tests and historical changelog entries.
 8. Detect semantic entropy: duplicated docs, stale pins, conflicting instructions, dead config, unclear source-of-truth, missing ADR/CONTEXT/FUTURE facts, and broken validator contracts.
 9. Produce a repair plan that separates:
    - technical repairs the agent may apply;

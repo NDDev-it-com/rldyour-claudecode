@@ -1,6 +1,6 @@
 # GitHub Actions Workflows
 
-Twelve workflows split into four classes by trigger policy. The repository is
+Eleven workflows split into four classes by trigger policy. The repository is
 public, so standard GitHub-hosted runners do not consume the organization's
 paid private-repository Actions minutes. The split still keeps CI signal clear:
 required gates prove the repo is valid, while advisory gates surface upstream
@@ -15,7 +15,6 @@ These workflows must be green before any merge.
 | `validate.yml` | `validate-marketplace`, `syntax-checks` | `claude plugin validate` + JSON schemas + Python AST + bash -n + frontmatter + plugin-version parity + ownership boundaries + cross-tool contract + agent tools + reviewer contracts + hook lifecycle smoke + docs canon + sync_contract drift + release state + inventory freshness + MCP runtime drift + smoke_mcp_runtime |
 | `pytest.yml` | `pytest` | Unit tests under `tests/` with `-m "not integration"`. Live network probes run in `dependency-check.yml`. |
 | `gitleaks.yml` | `gitleaks` | Defense-in-depth secret scanning. |
-| `semgrep.yml` | `semgrep` | SAST via OSS rule packs. |
 | `codeql.yml` | `analyze` | CodeQL semantic analysis for Python and GitHub Actions. |
 | `dependency-review.yml` | `dependency-review` | Pull-request dependency diff review, failing on moderate-or-higher advisories. |
 | `actionlint.yml` | `actionlint` | Workflow YAML syntax + expression lint. PATH-filtered to `.github/workflows/**`. |
