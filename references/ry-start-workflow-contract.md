@@ -9,7 +9,7 @@ Source of truth:
 - Fallback skill: `plugins/rldyour-flow/skills/ry-start/SKILL.md`
 
 Claude Code `2.1.154` introduced dynamic workflows and `/workflows`; this
-adapter pins `2.1.160` to track the current npm `latest` while retaining the
+adapter pins `2.1.162` to track the current npm `latest` while retaining the
 Opus 4.8 thinking-block API hotfix introduced in `2.1.156`. The
 stable owner entrypoint remains `/rldyour-flow:ry-start`.
 

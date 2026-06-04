@@ -10,7 +10,7 @@ every historical patch in the line.
 
 | Version | Supported |
 |---------|-----------|
-| Current exact tag `1.1.25` | yes |
+| Current exact tag `1.1.26` | yes |
 | Older `1.1.*` tags | no; upgrade to current exact tag |
 | Older minor / major lines | no |
 
@@ -66,8 +66,6 @@ threat model focuses on:
   every push to `main`, every PR, and a weekly schedule (Tue 06:00 UTC).
   Full git-history scan via `fetch-depth: 0` checkout. Container pinned
   by digest.
-- **Semgrep** (`.github/workflows/semgrep.yml`): SAST with OWASP Top 10
-  + secrets + GitHub Actions rule packs, container pinned by digest.
 - **CodeQL** (`.github/workflows/codeql.yml`): semantic analysis for
   Python and GitHub Actions workflows, free for public repos.
 - **Dependabot** (`.github/dependabot.yml`): version drift detection for
