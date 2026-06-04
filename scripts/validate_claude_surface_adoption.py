@@ -44,7 +44,7 @@ REQUIRED_2_1_157_SURFACES = (
     "`settings.json` `agent`",
     "`EnterWorktree`",
     "`OTEL_LOG_TOOL_DETAILS`",
-    "workflow keyword trigger",
+    "ultracode keyword trigger",
 )
 
 REQUIRED_2_1_158_SURFACES = (

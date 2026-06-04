@@ -129,7 +129,7 @@ gh workflow run cross-platform.yml --ref <branch>
 When a PR lands:
 
 1. The CI matrix (`validate.yml`, `pytest.yml`, `cross-platform.yml`,
-   `gitleaks.yml`, `semgrep.yml`, `codeql.yml`) gates merge.
+   `gitleaks.yml`, `codeql.yml`) gates merge.
 2. The maintainer applies the `ry-review` reviewer track (6 parallel
    subagents covering architecture / quality / consistency / integration
    / verification / security). Findings get triaged: must-fix / should-fix

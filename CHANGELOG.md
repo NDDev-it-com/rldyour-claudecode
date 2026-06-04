@@ -7,6 +7,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 ## [Unreleased]
 
 
+## [1.1.26] - 2026-06-04
+
+### Changed
+
+- Sync upstream runtime baselines and remove active Semgrep usage.
+
 ## [1.1.25] - 2026-06-02
 
 ### Changed
