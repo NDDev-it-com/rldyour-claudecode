@@ -15,6 +15,12 @@ REQUIRED_BASELINE_SURFACES = {
     "sessionstart-reloadskills-output": "`SessionStart.reloadSkills`",
     "message-display-hook-event": "`MessageDisplay`",
     "auto-mode-explicit-ask-user-question": "AskUserQuestion",
+    "managed-required-version-settings": "`requiredMinimumVersion`",
+    "plugin-list-command": "`/plugin list`",
+    "stop-subagentstop-additional-context": "`hookSpecificOutput.additionalContext`",
+    "skill-dollar-escape-syntax": "`\\$` escape syntax",
+    "stdio-mcp-session-id-on-resume": "`CLAUDE_CODE_SESSION_ID`",
+    "claude-code-2-1-165-reliability-rollup": "2.1.165 reliability rollup",
 }
 
 REQUIRED_2_1_153_SURFACES = (
@@ -54,6 +60,20 @@ REQUIRED_2_1_158_SURFACES = (
     "Foundry",
     "Auto mode",
     "Opus 4.8",
+)
+
+REQUIRED_2_1_163_SURFACES = (
+    "`requiredMinimumVersion`",
+    "`requiredMaximumVersion`",
+    "`/plugin list`",
+    "`hookSpecificOutput.additionalContext`",
+    "`\\$` escape syntax",
+    "`CLAUDE_CODE_SESSION_ID`",
+)
+
+REQUIRED_2_1_165_SURFACES = (
+    "2.1.165 reliability rollup",
+    "Bug fixes and reliability improvements",
 )
 
 VALID_DECISIONS = ("Adopt", "Adopted", "Future", "Hybrid", "Intentionally unused")
@@ -105,6 +125,14 @@ def main() -> int:
         for marker in REQUIRED_2_1_158_SURFACES:
             if marker not in text:
                 errors.append(f"{ADOPTION.relative_to(ROOT)} missing 2.1.158 surface {marker}")
+    if parsed_version >= version_tuple("2.1.163"):
+        for marker in REQUIRED_2_1_163_SURFACES:
+            if marker not in text:
+                errors.append(f"{ADOPTION.relative_to(ROOT)} missing 2.1.163 surface {marker}")
+    if parsed_version >= version_tuple("2.1.165"):
+        for marker in REQUIRED_2_1_165_SURFACES:
+            if marker not in text:
+                errors.append(f"{ADOPTION.relative_to(ROOT)} missing 2.1.165 surface {marker}")
 
     for line in text.splitlines():
         if not line.startswith("| `") and not line.startswith("| `/"):
