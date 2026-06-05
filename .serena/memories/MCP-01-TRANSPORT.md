@@ -1,7 +1,7 @@
 <!-- Memory Metadata
-Last updated: 2026-06-04
-Last verified: 2026-06-04
-Last commit: 2f30e0f8a1c9d479de425d039507267616d78c2b chore(runtime): update Claude Code baseline to 2.1.162
+Last updated: 2026-06-05
+Last verified: 2026-06-05
+Last commit: 55c6df618d2982e633c14c459ab88fba7da981ee chore(runtime): update Claude Code baseline to 2.1.165
 Scope: MCP runtime transport and pin policy
 Area: MCP
 -->
@@ -21,8 +21,8 @@ MCP runtime transport and pin policy
 - `path:README.md`
 
 ## Last verified
-- date: 2026-06-04
-- commit: `2f30e0f8a1c9d479de425d039507267616d78c2b`
+- date: 2026-06-05
+- commit: `55c6df618d2982e633c14c459ab88fba7da981ee`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
@@ -32,7 +32,7 @@ MCP runtime transport and pin policy
   `config/mcp-runtime-versions.env`.
 
 ## Evidence
-- `commit:2f30e0f8a1c9d479de425d039507267616d78c2b`
+- `commit:55c6df618d2982e633c14c459ab88fba7da981ee`
 - `path:plugins/rldyour-mcps/.mcp.json`
 - `path:config/mcp-runtime-versions.env`
 - `path:README.md`
