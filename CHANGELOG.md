@@ -7,6 +7,16 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 ## [Unreleased]
 
 
+## [1.1.27] - 2026-06-05
+
+### Changed
+
+- Refresh Claude Code runtime baseline to 2.1.165 and document 2.1.163 managed-version, plugin-list, hook-continuation, skill-escape, and stdio MCP session-id surfaces.
+
+### Fixed
+
+- Extend the Claude surface-adoption validator so the new runtime surfaces are enforced alongside the package pin.
+
 ## [1.1.26] - 2026-06-04
 
 ### Changed
