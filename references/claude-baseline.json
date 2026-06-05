@@ -1,10 +1,10 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "schema_version": 1,
-  "verified_on": "2026-06-04",
+  "verified_on": "2026-06-05",
   "baseline": {
     "claude_code": {
-      "version": "2.1.162",
+      "version": "2.1.165",
       "npm_package": "@anthropic-ai/claude-code",
       "ref": "https://code.claude.com/docs/en/changelog",
       "model_config_ref": "https://code.claude.com/docs/en/model-config"
@@ -20,7 +20,13 @@
       "dynamic-workflows",
       "streaming-tool-execution-default",
       "mcp-pending-approval-piped-output",
-      "opus-4-8-thinking-block-api-hotfix"
+      "opus-4-8-thinking-block-api-hotfix",
+      "managed-required-version-settings",
+      "plugin-list-command",
+      "stop-subagentstop-additional-context",
+      "skill-dollar-escape-syntax",
+      "stdio-mcp-session-id-on-resume",
+      "claude-code-2-1-165-reliability-rollup"
     ]
   }
 }

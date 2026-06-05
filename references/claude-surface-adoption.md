@@ -1,6 +1,6 @@
 # Claude Code Surface Adoption
 
-Verified: 2026-06-04
+Verified: 2026-06-05
 
 Source of truth:
 - Runtime baseline: `references/claude-baseline.json`
@@ -25,7 +25,7 @@ Source of truth:
 | Streaming tool execution enabled by default | 2.1.154 | Adopt implicitly | No config migration is required; existing hooks and reviewer file-first output must continue to treat tool output as bounded evidence. | `scripts/validate_claude_surface_adoption.py` |
 | Piped `claude mcp list`/`get` pending-approval reporting | 2.1.154 | Adopt operationally | Keep MCP approval checks in installed-runtime diagnostics; do not auto-approve `.mcp.json` from static validators. | `scripts/validate_claude_surface_adoption.py` |
 | Plugin `defaultEnabled: false` metadata | 2.1.154 | Future | All first-party rldyour plugins remain enabled by the owner marketplace installer; add this only for optional plugins with explicit owner approval. | `scripts/validate_claude_surface_adoption.py` |
-| Opus 4.8 thinking-block API hotfix | 2.1.156 | Adopted | Preserve the hotfix introduced in `2.1.156`; pin package/runtime surfaces to Claude Code `2.1.162` and require installed-runtime smoke to report `claude --version` `2.1.162` or newer before declaring Opus 4.8 release readiness. | `scripts/validate_claude_surface_adoption.py` |
+| Opus 4.8 thinking-block API hotfix | 2.1.156 | Adopted | Preserve the hotfix introduced in `2.1.156`; pin package/runtime surfaces to Claude Code `2.1.165` and require installed-runtime smoke to report `claude --version` `2.1.165` or newer before declaring Opus 4.8 release readiness. | `scripts/validate_claude_surface_adoption.py` |
 | `.claude/skills` direct loading, `claude plugin init`, and `/plugin` autocomplete | 2.1.157 | Adopt operationally | Treat these as compatible with the existing marketplace model; keep first-party release artifacts in marketplace plugins and use `.claude/skills` only for generated/runtime discovery bridges where the control plane owns them. | `scripts/validate_claude_surface_adoption.py` |
 | `settings.json` `agent` field honored | 2.1.157 | Adopt implicitly | Keep agent routing explicit in first-party command and skill metadata; no config migration is required because the existing settings surface can now be trusted when installed-runtime smoke exercises it. | `scripts/validate_agent_tools.py`; `scripts/validate_claude_surface_adoption.py` |
 | `EnterWorktree` and background-agent worktree fixes | 2.1.157 | Adopt implicitly | Treat as runtime correctness for worktree-aware tasks; keep rldyour worktree cleanup and fullrepo publishing policy in Flow rather than inventing adapter-specific worktree orchestration. | `scripts/validate_claude_surface_adoption.py` |
@@ -35,6 +35,12 @@ Source of truth:
 | Claude Code 2.1.159 infrastructure-only release | 2.1.159 | Adopted | Official changelog records internal infrastructure improvements with no user-facing changes; update package/runtime pins and keep existing feature decisions unchanged. | `scripts/validate_runtime_baselines.py`; `scripts/validate_model_baselines.py` |
 | Claude Code 2.1.161 secret-redaction and parallel-call isolation | 2.1.161 | Adopt implicitly | Runtime redacts sensitive `claude mcp` command output and isolates parallel tool-call failures. Repository repair scripts still redact captured command output before state logging instead of relying only on runtime behavior. | `scripts/validate_runtime_baselines.py`; `scripts/validate_model_baselines.py`; root `scripts/ry_repair_sync.py --plan --json` |
 | Claude Code 2.1.162 agents/tooling and permission fixes | 2.1.162 | Adopted | Treat optional `waitingFor` in `claude agents --json` as runtime output data, allow native `Grep`/`Glob` tool listings on embedded-search builds, keep WebFetch permission rules explicit, and use installed-runtime smoke to prove the local binary. | `scripts/validate_runtime_baselines.py`; `scripts/validate_model_baselines.py`; root `scripts/smoke_claude_ry_start_workflow.py` |
+| Managed runtime version bounds | 2.1.163 | Future | `requiredMinimumVersion` and `requiredMaximumVersion` are enterprise/admin managed settings. Do not write them into normal user or project config until this repository owns a managed settings surface; validate only when such a surface exists. | `scripts/validate_claude_surface_adoption.py` |
+| `/plugin list` inventory command | 2.1.163 | Adopt operationally | Treat `/plugin list --enabled` and `/plugin list --disabled` as installed-runtime diagnostics. Static release truth remains marketplace and plugin manifests in this repository. | `scripts/validate_claude_surface_adoption.py` |
+| Stop/SubagentStop `hookSpecificOutput.additionalContext` | 2.1.163 | Future | Keep Stop hook continuation owned by rldyour-flow until a specific hook needs to add feedback without surfacing as an error. Do not use this as a generic retry channel. | `scripts/validate_claude_surface_adoption.py` |
+| Skills literal dollar escape before digits | 2.1.163 | Adopt operationally | When command bodies need a literal `$` before a digit, use the `\$` escape syntax and keep generated skill text ASCII-stable. No current command body migration is required. | `scripts/validate_claude_surface_adoption.py` |
+| stdio MCP `CLAUDE_CODE_SESSION_ID` parity on resume | 2.1.163 | Adopt implicitly | Runtime now aligns resumed stdio MCP servers with hook/Bash session IDs; keep MCP config unchanged and rely on installed-runtime smoke when debugging resumed sessions. | `scripts/validate_claude_surface_adoption.py` |
+| Claude Code 2.1.165 reliability rollup | 2.1.165 | Adopted | Official changelog records Bug fixes and reliability improvements only. Adopt `2.1.165` as the latest runtime baseline after package and installed-runtime checks; no new config surface is introduced. | `scripts/validate_runtime_baselines.py`; `scripts/validate_live_runtime_latest.py` |
 
 ## AskUserQuestion And Owner Full-Auto
 
@@ -54,5 +60,5 @@ fabricates owner decisions.
 `scripts/validate_claude_surface_adoption.py` requires this file to contain an
 explicit decision for every runtime surface listed in
 `references/claude-baseline.json`, every Claude Code `2.1.154` workflow/model
-surface, and every pinned `2.1.162` runtime surface that affects this
+surface, and every pinned `2.1.165` runtime surface that affects this
 adapter's plugin, skill, hook, or marketplace behavior.
