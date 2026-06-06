@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-06-06
 Last verified: 2026-06-06
-Last commit: 22f754ee2becb2abbd0668f24dde1050bcd5d99f fix(flow): add project policy sync controls
+Last commit: 930ab8caf29edf50d0de8d4185cfe19d243f32ad fix(flow): add project policy sync controls
 Scope: language-server setup and diagnostic proof
 Area: LSP
 -->
@@ -22,14 +22,14 @@ language-server setup and diagnostic proof
 
 ## Last verified
 - date: 2026-06-06
-- commit: `22f754ee2becb2abbd0668f24dde1050bcd5d99f`
+- commit: `930ab8caf29edf50d0de8d4185cfe19d243f32ad`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
 - LSP memories record language-server coverage and diagnostic proof requirements.
 
 ## Evidence
-- `commit:22f754ee2becb2abbd0668f24dde1050bcd5d99f`
+- `commit:930ab8caf29edf50d0de8d4185cfe19d243f32ad`
 - `path:plugins/rldyour-lsps`
 - `path:README.md`
 

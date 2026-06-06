@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-06-06
 Last verified: 2026-06-06
-Last commit: 22f754ee2becb2abbd0668f24dde1050bcd5d99f fix(flow): add project policy sync controls
+Last commit: 930ab8caf29edf50d0de8d4185cfe19d243f32ad fix(flow): add project policy sync controls
 Scope: security posture and blocking/warning policy
 Area: SECURITY
 -->
@@ -22,14 +22,14 @@ security posture and blocking/warning policy
 
 ## Last verified
 - date: 2026-06-06
-- commit: `22f754ee2becb2abbd0668f24dde1050bcd5d99f`
+- commit: `930ab8caf29edf50d0de8d4185cfe19d243f32ad`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
 - Security memories record block/warn/review classes and defensive-only review policy.
 
 ## Evidence
-- `commit:22f754ee2becb2abbd0668f24dde1050bcd5d99f`
+- `commit:930ab8caf29edf50d0de8d4185cfe19d243f32ad`
 - `path:plugins/rldyour-security`
 - `path:README.md`
 

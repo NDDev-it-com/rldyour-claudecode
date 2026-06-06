@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-06-06
 Last verified: 2026-06-06
-Last commit: 22f754ee2becb2abbd0668f24dde1050bcd5d99f fix(flow): add project policy sync controls
+Last commit: 930ab8caf29edf50d0de8d4185cfe19d243f32ad fix(flow): add project policy sync controls
 Scope: deterministic hook lifecycle behavior
 Area: HOOKS
 -->
@@ -22,7 +22,7 @@ deterministic hook lifecycle behavior
 
 ## Last verified
 - date: 2026-06-06
-- commit: `22f754ee2becb2abbd0668f24dde1050bcd5d99f`
+- commit: `930ab8caf29edf50d0de8d4185cfe19d243f32ad`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
@@ -40,7 +40,7 @@ deterministic hook lifecycle behavior
   checks in the hot path and reports `network_checked=false`.
 
 ## Evidence
-- `commit:22f754ee2becb2abbd0668f24dde1050bcd5d99f`
+- `commit:930ab8caf29edf50d0de8d4185cfe19d243f32ad`
 - `path:plugins/rldyour-flow/hooks`
 - `path:plugins/rldyour-flow/scripts/flow_post_task_state.py`
 - `path:plugins/rldyour-flow/scripts/fullrepo_sync.py`

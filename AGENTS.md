@@ -20,7 +20,7 @@ claims:
   max_skill_description_chars: 1536
   fullrepo_branch: fullrepo
   plugin_count: 9
-  skill_count: 33
+  skill_count: 35
   command_count: 11
   subagent_count: 8
 -->
@@ -76,7 +76,7 @@ OpenAI Codex CLI reads `AGENTS.md` before starting work and runs commands listed
 
 ## SDLC Workflow
 
-Five orchestrated lifecycle skills plus one explicit sync command (Russian-leading descriptions) live in `rldyour-flow`:
+Five orchestrated lifecycle skills, two cmux role skills, plus one explicit sync command (Russian-leading descriptions) live in `rldyour-flow`:
 
 - `/rldyour-flow:ry-init` - read-only scope discovery and context pack.
 - `/rldyour-flow:ry-start` - full task lifecycle: init → research → plan → implement → quality gates → post-task sync; reviewer fan-out only when explicitly requested.

@@ -104,6 +104,12 @@ if not isinstance(instruction_policy, dict):
 cleanup_policy = effective_policy.get("branch_cleanup", {})
 if not isinstance(cleanup_policy, dict):
     cleanup_policy = {}
+execution_state = state.get("execution", {})
+if not isinstance(execution_state, dict):
+    execution_state = {}
+cmux_policy = effective_policy.get("cmux", {})
+if not isinstance(cmux_policy, dict):
+    cmux_policy = {}
 local_merged = branch_cleanup_state.get("local_merged_branches", [])
 if not isinstance(local_merged, list):
     local_merged = []
@@ -145,6 +151,14 @@ lines = [
         f"agent_files {normal_policy.get('agent_files', 'strict-fullrepo-default')}, "
         f"instruction_docs.mode {instruction_policy.get('mode', 'auto')}, "
         f"branch_cleanup.mode {cleanup_policy.get('mode', 'advisory')}."
+    ),
+    (
+        "- Execution: "
+        f"mode {execution_state.get('execution_mode', 'standard')}, "
+        f"agent_role {execution_state.get('agent_role', 'standalone')}, "
+        f"cmux.enabled {cmux_policy.get('enabled', False)}, "
+        f"workspace {execution_state.get('cmux_workspace_id') or 'none'}, "
+        f"surface {execution_state.get('cmux_surface_id') or 'none'}."
     ),
     (
         "- Branch cleanup: "

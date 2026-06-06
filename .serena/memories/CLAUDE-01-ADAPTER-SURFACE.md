@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-06-06
 Last verified: 2026-06-06
-Last commit: 22f754ee2becb2abbd0668f24dde1050bcd5d99f fix(flow): add project policy sync controls
+Last commit: 930ab8caf29edf50d0de8d4185cfe19d243f32ad fix(flow): add project policy sync controls
 Scope: Claude Code adapter implementation surface
 Area: CLAUDE
 -->
@@ -22,14 +22,14 @@ Claude Code adapter implementation surface
 
 ## Last verified
 - date: 2026-06-06
-- commit: `22f754ee2becb2abbd0668f24dde1050bcd5d99f`
+- commit: `930ab8caf29edf50d0de8d4185cfe19d243f32ad`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
 - Claude memories describe the Claude Code plugin marketplace, command, skill, hook, MCP, and LSP surfaces.
 
 ## Evidence
-- `commit:22f754ee2becb2abbd0668f24dde1050bcd5d99f`
+- `commit:930ab8caf29edf50d0de8d4185cfe19d243f32ad`
 - `path:config/rldyour-contract.json`
 - `path:.claude-plugin/marketplace.json`
 
