@@ -7,6 +7,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 ## [Unreleased]
 
 
+## [1.1.31] - 2026-06-07
+
+### Fixed
+
+- Fix CI static analysis gates.
+
 ## [1.1.30] - 2026-06-06
 
 ### Added
