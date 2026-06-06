@@ -155,6 +155,53 @@ def _effective_policy(policy: dict[str, Any]) -> dict[str, Any]:
     return effective if isinstance(effective, dict) else {}
 
 
+def _runtime_execution(effective_policy: dict[str, Any]) -> dict[str, Any]:
+    execution_policy = effective_policy.get("execution")
+    if not isinstance(execution_policy, dict):
+        execution_policy = {}
+    mode = os.environ.get("RLDYOUR_EXECUTION_MODE") or str(execution_policy.get("mode", "standard"))
+    if mode not in {"standard", "orchestrator"}:
+        mode = "standard"
+
+    role = os.environ.get("RLDYOUR_AGENT_ROLE") or str(execution_policy.get("agent_role", "auto"))
+    if role not in {"auto", "standalone", "orchestrator", "worker"}:
+        role = "auto"
+    if role == "auto":
+        if mode == "orchestrator" and os.environ.get("RLDYOUR_ORCHESTRATOR") == "1":
+            role = "orchestrator"
+        elif mode == "orchestrator" and (
+            os.environ.get("RLDYOUR_WORKER") == "1" or os.environ.get("RLDYOUR_WORKER_ID")
+        ):
+            role = "worker"
+        else:
+            role = "standalone"
+
+    return {
+        "execution_mode": mode,
+        "agent_role": role,
+        "task_delegation": str(execution_policy.get("task_delegation", "direct")),
+        "cmux_workspace_id": os.environ.get("CMUX_WORKSPACE_ID", ""),
+        "cmux_surface_id": os.environ.get("CMUX_SURFACE_ID", ""),
+        "worker_id": os.environ.get("RLDYOUR_WORKER_ID", ""),
+        "worker_allowed_paths": _split_worker_paths(os.environ.get("RLDYOUR_WORKER_ALLOWED_PATHS", "")),
+    }
+
+
+def _split_worker_paths(raw: str) -> list[str]:
+    if not raw:
+        return []
+    normalized = raw.replace("\n", ",").replace(os.pathsep, ",")
+    return sorted({part.strip().strip("/") for part in normalized.split(",") if part.strip().strip("/")})
+
+
+def _path_matches_scope(path: str, scopes: list[str]) -> bool:
+    normalized = path.strip("/")
+    for scope in scopes:
+        if normalized == scope or normalized.startswith(scope.rstrip("/") + "/"):
+            return True
+    return False
+
+
 def _policy_list(section: dict[str, Any], key: str, fallback: tuple[str, ...]) -> tuple[str, ...]:
     value = section.get(key)
     if not isinstance(value, list) or not all(isinstance(item, str) and item for item in value):
@@ -348,6 +395,10 @@ def state() -> dict[str, Any]:
     stop_policy = effective_policy.get("stop_hook") if isinstance(effective_policy.get("stop_hook"), dict) else {}
     serena_policy = effective_policy.get("serena") if isinstance(effective_policy.get("serena"), dict) else {}
     fullrepo_mode = str(fullrepo_policy.get("mode", "auto"))
+    runtime_execution = _runtime_execution(effective_policy)
+    execution_mode = str(runtime_execution["execution_mode"])
+    agent_role = str(runtime_execution["agent_role"])
+    is_worker = execution_mode == "orchestrator" and agent_role == "worker"
 
     head_full = _stdout("rev-parse", "HEAD")
     head_sha = head_full[:7] if head_full else ""
@@ -406,25 +457,44 @@ def state() -> dict[str, Any]:
 
     blocking_reasons: list[str] = []
     advisory_reasons: list[str] = []
-    if not serena_current and str(serena_policy.get("mode", "enabled")) != "disabled":
-        blocking_reasons.append("serena-memory-stale")
-    if dirty_files and bool(stop_policy.get("block_on_dirty_source", True)):
-        blocking_reasons.append("dirty-worktree")
-    if (ahead or behind) and bool(stop_policy.get("block_on_ahead_behind", True)):
-        blocking_reasons.append("branch-ahead-behind")
-    if fullrepo_needs_attention:
-        blocking_reasons.append("fullrepo-sync-required")
-    elif fullrepo_attention_candidate and fullrepo_mode in {"auto", "advisory"}:
-        advisory_reasons.append("fullrepo-sync-advisory")
-    branch_cleanup_blocks_stop = bool(stop_policy.get("block_on_branch_cleanup", False)) or bool(
-        branch_cleanup_state.get("block_stop")
-    )
-    if bool(branch_cleanup_state.get("needs_cleanup")) and branch_cleanup_blocks_stop:
-        blocking_reasons.append("branch-cleanup-required")
-    elif branch_cleanup_state.get("advisory_candidates"):
-        advisory_reasons.append("branch-cleanup-advisory")
-    if bool(instruction_docs_state.get("needs_instruction_docs_review")):
-        blocking_reasons.append("instruction-docs-review")
+    if is_worker:
+        worker_scopes = runtime_execution.get("worker_allowed_paths")
+        worker_scopes = worker_scopes if isinstance(worker_scopes, list) else []
+        dirty_out_of_scope = [path for path in dirty_files if worker_scopes and not _path_matches_scope(path, worker_scopes)]
+        if dirty_out_of_scope:
+            blocking_reasons.append("worker-dirty-out-of-scope")
+        if dirty_files and bool(stop_policy.get("block_on_dirty_source", True)):
+            blocking_reasons.append("worker-report-required")
+        if not serena_current and str(serena_policy.get("mode", "enabled")) != "disabled":
+            advisory_reasons.append("worker-serena-stale-report")
+        if ahead or behind:
+            advisory_reasons.append("worker-branch-drift-report")
+        if fullrepo_attention_candidate:
+            advisory_reasons.append("worker-fullrepo-report")
+        if bool(branch_cleanup_state.get("needs_cleanup")):
+            advisory_reasons.append("worker-branch-cleanup-report")
+        if bool(instruction_docs_state.get("needs_instruction_docs_review")):
+            advisory_reasons.append("worker-instruction-docs-report")
+    else:
+        if not serena_current and str(serena_policy.get("mode", "enabled")) != "disabled":
+            blocking_reasons.append("serena-memory-stale")
+        if dirty_files and bool(stop_policy.get("block_on_dirty_source", True)):
+            blocking_reasons.append("dirty-worktree")
+        if (ahead or behind) and bool(stop_policy.get("block_on_ahead_behind", True)):
+            blocking_reasons.append("branch-ahead-behind")
+        if fullrepo_needs_attention:
+            blocking_reasons.append("fullrepo-sync-required")
+        elif fullrepo_attention_candidate and fullrepo_mode in {"auto", "advisory"}:
+            advisory_reasons.append("fullrepo-sync-advisory")
+        branch_cleanup_blocks_stop = bool(stop_policy.get("block_on_branch_cleanup", False)) or bool(
+            branch_cleanup_state.get("block_stop")
+        )
+        if bool(branch_cleanup_state.get("needs_cleanup")) and branch_cleanup_blocks_stop:
+            blocking_reasons.append("branch-cleanup-required")
+        elif branch_cleanup_state.get("advisory_candidates"):
+            advisory_reasons.append("branch-cleanup-advisory")
+        if bool(instruction_docs_state.get("needs_instruction_docs_review")):
+            blocking_reasons.append("instruction-docs-review")
 
     needs_flow_sync = bool(blocking_reasons)
 
@@ -445,6 +515,7 @@ def state() -> dict[str, Any]:
         "advisory_reasons": advisory_reasons,
         "policy_source": project_policy.get("source"),
         "policy_source_kind": project_policy.get("source_kind"),
+        "execution": runtime_execution,
     }
     fingerprint = hashlib.sha256(json.dumps(fingerprint_payload, sort_keys=True).encode()).hexdigest()[:16]
 
@@ -463,6 +534,7 @@ def state() -> dict[str, Any]:
         "worktree_count": worktree_count,
         "serena_current": serena_current,
         "serena_state": serena_state,
+        "execution": runtime_execution,
         "project_policy": {
             "source": project_policy.get("source"),
             "source_kind": project_policy.get("source_kind"),

@@ -97,6 +97,8 @@ if payload.get("stop_hook_active") is True and sync_marker.is_file():
         marker = ""
     if marker == fingerprint:
         policy = state.get("project_policy", {})
+        execution = state.get("execution", {})
+        is_worker = isinstance(execution, dict) and execution.get("agent_role") == "worker"
         ack = {
             "schema_version": 1,
             "fingerprint": fingerprint,
@@ -109,6 +111,10 @@ if payload.get("stop_hook_active") is True and sync_marker.is_file():
         ack_marker.write_text(json.dumps(ack, sort_keys=True) + "\n", encoding="utf-8")
         print(json.dumps({
             "systemMessage": (
+                "rldyour-flow worker report was already requested for this state. "
+                "Allowing stop now to avoid a Stop-hook loop."
+                if is_worker
+                else
                 "rldyour-flow post-task sync was already requested for this state. "
                 "Allowing stop now to avoid a Stop-hook loop."
             )
@@ -137,6 +143,7 @@ if not isinstance(project_policy, dict):
 summary = json.dumps({
     "branch": state.get("branch"),
     "head": state.get("head_sha"),
+    "execution": state.get("execution", {}),
     "dirty_files": state.get("dirty_files", []),
     "doc_files_present": state.get("doc_files_present", []),
     "doc_files_changed": state.get("doc_files_changed", []),
@@ -217,7 +224,39 @@ else:
     policy_lines.append("Branch cleanup is strict only for configured workflow prefixes; never delete protected branches.")
 policy_guidance = "\n".join(policy_lines)
 
-message = f"""[RLDYOUR-FLOW POST-TASK SYNC REQUIRED] Serena memories are current for HEAD {head_sha or 'unknown'}; now synchronize project docs and git state.
+execution_state = state.get("execution", {})
+if not isinstance(execution_state, dict):
+    execution_state = {}
+is_worker = execution_state.get("execution_mode") == "orchestrator" and execution_state.get("agent_role") == "worker"
+
+if is_worker:
+    message = f"""[RLDYOUR-FLOW CMUX WORKER REPORT REQUIRED] Worker state has policy-scoped blockers for HEAD {head_sha or 'unknown'}; report to the orchestrator instead of running global sync.
+
+Current state:
+{summary}
+
+Worker role: {execution_state.get('worker_id') or execution_state.get('agent_role') or 'worker'}
+
+Effective policy:
+{policy_guidance}
+
+Worker rules:
+1. Do not run fullrepo publish/migrate/install-exclude.
+2. Do not push, force-push, delete branches, install system configs, or mutate project policy.
+3. Do not run flow-post-task-sync unless the orchestrator explicitly delegates final sync.
+4. If dirty files are outside assigned scope, stop and report the exact paths.
+5. Return a structured worker report to the orchestrator:
+{{
+  "status": "pass|fail|blocked|not_proven",
+  "files_changed": [],
+  "commands_run": [],
+  "findings": [],
+  "risks": [],
+  "needs_orchestrator_action": []
+}}
+6. Stop again after reporting or after the orchestrator delegates a specific cleanup."""
+else:
+    message = f"""[RLDYOUR-FLOW POST-TASK SYNC REQUIRED] Serena memories are current for HEAD {head_sha or 'unknown'}; now synchronize project docs and git state.
 
 Current state:
 {summary}
