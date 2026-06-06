@@ -154,10 +154,9 @@ def check_file(path: Path, root: Path, runtime_pin: str, counts: dict[str, int])
                 issues.append(f"FAIL {path}: sync_contract {key} does not match inventory ({expected_count})")
                 fail = 1
 
-    if path.match("*/.github/ISSUE_TEMPLATE/bug_report.yml"):
-        if f'placeholder: "{runtime_pin}"' not in text:
-            issues.append(f"FAIL {path}: bug-report Claude Code placeholder must match runtime pin {runtime_pin}")
-            fail = 1
+    if path.match("*/.github/ISSUE_TEMPLATE/bug_report.yml") and f'placeholder: "{runtime_pin}"' not in text:
+        issues.append(f"FAIL {path}: bug-report Claude Code placeholder must match runtime pin {runtime_pin}")
+        fail = 1
 
     if fail == 0 and not issues:
         issues.append(f"OK {path}: {n} lines")
