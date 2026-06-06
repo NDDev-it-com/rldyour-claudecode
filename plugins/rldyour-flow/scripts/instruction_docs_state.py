@@ -8,13 +8,13 @@ import os
 import subprocess
 import sys
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 if str(SCRIPT_DIR) not in sys.path:
     sys.path.insert(0, str(SCRIPT_DIR))
 
-from project_flow_policy import load_policy
+from project_flow_policy import load_policy  # noqa: E402
 
 AGENTS_DOC = "AGENTS.md"
 CLAUDE_DOC = ".claude/CLAUDE.md"
@@ -178,6 +178,10 @@ def file_line_count(path: Path) -> int:
     return len(path.read_text(encoding="utf-8", errors="replace").splitlines())
 
 
+def dict_section(value: object) -> dict[str, Any]:
+    return cast(dict[str, Any], value) if isinstance(value, dict) else {}
+
+
 def instruction_state(root: Path) -> dict[str, Any]:
     root = root.resolve()
     if git(root, "rev-parse", "--is-inside-work-tree").returncode != 0:
@@ -189,16 +193,10 @@ def instruction_state(root: Path) -> dict[str, Any]:
         }
 
     project_policy = load_policy(root)
-    effective_policy = project_policy.get("effective") if isinstance(project_policy.get("effective"), dict) else {}
-    fullrepo_policy = effective_policy.get("fullrepo") if isinstance(effective_policy.get("fullrepo"), dict) else {}
-    normal_policy = (
-        effective_policy.get("normal_branch_policy")
-        if isinstance(effective_policy.get("normal_branch_policy"), dict)
-        else {}
-    )
-    instruction_policy = (
-        effective_policy.get("instruction_docs") if isinstance(effective_policy.get("instruction_docs"), dict) else {}
-    )
+    effective_policy = dict_section(project_policy.get("effective"))
+    fullrepo_policy = dict_section(effective_policy.get("fullrepo"))
+    normal_policy = dict_section(effective_policy.get("normal_branch_policy"))
+    instruction_policy = dict_section(effective_policy.get("instruction_docs"))
     instruction_docs_mode = str(instruction_policy.get("mode", "auto"))
     normal_instruction_mode = str(normal_policy.get("instruction_docs", "auto"))
     if instruction_docs_mode == "auto" and normal_instruction_mode != "auto":
@@ -211,9 +209,11 @@ def instruction_state(root: Path) -> dict[str, Any]:
         worktree_agent_paths = []
 
     current_branch = stdout(root, "branch", "--show-current") or "detached"
-    if instruction_docs_mode == "disabled" or fullrepo_mode == "disabled":
-        fullrepo_managed = False
-    elif instruction_docs_mode == "tracked-normal-branch":
+    if (
+        instruction_docs_mode == "disabled"
+        or fullrepo_mode == "disabled"
+        or instruction_docs_mode == "tracked-normal-branch"
+    ):
         fullrepo_managed = False
     elif instruction_docs_mode == "fullrepo-managed" or fullrepo_mode == "required":
         fullrepo_managed = True

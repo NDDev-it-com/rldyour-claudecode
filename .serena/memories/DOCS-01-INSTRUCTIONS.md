@@ -1,7 +1,7 @@
 <!-- Memory Metadata
-Last updated: 2026-06-06
-Last verified: 2026-06-06
-Last commit: 930ab8caf29edf50d0de8d4185cfe19d243f32ad fix(flow): add project policy sync controls
+Last updated: 2026-06-07
+Last verified: 2026-06-07
+Last commit: 193517832b7f6633e74ff2d5c38d2034f7ac53b3 chore(release): claude 1.1.31 (other)
 Scope: instruction docs and durable operator documentation
 Area: DOCS
 -->
@@ -23,8 +23,8 @@ instruction docs and durable operator documentation
 - `path:README.md`
 
 ## Last verified
-- date: 2026-06-06
-- commit: `930ab8caf29edf50d0de8d4185cfe19d243f32ad`
+- date: 2026-06-07
+- commit: `193517832b7f6633e74ff2d5c38d2034f7ac53b3`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
@@ -33,7 +33,7 @@ instruction docs and durable operator documentation
 - `scripts/validate_instruction_sync.py` accepts both nested `claims` and top-level sync-contract keys, while still failing semantic drift for shared keys.
 
 ## Evidence
-- `commit:930ab8caf29edf50d0de8d4185cfe19d243f32ad`
+- `commit:193517832b7f6633e74ff2d5c38d2034f7ac53b3`
 - `path:AGENTS.md`
 - `path:.claude/CLAUDE.md`
 - `path:README.md`

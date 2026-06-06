@@ -5,7 +5,6 @@ import json
 import sys
 from pathlib import Path
 
-
 ROOT = Path(__file__).resolve().parents[1]
 BASELINE = ROOT / "references" / "claude-baseline.json"
 ADOPTION = ROOT / "references" / "claude-surface-adoption.md"
