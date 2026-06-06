@@ -21,6 +21,8 @@ REQUIRED_BASELINE_SURFACES = {
     "skill-dollar-escape-syntax": "`\\$` escape syntax",
     "stdio-mcp-session-id-on-resume": "`CLAUDE_CODE_SESSION_ID`",
     "claude-code-2-1-165-reliability-rollup": "2.1.165 reliability rollup",
+    "fallback-model-and-deny-glob-policy": "`fallbackModel`",
+    "claude-code-2-1-167-reliability-rollup": "2.1.167 reliability rollup",
 }
 
 REQUIRED_2_1_153_SURFACES = (
@@ -73,6 +75,24 @@ REQUIRED_2_1_163_SURFACES = (
 
 REQUIRED_2_1_165_SURFACES = (
     "2.1.165 reliability rollup",
+    "Bug fixes and reliability improvements",
+)
+
+REQUIRED_2_1_166_SURFACES = (
+    "`fallbackModel`",
+    "`--fallback-model`",
+    "deny rule",
+    "`\"*\"`",
+    "`SendMessage`",
+    "`MAX_THINKING_TOKENS=0`",
+    "`--thinking disabled`",
+    "`allowedMcpServers`",
+    "`deniedMcpServers`",
+    "`${VAR}`",
+)
+
+REQUIRED_2_1_167_SURFACES = (
+    "2.1.167 reliability rollup",
     "Bug fixes and reliability improvements",
 )
 
@@ -133,6 +153,14 @@ def main() -> int:
         for marker in REQUIRED_2_1_165_SURFACES:
             if marker not in text:
                 errors.append(f"{ADOPTION.relative_to(ROOT)} missing 2.1.165 surface {marker}")
+    if parsed_version >= version_tuple("2.1.166"):
+        for marker in REQUIRED_2_1_166_SURFACES:
+            if marker not in text:
+                errors.append(f"{ADOPTION.relative_to(ROOT)} missing 2.1.166 surface {marker}")
+    if parsed_version >= version_tuple("2.1.167"):
+        for marker in REQUIRED_2_1_167_SURFACES:
+            if marker not in text:
+                errors.append(f"{ADOPTION.relative_to(ROOT)} missing 2.1.167 surface {marker}")
 
     for line in text.splitlines():
         if not line.startswith("| `") and not line.startswith("| `/"):
