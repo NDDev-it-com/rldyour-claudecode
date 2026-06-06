@@ -6,7 +6,6 @@ import sys
 from pathlib import Path
 from typing import Any
 
-
 ROOT = Path(__file__).resolve().parents[1]
 FLOW_HOOKS = ROOT / "plugins" / "rldyour-flow" / "hooks" / "hooks.json"
 SERENA_HOOKS = ROOT / "plugins" / "rldyour-serena-mcp" / "hooks" / "hooks.json"
