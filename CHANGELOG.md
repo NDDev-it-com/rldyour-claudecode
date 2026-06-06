@@ -7,6 +7,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 ## [Unreleased]
 
 
+## [1.1.28] - 2026-06-06
+
+### Changed
+
+- Refresh Claude Code 2.1.167 and OpenCode 1.16.2 runtime baselines.
+
 ## [1.1.27] - 2026-06-05
 
 ### Changed
