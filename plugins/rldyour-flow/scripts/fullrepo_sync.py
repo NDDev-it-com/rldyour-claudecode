@@ -16,7 +16,7 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 if str(SCRIPT_DIR) not in sys.path:
     sys.path.insert(0, str(SCRIPT_DIR))
 
-from project_flow_policy import load_policy
+from project_flow_policy import load_policy  # noqa: E402
 
 FULLREPO_BRANCH = "fullrepo"
 DEFAULT_REMOTE = "origin"
@@ -513,11 +513,8 @@ def status(remote: str, branch: str, *, local_only: bool = False) -> dict[str, o
     remote_sha = local_ref_sha(remote_ref) if local_only else remote_branch_sha(remote, branch)
     local_sha = local_ref_sha(f"refs/heads/{branch}")
     remote_tree = ""
-    if remote_sha:
-        if local_only:
-            remote_tree = ref_tree_sha(remote_ref)
-        elif fetch_fullrepo(remote, branch):
-            remote_tree = ref_tree_sha(remote_ref)
+    if remote_sha and (local_only or fetch_fullrepo(remote, branch)):
+        remote_tree = ref_tree_sha(remote_ref)
     local_tree = ref_tree_sha(f"refs/heads/{branch}") if local_sha else ""
     expected_tree, agent_paths = build_fullrepo_tree(root)
     comparison_tree = remote_tree or local_tree

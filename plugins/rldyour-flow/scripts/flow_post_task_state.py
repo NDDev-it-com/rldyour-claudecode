@@ -7,13 +7,13 @@ import os
 import subprocess
 import sys
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 if str(SCRIPT_DIR) not in sys.path:
     sys.path.insert(0, str(SCRIPT_DIR))
 
-from project_flow_policy import load_policy
+from project_flow_policy import load_policy  # noqa: E402
 
 RUNTIME_IGNORED = {
     ".serena/.sync_marker",
@@ -150,9 +150,12 @@ def _worktree_cleanup_candidates(base: str, protected_branches: set[str]) -> lis
     return candidates
 
 
+def _dict_section(value: object) -> dict[str, Any]:
+    return cast(dict[str, Any], value) if isinstance(value, dict) else {}
+
+
 def _effective_policy(policy: dict[str, Any]) -> dict[str, Any]:
-    effective = policy.get("effective")
-    return effective if isinstance(effective, dict) else {}
+    return _dict_section(policy.get("effective"))
 
 
 def _runtime_execution(effective_policy: dict[str, Any]) -> dict[str, Any]:
@@ -211,8 +214,8 @@ def _policy_list(section: dict[str, Any], key: str, fallback: tuple[str, ...]) -
 
 def _branch_cleanup_state(current_branch: str, policy: dict[str, Any]) -> dict[str, Any]:
     effective = _effective_policy(policy)
-    branches_policy = effective.get("branches") if isinstance(effective.get("branches"), dict) else {}
-    cleanup_policy = effective.get("branch_cleanup") if isinstance(effective.get("branch_cleanup"), dict) else {}
+    branches_policy = _dict_section(effective.get("branches"))
+    cleanup_policy = _dict_section(effective.get("branch_cleanup"))
     protected_branches = set(PROTECTED_BRANCHES)
     protected_branches.update(branches_policy.get("protected_branches", []) if isinstance(branches_policy, dict) else [])
     protected_branches.update(cleanup_policy.get("protected_branches", []) if isinstance(cleanup_policy, dict) else [])
@@ -391,9 +394,9 @@ def state() -> dict[str, Any]:
 
     project_policy = load_policy(Path.cwd())
     effective_policy = _effective_policy(project_policy)
-    fullrepo_policy = effective_policy.get("fullrepo") if isinstance(effective_policy.get("fullrepo"), dict) else {}
-    stop_policy = effective_policy.get("stop_hook") if isinstance(effective_policy.get("stop_hook"), dict) else {}
-    serena_policy = effective_policy.get("serena") if isinstance(effective_policy.get("serena"), dict) else {}
+    fullrepo_policy = _dict_section(effective_policy.get("fullrepo"))
+    stop_policy = _dict_section(effective_policy.get("stop_hook"))
+    serena_policy = _dict_section(effective_policy.get("serena"))
     fullrepo_mode = str(fullrepo_policy.get("mode", "auto"))
     runtime_execution = _runtime_execution(effective_policy)
     execution_mode = str(runtime_execution["execution_mode"])
