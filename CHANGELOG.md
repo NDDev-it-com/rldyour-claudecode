@@ -7,6 +7,17 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 ## [Unreleased]
 
 
+## [1.1.30] - 2026-06-06
+
+### Added
+
+- Add macOS cmux orchestrator/worker Flow policy, Claude-native cmux skills, and project-policy execution/cmux schema support.
+
+### Fixed
+
+- Preserve standard post-task sync blockers while restricting worker agents to scoped reports in orchestrator mode.
+
+
 ## [1.1.29] - 2026-06-06
 
 ### Fixed
