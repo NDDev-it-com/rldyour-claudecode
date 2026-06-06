@@ -7,6 +7,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 ## [Unreleased]
 
 
+## [1.1.29] - 2026-06-06
+
+### Fixed
+
+- Add schema-backed project Flow policy so Stop hooks, fullrepo sync, branch cleanup, instruction docs, and local Git guards honor repository-specific workflow constraints.
+
 ## [1.1.28] - 2026-06-06
 
 ### Changed
