@@ -40,6 +40,56 @@ DEFAULT_POLICY: dict[str, Any] = {
         "remote_branch_delete_requires_explicit_user_confirmation": True,
         "force_push_requires_explicit_user_confirmation": True,
     },
+    "operating_system": {
+        "target": "auto",
+        "install_profile": "auto",
+    },
+    "execution": {
+        "mode": "standard",
+        "agent_role": "auto",
+        "default_agent": "codex",
+        "worker_agents": ["codex", "claude", "opencode"],
+        "worker_count_min": 1,
+        "worker_count_max": 6,
+        "task_delegation": "direct",
+    },
+    "cmux": {
+        "enabled": False,
+        "install_method": "auto",
+        "global_config_path": "~/.config/cmux/cmux.json",
+        "project_config_path": ".cmux/cmux.json",
+        "install_hooks": False,
+        "install_skills": False,
+        "auto_resume_agent_sessions": False,
+        "agent_hibernation_enabled": False,
+        "socket_control_mode": "cmuxOnly",
+        "workspace_layout": "standard",
+        "version_policy": "latest-compatible",
+    },
+    "orchestrator": {
+        "enabled": False,
+        "agent": "codex",
+        "user_facing_only": True,
+        "owns_task_delegation": True,
+        "owns_commits": True,
+        "owns_push": True,
+        "owns_fullrepo": True,
+        "owns_system_install": True,
+        "worker_permissions": {
+            "commit": "forbidden-unless-delegated",
+            "push": "forbidden",
+            "fullrepo": "forbidden",
+            "system_install": "forbidden",
+            "branch_cleanup": "forbidden",
+        },
+        "concurrency": {
+            "default_strategy": "single-writer",
+            "read_only_workers_same_worktree": True,
+            "write_workers_require_worktree_or_file_scope": True,
+            "parallel_same_file_edits": "forbidden",
+            "commit_owner": "orchestrator",
+        },
+    },
     "branches": {
         "allowed_work_branches": ["main", "dev", "feat/*", "fix/*", "chore/*"],
         "protected_branches": list(PROTECTED_BRANCHES),
@@ -98,6 +148,10 @@ KNOWN_KEYS: dict[str, set[str]] = {
         "profile",
         "description",
         "ownership",
+        "operating_system",
+        "execution",
+        "cmux",
+        "orchestrator",
         "branches",
         "fullrepo",
         "normal_branch_policy",
@@ -112,6 +166,58 @@ KNOWN_KEYS: dict[str, set[str]] = {
         "destructive_git_requires_explicit_user_confirmation",
         "remote_branch_delete_requires_explicit_user_confirmation",
         "force_push_requires_explicit_user_confirmation",
+    },
+    "operating_system": {
+        "target",
+        "install_profile",
+    },
+    "execution": {
+        "mode",
+        "agent_role",
+        "default_agent",
+        "worker_agents",
+        "worker_count_min",
+        "worker_count_max",
+        "task_delegation",
+    },
+    "cmux": {
+        "enabled",
+        "install_method",
+        "global_config_path",
+        "project_config_path",
+        "install_hooks",
+        "install_skills",
+        "auto_resume_agent_sessions",
+        "agent_hibernation_enabled",
+        "socket_control_mode",
+        "workspace_layout",
+        "version_policy",
+    },
+    "orchestrator": {
+        "enabled",
+        "agent",
+        "user_facing_only",
+        "owns_task_delegation",
+        "owns_commits",
+        "owns_push",
+        "owns_fullrepo",
+        "owns_system_install",
+        "worker_permissions",
+        "concurrency",
+    },
+    "orchestrator.worker_permissions": {
+        "commit",
+        "push",
+        "fullrepo",
+        "system_install",
+        "branch_cleanup",
+    },
+    "orchestrator.concurrency": {
+        "default_strategy",
+        "read_only_workers_same_worktree",
+        "write_workers_require_worktree_or_file_scope",
+        "parallel_same_file_edits",
+        "commit_owner",
     },
     "branches": {
         "allowed_work_branches",
@@ -156,6 +262,31 @@ KNOWN_KEYS: dict[str, set[str]] = {
 }
 
 ALLOWED_VALUES: dict[tuple[str, str], set[str]] = {
+    ("operating_system", "target"): {"auto", "macos", "linux", "windows", "wsl"},
+    ("operating_system", "install_profile"): {
+        "auto",
+        "macos-standard",
+        "macos-cmux-orchestrator",
+        "linux-standard",
+        "windows-standard",
+        "wsl-standard",
+    },
+    ("execution", "mode"): {"standard", "orchestrator"},
+    ("execution", "agent_role"): {"auto", "standalone", "orchestrator", "worker"},
+    ("execution", "default_agent"): {"codex", "claude", "opencode"},
+    ("execution", "task_delegation"): {"direct", "explicit-orchestrator-only"},
+    ("cmux", "install_method"): {"auto", "brew-cask", "dmg", "manual"},
+    ("cmux", "socket_control_mode"): {"cmuxOnly"},
+    ("cmux", "version_policy"): {"latest-compatible"},
+    ("orchestrator", "agent"): {"codex", "claude", "opencode"},
+    ("orchestrator.worker_permissions", "commit"): {"forbidden", "forbidden-unless-delegated", "delegated"},
+    ("orchestrator.worker_permissions", "push"): {"forbidden", "delegated"},
+    ("orchestrator.worker_permissions", "fullrepo"): {"forbidden", "delegated"},
+    ("orchestrator.worker_permissions", "system_install"): {"forbidden", "delegated"},
+    ("orchestrator.worker_permissions", "branch_cleanup"): {"forbidden", "delegated"},
+    ("orchestrator.concurrency", "default_strategy"): {"single-writer", "worktree-per-worker"},
+    ("orchestrator.concurrency", "parallel_same_file_edits"): {"forbidden"},
+    ("orchestrator.concurrency", "commit_owner"): {"orchestrator", "delegated-worker"},
     ("fullrepo", "mode"): {"required", "auto", "advisory", "disabled"},
     ("normal_branch_policy", "agent_files"): {"allowed", "strict-fullrepo-default"},
     ("normal_branch_policy", "ai_marker_additions"): {"allowed", "strict-fullrepo-default"},
@@ -173,6 +304,20 @@ BOOL_FIELDS = {
     ("ownership", "destructive_git_requires_explicit_user_confirmation"),
     ("ownership", "remote_branch_delete_requires_explicit_user_confirmation"),
     ("ownership", "force_push_requires_explicit_user_confirmation"),
+    ("cmux", "enabled"),
+    ("cmux", "install_hooks"),
+    ("cmux", "install_skills"),
+    ("cmux", "auto_resume_agent_sessions"),
+    ("cmux", "agent_hibernation_enabled"),
+    ("orchestrator", "enabled"),
+    ("orchestrator", "user_facing_only"),
+    ("orchestrator", "owns_task_delegation"),
+    ("orchestrator", "owns_commits"),
+    ("orchestrator", "owns_push"),
+    ("orchestrator", "owns_fullrepo"),
+    ("orchestrator", "owns_system_install"),
+    ("orchestrator.concurrency", "read_only_workers_same_worktree"),
+    ("orchestrator.concurrency", "write_workers_require_worktree_or_file_scope"),
     ("fullrepo", "restore"),
     ("fullrepo", "publish"),
     ("fullrepo", "migrate_main"),
@@ -192,11 +337,17 @@ BOOL_FIELDS = {
 }
 
 LIST_STRING_FIELDS = {
+    ("execution", "worker_agents"),
     ("branches", "allowed_work_branches"),
     ("branches", "protected_branches"),
     ("branch_cleanup", "workflow_branch_prefixes"),
     ("branch_cleanup", "blocking_prefixes"),
     ("branch_cleanup", "protected_branches"),
+}
+
+INT_FIELDS = {
+    ("execution", "worker_count_min"),
+    ("execution", "worker_count_max"),
 }
 
 
@@ -278,6 +429,15 @@ def _ensure_list(value: Any, path: str, errors: list[str]) -> list[str]:
     return sorted(dict.fromkeys(value))
 
 
+def _section_dict(policy: dict[str, Any], section: str) -> dict[str, Any] | None:
+    current: Any = policy
+    for part in section.split("."):
+        if not isinstance(current, dict):
+            return None
+        current = current.get(part)
+    return current if isinstance(current, dict) else None
+
+
 def _validate_effective(policy: dict[str, Any], *, strict: bool) -> tuple[list[str], list[str]]:
     errors: list[str] = []
     warnings = _unknown_key_warnings(policy)
@@ -289,8 +449,8 @@ def _validate_effective(policy: dict[str, Any], *, strict: bool) -> tuple[list[s
         errors.append(f"schema_version must be {SCHEMA_VERSION}")
 
     for (section, key), allowed in ALLOWED_VALUES.items():
-        section_value = policy.get(section)
-        if not isinstance(section_value, dict):
+        section_value = _section_dict(policy, section)
+        if section_value is None:
             errors.append(f"{section} must be an object")
             continue
         value = section_value.get(key)
@@ -298,25 +458,52 @@ def _validate_effective(policy: dict[str, Any], *, strict: bool) -> tuple[list[s
             errors.append(f"{section}.{key} must be one of {sorted(allowed)}")
 
     for section, key in BOOL_FIELDS:
-        section_value = policy.get(section)
-        if not isinstance(section_value, dict):
+        section_value = _section_dict(policy, section)
+        if section_value is None:
             errors.append(f"{section} must be an object")
             continue
         if not isinstance(section_value.get(key), bool):
             errors.append(f"{section}.{key} must be a boolean")
 
     for section, key in LIST_STRING_FIELDS:
-        section_value = policy.get(section)
-        if not isinstance(section_value, dict):
+        section_value = _section_dict(policy, section)
+        if section_value is None:
             errors.append(f"{section} must be an object")
             continue
         section_value[key] = _ensure_list(section_value.get(key), f"{section}.{key}", errors)
+
+    for section, key in INT_FIELDS:
+        section_value = _section_dict(policy, section)
+        if section_value is None:
+            errors.append(f"{section} must be an object")
+            continue
+        value = section_value.get(key)
+        if not isinstance(value, int) or isinstance(value, bool) or value < 0:
+            errors.append(f"{section}.{key} must be a non-negative integer")
+
+    execution = policy.get("execution")
+    if isinstance(execution, dict):
+        worker_min = execution.get("worker_count_min")
+        worker_max = execution.get("worker_count_max")
+        if isinstance(worker_min, int) and not isinstance(worker_min, bool) and isinstance(worker_max, int) and not isinstance(worker_max, bool):
+            if worker_min > worker_max:
+                errors.append("execution.worker_count_min must be <= execution.worker_count_max")
 
     return errors, warnings
 
 
 def _apply_safe_invalid_fallback(policy: dict[str, Any]) -> dict[str, Any]:
     fallback = copy.deepcopy(policy)
+    fallback.setdefault("execution", {})
+    if fallback["execution"].get("mode") not in {"standard", "orchestrator"}:
+        fallback["execution"]["mode"] = "standard"
+    if fallback["execution"].get("agent_role") not in {"auto", "standalone", "orchestrator", "worker"}:
+        fallback["execution"]["agent_role"] = "auto"
+    if fallback["execution"].get("task_delegation") not in {"direct", "explicit-orchestrator-only"}:
+        fallback["execution"]["task_delegation"] = "direct"
+    fallback.setdefault("cmux", {})
+    if not isinstance(fallback["cmux"].get("enabled"), bool):
+        fallback["cmux"]["enabled"] = False
     fallback.setdefault("normal_branch_policy", {})
     fallback["normal_branch_policy"]["runtime_markers"] = "forbidden"
     fallback["normal_branch_policy"]["secrets"] = "forbidden"

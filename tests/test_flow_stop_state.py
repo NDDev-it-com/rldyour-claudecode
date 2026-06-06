@@ -176,6 +176,34 @@ def test_stop_post_task_loop_guard_works_from_subdirectory(tmp_path: Path) -> No
     assert "Allowing stop now to avoid a Stop-hook loop" in second.stdout
 
 
+def test_stop_post_task_worker_role_requests_worker_report(tmp_path: Path) -> None:
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    init_repo(repo)
+    (repo / "pending.txt").write_text("dirty\n", encoding="utf-8")
+
+    env = os.environ.copy()
+    env["RLDYOUR_EXECUTION_MODE"] = "orchestrator"
+    env["RLDYOUR_AGENT_ROLE"] = "worker"
+    env["RLDYOUR_WORKER_ID"] = "worker-claude-test"
+
+    proc = subprocess.run(
+        ["bash", str(STOP_HOOK)],
+        cwd=repo,
+        env=env,
+        input='{"stop_hook_active":false}',
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+
+    assert proc.returncode == 2
+    assert "[RLDYOUR-FLOW CMUX WORKER REPORT REQUIRED]" in proc.stderr
+    assert "Worker role: worker-claude-test" in proc.stderr
+    assert "Do not run fullrepo publish" in proc.stderr
+    assert "[RLDYOUR-FLOW POST-TASK SYNC REQUIRED]" not in proc.stderr
+
+
 def test_stop_lifecycle_dispatcher_loop_guard_preserves_stdout_json(tmp_path: Path) -> None:
     repo = tmp_path / "repo"
     repo.mkdir()

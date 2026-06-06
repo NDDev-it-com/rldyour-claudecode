@@ -20,6 +20,82 @@
         "force_push_requires_explicit_user_confirmation": { "type": "boolean" }
       }
     },
+    "operating_system": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "target": { "enum": ["auto", "macos", "linux", "windows", "wsl"] },
+        "install_profile": {
+          "enum": ["auto", "macos-standard", "macos-cmux-orchestrator", "linux-standard", "windows-standard", "wsl-standard"]
+        }
+      }
+    },
+    "execution": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "mode": { "enum": ["standard", "orchestrator"] },
+        "agent_role": { "enum": ["auto", "standalone", "orchestrator", "worker"] },
+        "default_agent": { "enum": ["codex", "claude", "opencode"] },
+        "worker_agents": { "$ref": "#/$defs/stringList" },
+        "worker_count_min": { "type": "integer", "minimum": 0 },
+        "worker_count_max": { "type": "integer", "minimum": 0 },
+        "task_delegation": { "enum": ["direct", "explicit-orchestrator-only"] }
+      }
+    },
+    "cmux": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "install_method": { "enum": ["auto", "brew-cask", "dmg", "manual"] },
+        "global_config_path": { "type": "string" },
+        "project_config_path": { "type": "string" },
+        "install_hooks": { "type": "boolean" },
+        "install_skills": { "type": "boolean" },
+        "auto_resume_agent_sessions": { "type": "boolean" },
+        "agent_hibernation_enabled": { "type": "boolean" },
+        "socket_control_mode": { "enum": ["cmuxOnly"] },
+        "workspace_layout": { "type": "string" },
+        "version_policy": { "const": "latest-compatible" }
+      }
+    },
+    "orchestrator": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "agent": { "enum": ["codex", "claude", "opencode"] },
+        "user_facing_only": { "type": "boolean" },
+        "owns_task_delegation": { "type": "boolean" },
+        "owns_commits": { "type": "boolean" },
+        "owns_push": { "type": "boolean" },
+        "owns_fullrepo": { "type": "boolean" },
+        "owns_system_install": { "type": "boolean" },
+        "worker_permissions": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "commit": { "enum": ["forbidden", "forbidden-unless-delegated", "delegated"] },
+            "push": { "enum": ["forbidden", "delegated"] },
+            "fullrepo": { "enum": ["forbidden", "delegated"] },
+            "system_install": { "enum": ["forbidden", "delegated"] },
+            "branch_cleanup": { "enum": ["forbidden", "delegated"] }
+          }
+        },
+        "concurrency": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "default_strategy": { "enum": ["single-writer", "worktree-per-worker"] },
+            "read_only_workers_same_worktree": { "type": "boolean" },
+            "write_workers_require_worktree_or_file_scope": { "type": "boolean" },
+            "parallel_same_file_edits": { "const": "forbidden" },
+            "commit_owner": { "enum": ["orchestrator", "delegated-worker"] }
+          }
+        }
+      }
+    },
     "branches": {
       "type": "object",
       "additionalProperties": false,
