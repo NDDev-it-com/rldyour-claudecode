@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://rldyour.dev/schemas/project-flow-policy.schema.json",
+  "title": "rldyour Flow project policy",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version"],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "profile": { "type": "string" },
+    "description": { "type": "string" },
+    "ownership": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "owned_by_user": { "type": "boolean" },
+        "remote_owner": { "type": "string" },
+        "destructive_git_requires_explicit_user_confirmation": { "type": "boolean" },
+        "remote_branch_delete_requires_explicit_user_confirmation": { "type": "boolean" },
+        "force_push_requires_explicit_user_confirmation": { "type": "boolean" }
+      }
+    },
+    "branches": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "allowed_work_branches": { "$ref": "#/$defs/stringList" },
+        "protected_branches": { "$ref": "#/$defs/stringList" },
+        "default_base_branch": { "type": "string" },
+        "default_integration_branch": { "type": "string" }
+      }
+    },
+    "fullrepo": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "mode": { "enum": ["required", "auto", "advisory", "disabled"] },
+        "restore": { "type": "boolean" },
+        "publish": { "type": "boolean" },
+        "migrate_main": { "type": "boolean" },
+        "install_exclude": { "type": "boolean" },
+        "create_if_missing": { "type": "boolean" },
+        "block_stop": { "type": "boolean" }
+      }
+    },
+    "normal_branch_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "agent_files": { "enum": ["allowed", "strict-fullrepo-default"] },
+        "ai_marker_additions": { "enum": ["allowed", "strict-fullrepo-default"] },
+        "instruction_docs": { "enum": ["auto", "tracked-normal-branch", "fullrepo-managed", "disabled"] },
+        "runtime_markers": { "const": "forbidden" },
+        "secrets": { "const": "forbidden" }
+      }
+    },
+    "instruction_docs": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "mode": { "enum": ["auto", "tracked-normal-branch", "fullrepo-managed", "disabled"] },
+        "codex": { "type": "string" },
+        "claude": { "type": "string" },
+        "opencode": { "type": "string" }
+      }
+    },
+    "serena": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "mode": { "enum": ["enabled", "disabled"] },
+        "memory_storage": { "enum": ["fullrepo-auto", "fullrepo", "normal-branch", "disabled"] },
+        "allow_memory_commits": { "type": "boolean" },
+        "forbid_runtime_markers": { "type": "boolean" }
+      }
+    },
+    "branch_cleanup": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "mode": { "enum": ["disabled", "advisory", "strict"] },
+        "block_stop": { "type": "boolean" },
+        "delete_local_branches": { "type": "boolean" },
+        "delete_remote_branches": { "type": "boolean" },
+        "workflow_branch_prefixes": { "$ref": "#/$defs/stringList" },
+        "blocking_prefixes": { "$ref": "#/$defs/stringList" },
+        "protected_branches": { "$ref": "#/$defs/stringList" }
+      }
+    },
+    "stop_hook": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "block_on_dirty_source": { "type": "boolean" },
+        "block_on_ahead_behind": { "type": "boolean" },
+        "block_on_fullrepo": { "type": "boolean" },
+        "block_on_branch_cleanup": { "type": "boolean" },
+        "allow_same_fingerprint_after_report": { "type": "boolean" }
+      }
+    }
+  },
+  "$defs": {
+    "stringList": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    }
+  }
+}

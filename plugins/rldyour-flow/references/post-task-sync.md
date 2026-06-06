@@ -32,7 +32,7 @@ Claude Code reads project memory from `.claude/CLAUDE.md` in rldyour fullrepo-ma
 
 Both files must contain verified facts, not chat history or speculative plans.
 
-For normal projects, root `AGENTS.md`, `.claude/CLAUDE.md`, and `REVIEW.md` are agent-only files and should be restored from `fullrepo`, ignored through `.git/info/exclude`, and excluded from normal branch history. Repositories that are themselves agent tooling may intentionally track selected instruction templates as product files (such as `system/CLAUDE.md` if the project ships a Claude Code template).
+For default rldyour-managed projects, root `AGENTS.md`, `.claude/CLAUDE.md`, and `REVIEW.md` are agent-only files restored from `fullrepo`, ignored through `.git/info/exclude`, and excluded from normal branch history. Project policy may explicitly allow tracked instruction/AI files in normal branches; scripts read `.rldyour/project-policy.json`, `.rldyour/project-policy.local.json`, or `RLDYOUR_PROJECT_POLICY`.
 
 Use `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/instruction_docs_state.py --json` to decide whether review is needed.
 
@@ -52,19 +52,20 @@ Initialization flow:
 
 1. Run `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/fullrepo_sync.py --bootstrap-init` before relying on missing agent-only context.
 2. If `origin/fullrepo` exists, restore its agent-only files and install excludes.
-3. If `origin/fullrepo` does not exist but local agent-only files exist, publish the initial generated `fullrepo` snapshot.
-4. If the current branch tracks agent-only files, remove them from the index and commit that cleanup on the normal branch before final delivery.
+3. If `origin/fullrepo` does not exist, do not create it unless `fullrepo.create_if_missing=true` or the current user instruction explicitly allows creation.
+4. If the current branch tracks agent-only files, remove them from the index only when policy says they should be fullrepo-managed.
 
 `fullrepo` uses safe force updates because it is a generated snapshot branch. Use `--force-with-lease`, not a blind `--force`, so an unexpected remote update cannot be silently overwritten.
 
 ## Loop Prevention
 
-The Stop hook writes `.serena/.flow_sync_marker` with a fingerprint of HEAD, dirty files, ahead/behind, branch, and Serena freshness. If `stop_hook_active=true` from Claude Code stdin AND the same fingerprint is already in the marker, the hook allows stop to avoid an infinite loop.
+The Stop hook writes `.serena/.flow_sync_marker` with a fingerprint of HEAD, dirty files, ahead/behind, branch, policy, and blocking/advisory reasons. If `stop_hook_active=true` from Claude Code stdin AND the same fingerprint is already in the marker, the hook writes `.serena/.flow_blocker_ack.json` and allows stop to avoid an infinite loop.
 
 Runtime markers are ignored by git:
 
 - `.serena/.flow_sync_marker`
 - `.serena/.flow_post_task_state.json`
+- `.serena/.flow_blocker_ack.json`
 - `.serena/.stop_lifecycle_timeout_marker`
 
 ## Commit Rules
@@ -79,5 +80,5 @@ Runtime markers are ignored by git:
 
 - Remove merged worktrees and branches only after verifying they are merged into `main` and pushed if needed.
 - `flow_post_task_state.py` exposes `branch_cleanup_state`; merged local branches, merged remote branches, and merged workflow worktree candidates keep `needs_flow_sync` true until cleaned or reported as blockers.
-- Delete remote branches after merge when the branch was created for this workflow and no open PR depends on it. Protected branches such as `main` and `fullrepo` are never cleanup candidates.
+- Delete remote branches after merge only when policy allows it, the branch was created for this workflow, and no open PR depends on it. Protected branches such as `main`, `dev`, and `fullrepo` are never cleanup candidates.
 - Ask the user if branch ownership, merge status, or remote state is unclear.
