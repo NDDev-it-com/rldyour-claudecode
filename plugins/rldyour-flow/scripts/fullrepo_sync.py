@@ -12,6 +12,12 @@ import tempfile
 from collections.abc import Iterable
 from pathlib import Path
 
+SCRIPT_DIR = Path(__file__).resolve().parent
+if str(SCRIPT_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPT_DIR))
+
+from project_flow_policy import load_policy
+
 FULLREPO_BRANCH = "fullrepo"
 DEFAULT_REMOTE = "origin"
 EXCLUDE_BEGIN = "# >>> rldyour fullrepo agent-only files >>>"
@@ -60,6 +66,7 @@ RUNTIME_EXCLUDE_PATTERNS = (
     ".serena/.dirty_stop_ack",
     ".serena/.flow_sync_marker",
     ".serena/.flow_post_task_state.json",
+    ".serena/.flow_blocker_ack.json",
     ".serena/.stop_lifecycle_timeout_marker",
     ".serena/.bootstrap_overrides.log",
 )
@@ -77,6 +84,44 @@ SECRET_RE = re.compile(
 
 class FullrepoError(RuntimeError):
     pass
+
+
+def _effective_policy(policy: dict[str, object]) -> dict[str, object]:
+    effective = policy.get("effective")
+    return effective if isinstance(effective, dict) else {}
+
+
+def _fullrepo_policy(policy: dict[str, object]) -> dict[str, object]:
+    section = _effective_policy(policy).get("fullrepo")
+    return section if isinstance(section, dict) else {}
+
+
+def _project_policy() -> dict[str, object]:
+    return load_policy(repo_root())
+
+
+def _policy_value(policy: dict[str, object], key: str, default: bool) -> bool:
+    value = _fullrepo_policy(policy).get(key)
+    return value if isinstance(value, bool) else default
+
+
+def enforce_fullrepo_policy(policy: dict[str, object], action: str, *, ignore_project_policy: bool = False) -> None:
+    if ignore_project_policy:
+        print(f"warning: ignoring project fullrepo policy for {action}", file=sys.stderr)
+        return
+    fullrepo = _fullrepo_policy(policy)
+    mode = str(fullrepo.get("mode", "auto"))
+    source = str(policy.get("source", "built-in defaults"))
+    if mode == "disabled":
+        raise FullrepoError(f"fullrepo disabled by project policy ({source}); refused {action}")
+    action_key = {
+        "publish": "publish",
+        "restore": "restore",
+        "migrate-main": "migrate_main",
+        "install-exclude": "install_exclude",
+    }.get(action)
+    if action_key and not _policy_value(policy, action_key, True):
+        raise FullrepoError(f"fullrepo {action} disabled by project policy ({source})")
 
 
 def _git(*args: str, check: bool = True, env: dict[str, str] | None = None) -> subprocess.CompletedProcess[str]:
@@ -291,7 +336,9 @@ def build_fullrepo_tree(root: Path) -> tuple[str, list[str]]:
         return tree, agent_paths
 
 
-def publish(remote: str, branch: str, dry_run: bool = False) -> None:
+def publish(remote: str, branch: str, dry_run: bool = False, *, ignore_project_policy: bool = False) -> None:
+    policy = _project_policy()
+    enforce_fullrepo_policy(policy, "publish", ignore_project_policy=ignore_project_policy)
     root = repo_root()
     non_agent_dirty = dirty_non_agent_paths()
     if non_agent_dirty:
@@ -300,7 +347,8 @@ def publish(remote: str, branch: str, dry_run: bool = False) -> None:
             + ", ".join(non_agent_dirty)
         )
 
-    install_exclude(dry_run=dry_run)
+    if _policy_value(policy, "install_exclude", True) or ignore_project_policy:
+        install_exclude(dry_run=dry_run)
     tree, agent_paths = build_fullrepo_tree(root)
     head = _stdout("rev-parse", "HEAD")
     head_short = head[:7]
@@ -338,8 +386,11 @@ def publish(remote: str, branch: str, dry_run: bool = False) -> None:
     print(f"published {branch} at {commit[:12]} from HEAD {head_short} with {len(agent_paths)} agent-only files")
 
 
-def restore(remote: str, branch: str, dry_run: bool = False) -> None:
-    install_exclude(dry_run=dry_run)
+def restore(remote: str, branch: str, dry_run: bool = False, *, ignore_project_policy: bool = False) -> None:
+    policy = _project_policy()
+    enforce_fullrepo_policy(policy, "restore", ignore_project_policy=ignore_project_policy)
+    if _policy_value(policy, "install_exclude", True) or ignore_project_policy:
+        install_exclude(dry_run=dry_run)
     if not fetch_fullrepo(remote, branch):
         print(f"fullrepo branch {remote}/{branch} does not exist; restore skipped")
         return
@@ -361,8 +412,11 @@ def restore(remote: str, branch: str, dry_run: bool = False) -> None:
     print(f"restored {len(remote_paths)} agent-only files from {remote}/{branch}")
 
 
-def migrate_main(dry_run: bool = False) -> None:
-    install_exclude(dry_run=dry_run)
+def migrate_main(dry_run: bool = False, *, ignore_project_policy: bool = False) -> None:
+    policy = _project_policy()
+    enforce_fullrepo_policy(policy, "migrate-main", ignore_project_policy=ignore_project_policy)
+    if _policy_value(policy, "install_exclude", True) or ignore_project_policy:
+        install_exclude(dry_run=dry_run)
     paths = tracked_agent_paths_in_index()
     if not paths:
         print("no tracked agent-only files in current branch index")
@@ -376,26 +430,42 @@ def migrate_main(dry_run: bool = False) -> None:
     print(f"removed {len(paths)} agent-only files from current branch index; files remain in the working tree")
 
 
-def bootstrap_init(remote: str, branch: str, dry_run: bool = False) -> None:
+def bootstrap_init(
+    remote: str,
+    branch: str,
+    dry_run: bool = False,
+    *,
+    create_missing: bool = False,
+    ignore_project_policy: bool = False,
+) -> None:
+    policy = _project_policy()
+    enforce_fullrepo_policy(policy, "restore", ignore_project_policy=ignore_project_policy)
     root = repo_root()
     local_agent_paths = iter_worktree_agent_files(root)
     remote_exists = fetch_fullrepo(remote, branch)
     actions: list[str] = []
 
-    install_exclude(dry_run=dry_run)
+    if _policy_value(policy, "install_exclude", True) or ignore_project_policy:
+        install_exclude(dry_run=dry_run)
 
     if remote_exists:
         actions.append("restore")
-        restore(remote, branch, dry_run=dry_run)
+        restore(remote, branch, dry_run=dry_run, ignore_project_policy=ignore_project_policy)
     elif local_agent_paths:
-        actions.append("publish")
-        publish(remote, branch, dry_run=dry_run)
+        may_create = create_missing or _policy_value(policy, "create_if_missing", False) or ignore_project_policy
+        if may_create:
+            enforce_fullrepo_policy(policy, "publish", ignore_project_policy=ignore_project_policy)
+            actions.append("publish")
+            publish(remote, branch, dry_run=dry_run, ignore_project_policy=ignore_project_policy)
+        else:
+            print(f"fullrepo branch {remote}/{branch} does not exist; creation skipped by project policy")
     else:
         print(f"fullrepo branch {remote}/{branch} does not exist and no local agent-only files were found")
 
     if tracked_agent_paths_in_index():
+        enforce_fullrepo_policy(policy, "migrate-main", ignore_project_policy=ignore_project_policy)
         actions.append("migrate-main")
-        migrate_main(dry_run=dry_run)
+        migrate_main(dry_run=dry_run, ignore_project_policy=ignore_project_policy)
 
     payload = status(remote, branch)
     payload["bootstrap_actions"] = actions
@@ -404,6 +474,40 @@ def bootstrap_init(remote: str, branch: str, dry_run: bool = False) -> None:
 
 def status(remote: str, branch: str, *, local_only: bool = False) -> dict[str, object]:
     root = repo_root()
+    policy = _project_policy()
+    fullrepo_policy = _fullrepo_policy(policy)
+    if str(fullrepo_policy.get("mode", "auto")) == "disabled":
+        return {
+            "is_git_repo": True,
+            "root": str(root),
+            "branch": _stdout("branch", "--show-current", check=False) or "detached",
+            "head": _stdout("rev-parse", "--short=12", "HEAD", check=False),
+            "remote": remote,
+            "remote_configured": remote_configured(remote),
+            "fullrepo_branch": branch,
+            "network_checked": False,
+            "remote_fullrepo_exists": False,
+            "remote_fullrepo_sha": "",
+            "remote_fullrepo_tree": "",
+            "local_fullrepo_sha": "",
+            "local_fullrepo_tree": "",
+            "expected_fullrepo_tree": "",
+            "fullrepo_matches_worktree": True,
+            "local_fullrepo_matches_worktree": True,
+            "exclude_installed": exclude_installed(),
+            "tracked_agent_paths": [],
+            "worktree_agent_paths": [],
+            "dirty_non_agent_paths": dirty_non_agent_paths(),
+            "fullrepo_needs_attention": False,
+            "mode": "disabled",
+            "project_policy": {
+                "source": policy.get("source"),
+                "source_kind": policy.get("source_kind"),
+                "valid": policy.get("valid"),
+                "profile": _effective_policy(policy).get("profile"),
+                "effective": _effective_policy(policy),
+            },
+        }
     remote_ref = f"refs/remotes/{remote}/{branch}"
     has_remote = remote_configured(remote)
     remote_sha = local_ref_sha(remote_ref) if local_only else remote_branch_sha(remote, branch)
@@ -438,6 +542,14 @@ def status(remote: str, branch: str, *, local_only: bool = False) -> dict[str, o
         "tracked_agent_paths": tracked_agent_paths_in_index(),
         "worktree_agent_paths": agent_paths,
         "dirty_non_agent_paths": dirty_non_agent_paths(),
+        "mode": str(fullrepo_policy.get("mode", "auto")),
+        "project_policy": {
+            "source": policy.get("source"),
+            "source_kind": policy.get("source_kind"),
+            "valid": policy.get("valid"),
+            "profile": _effective_policy(policy).get("profile"),
+            "effective": _effective_policy(policy),
+        },
     }
 
 
@@ -453,6 +565,16 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--remote", default=DEFAULT_REMOTE)
     parser.add_argument("--branch", default=FULLREPO_BRANCH)
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument(
+        "--ignore-project-policy",
+        action="store_true",
+        help="Emergency override for owner-authorized fullrepo actions that project policy would normally refuse.",
+    )
+    parser.add_argument(
+        "--create-missing",
+        action="store_true",
+        help="Allow --bootstrap-init to create a missing fullrepo branch when policy does not set create_if_missing.",
+    )
     parser.add_argument(
         "--local-only",
         action="store_true",
@@ -476,15 +598,26 @@ def main() -> int:
         if args.status or args.status_json:
             print_status(status(args.remote, args.branch, local_only=args.local_only), as_json=args.status_json)
         elif args.install_exclude:
+            enforce_fullrepo_policy(
+                _project_policy(),
+                "install-exclude",
+                ignore_project_policy=args.ignore_project_policy,
+            )
             install_exclude(dry_run=args.dry_run)
         elif args.restore:
-            restore(args.remote, args.branch, dry_run=args.dry_run)
+            restore(args.remote, args.branch, dry_run=args.dry_run, ignore_project_policy=args.ignore_project_policy)
         elif args.publish:
-            publish(args.remote, args.branch, dry_run=args.dry_run)
+            publish(args.remote, args.branch, dry_run=args.dry_run, ignore_project_policy=args.ignore_project_policy)
         elif args.migrate_main:
-            migrate_main(dry_run=args.dry_run)
+            migrate_main(dry_run=args.dry_run, ignore_project_policy=args.ignore_project_policy)
         elif args.bootstrap_init:
-            bootstrap_init(args.remote, args.branch, dry_run=args.dry_run)
+            bootstrap_init(
+                args.remote,
+                args.branch,
+                dry_run=args.dry_run,
+                create_missing=args.create_missing,
+                ignore_project_policy=args.ignore_project_policy,
+            )
     except FullrepoError as exc:
         print(str(exc), file=sys.stderr)
         return 1

@@ -5,9 +5,13 @@ unset CDPATH
 
 FULLREPO_BRANCH=${RLDYOUR_FULLREPO_BRANCH:-fullrepo}
 ZERO_SHA_RE='^0{40}$'
+SCRIPT_DIR=$(CDPATH="" cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+POLICY_SCRIPT=${RLDYOUR_PROJECT_POLICY_SCRIPT:-"${SCRIPT_DIR}/project_flow_policy.py"}
+RLDYOUR_AGENT_FILES_POLICY=${RLDYOUR_AGENT_FILES_POLICY:-strict-fullrepo-default}
+RLDYOUR_AI_MARKER_ADDITIONS_POLICY=${RLDYOUR_AI_MARKER_ADDITIONS_POLICY:-strict-fullrepo-default}
 
 AGENT_ONLY_RE='^(AGENTS\.md|CLAUDE\.md|REVIEW\.md|GEMINI\.md|QWEN\.md|\.cursorrules|\.windsurfrules|\.aider.*|\.claude(/|$)|\.cursor/rules(/|$)|\.gemini(/|$)|\.roo(/|$)|\.windsurf(/|$)|\.openhands(/|$)|\.github/copilot-instructions\.md|\.github/instructions(/|$)|\.github/prompts(/|$)|\.agents/(skills|commands|hooks)(/|$)|\.serena/project\.yml|\.serena/(memories|plans|research|newproj|deploy)(/|$))'
-RUNTIME_RE='^(\.serena/cache(/|$)|\.serena/\.gitignore$|\.serena/project\.local\.yml$|\.serena/\.(sync_marker|serena_sync_state\.json|auto_sync_head|active_workflow_intent\.json|dirty_stop_ack|flow_sync_marker|flow_post_task_state\.json|stop_lifecycle_timeout_marker)$|\.playwright-mcp(/|$)|browser(/|$)|\.env$|\.env\.[^/]+$)'
+RUNTIME_RE='^(\.serena/cache(/|$)|\.serena/\.gitignore$|\.serena/project\.local\.yml$|\.serena/\.(sync_marker|serena_sync_state\.json|auto_sync_head|active_workflow_intent\.json|dirty_stop_ack|flow_sync_marker|flow_post_task_state\.json|flow_blocker_ack\.json|stop_lifecycle_timeout_marker)$|\.playwright-mcp(/|$)|browser(/|$)|\.env$|\.env\.[^/]+$)'
 DEFINITE_SECRET_RE='(ctx7sk-[A-Za-z0-9-]+|ghp_[A-Za-z0-9_]+|github_pat_[A-Za-z0-9_]+|sk-[A-Za-z0-9_-]{16,}|xox[baprs]-[A-Za-z0-9-]+|BEGIN (RSA|OPENSSH|PRIVATE) KEY|Bearer[[:space:]]+[A-Za-z0-9._-]{20,})'
 SUSPICIOUS_WORDING_RE='(Bearer token|auth key|localStorage.*(auth|token)|api key|secret|credential)'
 AI_MARKER_RE='(AGENTS\.md|CLAUDE\.md|\.serena|\.claude|agent-memory|Claude|ChatGPT|OpenAI|AI-generated)'
@@ -16,6 +20,12 @@ failures=0
 
 note() {
   printf '%s\n' "$*" >&2
+}
+
+load_project_policy() {
+  if command -v python3 >/dev/null 2>&1 && [ -f "$POLICY_SCRIPT" ]; then
+    eval "$(python3 "$POLICY_SCRIPT" --shell 2>/dev/null || true)"
+  fi
 }
 
 is_zero_sha() {
@@ -93,7 +103,7 @@ guard_product_ref() {
   range=$(range_for_push "$local_sha" "$remote_sha")
 
   for path in "${paths[@]}"; do
-    if [[ $path =~ $AGENT_ONLY_RE ]]; then
+    if [ "$RLDYOUR_AGENT_FILES_POLICY" != "allowed" ] && [[ $path =~ $AGENT_ONLY_RE ]]; then
       note "[RLDYOUR-AI-GUARD] blocked agent-only path on ${remote_ref}: ${path}"
       failures=1
     fi
@@ -104,7 +114,9 @@ guard_product_ref() {
   done
 
   scan_paths_for_definite_secrets "$local_sha" "${paths[@]}"
-  block_strict_ai_markers "$range"
+  if [ "$RLDYOUR_AI_MARKER_ADDITIONS_POLICY" != "allowed" ]; then
+    block_strict_ai_markers "$range"
+  fi
 }
 
 guard_fullrepo_ref() {
@@ -139,6 +151,7 @@ guard_fullrepo_ref() {
 main() {
   local local_ref local_sha remote_ref remote_sha
   local fullrepo_ref="refs/heads/${FULLREPO_BRANCH}"
+  load_project_policy
 
   while read -r local_ref local_sha remote_ref remote_sha; do
     [ -n "${local_ref:-}" ] || continue

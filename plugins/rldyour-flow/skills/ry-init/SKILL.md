@@ -15,7 +15,7 @@ Build a verified mental model of the requested project scope before implementati
 
 1. Run `bash ${CLAUDE_PLUGIN_ROOT}/scripts/git_sync_audit.sh` when available.
 2. Inspect dirty work, old branches, and worktrees. If code is correct and consistent, synchronize it into `main`, push, and remove merged branches/worktrees. If risky, explain the issue in Russian and ask the user with concrete options.
-3. Bootstrap project agent-only context with `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/fullrepo_sync.py --bootstrap-init`, then verify `.git/info/exclude` contains the rldyour fullrepo block. This restores existing `fullrepo` context, publishes local agent-only files when no `fullrepo` exists, and removes tracked agent-only files from the current branch index when migration is needed.
+3. Resolve effective project policy with `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/project_flow_policy.py --json` when available. Bootstrap project agent-only context only when `fullrepo.mode` allows it. `--bootstrap-init` restores existing fullrepo context; it must not create a missing fullrepo branch unless policy sets `create_if_missing=true` or the user explicitly asks in the current turn.
 4. Read `${CLAUDE_PLUGIN_ROOT}/references/init-context-pack.md` and use it as the required context-pack contract.
 5. Use `serena-code-workflow`: check onboarding, list memories, read relevant memories, and use Serena semantic tools before raw reads.
 6. Map the requested scope deeply enough to understand modules, layers, symbols, DB fields, schemas, APIs, generated artifacts, configs, tests, and integration paths.
@@ -33,7 +33,7 @@ Build a verified mental model of the requested project scope before implementati
 - Do not stop at file lists. The initialized context must explain how relevant code works end to end.
 - For database-backed or API work, include fields, schemas, migrations, payloads, and caller/client paths.
 - For UI/client work, include routes/screens/components, state, API calls, design-system constraints, browser-visible behavior, and tests.
-- If agent-only files such as `AGENTS.md`, `CLAUDE.md`, `.serena/*`, `.claude/*`, `.cursor/rules/*`, or `.agents/skills/*` are needed for context, restore `fullrepo` before treating them as missing.
+- If agent-only files such as `AGENTS.md`, `CLAUDE.md`, `.serena/*`, `.claude/*`, `.cursor/rules/*`, or `.agents/skills/*` are needed for context, first read project policy. Restore `fullrepo` before treating them as missing only when policy allows restore; in tracked-normal-branch projects, treat them as normal source files.
 - Runtime snapshots, server log summaries, health-check timestamps, current container status, and one-off audit observations are report material, not Serena memory material, unless they reveal a stable code/config contract.
 
 ## Output
@@ -55,6 +55,6 @@ Report in Russian:
 
 - Запускать `serena-memory-sync` автоматически без user request или stale-memory хука.
 - Останавливаться на file listings без понимания end-to-end behavior.
-- Skip'ать `--bootstrap-init` когда AGENTS.md/CLAUDE.md missing - fullrepo restore первый.
+- Do not run `--bootstrap-init` when project policy disables fullrepo. If `AGENTS.md`/`CLAUDE.md` are missing and policy allows fullrepo restore, restore before treating them as absent.
 - Treat'ить runtime snapshots как memory material.
 - Editing scope-detection ambiguous prompts без 2-3 concrete option questions.

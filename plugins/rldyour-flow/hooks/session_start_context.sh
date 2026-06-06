@@ -86,6 +86,24 @@ if not isinstance(tracked_agent_paths, list):
 branch_cleanup_state = state.get("branch_cleanup_state", {})
 if not isinstance(branch_cleanup_state, dict):
     branch_cleanup_state = {}
+project_policy = state.get("project_policy", {})
+if not isinstance(project_policy, dict):
+    project_policy = {}
+effective_policy = project_policy.get("effective", {})
+if not isinstance(effective_policy, dict):
+    effective_policy = {}
+fullrepo_policy = effective_policy.get("fullrepo", {})
+if not isinstance(fullrepo_policy, dict):
+    fullrepo_policy = {}
+normal_policy = effective_policy.get("normal_branch_policy", {})
+if not isinstance(normal_policy, dict):
+    normal_policy = {}
+instruction_policy = effective_policy.get("instruction_docs", {})
+if not isinstance(instruction_policy, dict):
+    instruction_policy = {}
+cleanup_policy = effective_policy.get("branch_cleanup", {})
+if not isinstance(cleanup_policy, dict):
+    cleanup_policy = {}
 local_merged = branch_cleanup_state.get("local_merged_branches", [])
 if not isinstance(local_merged, list):
     local_merged = []
@@ -121,6 +139,14 @@ lines = [
         f"tracked agent-only paths {len(tracked_agent_paths)}."
     ),
     (
+        "- Project policy: "
+        f"source {project_policy.get('source', 'built-in defaults')}, "
+        f"fullrepo.mode {fullrepo_policy.get('mode', 'auto')}, "
+        f"agent_files {normal_policy.get('agent_files', 'strict-fullrepo-default')}, "
+        f"instruction_docs.mode {instruction_policy.get('mode', 'auto')}, "
+        f"branch_cleanup.mode {cleanup_policy.get('mode', 'advisory')}."
+    ),
+    (
         "- Branch cleanup: "
         f"base {branch_cleanup_state.get('base') or 'unknown'}, "
         f"local merged {len(local_merged)}, "
@@ -143,7 +169,7 @@ if doc_files:
 
 if state.get("needs_flow_sync"):
     lines.append(
-        "- Flow sync signal: pending. Before final delivery, run flow-post-task-sync after Serena memories are current and publish fullrepo when agent-only files exist."
+        "- Flow sync signal: pending. Before final delivery, run flow-post-task-sync after Serena memories are current and follow the effective project policy."
     )
 else:
     lines.append("- Flow sync signal: clean.")
@@ -151,7 +177,7 @@ else:
 lines.extend(
     [
         "- If a task starts with insufficient context, trigger scoped ry-init before editing.",
-        "- At init, restore agent-only context from fullrepo when available before relying on AGENTS.md, CLAUDE.md, or .serena knowledge.",
+        "- At init, restore agent-only context from fullrepo only when effective project policy allows it.",
         "- Before edits, pass the context sufficiency gate: code paths, symbols, data contracts, integration points, existing patterns, checks, and research evidence must be known or explicitly marked as unknown.",
         "- This context is advisory only. Do not block execution only because this hook emitted warnings.",
     ]

@@ -44,8 +44,18 @@ cd "$ROOT"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PLUGIN_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 FULLREPO_SCRIPT="$PLUGIN_DIR/scripts/fullrepo_sync.py"
+POLICY_SCRIPT="$PLUGIN_DIR/scripts/project_flow_policy.py"
 
 if [ ! -f "$FULLREPO_SCRIPT" ]; then
+  exit 0
+fi
+
+RLDYOUR_FULLREPO_MODE=${RLDYOUR_FULLREPO_MODE:-auto}
+RLDYOUR_FULLREPO_RESTORE=${RLDYOUR_FULLREPO_RESTORE:-1}
+if [ -f "$POLICY_SCRIPT" ]; then
+  eval "$("${PYTHON_BIN}" "$POLICY_SCRIPT" --shell 2>/dev/null || true)"
+fi
+if [ "$RLDYOUR_FULLREPO_MODE" = "disabled" ] || [ "$RLDYOUR_FULLREPO_RESTORE" != "1" ]; then
   exit 0
 fi
 

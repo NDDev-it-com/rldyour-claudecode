@@ -10,6 +10,12 @@ import sys
 from pathlib import Path
 from typing import Any
 
+SCRIPT_DIR = Path(__file__).resolve().parent
+if str(SCRIPT_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPT_DIR))
+
+from project_flow_policy import load_policy
+
 AGENTS_DOC = "AGENTS.md"
 CLAUDE_DOC = ".claude/CLAUDE.md"
 LEGACY_CLAUDE_DOC = "CLAUDE.md"
@@ -24,6 +30,7 @@ RUNTIME_IGNORED = {
     ".serena/.dirty_stop_ack",
     ".serena/.flow_sync_marker",
     ".serena/.flow_post_task_state.json",
+    ".serena/.flow_blocker_ack.json",
     ".serena/.stop_lifecycle_timeout_marker",
     ".serena/cache",
 }
@@ -181,21 +188,49 @@ def instruction_state(root: Path) -> dict[str, Any]:
             "fullrepo_managed": False,
         }
 
+    project_policy = load_policy(root)
+    effective_policy = project_policy.get("effective") if isinstance(project_policy.get("effective"), dict) else {}
+    fullrepo_policy = effective_policy.get("fullrepo") if isinstance(effective_policy.get("fullrepo"), dict) else {}
+    normal_policy = (
+        effective_policy.get("normal_branch_policy")
+        if isinstance(effective_policy.get("normal_branch_policy"), dict)
+        else {}
+    )
+    instruction_policy = (
+        effective_policy.get("instruction_docs") if isinstance(effective_policy.get("instruction_docs"), dict) else {}
+    )
+    instruction_docs_mode = str(instruction_policy.get("mode", "auto"))
+    normal_instruction_mode = str(normal_policy.get("instruction_docs", "auto"))
+    if instruction_docs_mode == "auto" and normal_instruction_mode != "auto":
+        instruction_docs_mode = normal_instruction_mode
+    fullrepo_mode = str(fullrepo_policy.get("mode", "auto"))
+
     fullrepo = fullrepo_state(root)
     worktree_agent_paths = fullrepo.get("worktree_agent_paths")
     if not isinstance(worktree_agent_paths, list):
         worktree_agent_paths = []
 
     current_branch = stdout(root, "branch", "--show-current") or "detached"
-    fullrepo_managed = bool(fullrepo) and (
-        current_branch == str(fullrepo.get("fullrepo_branch", "fullrepo"))
-        or bool(fullrepo.get("exclude_installed"))
-        or bool(fullrepo.get("remote_fullrepo_exists"))
-        or bool(worktree_agent_paths)
-    )
+    if instruction_docs_mode == "disabled" or fullrepo_mode == "disabled":
+        fullrepo_managed = False
+    elif instruction_docs_mode == "tracked-normal-branch":
+        fullrepo_managed = False
+    elif instruction_docs_mode == "fullrepo-managed" or fullrepo_mode == "required":
+        fullrepo_managed = True
+    else:
+        fullrepo_managed = bool(fullrepo) and (
+            current_branch == str(fullrepo.get("fullrepo_branch", "fullrepo"))
+            or bool(fullrepo.get("exclude_installed"))
+            or bool(fullrepo.get("remote_fullrepo_exists"))
+            or bool(fullrepo.get("local_fullrepo_sha"))
+        )
 
     present_docs = [path for path in REQUIRED_AGENT_DOCS if (root / path).is_file()]
-    missing_docs = [path for path in REQUIRED_AGENT_DOCS if fullrepo_managed and not (root / path).is_file()]
+    missing_docs = [
+        path
+        for path in REQUIRED_AGENT_DOCS
+        if fullrepo_managed and instruction_docs_mode != "disabled" and not (root / path).is_file()
+    ]
     legacy_root_claude_present = (root / LEGACY_CLAUDE_DOC).is_file()
 
     dirty_paths = porcelain_paths(root)
@@ -214,6 +249,10 @@ def instruction_state(root: Path) -> dict[str, Any]:
         review_reasons.append("instruction docs have uncommitted changes")
     if durable_change_candidates:
         review_reasons.append("durable project facts changed")
+    needs_review = bool(fullrepo_managed and review_reasons)
+    if instruction_docs_mode == "disabled":
+        review_reasons = []
+        needs_review = False
 
     return {
         "is_git_repo": True,
@@ -222,6 +261,10 @@ def instruction_state(root: Path) -> dict[str, Any]:
         "head": stdout(root, "rev-parse", "--short=12", "HEAD"),
         "upstream": upstream_ref,
         "fullrepo_managed": fullrepo_managed,
+        "instruction_docs_mode": instruction_docs_mode,
+        "policy_source": project_policy.get("source"),
+        "policy_source_kind": project_policy.get("source_kind"),
+        "project_policy_valid": project_policy.get("valid"),
         "required_docs": list(REQUIRED_AGENT_DOCS),
         "present_docs": present_docs,
         "missing_docs": missing_docs,
@@ -236,7 +279,7 @@ def instruction_state(root: Path) -> dict[str, Any]:
             LEGACY_CLAUDE_DOC: file_line_count(root / LEGACY_CLAUDE_DOC),
         },
         "review_reasons": review_reasons,
-        "needs_instruction_docs_review": bool(fullrepo_managed and review_reasons),
+        "needs_instruction_docs_review": needs_review,
     }
 
 

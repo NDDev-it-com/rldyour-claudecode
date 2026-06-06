@@ -63,7 +63,7 @@ The PostToolUse commit advice hook is advisory and read-only. It checks recently
 
 ## Fullrepo Branch Standard
 
-Normal project branches such as `main` should contain product source, tests, public docs, CI, and deployable configuration. Agent-only files that reveal or preserve AI workflow state should live locally and in the `fullrepo` branch, not in normal branch history.
+Default rldyour-managed product branches such as `main` contain product source, tests, public docs, CI, and deployable configuration. Agent-only files that reveal or preserve AI workflow state normally live locally and in the `fullrepo` branch. A repository may override this with `.rldyour/project-policy.json`: `normal_branch_policy.agent_files=allowed` and `instruction_docs.mode=tracked-normal-branch` make configured AI instruction files normal tracked project files.
 
 Agent-only examples:
 
@@ -77,15 +77,15 @@ Use `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/fullrepo_sync.py`:
 
 - `--restore`: fetch and restore agent-only files from `origin/fullrepo` into the worktree and install `.git/info/exclude`.
 - `--migrate-main`: remove currently tracked agent-only files from the current branch index through `git rm --cached`, leaving files in the worktree.
-- `--publish`: build a snapshot tree from current `HEAD` plus local agent-only files and push it to `fullrepo` with `--force-with-lease`.
-- `--bootstrap-init`: install excludes, restore existing remote `fullrepo` context, publish local agent-only files when no remote `fullrepo` exists, and run `--migrate-main` when the current branch still tracks agent-only files.
+- `--publish`: build a snapshot tree from current `HEAD` plus local agent-only files and push it to `fullrepo` with `--force-with-lease`; refused when project policy disables fullrepo.
+- `--bootstrap-init`: install excludes and restore existing remote `fullrepo` context when policy allows it. Creating a missing fullrepo branch requires policy `fullrepo.create_if_missing=true` or explicit current user instruction.
 - `--status-json`: emit machine-readable state for hooks and diagnostics.
 
 Use `--force-with-lease` for `fullrepo` because it protects against overwriting unexpected remote changes. Never force-push `main`.
 
 ## Local Git Pre-Push Guard
 
-Use `${CLAUDE_PLUGIN_ROOT}/scripts/local_git_ai_guard.sh` as the pre-push policy in product repositories that need local protection. The guard reads Git pre-push stdin per ref. For normal product refs it blocks agent-only paths, runtime/local-only paths, definite secrets, and AI-marker additions. For `refs/heads/${RLDYOUR_FULLREPO_BRANCH:-fullrepo}` it allows durable AI context and emits advisory warnings, but still blocks definite secrets, runtime markers, browser artifacts, and local env files.
+Use `${CLAUDE_PLUGIN_ROOT}/scripts/local_git_ai_guard.sh` as the pre-push policy in product repositories that need local protection. The guard reads Git pre-push stdin per ref. For normal product refs it blocks runtime/local-only paths, definite secrets, and, by default, agent-only paths plus AI-marker additions. If project policy allows tracked agent files, those paths are allowed while runtime markers, browser artifacts, local env files, and definite secrets remain blocked.
 
 ## ry-newp
 

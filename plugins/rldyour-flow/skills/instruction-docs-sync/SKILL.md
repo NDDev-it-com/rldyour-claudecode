@@ -7,7 +7,7 @@ description: "Синхронизация AGENTS.md и .claude/CLAUDE.md из ver
 
 ## Purpose
 
-Keep project instruction files current after meaningful work without creating a second source of truth or leaking agent-only files into normal branches.
+Keep project instruction files current after meaningful work without creating a second source of truth or violating the effective project policy for agent files.
 
 This skill runs after Serena memory sync and before quality checks, commits, GitHub sync, and `fullrepo` publish.
 
@@ -16,7 +16,7 @@ This skill runs after Serena memory sync and before quality checks, commits, Git
 - `AGENTS.md`: concise root project-instruction file (cross-tool standard, see https://agents.md/).
 - `.claude/CLAUDE.md`: Claude Code-native deep project memory.
 
-Both files are agent-only in normal product repositories: keep them local, ignore them through `.git/info/exclude`, and publish them through `fullrepo`.
+By default these files are agent-only in rldyour-managed product repositories: keep them local, ignore them through `.git/info/exclude`, and publish them through `fullrepo`. If project policy sets `instruction_docs.mode=tracked-normal-branch` or `normal_branch_policy.agent_files=allowed`, treat them as normal tracked project files.
 
 ## Source Of Truth
 
@@ -43,7 +43,7 @@ Do not copy chat history, future plans, speculation, secrets, tokens, cookies, o
    - Claude-specific locations such as `.claude/settings.json`, `.claude/skills/`, `.claude-plugin/`, hooks, `/memory`, `/context`, `/hooks`, `/mcp`, `/doctor`, and `/status` when relevant;
    - deep technical detail that complements the concise root file.
 5. Keep both files independently useful. Do not reduce `.claude/CLAUDE.md` to only `@AGENTS.md`; shared facts may overlap, but each file must be optimized for its own role.
-6. Let `flow-post-task-sync` commit normal tracked files, then publish agent-only instruction files through `fullrepo`.
+6. Let `flow-post-task-sync` commit tracked instruction files or publish agent-only instruction files through `fullrepo` according to effective project policy.
 
 ## Freshness Rules
 
@@ -71,4 +71,4 @@ Report:
 - Copy chat history / future plans / speculation into instruction files.
 - Update for mechanical formatting changes only.
 - Skip Serena memory current-check before sync (memories first, instruction docs second).
-- Commit instruction docs to normal branch when fullrepo policy requires they stay agent-only.
+- Commit instruction docs to normal branch when fullrepo policy requires they stay agent-only. In tracked-normal-branch policy, committing them is expected.
