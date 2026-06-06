@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-06-06
 Last verified: 2026-06-06
-Last commit: b874abe3f79cfba566d357f107c182dac230ccc3 chore(runtime): update Claude Code baseline to 2.1.167
+Last commit: 00d438523c4d94894a2a04e9b1e712497e03c298 chore(runtime): update Claude Code baseline to 2.1.167
 Scope: deploy and rollout verification contracts
 Area: DEPLOY
 -->
@@ -22,14 +22,14 @@ deploy and rollout verification contracts
 
 ## Last verified
 - date: 2026-06-06
-- commit: `b874abe3f79cfba566d357f107c182dac230ccc3`
+- commit: `00d438523c4d94894a2a04e9b1e712497e03c298`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
 - Deploy memories record preflight, rollout, postflight, rollback, and sync requirements.
 
 ## Evidence
-- `commit:b874abe3f79cfba566d357f107c182dac230ccc3`
+- `commit:00d438523c4d94894a2a04e9b1e712497e03c298`
 - `path:README.md`
 - `path:plugins/rldyour-flow/skills/ry-deploy`
 

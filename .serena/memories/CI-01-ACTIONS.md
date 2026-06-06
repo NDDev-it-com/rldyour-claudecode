@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-06-06
 Last verified: 2026-06-06
-Last commit: b874abe3f79cfba566d357f107c182dac230ccc3 chore(runtime): update Claude Code baseline to 2.1.167
+Last commit: 00d438523c4d94894a2a04e9b1e712497e03c298 chore(runtime): update Claude Code baseline to 2.1.167
 Scope: GitHub Actions and local CI policy
 Area: CI
 -->
@@ -22,7 +22,7 @@ GitHub Actions and local CI policy
 
 ## Last verified
 - date: 2026-06-06
-- commit: `b874abe3f79cfba566d357f107c182dac230ccc3`
+- commit: `00d438523c4d94894a2a04e9b1e712497e03c298`
 - checked by: Codex ry-start docs/memory consistency audit
 
 ## Facts
@@ -37,7 +37,7 @@ GitHub Actions and local CI policy
   OS-independent.
 
 ## Evidence
-- `commit:b874abe3f79cfba566d357f107c182dac230ccc3`
+- `commit:00d438523c4d94894a2a04e9b1e712497e03c298`
 - `path:.github/workflows`
 - `path:README.md`
 
