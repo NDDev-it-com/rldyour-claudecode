@@ -27,15 +27,15 @@ This project and all first-party marketplace plugins are licensed under the GNU 
 
 | Plugin | Version | Skills | Commands | Agents | Hooks | Scripts | References | MCP | LSP |
 |---|---|---|---|---|---|---|---|---|---|
-| `rldyour-mcps` | `1.1.27` | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 0 |
-| `rldyour-explore` | `1.1.27` | 2 | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| `rldyour-serena-mcp` | `1.1.27` | 2 | 0 | 1 | 4 | 3 | 0 | 0 | 0 |
-| `rldyour-security` | `1.1.27` | 2 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| `rldyour-browser` | `1.1.27` | 3 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| `rldyour-design` | `1.1.27` | 5 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| `rldyour-lsps` | `1.1.27` | 4 | 0 | 0 | 0 | 2 | 3 | 0 | 1 |
-| `rldyour-flow` | `1.1.27` | 8 | 7 | 6 | 6 | 7 | 7 | 0 | 0 |
-| `rldyour-rules` | `1.1.27` | 7 | 1 | 0 | 0 | 0 | 6 | 0 | 0 |
+| `rldyour-mcps` | `1.1.28` | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 0 |
+| `rldyour-explore` | `1.1.28` | 2 | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
+| `rldyour-serena-mcp` | `1.1.28` | 2 | 0 | 1 | 4 | 3 | 0 | 0 | 0 |
+| `rldyour-security` | `1.1.28` | 2 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
+| `rldyour-browser` | `1.1.28` | 3 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| `rldyour-design` | `1.1.28` | 5 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
+| `rldyour-lsps` | `1.1.28` | 4 | 0 | 0 | 0 | 2 | 3 | 0 | 1 |
+| `rldyour-flow` | `1.1.28` | 8 | 7 | 6 | 6 | 7 | 7 | 0 | 0 |
+| `rldyour-rules` | `1.1.28` | 7 | 1 | 0 | 0 | 0 | 6 | 0 | 0 |
 
 <!-- inventory:end -->
 
@@ -175,9 +175,9 @@ Reference documents:
 
 ## Minimum Claude Code Version
 
-**v2.1.165** as the pinned CI/runtime baseline and **v2.1.146+** as the feature compatibility floor. This covers every Claude Code feature used by the marketplace: `opus[1m]` for Opus 4.8 extended context (v2.1.154+; `[1m]` availability remains account/plan-dependent and `/model` omits it when unavailable), `alwaysLoad: true` MCP option (v2.1.121+), `claude plugin tag --push` (v2.1.118+), hook `if` filter (v2.1.118+), exec-form hook `args` (v2.1.139+), `displayName` marketplace entries (v2.1.143+), Stop/SubagentStop `background_tasks` and `session_crons` input fields (v2.1.145+), MCP pagination fixes, Auto mode `AskUserQuestion` behavior needed by decision gates (v2.1.146+), `disallowed-tools` frontmatter for skills/slash commands, `SessionStart` `reloadSkills` output, and the `MessageDisplay` hook event (v2.1.152), `skipLfs` marketplace-source option, status line terminal-size env (`COLUMNS`/`LINES`), `claude agents` native command/bundled skill autocomplete (v2.1.153), Opus 4.8 support, dynamic workflows, default streaming tool execution, `defaultEnabled: false` plugin metadata, piped MCP pending-approval reporting (v2.1.154), the Opus 4.8 thinking-block API hotfix (v2.1.156), current `latest` package drift through v2.1.165, `maxSkillDescriptionChars` and `skillListingBudgetFraction` user settings (v2.1.105+), `skillOverrides` (v2.1.129+; plugin skills exempt), `experimental.{themes,monitors}` wrapper (v2.1.129+).
+**v2.1.167** as the pinned CI/runtime baseline and **v2.1.146+** as the feature compatibility floor. This covers every Claude Code feature used by the marketplace: `opus[1m]` for Opus 4.8 extended context (v2.1.154+; `[1m]` availability remains account/plan-dependent and `/model` omits it when unavailable), `alwaysLoad: true` MCP option (v2.1.121+), `claude plugin tag --push` (v2.1.118+), hook `if` filter (v2.1.118+), exec-form hook `args` (v2.1.139+), `displayName` marketplace entries (v2.1.143+), Stop/SubagentStop `background_tasks` and `session_crons` input fields (v2.1.145+), MCP pagination fixes, Auto mode `AskUserQuestion` behavior needed by decision gates (v2.1.146+), `disallowed-tools` frontmatter for skills/slash commands, `SessionStart` `reloadSkills` output, and the `MessageDisplay` hook event (v2.1.152), `skipLfs` marketplace-source option, status line terminal-size env (`COLUMNS`/`LINES`), `claude agents` native command/bundled skill autocomplete (v2.1.153), Opus 4.8 support, dynamic workflows, default streaming tool execution, `defaultEnabled: false` plugin metadata, piped MCP pending-approval reporting (v2.1.154), the Opus 4.8 thinking-block API hotfix (v2.1.156), current `latest` package drift through v2.1.167, `fallbackModel`, `--fallback-model`, deny rule glob support including `"*"`, relayed `SendMessage` permission hardening, explicit thinking disable controls, managed `allowedMcpServers` / `deniedMcpServers` `${VAR}` matching, `maxSkillDescriptionChars` and `skillListingBudgetFraction` user settings (v2.1.105+), `skillOverrides` (v2.1.129+; plugin skills exempt), `experimental.{themes,monitors}` wrapper (v2.1.129+).
 
-Claude Code v2.1.163 managed runtime bounds, `/plugin list`, Stop/SubagentStop `hookSpecificOutput.additionalContext`, skill `\$` escaping, and resumed stdio MCP session-id parity are tracked in `references/claude-surface-adoption.md`. The v2.1.165 target is a reliability rollup; it does not add a new adapter-owned config surface.
+Claude Code v2.1.163 managed runtime bounds, `/plugin list`, Stop/SubagentStop `hookSpecificOutput.additionalContext`, skill `\$` escaping, and resumed stdio MCP session-id parity are tracked in `references/claude-surface-adoption.md`. The v2.1.166 target adds runtime/model/permission policy surfaces; the v2.1.167 target is a reliability rollup with no new adapter-owned config surface.
 
 ## Support And Feedback
 
