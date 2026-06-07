@@ -22,6 +22,7 @@ REQUIRED_BASELINE_SURFACES = {
     "claude-code-2-1-165-reliability-rollup": "2.1.165 reliability rollup",
     "fallback-model-and-deny-glob-policy": "`fallbackModel`",
     "claude-code-2-1-167-reliability-rollup": "2.1.167 reliability rollup",
+    "claude-code-2-1-168-reliability-rollup": "2.1.168 reliability rollup",
 }
 
 REQUIRED_2_1_153_SURFACES = (
@@ -95,6 +96,11 @@ REQUIRED_2_1_167_SURFACES = (
     "Bug fixes and reliability improvements",
 )
 
+REQUIRED_2_1_168_SURFACES = (
+    "2.1.168 reliability rollup",
+    "Bug fixes and reliability improvements",
+)
+
 VALID_DECISIONS = ("Adopt", "Adopted", "Future", "Hybrid", "Intentionally unused")
 
 
@@ -160,6 +166,10 @@ def main() -> int:
         for marker in REQUIRED_2_1_167_SURFACES:
             if marker not in text:
                 errors.append(f"{ADOPTION.relative_to(ROOT)} missing 2.1.167 surface {marker}")
+    if parsed_version >= version_tuple("2.1.168"):
+        for marker in REQUIRED_2_1_168_SURFACES:
+            if marker not in text:
+                errors.append(f"{ADOPTION.relative_to(ROOT)} missing 2.1.168 surface {marker}")
 
     for line in text.splitlines():
         if not line.startswith("| `") and not line.startswith("| `/"):
