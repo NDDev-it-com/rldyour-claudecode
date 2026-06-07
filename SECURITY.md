@@ -10,7 +10,7 @@ every historical patch in the line.
 
 | Version | Supported |
 |---------|-----------|
-| Current exact tag `1.1.32` | yes |
+| Current exact tag `1.1.33` | yes |
 | Older `1.1.*` tags | no; upgrade to current exact tag |
 | Older minor / major lines | no |
 
@@ -48,6 +48,10 @@ threat model focuses on:
   `.serena/memories/**`) must stay on the `fullrepo` branch and never
   reach `main`. The `fullrepo_sync.py` script enforces this; ADR-0001
   documents the policy.
+  This is the default rldyour-owned repository policy. In external or
+  colleague-owned repositories, `.rldyour/project-policy.json` is the
+  executable source of truth and may disable fullrepo, allow instruction docs
+  on normal branches, and disable branch-cleanup blockers.
 - **Hook freshness invariants for branch-split projects**: see ADR-0011.
 
 ## What does NOT count
