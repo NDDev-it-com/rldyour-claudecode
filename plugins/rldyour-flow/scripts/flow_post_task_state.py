@@ -45,6 +45,14 @@ def _stdout(*args: str) -> str:
     return _git(*args).stdout.strip()
 
 
+def _subprocess_timeout() -> float:
+    raw = os.environ.get("RLDYOUR_FLOW_SUBPROCESS_TIMEOUT_SECONDS", "10")
+    try:
+        return max(0.1, float(raw))
+    except ValueError:
+        return 10.0
+
+
 def _porcelain_paths() -> list[str]:
     raw = _git("status", "--porcelain").stdout.rstrip("\n")
     paths: list[str] = []
@@ -318,7 +326,16 @@ def _serena_current() -> tuple[bool, dict[str, Any]]:
     candidate = _resolve_sibling_plugin_script("rldyour-serena-mcp", "scripts/serena_memory_state.py")
     if candidate is None:
         return True, {}
-    proc = subprocess.run([sys.executable, str(candidate)], check=False, capture_output=True, text=True)
+    try:
+        proc = subprocess.run(
+            [sys.executable, str(candidate)],
+            check=False,
+            capture_output=True,
+            text=True,
+            timeout=_subprocess_timeout(),
+        )
+    except subprocess.TimeoutExpired:
+        return True, {"not_proven": "serena memory state timed out"}
     if proc.returncode != 0 or not proc.stdout.strip():
         return True, {}
     try:
@@ -350,12 +367,16 @@ def _fullrepo_state() -> dict[str, Any]:
     args = [sys.executable, str(candidate), "--status-json"]
     if os.environ.get("RLDYOUR_FLOW_STATE_LOCAL_ONLY") == "1":
         args.append("--local-only")
-    proc = subprocess.run(
-        args,
-        check=False,
-        capture_output=True,
-        text=True,
-    )
+    try:
+        proc = subprocess.run(
+            args,
+            check=False,
+            capture_output=True,
+            text=True,
+            timeout=_subprocess_timeout(),
+        )
+    except subprocess.TimeoutExpired:
+        return {}
     if proc.returncode != 0 or not proc.stdout.strip():
         return {}
     try:
@@ -372,13 +393,17 @@ def _instruction_docs_state() -> dict[str, Any]:
     env = os.environ.copy()
     if os.environ.get("RLDYOUR_FLOW_STATE_LOCAL_ONLY") == "1":
         env["RLDYOUR_FULLREPO_STATUS_LOCAL_ONLY"] = "1"
-    proc = subprocess.run(
-        [sys.executable, str(candidate), "--json"],
-        check=False,
-        capture_output=True,
-        text=True,
-        env=env,
-    )
+    try:
+        proc = subprocess.run(
+            [sys.executable, str(candidate), "--json"],
+            check=False,
+            capture_output=True,
+            text=True,
+            env=env,
+            timeout=_subprocess_timeout(),
+        )
+    except subprocess.TimeoutExpired:
+        return {}
     if proc.returncode != 0 or not proc.stdout.strip():
         return {}
     try:

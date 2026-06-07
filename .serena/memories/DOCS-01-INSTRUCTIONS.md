@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-06-07
 Last verified: 2026-06-07
-Last commit: 9b7a3707c61d54fa2d3674461633a93c94011bc8 chore(release): claude 1.1.32 (other)
+Last commit: c680802c9b3554b1f00e479ecc27cafc719d6264 chore(release): claude 1.1.33 (other)
 Scope: instruction docs and durable operator documentation
 Area: DOCS
 -->
@@ -24,7 +24,7 @@ instruction docs and durable operator documentation
 
 ## Last verified
 - date: 2026-06-07
-- commit: `9b7a3707c61d54fa2d3674461633a93c94011bc8`
+- commit: `c680802c9b3554b1f00e479ecc27cafc719d6264`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
@@ -33,7 +33,7 @@ instruction docs and durable operator documentation
 - `scripts/validate_instruction_sync.py` accepts both nested `claims` and top-level sync-contract keys, while still failing semantic drift for shared keys.
 
 ## Evidence
-- `commit:9b7a3707c61d54fa2d3674461633a93c94011bc8`
+- `commit:c680802c9b3554b1f00e479ecc27cafc719d6264`
 - `path:AGENTS.md`
 - `path:.claude/CLAUDE.md`
 - `path:README.md`

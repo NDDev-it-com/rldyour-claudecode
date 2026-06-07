@@ -7,6 +7,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 ## [Unreleased]
 
 
+## [1.1.33] - 2026-06-07
+
+### Fixed
+
+- Bound validation subprocesses and clarify release gates.
+
 ## [1.1.32] - 2026-06-07
 
 ### Fixed
