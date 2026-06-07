@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-06-07
 Last verified: 2026-06-07
-Last commit: 193517832b7f6633e74ff2d5c38d2034f7ac53b3 chore(release): claude 1.1.31 (other)
+Last commit: 9b7a3707c61d54fa2d3674461633a93c94011bc8 chore(release): claude 1.1.32 (other)
 Scope: security posture and blocking/warning policy
 Area: SECURITY
 -->
@@ -22,14 +22,14 @@ security posture and blocking/warning policy
 
 ## Last verified
 - date: 2026-06-07
-- commit: `193517832b7f6633e74ff2d5c38d2034f7ac53b3`
+- commit: `9b7a3707c61d54fa2d3674461633a93c94011bc8`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
 - Security memories record block/warn/review classes and defensive-only review policy.
 
 ## Evidence
-- `commit:193517832b7f6633e74ff2d5c38d2034f7ac53b3`
+- `commit:9b7a3707c61d54fa2d3674461633a93c94011bc8`
 - `path:plugins/rldyour-security`
 - `path:README.md`
 
