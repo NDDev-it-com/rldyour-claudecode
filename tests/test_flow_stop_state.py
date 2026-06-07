@@ -12,10 +12,11 @@ FLOW_STATE = FLOW_PLUGIN / "scripts" / "flow_post_task_state.py"
 FULLREPO_SYNC = FLOW_PLUGIN / "scripts" / "fullrepo_sync.py"
 STOP_HOOK = FLOW_PLUGIN / "hooks" / "stop_post_task_sync.sh"
 DISPATCHER = FLOW_PLUGIN / "hooks" / "stop_lifecycle_dispatcher.sh"
+DEFAULT_TIMEOUT = 30
 
 
 def run_git(repo: Path, *args: str) -> subprocess.CompletedProcess[str]:
-    return subprocess.run(["git", *args], cwd=repo, text=True, capture_output=True, check=False)
+    return subprocess.run(["git", *args], cwd=repo, text=True, capture_output=True, check=False, timeout=DEFAULT_TIMEOUT)
 
 
 def init_repo(repo: Path) -> str:
@@ -63,6 +64,7 @@ def test_direct_installed_flow_state_resolves_self_plugin_scripts(tmp_path: Path
         text=True,
         capture_output=True,
         check=False,
+        timeout=DEFAULT_TIMEOUT,
     )
 
     assert proc.returncode == 0, proc.stderr
@@ -82,6 +84,7 @@ def test_fullrepo_status_local_only_does_not_mark_network_checked(tmp_path: Path
         text=True,
         capture_output=True,
         check=False,
+        timeout=DEFAULT_TIMEOUT,
     )
 
     assert proc.returncode == 0, proc.stderr
@@ -123,6 +126,7 @@ def test_project_policy_disables_fullrepo_stop_loop_for_tracked_ai_docs(tmp_path
         text=True,
         capture_output=True,
         check=False,
+        timeout=DEFAULT_TIMEOUT,
     )
     assert state.returncode == 0, state.stderr
     payload = json.loads(state.stdout)
@@ -138,6 +142,7 @@ def test_project_policy_disables_fullrepo_stop_loop_for_tracked_ai_docs(tmp_path
         text=True,
         capture_output=True,
         check=False,
+        timeout=DEFAULT_TIMEOUT,
     )
     assert stop.returncode == 0
 
@@ -158,6 +163,7 @@ def test_stop_post_task_loop_guard_works_from_subdirectory(tmp_path: Path) -> No
         text=True,
         capture_output=True,
         check=False,
+        timeout=DEFAULT_TIMEOUT,
     )
 
     assert first.returncode == 2
@@ -170,6 +176,7 @@ def test_stop_post_task_loop_guard_works_from_subdirectory(tmp_path: Path) -> No
         text=True,
         capture_output=True,
         check=False,
+        timeout=DEFAULT_TIMEOUT,
     )
 
     assert second.returncode == 0
@@ -195,6 +202,7 @@ def test_stop_post_task_worker_role_requests_worker_report(tmp_path: Path) -> No
         text=True,
         capture_output=True,
         check=False,
+        timeout=DEFAULT_TIMEOUT,
     )
 
     assert proc.returncode == 2
@@ -220,6 +228,7 @@ def test_stop_lifecycle_dispatcher_loop_guard_preserves_stdout_json(tmp_path: Pa
         text=True,
         capture_output=True,
         check=False,
+        timeout=DEFAULT_TIMEOUT,
     )
 
     assert first.returncode == 2
@@ -232,6 +241,7 @@ def test_stop_lifecycle_dispatcher_loop_guard_preserves_stdout_json(tmp_path: Pa
         text=True,
         capture_output=True,
         check=False,
+        timeout=DEFAULT_TIMEOUT,
     )
 
     assert second.returncode == 0
@@ -262,6 +272,7 @@ def test_stop_lifecycle_dispatcher_timeout_loop_guard(tmp_path: Path) -> None:
         text=True,
         capture_output=True,
         check=False,
+        timeout=DEFAULT_TIMEOUT,
     )
 
     assert first.returncode == 2
@@ -276,6 +287,7 @@ def test_stop_lifecycle_dispatcher_timeout_loop_guard(tmp_path: Path) -> None:
         text=True,
         capture_output=True,
         check=False,
+        timeout=DEFAULT_TIMEOUT,
     )
 
     assert second.returncode == 0
