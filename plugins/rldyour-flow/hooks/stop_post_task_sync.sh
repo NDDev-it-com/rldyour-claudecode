@@ -50,7 +50,31 @@ if [ ! -f "$STATE_SCRIPT" ]; then
   exit 0
 fi
 
-STATE_JSON=$(RLDYOUR_FLOW_STATE_LOCAL_ONLY=1 RLDYOUR_FULLREPO_STATUS_LOCAL_ONLY=1 "${PYTHON_BIN}" "$STATE_SCRIPT" 2>/dev/null || true)
+FLOW_STATE_TIMEOUT="${RLDYOUR_FLOW_STATE_TIMEOUT_SECONDS:-10}"
+STATE_JSON=$(RLDYOUR_FLOW_STATE_LOCAL_ONLY=1 RLDYOUR_FULLREPO_STATUS_LOCAL_ONLY=1 RLDYOUR_STATE_SCRIPT="$STATE_SCRIPT" RLDYOUR_STATE_PYTHON="$PYTHON_BIN" RLDYOUR_FLOW_STATE_TIMEOUT_SECONDS="$FLOW_STATE_TIMEOUT" "${PYTHON_BIN}" <<'PY' 2>/dev/null || true
+import os
+import subprocess
+import sys
+
+raw_timeout = os.environ.get("RLDYOUR_FLOW_STATE_TIMEOUT_SECONDS", "10")
+try:
+    timeout = max(0.1, float(raw_timeout))
+except ValueError:
+    timeout = 10.0
+try:
+    proc = subprocess.run(
+        [os.environ["RLDYOUR_STATE_PYTHON"], os.environ["RLDYOUR_STATE_SCRIPT"]],
+        check=False,
+        capture_output=True,
+        text=True,
+        timeout=timeout,
+    )
+except subprocess.TimeoutExpired:
+    raise SystemExit(0)
+if proc.returncode == 0:
+    sys.stdout.write(proc.stdout)
+PY
+)
 if [ -z "$STATE_JSON" ]; then
   exit 0
 fi
