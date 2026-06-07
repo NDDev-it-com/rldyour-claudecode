@@ -27,15 +27,15 @@ This project and all first-party marketplace plugins are licensed under the GNU 
 
 | Plugin | Version | Skills | Commands | Agents | Hooks | Scripts | References | MCP | LSP |
 |---|---|---|---|---|---|---|---|---|---|
-| `rldyour-mcps` | `1.1.32` | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 0 |
-| `rldyour-explore` | `1.1.32` | 2 | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| `rldyour-serena-mcp` | `1.1.32` | 2 | 0 | 1 | 4 | 3 | 0 | 0 | 0 |
-| `rldyour-security` | `1.1.32` | 2 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| `rldyour-browser` | `1.1.32` | 3 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| `rldyour-design` | `1.1.32` | 5 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| `rldyour-lsps` | `1.1.32` | 4 | 0 | 0 | 0 | 2 | 3 | 0 | 1 |
-| `rldyour-flow` | `1.1.32` | 10 | 7 | 6 | 6 | 8 | 7 | 0 | 0 |
-| `rldyour-rules` | `1.1.32` | 7 | 1 | 0 | 0 | 0 | 6 | 0 | 0 |
+| `rldyour-mcps` | `1.1.33` | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 0 |
+| `rldyour-explore` | `1.1.33` | 2 | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
+| `rldyour-serena-mcp` | `1.1.33` | 2 | 0 | 1 | 4 | 3 | 0 | 0 | 0 |
+| `rldyour-security` | `1.1.33` | 2 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
+| `rldyour-browser` | `1.1.33` | 3 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| `rldyour-design` | `1.1.33` | 5 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
+| `rldyour-lsps` | `1.1.33` | 4 | 0 | 0 | 0 | 2 | 3 | 0 | 1 |
+| `rldyour-flow` | `1.1.33` | 10 | 7 | 6 | 6 | 8 | 7 | 0 | 0 |
+| `rldyour-rules` | `1.1.33` | 7 | 1 | 0 | 0 | 0 | 6 | 0 | 0 |
 
 <!-- inventory:end -->
 
@@ -135,6 +135,8 @@ GitHub Actions runs `claude plugin validate`, JSON/Python/shell syntax checks, a
 ## Fullrepo Branch
 
 `fullrepo` is the portable complete-state branch for agent-only files (e.g. `AGENTS.md`, `.claude/CLAUDE.md`, `.serena/project.yml`, `.serena/memories/**`). Normal project branches keep product history clean and exclude these files through `.git/info/exclude`.
+
+This is the default rldyour-owned repository policy. In external or colleague-owned repositories, `.rldyour/project-policy.json` is the executable source of truth and may disable fullrepo, allow instruction docs on normal branches, and disable branch-cleanup blockers.
 
 ```bash
 python3 plugins/rldyour-flow/scripts/fullrepo_sync.py --bootstrap-init   # first-time setup on a fresh checkout
