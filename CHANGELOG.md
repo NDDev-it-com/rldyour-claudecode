@@ -7,6 +7,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 ## [Unreleased]
 
 
+## [1.1.34] - 2026-06-08
+
+### Changed
+
+- Re-architect browser providers around Webwright, Playwright CLI, and Chrome DevTools MCP.
+
 ## [1.1.33] - 2026-06-07
 
 ### Fixed
