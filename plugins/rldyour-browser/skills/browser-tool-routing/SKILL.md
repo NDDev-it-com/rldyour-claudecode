@@ -18,6 +18,15 @@ EN triggers: validate UI, browser check, visual QA, pixel-perfect, compare with 
 
 ## Routing
 
+Decision tree:
+
+1. If the user asks for a long-horizon web task, extraction, comparison, booking/search flow, export, or reusable script, use Webwright.
+2. If the user asks to validate UI, reproduce clicks/forms, capture screenshots, compare Figma/photo/screenshot, or prove final UI state, use Playwright CLI.
+3. If the user asks for console, network, runtime exception, computed style, layout debug, Lighthouse, performance, memory, or live Chrome inspection, use Chrome DevTools MCP.
+4. If the browser issue is unknown, reproduce with Playwright CLI first, then diagnose with Chrome DevTools MCP when runtime evidence is relevant.
+5. Never use Webwright as a DevTools replacement.
+6. Never use a browser-control MCP surface for Playwright; the approved provider is Playwright CLI.
+
 Use Webwright first for:
 
 - Long-horizon web task execution: search, filter, compare, extract, upload, export, repeat.

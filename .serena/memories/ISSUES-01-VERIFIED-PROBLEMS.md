@@ -1,7 +1,7 @@
 <!-- Memory Metadata
-Last updated: 2026-06-08
-Last verified: 2026-06-08
-Last commit: 7b081d18859747099f5e011be45173f679847dec docs(security): remove retired browser mcp wording
+Last updated: 2026-06-09
+Last verified: 2026-06-09
+Last commit: a06958d9e78e5cc809ff9c28e97cb3c5398eaabb docs(security): remove retired browser mcp wording
 Scope: GitHub issue and PR evidence policy
 Area: ISSUES
 -->
@@ -21,8 +21,8 @@ GitHub issue and PR evidence policy
 - `path:plugins/rldyour-flow/skills/ry-review`
 
 ## Last verified
-- date: 2026-06-08
-- commit: `7b081d18859747099f5e011be45173f679847dec`
+- date: 2026-06-09
+- commit: `a06958d9e78e5cc809ff9c28e97cb3c5398eaabb`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
@@ -30,7 +30,7 @@ GitHub issue and PR evidence policy
 - Status policy: issues and PRs are evidence only after verification against current code/config.
 
 ## Evidence
-- `commit:7b081d18859747099f5e011be45173f679847dec`
+- `commit:a06958d9e78e5cc809ff9c28e97cb3c5398eaabb`
 - `path:README.md`
 - `path:plugins/rldyour-flow/skills/ry-review`
 

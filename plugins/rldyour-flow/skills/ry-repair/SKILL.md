@@ -20,7 +20,7 @@ For rldyour AI CLI configuration repositories, `/ry-repair` also verifies determ
 4. Inspect GitHub issues/PRs/history when available through MCP/app/CLI, then verify every issue against current code before treating it as a fact.
 5. Inspect MCP/LSP/tooling config, hook lifecycles, commands/skills/agents, CI gates, release manifests, and dependency baselines.
 6. When the root control plane is present, run `python3 scripts/ry_repair_sync.py --plan --target "$PWD"` and use `--check` before claiming local repo, system AI CLI config, Serena memory, or GitHub/fullrepo sync. For OS/mode work, pass explicit flags: `--os macos|linux|wsl|windows`, `--mode standard|orchestrator`, and `--cmux` only for macOS orchestrator mode.
-7. Treat zero-active Semgrep policy as system-wide: installed Claude/Codex/OpenCode configs, active agent/tool surfaces, CI workflows, runtime pins, docs, and release gates must be clean. Keep only negative validators/tests and historical changelog entries.
+7. Treat approved active inventories as system-wide: installed Claude/Codex/OpenCode configs, active agent/tool surfaces, CI workflows, runtime pins, docs, and release gates must match current MCP/provider policies. Do not keep permanent tool-specific absence gates for removed components.
 8. Detect semantic entropy: duplicated docs, stale pins, conflicting instructions, dead config, unclear source-of-truth, missing ADR/CONTEXT/FUTURE facts, broken validator contracts, and natural-language policy overrides that are not materialized in project policy JSON.
 9. Produce a repair plan that separates:
    - technical repairs the agent may apply;

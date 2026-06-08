@@ -1,7 +1,7 @@
 <!-- Memory Metadata
-Last updated: 2026-06-08
-Last verified: 2026-06-08
-Last commit: 7b081d18859747099f5e011be45173f679847dec docs(security): remove retired browser mcp wording
+Last updated: 2026-06-09
+Last verified: 2026-06-09
+Last commit: a06958d9e78e5cc809ff9c28e97cb3c5398eaabb docs(security): remove retired browser mcp wording
 Scope: instruction docs and durable operator documentation
 Area: DOCS
 -->
@@ -23,8 +23,8 @@ instruction docs and durable operator documentation
 - `path:README.md`
 
 ## Last verified
-- date: 2026-06-08
-- commit: `7b081d18859747099f5e011be45173f679847dec`
+- date: 2026-06-09
+- commit: `a06958d9e78e5cc809ff9c28e97cb3c5398eaabb`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
@@ -33,7 +33,7 @@ instruction docs and durable operator documentation
 - `scripts/validate_instruction_sync.py` accepts both nested `claims` and top-level sync-contract keys, while still failing semantic drift for shared keys.
 
 ## Evidence
-- `commit:7b081d18859747099f5e011be45173f679847dec`
+- `commit:a06958d9e78e5cc809ff9c28e97cb3c5398eaabb`
 - `path:AGENTS.md`
 - `path:.claude/CLAUDE.md`
 - `path:README.md`
