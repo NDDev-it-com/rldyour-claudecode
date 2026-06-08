@@ -7,6 +7,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 ## [Unreleased]
 
 
+## [1.1.42] - 2026-06-09
+
+### Fixed
+
+- Harden Serena memory sync target selection for nested repositories.
+
 ## [1.1.41] - 2026-06-09
 
 ### Changed
