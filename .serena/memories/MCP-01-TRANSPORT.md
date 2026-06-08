@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-06-09
 Last verified: 2026-06-09
-Last commit: a06958d9e78e5cc809ff9c28e97cb3c5398eaabb docs(security): remove retired browser mcp wording
+Last commit: b28b4cfae1d86cfdc69e4dc410365ce598113770 docs(security): remove retired browser mcp wording
 Scope: MCP runtime transport and pin policy
 Area: MCP
 -->
@@ -22,7 +22,7 @@ MCP runtime transport and pin policy
 
 ## Last verified
 - date: 2026-06-09
-- commit: `a06958d9e78e5cc809ff9c28e97cb3c5398eaabb`
+- commit: `b28b4cfae1d86cfdc69e4dc410365ce598113770`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
@@ -32,7 +32,7 @@ MCP runtime transport and pin policy
   `config/mcp-runtime-versions.env`.
 
 ## Evidence
-- `commit:a06958d9e78e5cc809ff9c28e97cb3c5398eaabb`
+- `commit:b28b4cfae1d86cfdc69e4dc410365ce598113770`
 - `path:plugins/rldyour-mcps/.mcp.json`
 - `path:config/mcp-runtime-versions.env`
 - `path:README.md`

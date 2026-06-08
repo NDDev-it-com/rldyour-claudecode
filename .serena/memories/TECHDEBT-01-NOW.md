@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-06-09
 Last verified: 2026-06-09
-Last commit: a06958d9e78e5cc809ff9c28e97cb3c5398eaabb docs(security): remove retired browser mcp wording
+Last commit: b28b4cfae1d86cfdc69e4dc410365ce598113770 docs(security): remove retired browser mcp wording
 Scope: verified current technical debt
 Area: TECHDEBT
 -->
@@ -22,14 +22,14 @@ verified current technical debt
 
 ## Last verified
 - date: 2026-06-09
-- commit: `a06958d9e78e5cc809ff9c28e97cb3c5398eaabb`
+- commit: `b28b4cfae1d86cfdc69e4dc410365ce598113770`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
 - Technical debt memories record verified open debt only when it has code/config evidence.
 
 ## Evidence
-- `commit:a06958d9e78e5cc809ff9c28e97cb3c5398eaabb`
+- `commit:b28b4cfae1d86cfdc69e4dc410365ce598113770`
 - `path:README.md`
 - `path:CHANGELOG.md`
 

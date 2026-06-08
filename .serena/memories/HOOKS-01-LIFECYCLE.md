@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-06-09
 Last verified: 2026-06-09
-Last commit: a06958d9e78e5cc809ff9c28e97cb3c5398eaabb docs(security): remove retired browser mcp wording
+Last commit: b28b4cfae1d86cfdc69e4dc410365ce598113770 docs(security): remove retired browser mcp wording
 Scope: deterministic hook lifecycle behavior
 Area: HOOKS
 -->
@@ -22,7 +22,7 @@ deterministic hook lifecycle behavior
 
 ## Last verified
 - date: 2026-06-09
-- commit: `a06958d9e78e5cc809ff9c28e97cb3c5398eaabb`
+- commit: `b28b4cfae1d86cfdc69e4dc410365ce598113770`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
@@ -40,7 +40,7 @@ deterministic hook lifecycle behavior
   checks in the hot path and reports `network_checked=false`.
 
 ## Evidence
-- `commit:a06958d9e78e5cc809ff9c28e97cb3c5398eaabb`
+- `commit:b28b4cfae1d86cfdc69e4dc410365ce598113770`
 - `path:plugins/rldyour-flow/hooks`
 - `path:plugins/rldyour-flow/scripts/flow_post_task_state.py`
 - `path:plugins/rldyour-flow/scripts/fullrepo_sync.py`
