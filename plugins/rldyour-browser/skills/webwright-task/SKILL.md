@@ -1,6 +1,6 @@
 ---
 name: webwright-task
-description: "Webwright для длинных web tasks, RPA и воспроизводимых browser workflows. Используй для: найти, сравнить, выгрузить, повторить, reusable script. EN triggers: Webwright task, long-horizon web task, RPA, extraction, final_script.py."
+description: "Запускает Webwright для длинных web tasks, RPA и воспроизводимых browser workflows. Используй для: найти, сравнить, выгрузить, повторить, reusable script. EN triggers: Webwright task, long-horizon web task, RPA, extraction, final_script.py."
 ---
 
 # Webwright Task
