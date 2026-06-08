@@ -45,12 +45,12 @@ Unified cross-tool behavior is declared in `config/rldyour-contract.json` and pr
 
 Briefly:
 
-- **`rldyour-mcps`** - single-owner MCP transport (12 pinned servers: Serena, Sequential Thinking, Playwright, Chrome DevTools, Context7, DeepWiki, Grep, shadcn, Dart/Flutter, Figma, OpenAI Docs, GitHub).
+- **`rldyour-mcps`** - single-owner MCP transport (11 pinned servers: Serena, Sequential Thinking, Chrome DevTools, Context7, DeepWiki, Grep, shadcn, Dart/Flutter, Figma, OpenAI Docs, GitHub).
 - **`rldyour-serena-mcp`** - Serena-first semantic code workflow, numbered fact-only `.serena` memory sync via `flow-memory-sync` subagent, lifecycle hooks (UserPromptSubmit, PreToolUse:Bash, PostToolUse:Bash, Stop).
 - **`rldyour-flow`** - autonomous SDLC orchestration with six slash commands (`ry-init`, `ry-start`, `ry-newp`, `ry-review`, `ry-deploy`, `ry-sync`), six reviewer subagents (architecture/quality/consistency/integration/verification/security tracks), advisory SessionStart, PreToolUse:Bash, PostToolUse:Bash, and Stop hooks, scoped context packs, instruction docs sync, and post-task synchronization.
 - **`rldyour-explore`** - deep multi-source research via `ry-explore` subagent (`model: opus[1m]`, `effort: max`) and tech/web research skills routing through Context7, DeepWiki, Grep, and authoritative web sources.
 - **`rldyour-security`** - non-blocking OWASP Top 10 2025 secure-implementation guidance plus the `ry-sec-review` defensive review skill.
-- **`rldyour-browser`** - browser validation, debugging, and tool-routing workflows for Playwright MCP and Chrome DevTools MCP.
+- **`rldyour-browser`** - provider-routed browser workflows for Webwright, Playwright CLI, and Chrome DevTools MCP.
 - **`rldyour-design`** - Figma → code, centralized token-based design system, strict Feature-Sliced Design frontend architecture, shadcn/ui, ReactBits, and browser-validation workflows.
 - **`rldyour-lsps`** - language-server routing, health checks, brew-first setup profiles, and Serena LSP integration guidance.
 - **`rldyour-rules`** - quality-first engineering rules, architecture boundaries, implementation discipline, dependency compatibility (SLSA Level 2, SBOM, lockfile discipline), verification gates, project-instruction policy, MADR 4.0.0 ADR policy, and `ry-rules-review`.
