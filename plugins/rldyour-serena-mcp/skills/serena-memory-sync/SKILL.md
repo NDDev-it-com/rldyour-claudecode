@@ -150,20 +150,24 @@ Do not write:
 
 ## Sync Workflow
 
-1. Read marker + impact analysis:
+1. Resolve the concrete Git target:
+   - Run `git rev-parse --show-toplevel`, `git rev-parse HEAD`, and `git rev-parse --short=7 HEAD` from the repository being synchronized.
+   - Before any Serena MCP memory write, verify the active Serena project resolves to that Git root. If it does not, activate the intended repository path first.
+   - In superprojects, process root and every nested repository with `.serena/memories/` separately; each memory set is synchronized against its own repository HEAD, not the superproject HEAD.
+2. Read marker + impact analysis:
    - `python3 plugins/rldyour-serena-mcp/scripts/serena_memory_state.py` (state + stale marker)
    - `jq`/`python3` read `.serena/.serena_sync_state.json` if present; use `analysis.memory_taxonomy`, `analysis.memory_targets`, `analysis.areas`, and `analysis.areas_summary` as the first-pass scope.
    - Treat `analysis.schema_version` as the analyzer payload contract; if the field is missing, proceed conservatively from changed files.
-2. Build the concrete sync scope:
+3. Build the concrete sync scope:
    - Start from `sync_state.changed_files` when available.
    - If analysis exists, prioritize files and areas in `analysis.areas` and `analysis.memory_targets`.
    - If analysis is missing, fall back to `changed_files_since_sync` in state.
-3. Use Serena first: `list_memories`, then read `CORE-01-INDEX` when present and every relevant memory target inferred from names. For code, use `get_symbols_overview`, targeted `find_symbol`, and `find_referencing_symbols` before raw reads when the language server supports the file type.
-4. Update or create memory files with verified facts only, using the memory body template and the project taxonomy. Remove or correct stale statements instead of preserving outdated text.
-5. Save non-trivial plans to `.serena/plans/` only when they will help future sessions continue work.
-6. Save long research summaries to `.serena/research/` only when the research was complex, source-backed, and likely reusable.
-7. Keep exact paths, symbol names, commands, contracts, invariants, verification checks, and behavior. Avoid generic advice.
-8. Run the plugin's `commit_serena_knowledge.sh` script (path provided by the Stop hook message, or `${CLAUDE_PLUGIN_ROOT}/scripts/commit_serena_knowledge.sh` when the plugin is enabled). In repositories where `.serena` knowledge is still tracked, this creates the knowledge-only commit. In fullrepo-managed repositories, it acknowledges current memories and clears runtime sync markers without committing AI files to the current branch; `flow-post-task-sync` publishes the final `fullrepo` snapshot.
+4. Use Serena first: `list_memories`, then read `CORE-01-INDEX` when present and every relevant memory target inferred from names. For code, use `get_symbols_overview`, targeted `find_symbol`, and `find_referencing_symbols` before raw reads when the language server supports the file type.
+5. Update or create memory files with verified facts only, using the memory body template and the project taxonomy. Remove or correct stale statements instead of preserving outdated text.
+6. Save non-trivial plans to `.serena/plans/` only when they will help future sessions continue work.
+7. Save long research summaries to `.serena/research/` only when the research was complex, source-backed, and likely reusable.
+8. Keep exact paths, symbol names, commands, contracts, invariants, verification checks, and behavior. Avoid generic advice.
+9. Run the plugin's `commit_serena_knowledge.sh` script (path provided by the Stop hook message, or `${CLAUDE_PLUGIN_ROOT}/scripts/commit_serena_knowledge.sh` when the plugin is enabled). In repositories where `.serena` knowledge is still tracked, this creates the knowledge-only commit. In fullrepo-managed repositories, it acknowledges current memories and clears runtime sync markers without committing AI files to the current branch; `flow-post-task-sync` publishes the final `fullrepo` snapshot.
 
 ## Quality Rules
 
