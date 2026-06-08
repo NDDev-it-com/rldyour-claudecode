@@ -7,6 +7,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 ## [Unreleased]
 
 
+## [1.1.38] - 2026-06-08
+
+### Fixed
+
+- Remove retired browser MCP wording from active security docs.
+
 ## [1.1.37] - 2026-06-08
 
 ### Fixed
