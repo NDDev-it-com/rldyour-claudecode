@@ -7,6 +7,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 ## [Unreleased]
 
 
+## [1.1.35] - 2026-06-08
+
+### Fixed
+
+- Tighten browser provider and visual QA contracts.
+
 ## [1.1.34] - 2026-06-08
 
 ### Changed
