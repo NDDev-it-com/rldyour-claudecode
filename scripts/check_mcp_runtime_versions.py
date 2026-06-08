@@ -32,7 +32,6 @@ from pathlib import Path
 SERVER_TO_ENV = {
     "serena": ("SERENA_AGENT_VERSION", "serena-agent=="),
     "sequential-thinking": ("SEQUENTIAL_THINKING_MCP_VERSION", "@modelcontextprotocol/server-sequential-thinking@"),
-    "playwright": ("PLAYWRIGHT_MCP_VERSION", "@playwright/mcp@"),
     "chrome-devtools": ("CHROME_DEVTOOLS_MCP_VERSION", "chrome-devtools-mcp@"),
     "context7": ("CONTEXT7_MCP_VERSION", "@upstash/context7-mcp@"),
     "shadcn": ("SHADCN_VERSION", "shadcn@"),
