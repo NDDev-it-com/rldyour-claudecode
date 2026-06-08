@@ -4,9 +4,10 @@
   "verified_on": "2026-06-08",
   "baseline": {
     "claude_code": {
-      "version": "2.1.168",
+      "version": "2.1.169",
       "npm_package": "@anthropic-ai/claude-code",
       "ref": "https://code.claude.com/docs/en/changelog",
+      "package_ref": "https://www.npmjs.com/package/@anthropic-ai/claude-code",
       "model_config_ref": "https://code.claude.com/docs/en/model-config"
     },
     "required_runtime_fixes": [
