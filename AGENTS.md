@@ -140,7 +140,7 @@ Subcommands:
 
 ## MCP Transport (`rldyour-mcps/.mcp.json`)
 
-11 pinned servers (full pin source: `config/mcp-runtime-versions.env`): `serena-agent==1.5.3` with `alwaysLoad: true` (v2.1.121+), `@modelcontextprotocol/server-sequential-thinking@2025.12.18`, `chrome-devtools-mcp@1.2.0`, `@upstash/context7-mcp@2.2.5`, `shadcn@4.10.0`, host binaries `github-mcp-server` (1.1.2) + `dart` (3.12.0); HTTP: `deepwiki`, `grep`, `figma`, `openai-docs`. Browser automation uses Webwright and Playwright CLI outside MCP. Required env: `CONTEXT7_API_KEY`, `GITHUB_PERSONAL_ACCESS_TOKEN`. GitHub MCP uses local stdio (not Copilot-gated HTTP).
+11 pinned servers (full pin source: `config/mcp-runtime-versions.env`): `serena-agent==1.5.3` with `alwaysLoad: true` (v2.1.121+), `@modelcontextprotocol/server-sequential-thinking@2025.12.18`, `chrome-devtools-mcp@1.2.0`, `@upstash/context7-mcp@2.2.5`, `shadcn@4.11.0`, host binaries `github-mcp-server` (1.2.0) + `dart` (3.12.0); HTTP: `deepwiki`, `grep`, `figma`, `openai-docs`. Browser automation uses Webwright and Playwright CLI outside MCP. Required env: `CONTEXT7_API_KEY`, `GITHUB_PERSONAL_ACCESS_TOKEN`. GitHub MCP uses local stdio (not Copilot-gated HTTP).
 
 Timeout knobs are env-only: `MCP_TIMEOUT`, `MCP_TOOL_TIMEOUT` (v2.1.142+ for HTTP/SSE). Per-server `startup_timeout_sec`/`tool_timeout_sec` keys are NOT documented and silently ignored - do not add them.
 

@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-06-09
 Last verified: 2026-06-09
-Last commit: b28b4cfae1d86cfdc69e4dc410365ce598113770 docs(security): remove retired browser mcp wording
+Last commit: c327d48847caf50432dbf5455da92d4e8882ff70 chore: resolve github security alert drift
 Scope: repository identity and source-of-truth map
 Area: CORE
 -->
@@ -24,14 +24,14 @@ repository identity and source-of-truth map
 
 ## Last verified
 - date: 2026-06-09
-- commit: `b28b4cfae1d86cfdc69e4dc410365ce598113770`
+- commit: `c327d48847caf50432dbf5455da92d4e8882ff70`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
 - Core memories index repository identity, source-of-truth files, and the current validation map.
 
 ## Evidence
-- `commit:b28b4cfae1d86cfdc69e4dc410365ce598113770`
+- `commit:c327d48847caf50432dbf5455da92d4e8882ff70`
 - `path:README.md`
 - `path:VERSION`
 - `path:CHANGELOG.md`

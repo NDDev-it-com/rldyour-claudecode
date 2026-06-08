@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-06-09
 Last verified: 2026-06-09
-Last commit: b28b4cfae1d86cfdc69e4dc410365ce598113770 docs(security): remove retired browser mcp wording
+Last commit: c327d48847caf50432dbf5455da92d4e8882ff70 chore: resolve github security alert drift
 Scope: design, UI, Figma, and visual validation workflow
 Area: DESIGN
 -->
@@ -22,14 +22,14 @@ design, UI, Figma, and visual validation workflow
 
 ## Last verified
 - date: 2026-06-09
-- commit: `b28b4cfae1d86cfdc69e4dc410365ce598113770`
+- commit: `c327d48847caf50432dbf5455da92d4e8882ff70`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
 - Design memories record Figma, tokens, component reuse, accessibility, and browser evidence requirements.
 
 ## Evidence
-- `commit:b28b4cfae1d86cfdc69e4dc410365ce598113770`
+- `commit:c327d48847caf50432dbf5455da92d4e8882ff70`
 - `path:README.md`
 - `path:plugins/rldyour-design`
 
