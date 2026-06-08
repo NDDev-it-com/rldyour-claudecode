@@ -2,8 +2,8 @@
 """probe_mcp_upstream.py - probe upstream registries for MCP server updates.
 
 Compares config/mcp-runtime-versions.env against:
-- npm registry for bunx servers (sequential-thinking, playwright, chrome-devtools,
-  context7, shadcn)
+- npm registry for bunx servers (sequential-thinking, chrome-devtools, context7,
+  shadcn)
 - PyPI JSON for uvx-installed packages (serena-agent)
 - Homebrew formula JSON for system binaries (github-mcp-server)
 
@@ -31,7 +31,6 @@ HOMEBREW = "https://formulae.brew.sh/api/formula"
 PROBES: tuple[tuple[str, str, str], ...] = (
     ("SERENA_AGENT_VERSION", "pypi", "serena-agent"),
     ("SEQUENTIAL_THINKING_MCP_VERSION", "npm", "@modelcontextprotocol/server-sequential-thinking"),
-    ("PLAYWRIGHT_MCP_VERSION", "npm", "@playwright/mcp"),
     ("CHROME_DEVTOOLS_MCP_VERSION", "npm", "chrome-devtools-mcp"),
     ("CONTEXT7_MCP_VERSION", "npm", "@upstash/context7-mcp"),
     ("SHADCN_VERSION", "npm", "shadcn"),
