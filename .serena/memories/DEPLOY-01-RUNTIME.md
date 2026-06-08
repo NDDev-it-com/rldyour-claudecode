@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-06-09
 Last verified: 2026-06-09
-Last commit: c327d48847caf50432dbf5455da92d4e8882ff70 chore: resolve github security alert drift
+Last commit: c2df8880dd3cfa3248fcf01225c6c4418fd1ebf2 chore(release): claude 1.1.42 (other)
 Scope: deploy and rollout verification contracts
 Area: DEPLOY
 -->
@@ -22,14 +22,14 @@ deploy and rollout verification contracts
 
 ## Last verified
 - date: 2026-06-09
-- commit: `c327d48847caf50432dbf5455da92d4e8882ff70`
+- commit: `c2df8880dd3cfa3248fcf01225c6c4418fd1ebf2`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
 - Deploy memories record preflight, rollout, postflight, rollback, and sync requirements.
 
 ## Evidence
-- `commit:c327d48847caf50432dbf5455da92d4e8882ff70`
+- `commit:c2df8880dd3cfa3248fcf01225c6c4418fd1ebf2`
 - `path:README.md`
 - `path:plugins/rldyour-flow/skills/ry-deploy`
 

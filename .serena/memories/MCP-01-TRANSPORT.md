@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-06-09
 Last verified: 2026-06-09
-Last commit: c327d48847caf50432dbf5455da92d4e8882ff70 chore: resolve github security alert drift
+Last commit: c2df8880dd3cfa3248fcf01225c6c4418fd1ebf2 chore(release): claude 1.1.42 (other)
 Scope: MCP runtime transport and pin policy
 Area: MCP
 -->
@@ -22,7 +22,7 @@ MCP runtime transport and pin policy
 
 ## Last verified
 - date: 2026-06-09
-- commit: `c327d48847caf50432dbf5455da92d4e8882ff70`
+- commit: `c2df8880dd3cfa3248fcf01225c6c4418fd1ebf2`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
@@ -32,7 +32,7 @@ MCP runtime transport and pin policy
   `config/mcp-runtime-versions.env`.
 
 ## Evidence
-- `commit:c327d48847caf50432dbf5455da92d4e8882ff70`
+- `commit:c2df8880dd3cfa3248fcf01225c6c4418fd1ebf2`
 - `path:plugins/rldyour-mcps/.mcp.json`
 - `path:config/mcp-runtime-versions.env`
 - `path:README.md`
