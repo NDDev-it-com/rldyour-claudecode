@@ -7,6 +7,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 ## [Unreleased]
 
 
+## [1.1.36] - 2026-06-08
+
+### Fixed
+
+- Synchronize documentation and memory facts with current browser provider policy.
+
 ## [1.1.35] - 2026-06-08
 
 ### Fixed
