@@ -56,17 +56,29 @@ You MUST follow these steps in order. Skipping a step is forbidden.
 1. Run `bash` to capture current state:
    - `git rev-parse HEAD` → `HEAD_FULL`
    - `git rev-parse --short=7 HEAD` → `HEAD_SHA`
+   - `git rev-parse --show-toplevel` → `TARGET_REPO_ROOT`
    - `python3 plugins/rldyour-serena-mcp/scripts/serena_memory_state.py` → state JSON
    - If `.serena/.serena_sync_state.json` exists, also load it and treat
      `analysis.memory_taxonomy`, `analysis.areas`, `analysis.memory_targets`, and `analysis.areas_summary` as a first-pass impact map.
      If `analysis.schema_version` is absent, treat the analysis as best-effort and verify from changed files.
-2. Read state JSON:
+2. Verify Serena targets the same repository before any memory tool writes:
+   - Read the current Serena configuration when the tool is available.
+   - If the active Serena project is absent or does not resolve to `TARGET_REPO_ROOT`, activate `TARGET_REPO_ROOT` before `list_memories`, `read_memory`, `write_memory`, or `edit_memory`.
+   - If the active project cannot be corrected, do not write memory content through Serena tools. Report `{"status":"blocked","reason":"serena_project_mismatch","target_repo_root":"<path>"}`.
+3. Read state JSON:
    - `is_current` - if `true`, exit immediately with `{"status":"already_current","head_sha":"<sha>"}` and STOP. Do not run any memory writes.
    - `newest_synced_sha` - used for diff range
    - `sync_state.changed_files` / `sync_state.non_knowledge_changed_files` - your primary scope.
    - fallback scope: `changed_files_since_sync` and `non_knowledge_changed_files_since_sync` from state JSON if marker data is absent.
-3. Run `mcp__plugin_rldyour-mcps_serena__list_memories` → memory index.
-4. If `CORE-01-INDEX` exists, read it first. Treat it as the navigation map, but still verify every claim against source files before preserving it.
+4. Run `mcp__plugin_rldyour-mcps_serena__list_memories` → memory index.
+5. If `CORE-01-INDEX` exists, read it first. Treat it as the navigation map, but still verify every claim against source files before preserving it.
+
+For superprojects with nested Git repositories, treat each repository that owns
+`.serena/memories/` as a separate target. The parent orchestrator must invoke
+this agent once per affected target repository (root, adapter, or product
+submodule), and each invocation must use that target repository's own
+`TARGET_REPO_ROOT` and HEAD. Never update an adapter memory set while Serena is
+still activated on the superproject root.
 
 ### Step 2 - Diff and impact map
 
