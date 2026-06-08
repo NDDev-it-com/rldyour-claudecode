@@ -1,29 +1,20 @@
 # rldyour-browser
 
-Browser workflows over Playwright MCP and Chrome DevTools MCP. Skills-only consumer of MCP transport.
+Browser workflows are provider-routed across Webwright, Playwright CLI, and Chrome DevTools MCP.
 
-## What's inside
+## Skills
 
-- `3` skills:
-  - `browser-validation` - UI/scenarios validation via Playwright MCP (pixel-perfect, e2e, business logic, screenshots).
-  - `browser-debug` - runtime debugging via Chrome DevTools MCP (console, network, hydration, performance, Lighthouse).
-  - `browser-tool-routing` - picks Playwright vs Chrome DevTools vs both for a given task.
-- `0` agents, `0` commands, `0` hooks.
+- `browser-tool-routing`: choose the provider.
+- `browser-validation`: UI and flow validation with Playwright CLI evidence.
+- `playwright-cli-validation`: low-level screenshot, snapshot, trace, and headed-session workflow.
+- `webwright-task`: long-horizon reusable web-task workflow with `plan.md` and `final_script.py`.
+- `visual-diff-review`: Figma/photo/reference-image deviation workflow.
+- `browser-debug`: Chrome DevTools MCP diagnosis for console, network, runtime, performance, memory, Lighthouse, and live Chrome inspection.
 
-## `allowed-tools`
+## Provider Roles
 
-Two of three skills declare explicit MCP wildcards (the third is a pure routing decision skill with no tool surface):
+- Webwright: high-level web task, RPA, extraction, comparison, reusable script.
+- Playwright CLI: browser flow validation, screenshots, snapshots, responsive matrices, final proof.
+- Chrome DevTools MCP: DevTools debugging, performance, memory, Lighthouse, network, console.
 
-- `browser-validation`: `mcp__plugin_rldyour-mcps_playwright__*`
-- `browser-debug`: `mcp__plugin_rldyour-mcps_chrome-devtools__*` + `mcp__plugin_rldyour-mcps_playwright__*`
-- `browser-tool-routing`: no `allowed-tools` (intentional - pure prose routing, no tool execution)
-
-This pre-approves the relevant MCP tool sets so consumers don't get permission prompts during validation/debug runs.
-
-## Browser artifacts
-
-Screenshots, traces, and recordings belong under `browser/` in consumer projects (per `.gitignore` patterns: `.playwright-mcp/`, `playwright-report/`, `test-results/`). Never commit them.
-
-## Dependencies
-
-`rldyour-mcps` (Playwright + Chrome DevTools MCP servers live there).
+Store temporary browser evidence under `browser/` and do not commit it.
