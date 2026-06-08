@@ -62,7 +62,21 @@ bun.lockb
 # Claude Code local-only
 .claude/settings.local.json
 
-# Browser artifacts
+# Browser / Webwright / Playwright CLI runtime artifacts
+browser/**
+!browser/
+!browser/.gitkeep
+.playwright-cli/
 .playwright-mcp/
 playwright-report/
 test-results/
+.webwright-runs/
+outputs/webwright/
+final_runs/
+**/final_script_log.txt
+**/trajectory.json
+**/raw_responses.jsonl
+**/screenshots/*.png
+**/screenshots/*.jpg
+**/screenshots/*.jpeg
+**/screenshots/*.webp
