@@ -1,6 +1,6 @@
 ---
 name: browser-debug
-description: "Debug browser-only failures через Chrome DevTools MCP и Playwright CLI reproduction. Используй для: консоль, сеть, runtime, hydration, layout, memory, performance, Lighthouse. EN triggers: browser debug, console errors, network, runtime, layout, memory, performance, Lighthouse."
+description: "Отлаживает browser-only failures через Chrome DevTools MCP и Playwright CLI reproduction. Используй для: консоль, сеть, runtime, hydration, layout, memory, performance, Lighthouse. EN triggers: browser debug, console errors, network, runtime, layout, memory, performance, Lighthouse."
 allowed-tools:
   - mcp__plugin_rldyour-mcps_chrome-devtools__*
 ---
