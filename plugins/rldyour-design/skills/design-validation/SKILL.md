@@ -50,6 +50,15 @@ Use `browser/` for all browser artifacts:
 
 Do not commit browser artifacts. Delete them after the task unless the user explicitly asks to keep them.
 
+For pixel-perfect, Figma, photo, or screenshot comparison, produce an explicit evidence object with:
+
+- `reference`: type (`figma`, `photo`, `screenshot`, or `url`) and path or URL.
+- `actual`: Playwright CLI screenshot path under `browser/<task>/<viewport>.png`.
+- `viewports`: default matrix `390x844`, `768x1024`, and `1440x900` unless project targets override it.
+- `stabilization`: app-ready wait, font-ready wait, safe network-idle wait, animation policy, and `masked_regions` for dynamic clocks, ads, random content, or unstable media.
+- `deviations`: element-level severity, selector or description, expected value, actual value, measured `px_delta`, `color_delta`, `token_delta`, and exact evidence paths.
+- `verdict`: `pass`, `fail`, or `not_proven`.
+
 ## Validation Workflow
 
 1. Use Figma context (`mcp__plugin_rldyour-mcps_figma__*`) for frame, token, component, text, and constraint source facts.

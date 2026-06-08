@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-06-08
 Last verified: 2026-06-08
-Last commit: 334045ab7ddfd3cef233c74b0ea9978d3022eff8 fix(docs): refresh Claude inventory
+Last commit: d49e21221e717550f1dd91b9b8f5b80168b6c88f fix(design): require deterministic visual evidence
 Scope: deterministic hook lifecycle behavior
 Area: HOOKS
 -->
@@ -22,7 +22,7 @@ deterministic hook lifecycle behavior
 
 ## Last verified
 - date: 2026-06-08
-- commit: `334045ab7ddfd3cef233c74b0ea9978d3022eff8`
+- commit: `d49e21221e717550f1dd91b9b8f5b80168b6c88f`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
@@ -40,7 +40,7 @@ deterministic hook lifecycle behavior
   checks in the hot path and reports `network_checked=false`.
 
 ## Evidence
-- `commit:334045ab7ddfd3cef233c74b0ea9978d3022eff8`
+- `commit:d49e21221e717550f1dd91b9b8f5b80168b6c88f`
 - `path:plugins/rldyour-flow/hooks`
 - `path:plugins/rldyour-flow/scripts/flow_post_task_state.py`
 - `path:plugins/rldyour-flow/scripts/fullrepo_sync.py`
