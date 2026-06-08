@@ -204,9 +204,6 @@ def instruction_state(root: Path) -> dict[str, Any]:
     fullrepo_mode = str(fullrepo_policy.get("mode", "auto"))
 
     fullrepo = fullrepo_state(root)
-    worktree_agent_paths = fullrepo.get("worktree_agent_paths")
-    if not isinstance(worktree_agent_paths, list):
-        worktree_agent_paths = []
 
     current_branch = stdout(root, "branch", "--show-current") or "detached"
     if (
