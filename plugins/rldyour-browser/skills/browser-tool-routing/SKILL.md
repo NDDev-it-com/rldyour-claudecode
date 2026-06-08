@@ -1,96 +1,38 @@
 ---
 name: browser-tool-routing
-description: "Маршрутизация браузерных задач: Playwright vs Chrome DevTools vs оба. Используй для: выбор браузерного MCP, проверь в браузере, скриншот vs дебаг, какой инструмент запустить, что использовать для UI. EN triggers: pick browser MCP, validation vs diagnosis, screenshot vs debug, which browser tool, route browser task, Playwright vs DevTools."
+description: "Маршрутизирует browser tasks между Webwright, Playwright CLI и Chrome DevTools MCP. Используй для: проверь в браузере, браузер, UI, визуально, скриншот, Figma, фото, консоль, сеть, перфоманс, Lighthouse. EN triggers: browser tool routing, UI validation, screenshots, visual QA, console, network, performance."
 ---
 
 # Browser Tool Routing
 
 ## Purpose
 
-Choose the right browser MCP workflow before acting. Playwright MCP and Chrome DevTools MCP overlap, but they are not interchangeable.
+Choose the browser provider before acting. The current provider model is:
 
-User-facing conversation stays in Russian unless requested otherwise. Repository documentation and committed files stay in English.
+- Webwright: high-level long-horizon web tasks, reusable scripts, RPA, extraction, comparison, and evidence-first workflows.
+- Playwright CLI: low-level browser flow validation, deterministic screenshots, snapshots, headed sessions, traces, console/request checks, and final UI proof.
+- Chrome DevTools MCP: console/network/runtime/performance/memory/Lighthouse debugging and live Chrome inspection.
 
-## When To Use
+RU triggers: проверь UI, проверь в браузере, визуально, pixel-perfect, сравни с Figma, сравни с фото, скриншот, консоль, сеть, перфоманс, Lighthouse.
+EN triggers: validate UI, browser check, visual QA, pixel-perfect, compare with Figma, compare with reference image, screenshot, console, network, performance, Lighthouse.
 
-Use this skill without waiting for explicit invocation when the task asks to:
+## Routing
 
-- Check or verify something in a browser, visually, interactively, functionally, or pixel-perfect.
-- Decide whether Playwright, Chrome DevTools, or both should be used.
-- Capture screenshots, inspect rendered UI, validate responsive behavior, or test a browser user flow.
-- Debug console errors, network failures, runtime exceptions, hydration, layout, performance, or Lighthouse issues.
-- Provide browser evidence before final delivery.
+Use Webwright first for:
 
-For implementation tasks, after routing select the concrete skill: `browser-validation` for proof and `browser-debug` for diagnosis.
+- Long-horizon web task execution: search, filter, compare, extract, upload, export, repeat.
+- Reusable RPA or web workflow creation where `plan.md`, logs, screenshots, and `final_script.py` are expected.
+- Multi-page evidence-first workflows where the result must be rerunnable.
 
-## Default Routing
+Use Playwright CLI first for:
 
-Use Playwright MCP first (`mcp__plugin_rldyour-mcps_playwright__*`) for:
+- Low-level browser flow validation, route navigation, forms, clicks, keyboard, dialogs, modals, tabs, uploads, waits, and state transitions.
+- Screenshot capture under `browser/`, accessibility snapshots, responsive viewport matrices, traces, videos when needed, and post-fix revalidation.
+- Figma/photo/reference-image visual QA when paired with `visual-diff-review`.
 
-- User-flow reproduction: navigation, forms, clicks, keyboard, dialogs, tabs, uploads, waits.
-- Functional validation: feature behavior, business rules, form values, visible state, route transitions, error states.
-- Pixel-perfect checks: screenshots, responsive viewport checks, visual comparison against provided design/context.
-- Accessibility-tree based interaction and assertions.
-- Storage/network/testing workflows enabled through `--caps=network,storage,testing,devtools`.
-- Final re-validation after code changes.
+Use Chrome DevTools MCP first for:
 
-Use Chrome DevTools MCP first (`mcp__plugin_rldyour-mcps_chrome-devtools__*`) for:
+- Console and source-map debugging, thrown exceptions, hydration/runtime failures, and DOM/runtime inspection.
+- Network failures, request/response payloads, cache/CORS/redirect diagnosis, performance traces, Lighthouse, memory/heap diagnostics, and live Chrome inspection.
 
-- Console errors, warnings, thrown exceptions, source maps, runtime stack traces.
-- Network diagnosis: failing requests, status codes, payload shapes, timing, caching, CORS, redirects.
-- DOM/runtime debugging when accessibility snapshots are insufficient.
-- Layout/computed style investigation, rendering issues, hydration/runtime behavior.
-- Lighthouse, Core Web Vitals, performance trace, CPU/network throttling, and memory snapshots.
-
-Use both when:
-
-- The task says the UI is broken but the cause is unknown.
-- Playwright can reproduce the issue and Chrome DevTools can explain it.
-- A fix requires browser validation plus console/network/performance evidence.
-- The task requires pixel-perfect confidence and runtime correctness.
-
-## Recommended Sequence
-
-For unknown browser bugs:
-
-1. Playwright: navigate, reproduce, take screenshot into `browser/`, capture accessibility snapshot.
-2. Chrome DevTools: inspect console, network, DOM/runtime, layout, and performance only as needed.
-3. Implement the fix using repo-native tools (Edit/Write or Serena symbol editing).
-4. Playwright: re-run the user flow and assertions.
-5. Chrome DevTools: confirm console/network/performance regressions are absent when relevant.
-
-For planned UI implementation:
-
-1. Implement the UI.
-2. Playwright: check desktop and mobile viewports, business flow, interaction states, screenshots, and visible assertions.
-3. Chrome DevTools: inspect console/network if UI uses client runtime, external data, hydration, or performance-sensitive rendering.
-4. Report evidence and residual risks.
-
-## Artifact Rule
-
-All browser MCP screenshots, videos, traces, PDFs, HAR-like exports, and temporary browser evidence must be written under `browser/`.
-
-Do not commit browser artifacts. Delete them after the task unless the user explicitly asks to preserve evidence. If evidence must be kept, prefer a text summary with paths and observations over committing binary files.
-
-## Safety Boundary
-
-The agent may decide how to interact with browser flows when the environment is local, test, staging, or clearly non-destructive. For production, payments, account settings, data deletion, credential changes, irreversible submissions, or external sites with real-world side effects, follow Claude Code safety and confirmation rules.
-
-Do not store real credentials or sensitive session state in the repository. Use test accounts or user-provided temporary credentials only when needed.
-
-## Output
-
-When routing is the main task, answer in Russian with:
-
-- `Chosen workflow`: Playwright, Chrome DevTools, or both.
-- `Why`: concrete reason based on the task.
-- `Evidence to collect`: screenshots, snapshots, console, network, trace, Lighthouse, or manual checks.
-- `Risks`: side effects, auth/session needs, unavailable browser context, or production safety concerns.
-
-## Anti-patterns
-
-- Использовать Chrome DevTools для simple validation когда Playwright достаточен.
-- Запускать Playwright для console/network debug без воспроизведения user flow.
-- Использовать оба MCP когда задача чисто validation OR чисто debug.
-- Запускать на production / live site без явного разрешения.
-- Игнорировать accessibility snapshot - это часто быстрее DOM inspection.
+For unknown browser bugs, reproduce with Playwright CLI, then diagnose with Chrome DevTools MCP when runtime evidence is needed.
