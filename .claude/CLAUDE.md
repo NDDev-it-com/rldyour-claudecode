@@ -124,7 +124,7 @@ Patterns verified against `anthropics/claude-plugins-official` snapshot `1a2f18b
 
 ## Changelog Adoption (v2.1.133 -> v2.1.168)
 
-Verified against `code.claude.com/docs/en/changelog`, `code.claude.com/docs/en/model-config`, `references/claude-baseline.json`, `package.json`, and npm package metadata on 2026-06-06. Runtime pin: **v2.1.168**. Feature compatibility floor: **v2.1.146+**.
+Verified against `code.claude.com/docs/en/changelog`, `code.claude.com/docs/en/model-config`, `references/claude-baseline.json`, `package.json`, and npm package metadata on 2026-06-08. Runtime pin: **v2.1.168**. Feature compatibility floor: **v2.1.146+**.
 
 Adopted:
 - v2.1.105 - `maxSkillDescriptionChars` and `skillListingBudgetFraction` user settings (Anthropic + claudekit-cli baseline is `0.03`; this repo recommends `0.04` - see Skill Listing Budget section above for the bilingual-description rationale). Per-entry skill description cap `1,536` chars, used by all 38 skills.

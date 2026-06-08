@@ -70,7 +70,10 @@ silently to a malicious version.
 - `scripts/refresh_actions_pins.sh` re-resolves tags to fresh SHAs via
   `gh api`.
 - Docker images used by workflow scanners are digest-pinned.
-- All 12 MCP servers pinned per ADR-0007.
+- All 11 active MCP servers are pinned per ADR-0007. Browser automation is split
+  out of MCP: the former browser-control MCP surface is not active, Playwright
+  CLI handles low-level browser evidence, Webwright handles long-horizon web
+  workflows, and Chrome DevTools MCP remains the specialist DevTools provider.
 - `actions/dependabot` + `.github/dependabot.yml` for github-actions and
   npm ecosystems.
 - `.github/workflows/claude-cli-drift.yml` weekly check for the Claude

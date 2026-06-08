@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-06-08
 Last verified: 2026-06-08
-Last commit: d49e21221e717550f1dd91b9b8f5b80168b6c88f fix(design): require deterministic visual evidence
+Last commit: 7b081d18859747099f5e011be45173f679847dec docs(security): remove retired browser mcp wording
 Scope: always-needed repository context
 Area: CONTEXT
 -->
@@ -22,14 +22,14 @@ always-needed repository context
 
 ## Last verified
 - date: 2026-06-08
-- commit: `d49e21221e717550f1dd91b9b8f5b80168b6c88f`
+- commit: `7b081d18859747099f5e011be45173f679847dec`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
 - Context memories hold stable facts that agents need before planning or editing.
 
 ## Evidence
-- `commit:d49e21221e717550f1dd91b9b8f5b80168b6c88f`
+- `commit:7b081d18859747099f5e011be45173f679847dec`
 - `path:README.md`
 - `path:config/rldyour-contract.json`
 

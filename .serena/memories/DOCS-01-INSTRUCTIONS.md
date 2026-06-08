@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-06-08
 Last verified: 2026-06-08
-Last commit: d49e21221e717550f1dd91b9b8f5b80168b6c88f fix(design): require deterministic visual evidence
+Last commit: 7b081d18859747099f5e011be45173f679847dec docs(security): remove retired browser mcp wording
 Scope: instruction docs and durable operator documentation
 Area: DOCS
 -->
@@ -24,7 +24,7 @@ instruction docs and durable operator documentation
 
 ## Last verified
 - date: 2026-06-08
-- commit: `d49e21221e717550f1dd91b9b8f5b80168b6c88f`
+- commit: `7b081d18859747099f5e011be45173f679847dec`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
@@ -33,7 +33,7 @@ instruction docs and durable operator documentation
 - `scripts/validate_instruction_sync.py` accepts both nested `claims` and top-level sync-contract keys, while still failing semantic drift for shared keys.
 
 ## Evidence
-- `commit:d49e21221e717550f1dd91b9b8f5b80168b6c88f`
+- `commit:7b081d18859747099f5e011be45173f679847dec`
 - `path:AGENTS.md`
 - `path:.claude/CLAUDE.md`
 - `path:README.md`
