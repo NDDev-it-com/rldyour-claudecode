@@ -67,7 +67,6 @@ browser/**
 !browser/
 !browser/.gitkeep
 .playwright-cli/
-.playwright-mcp/
 playwright-report/
 test-results/
 .webwright-runs/
