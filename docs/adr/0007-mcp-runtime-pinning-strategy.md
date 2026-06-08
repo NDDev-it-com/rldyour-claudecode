@@ -46,7 +46,7 @@ SERVER_TO_ENV + HTTP_TO_ENV + SYSTEM_BINARY_TO_ENV.
 Chosen option: **C**. Pinning rules:
 
 - **stdio uvx**: `==X.Y.Z` (e.g. `--from serena-agent==1.5.3`).
-- **stdio bunx**: `@X.Y.Z` (e.g. `bunx chrome-devtools-mcp@1.1.1`).
+- **stdio bunx**: `@X.Y.Z` (e.g. `bunx chrome-devtools-mcp@1.2.0`).
 - **HTTP**: pinned by exact URL only (`https://mcp.deepwiki.com/mcp`).
 - **Host binary** (github, dart-flutter): version literal in
   `config/mcp-runtime-versions.env` only (the manifest carries no version);

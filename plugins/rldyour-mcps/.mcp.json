@@ -32,7 +32,7 @@
     "chrome-devtools": {
       "command": "bunx",
       "args": [
-        "chrome-devtools-mcp@1.1.1",
+        "chrome-devtools-mcp@1.2.0",
         "--headless",
         "--isolated",
         "--no-usage-statistics",
