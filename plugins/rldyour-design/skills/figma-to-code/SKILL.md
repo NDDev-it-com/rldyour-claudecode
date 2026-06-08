@@ -4,7 +4,6 @@ description: "Перенос Figma макетов в код pixel-perfect чер
 allowed-tools:
   - mcp__plugin_rldyour-mcps_figma__*
   - mcp__plugin_rldyour-mcps_shadcn__*
-  - mcp__plugin_rldyour-mcps_playwright__*
   - mcp__plugin_rldyour-mcps_chrome-devtools__*
   - Read
   - Write

@@ -1,109 +1,35 @@
 ---
 name: browser-validation
-description: "Валидация UI и пользовательских сценариев в браузере через Playwright MCP. Используй для: проверь UI, проверь в браузере, валидируй страницу, скриншот, регрессия, адаптив, бизнес-логика, проверь визуально. EN triggers: validate UI, browser check, e2e test, regression test, responsive check, business logic in browser, take screenshot, pixel-perfect validation, visual QA."
-allowed-tools:
-  - mcp__plugin_rldyour-mcps_playwright__*
+description: "Валидация UI и пользовательских сценариев в браузере через Playwright CLI evidence. Используй для: проверь UI, проверь в браузере, скриншот, регрессия, адаптив, бизнес-логика, визуально. EN triggers: validate UI, browser check, regression test, responsive check, business logic in browser, screenshot, visual QA."
 ---
 
 # Browser Validation
 
 ## Purpose
 
-Validate browser-facing work with real browser evidence, not assumptions. The goal is to prove the implementation is visually correct, functionally correct, and consistent with business logic.
+Validate browser-facing work with repeatable evidence. Use Playwright CLI as the primary low-level provider for browser flow validation and screenshots. Store artifacts under `browser/` and do not commit them.
 
-User-facing reports stay in Russian unless requested otherwise. Store browser artifacts under `browser/` and do not commit them.
+## Workflow
 
-## When To Use
+1. Pick a named session such as `PLAYWRIGHT_CLI_SESSION="${RY_PROJECT_SLUG:-rldyour}"`.
+2. Open the target URL with `playwright-cli` and a deterministic viewport.
+3. Capture a snapshot and screenshot under `browser/`.
+4. Exercise the changed flow: navigation, forms, buttons, dialogs, modals, tabs, loading/error/empty states, and business rules.
+5. Capture desktop and mobile screenshots when layout or responsive behavior changed.
+6. Check console and requests with Playwright CLI for ordinary validation.
+7. Hand off to `browser-debug` when console/network/runtime/performance/memory/Lighthouse diagnosis is required.
+8. Re-run the same Playwright CLI commands after fixes.
 
-Use this skill without waiting for explicit invocation when the task asks to:
+Useful command shape:
 
-- Check, validate, verify, or prove a browser-visible implementation.
-- Verify UI visually, pixel-perfect, responsive, mobile/desktop, or against a design/reference.
-- Test navigation, forms, modals, tabs, dialogs, auth-like flows, route changes, loading/error/empty states, or business behavior.
-- Capture screenshots or browser evidence under `browser/`.
-- Confirm that a frontend fix works after code changes.
+```bash
+PLAYWRIGHT_CLI_SESSION="${RY_PROJECT_SLUG:-rldyour}" playwright-cli open "$URL"
+playwright-cli -s="${RY_PROJECT_SLUG:-rldyour}" snapshot --filename browser/snapshot.yaml
+playwright-cli -s="${RY_PROJECT_SLUG:-rldyour}" screenshot --filename browser/ui-desktop.png
+playwright-cli -s="${RY_PROJECT_SLUG:-rldyour}" console error
+playwright-cli -s="${RY_PROJECT_SLUG:-rldyour}" requests
+```
 
-If the validation exposes console, network, runtime, layout, hydration, or performance problems, hand off to `browser-debug`.
+## Evidence Contract
 
-Use this skill after:
-
-- UI, layout, styling, responsive, animation, or design-system changes.
-- User-flow, form, route, navigation, modal, upload, auth, checkout-like, or wizard changes.
-- Client-side business logic, validation, error-state, loading-state, or empty-state changes.
-- Changes that affect browser-visible data, browser storage, network requests, hydration, or runtime state.
-
-If the user asks for pixel-perfect, production-quality, or "проверь в браузере", this skill applies.
-
-## Required Validation Layers
-
-Validate the implementation across these layers when relevant:
-
-- Pixel-perfect: screenshots, spacing, typography, colors, alignment, visual hierarchy, responsive layout, overflow, scroll, focus, hover/active/disabled states.
-- Functionality: navigation, form input, validation, buttons, modals, tabs, dialogs, uploads, state changes, errors, loading, empty states.
-- Business logic: permissions, roles, required fields, calculations, step order, state transitions, saved values, data visibility, and edge cases.
-- Runtime health: console errors/warnings, failed network requests, hydration/runtime exceptions, unexpected redirects, stale state.
-- Accessibility basics: meaningful roles/names where interaction depends on them, keyboard reachability for important flows, visible focus when relevant.
-- Mobile/responsive: at least desktop plus mobile when UI/layout changed.
-
-## Playwright Workflow
-
-Use `mcp__plugin_rldyour-mcps_playwright__*` tools provided by Playwright MCP:
-
-1. Start from a clean or explicit test state.
-2. Navigate to the changed page/flow.
-3. Capture an accessibility snapshot to understand the page structure.
-4. Exercise the main user flow and changed edge cases.
-5. Use testing capability assertions when useful: visible element/text/list/value checks.
-6. Capture screenshots into `browser/` for key states: initial, changed state, error/empty/loading state, desktop/mobile, and final state.
-7. Check network/storage tools when behavior depends on API responses, cookies, localStorage, sessionStorage, or persisted state.
-8. Use Chrome DevTools MCP if console/network/runtime/performance diagnosis is needed (delegate to `browser-debug`).
-9. Re-run the relevant flow after fixes.
-10. Delete transient artifacts in `browser/` unless the user asks to keep them.
-
-## Pixel-Perfect Standard
-
-Do not call UI done if:
-
-- Important content overflows, clips, jumps, or is misaligned.
-- Mobile layout is broken for a changed responsive surface.
-- Loading, error, empty, disabled, hover/focus, or modal states are visibly inconsistent when they are part of the feature.
-- Typography, spacing, and contrast are visibly inconsistent with the local design language.
-- The page works only by accident because a business rule or state transition was not tested.
-
-When a design reference exists, compare against it directly. When no reference exists, compare against the existing product style and nearby components.
-
-## Artifact Rule
-
-All screenshots and browser artifacts must be written under `browser/`.
-
-Use descriptive names:
-
-- `browser/<feature>-desktop-before.png`
-- `browser/<feature>-desktop-after.png`
-- `browser/<feature>-mobile.png`
-- `browser/<feature>-error-state.png`
-- `browser/<feature>-trace.zip`
-
-Do not commit these files. They are local evidence. Remove them after the task unless the user explicitly asks to keep them.
-
-## Output
-
-For implementation work, report in Russian:
-
-- `Browser checks`: flows and viewports tested.
-- `Visual evidence`: screenshot filenames created under `browser/` and whether they were deleted or kept.
-- `Functional evidence`: interactions/assertions verified.
-- `Runtime evidence`: console/network/storage/performance status if checked.
-- `Fixes made`: browser-driven corrections applied.
-- `Residual risks`: flows not tested, unavailable credentials, external dependency, or manual checks still needed.
-
-If browser validation cannot run, state the blocker and the exact fallback used.
-
-## Anti-patterns
-
-- Calling UI done без визуального доказательства из браузера.
-- Тестирование только desktop когда UI поменялся для mobile.
-- Skip'нуть error/empty/loading states because "main flow works".
-- Коммит screenshots в репо вместо хранения под `browser/` локально.
-- Считать что accessibility snapshot заменяет визуальную проверку.
-- Игнорировать console/network errors при validation - это сигнал для `browser-debug`.
+Report the exact evidence paths and residual risk. A browser-visible change is not done until the relevant screenshot, snapshot, flow result, and runtime-health checks are proven or explicitly marked `NOT_PROVEN` with a bounded reason.

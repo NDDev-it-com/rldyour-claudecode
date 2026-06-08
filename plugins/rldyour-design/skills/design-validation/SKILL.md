@@ -1,8 +1,7 @@
 ---
 name: design-validation
-description: "Браузер-валидация дизайн-имплементации после UI/Figma/shadcn/ReactBits работы через Playwright + Chrome DevTools MCP. Используй для: проверь дизайн, проверь верстку, адаптив, скриншоты, проверь визуальное соответствие макету. EN triggers: validate design, check layout, responsive validation, pixel-perfect check, design screenshots, design QA, compare to Figma frame."
+description: "Браузер-валидация дизайн-имплементации через Figma, Playwright CLI и Chrome DevTools MCP. Используй для: проверь дизайн, проверь верстку, адаптив, скриншоты, visual diff. EN triggers: validate design, responsive validation, pixel-perfect check, design screenshots, compare to Figma frame."
 allowed-tools:
-  - mcp__plugin_rldyour-mcps_playwright__*
   - mcp__plugin_rldyour-mcps_chrome-devtools__*
   - mcp__plugin_rldyour-mcps_figma__*
 ---
@@ -53,12 +52,12 @@ Do not commit browser artifacts. Delete them after the task unless the user expl
 
 ## Validation Workflow
 
-1. Use Playwright MCP (`mcp__plugin_rldyour-mcps_playwright__*`) for browser flow reproduction, screenshots, accessibility snapshots, and assertions.
-2. Use Chrome DevTools MCP (`mcp__plugin_rldyour-mcps_chrome-devtools__*`) for console/network/runtime/layout/performance diagnosis when relevant.
-3. Compare against Figma context (`mcp__plugin_rldyour-mcps_figma__*`) and screenshots.
-4. For visual regression, use Playwright's built-in `toHaveScreenshot()` snapshot comparison when the project already adopted it; do not introduce Percy/Chromatic without explicit user request.
+1. Use Figma context (`mcp__plugin_rldyour-mcps_figma__*`) for frame, token, component, text, and constraint source facts.
+2. Use Playwright CLI for browser flow reproduction, screenshots, snapshots, viewport matrices, and visual diff evidence.
+3. Use Chrome DevTools MCP (`mcp__plugin_rldyour-mcps_chrome-devtools__*`) for computed style, layout, console, network, runtime, performance, memory, or Lighthouse diagnosis when relevant.
+4. For visual regression, use project-native screenshot comparison only when already adopted; do not introduce Percy/Chromatic without explicit user request.
 5. Fix mismatches and re-run checks.
-6. Report remaining mismatches or blockers explicitly.
+6. Report remaining mismatches or blockers explicitly with reference, actual screenshot, diff/deviation, and evidence paths.
 
 ## Done Criteria
 
