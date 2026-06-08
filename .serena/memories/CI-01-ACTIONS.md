@@ -1,7 +1,7 @@
 <!-- Memory Metadata
-Last updated: 2026-06-07
-Last verified: 2026-06-07
-Last commit: c680802c9b3554b1f00e479ecc27cafc719d6264 chore(release): claude 1.1.33 (other)
+Last updated: 2026-06-08
+Last verified: 2026-06-08
+Last commit: 334045ab7ddfd3cef233c74b0ea9978d3022eff8 fix(docs): refresh Claude inventory
 Scope: GitHub Actions and local CI policy
 Area: CI
 -->
@@ -21,8 +21,8 @@ GitHub Actions and local CI policy
 - `path:README.md`
 
 ## Last verified
-- date: 2026-06-07
-- commit: `c680802c9b3554b1f00e479ecc27cafc719d6264`
+- date: 2026-06-08
+- commit: `334045ab7ddfd3cef233c74b0ea9978d3022eff8`
 - checked by: Codex ry-start docs/memory consistency audit
 
 ## Facts
@@ -37,7 +37,7 @@ GitHub Actions and local CI policy
   OS-independent.
 
 ## Evidence
-- `commit:c680802c9b3554b1f00e479ecc27cafc719d6264`
+- `commit:334045ab7ddfd3cef233c74b0ea9978d3022eff8`
 - `path:.github/workflows`
 - `path:README.md`
 

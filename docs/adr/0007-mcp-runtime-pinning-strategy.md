@@ -6,9 +6,8 @@
 
 ## Context and Problem Statement
 
-12 MCP servers (`rldyour-mcps`) span three transport types: stdio uvx
-(serena), stdio bunx (sequential-thinking, playwright,
-chrome-devtools, context7, shadcn), HTTP (deepwiki, grep, figma,
+11 MCP servers (`rldyour-mcps`) span three transport types: stdio uvx
+(serena), stdio bunx (sequential-thinking, chrome-devtools, context7, shadcn), HTTP (deepwiki, grep, figma,
 openai-docs), and stdio host binary (github, dart-flutter). Without
 explicit pinning, `@latest` semantics can flip a server's tool surface
 overnight (e.g., Serena 1.3.0 mode-selection refactor reduced the
@@ -47,7 +46,7 @@ SERVER_TO_ENV + HTTP_TO_ENV + SYSTEM_BINARY_TO_ENV.
 Chosen option: **C**. Pinning rules:
 
 - **stdio uvx**: `==X.Y.Z` (e.g. `--from serena-agent==1.5.3`).
-- **stdio bunx**: `@X.Y.Z` (e.g. `bunx @playwright/mcp@0.0.75`).
+- **stdio bunx**: `@X.Y.Z` (e.g. `bunx chrome-devtools-mcp@1.1.1`).
 - **HTTP**: pinned by exact URL only (`https://mcp.deepwiki.com/mcp`).
 - **Host binary** (github, dart-flutter): version literal in
   `config/mcp-runtime-versions.env` only (the manifest carries no version);

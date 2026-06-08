@@ -5,10 +5,10 @@ End-to-end design workflows: Figma → tokens → FSD → shadcn/ui → ReactBit
 ## What's inside
 
 - `5` skills:
-  - `figma-to-code` - pixel-perfect Figma frame transfer with `allowed-tools: [figma + shadcn + playwright + chrome-devtools MCP, Read/Write/Edit]`.
+  - `figma-to-code` - pixel-perfect Figma frame transfer with Figma/shadcn MCP, Playwright CLI browser evidence, Chrome DevTools MCP diagnosis, and Read/Write/Edit.
   - `design-system-implementation` - centralized tokens (W3C DTCG / Tailwind v4 CSS-vars), shadcn/ui, ReactBits.
   - `fsd-frontend-architecture` - strict Feature-Sliced Design layers, public APIs, import boundaries (pure reference skill - no `allowed-tools` by design).
-  - `design-validation` - browser validation of design implementation (Playwright + Chrome DevTools).
+  - `design-validation` - browser validation of design implementation (Playwright CLI + Chrome DevTools MCP).
   - `ry-design` - full pipeline orchestrator: `disable-model-invocation: false` (auto-trigger on "сверстай UI / реализуй дизайн / pixel-perfect").
 - `1` slash command: `/rldyour-design:ry-design`.
 

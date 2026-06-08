@@ -20,7 +20,7 @@ claims:
   max_skill_description_chars: 1536
   fullrepo_branch: fullrepo
   plugin_count: 9
-  skill_count: 35
+  skill_count: 38
   command_count: 11
   subagent_count: 8
 -->
@@ -40,7 +40,7 @@ claims:
 ```
 .claude-plugin/marketplace.json
 plugins/
-  rldyour-mcps/        # transport - 12 pinned MCP servers (.mcp.json)
+  rldyour-mcps/        # transport - 11 pinned MCP servers (.mcp.json)
   rldyour-serena-mcp/  # Serena code workflow + memory sync + lifecycle hooks
   rldyour-flow/        # SDLC skills (ry-*) + reviewer subagents + hooks + scripts
   rldyour-explore/     # ry-explore agent + tech/web research skills
@@ -56,7 +56,7 @@ plugins/
 - `rldyour-mcps` is the single owner of any `.mcp.json`. Other plugins consume MCP transport from it; they never declare MCP servers themselves.
 - Only `rldyour-flow` and `rldyour-serena-mcp` declare `hooks.json`. No other plugin attaches Claude Code lifecycle hooks.
 - One domain per plugin. No catch-all plugins. Cross-plugin overlap is forbidden.
-- `rldyour-design` and `rldyour-browser` are skills-only and use Figma/shadcn/Playwright/Chrome DevTools transport from `rldyour-mcps`; `rldyour-design` also depends on `rldyour-browser` for validation routing.
+- `rldyour-design` and `rldyour-browser` are skills-only. Browser automation routes through Webwright and Playwright CLI outside MCP; Figma/shadcn/Chrome DevTools MCP transport remains owned by `rldyour-mcps`. `rldyour-design` depends on `rldyour-browser` for validation routing.
 
 ## Codex CLI Compatibility
 
@@ -140,7 +140,7 @@ Subcommands:
 
 ## MCP Transport (`rldyour-mcps/.mcp.json`)
 
-12 pinned servers (full pin source: `config/mcp-runtime-versions.env`): `serena-agent==1.5.3` with `alwaysLoad: true` (v2.1.121+), `@modelcontextprotocol/server-sequential-thinking@2025.12.18`, `@playwright/mcp@0.0.75`, `chrome-devtools-mcp@1.1.1`, `@upstash/context7-mcp@2.2.5`, `shadcn@4.10.0`, host binaries `github-mcp-server` (1.1.2) + `dart` (3.12.0); HTTP: `deepwiki`, `grep`, `figma`, `openai-docs`. Required env: `CONTEXT7_API_KEY`, `GITHUB_PERSONAL_ACCESS_TOKEN`. GitHub MCP uses local stdio (not Copilot-gated HTTP).
+11 pinned servers (full pin source: `config/mcp-runtime-versions.env`): `serena-agent==1.5.3` with `alwaysLoad: true` (v2.1.121+), `@modelcontextprotocol/server-sequential-thinking@2025.12.18`, `chrome-devtools-mcp@1.1.1`, `@upstash/context7-mcp@2.2.5`, `shadcn@4.10.0`, host binaries `github-mcp-server` (1.1.2) + `dart` (3.12.0); HTTP: `deepwiki`, `grep`, `figma`, `openai-docs`. Browser automation uses Webwright and Playwright CLI outside MCP. Required env: `CONTEXT7_API_KEY`, `GITHUB_PERSONAL_ACCESS_TOKEN`. GitHub MCP uses local stdio (not Copilot-gated HTTP).
 
 Timeout knobs are env-only: `MCP_TIMEOUT`, `MCP_TOOL_TIMEOUT` (v2.1.142+ for HTTP/SSE). Per-server `startup_timeout_sec`/`tool_timeout_sec` keys are NOT documented and silently ignored - do not add them.
 
