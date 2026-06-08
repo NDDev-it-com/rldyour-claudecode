@@ -32,7 +32,7 @@ release readiness, versioning, and artifact hygiene
 - Current product/config version is `1.1.43`; `VERSION`, `package.json`,
   `pyproject.toml`, and `CHANGELOG.md` are the source of truth for the
   adapter-local SemVer state.
-- Release `1.1.43` keeps the Claude Code runtime baseline at `2.1.168`,
+- Release `1.1.43` keeps the Claude Code runtime baseline at `2.1.169`,
   preserves the workflow-aware `/rldyour-flow:ry-start` hybrid shim, keeps
   `ry-start` reviewer fanout explicit opt-in, and makes reviewer agent
   descriptions Russian-first with compact English compatibility.
