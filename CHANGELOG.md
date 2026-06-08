@@ -7,6 +7,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 ## [Unreleased]
 
 
+## [1.1.40] - 2026-06-09
+
+### Changed
+
+- Refresh Chrome DevTools MCP baseline to 1.2.0.
+
 ## [1.1.39] - 2026-06-09
 
 ### Changed
