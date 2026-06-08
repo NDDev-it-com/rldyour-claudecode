@@ -3,14 +3,20 @@
     "serena": {
       "command": "uvx",
       "args": [
-        "--from", "serena-agent==1.5.3",
-        "--python", "3.13",
-        "--prerelease", "allow",
-        "serena", "start-mcp-server",
+        "--from",
+        "serena-agent==1.5.3",
+        "--python",
+        "3.13",
+        "--prerelease",
+        "allow",
+        "serena",
+        "start-mcp-server",
         "--project-from-cwd",
         "--context=agent",
-        "--enable-web-dashboard", "False",
-        "--open-web-dashboard", "False"
+        "--enable-web-dashboard",
+        "False",
+        "--open-web-dashboard",
+        "False"
       ],
       "alwaysLoad": true
     },
@@ -22,14 +28,6 @@
       "env": {
         "DISABLE_THOUGHT_LOGGING": "true"
       }
-    },
-    "playwright": {
-      "command": "bunx",
-      "args": [
-        "@playwright/mcp@0.0.75",
-        "--headless",
-        "--caps=network,storage,testing,devtools"
-      ]
     },
     "chrome-devtools": {
       "command": "bunx",
