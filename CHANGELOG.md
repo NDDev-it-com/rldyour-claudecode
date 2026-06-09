@@ -7,6 +7,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 ## [Unreleased]
 
 
+## [1.1.44] - 2026-06-09
+
+### Fixed
+
+- Mark Claude Code 2.1.168 surface-adoption baseline as historical; current package/runtime baseline is 2.1.169.
+
 ## [1.1.43] - 2026-06-09
 
 ### Changed
