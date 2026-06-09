@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "verified_on": "2026-05-30",
+  "verified_on": "2026-06-09",
   "owner_repo": "NDDev-it-com/rldyour-claudecode",
   "adapters": [
     "claude",
@@ -619,5 +619,23 @@
       "codex": { "status": "adapter repository should publish release evidence" },
       "opencode": { "status": "adapter repository should publish release evidence" }
     }
-  ]
+  ],
+  "browser_providers": {
+    "policy": "root config/browser-automation-policy.json",
+    "required_common_providers": [
+      "webwright",
+      "playwright-cli",
+      "chrome-devtools-mcp"
+    ],
+    "mcp_providers": [
+      "chrome-devtools-mcp"
+    ],
+    "cli_providers": [
+      "playwright-cli"
+    ],
+    "task_harness_providers": [
+      "webwright"
+    ],
+    "webwright_support": "adapter-owned-cli-wrapper; upstream-native NOT_PROVEN"
+  }
 }
