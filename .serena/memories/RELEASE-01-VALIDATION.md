@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-06-09
 Last verified: 2026-06-09
-Last commit: 01750ff705b8b272c2e728f78f0e4dc6a3191bce chore(release): claude 1.1.43 (other)
+Last commit: 94043354d8b81ff091f55e1ed3cf1b1b8138d707 chore(release): claude 1.1.44 (other)
 Scope: release readiness, versioning, and artifact hygiene
 Area: RELEASE
 -->
@@ -24,15 +24,15 @@ release readiness, versioning, and artifact hygiene
 
 ## Last verified
 - date: 2026-06-09
-- commit: `01750ff705b8b272c2e728f78f0e4dc6a3191bce`
+- commit: `94043354d8b81ff091f55e1ed3cf1b1b8138d707`
 - checked by: Codex ry-start docs/memory consistency audit
 
 ## Facts
 - Release memories record numeric versioning, tags, CI gates, and clean artifact hygiene.
-- Current product/config version is `1.1.43`; `VERSION`, `package.json`,
+- Current product/config version is `1.1.44`; `VERSION`, `package.json`,
   `pyproject.toml`, and `CHANGELOG.md` are the source of truth for the
   adapter-local SemVer state.
-- Release `1.1.43` keeps the Claude Code runtime baseline at `2.1.169`,
+- Release `1.1.44` keeps the Claude Code runtime baseline at `2.1.169`,
   preserves the workflow-aware `/rldyour-flow:ry-start` hybrid shim, keeps
   `ry-start` reviewer fanout explicit opt-in, and makes reviewer agent
   descriptions Russian-first with compact English compatibility.
@@ -67,7 +67,7 @@ release readiness, versioning, and artifact hygiene
   `rldyour-claudecode` name.
 
 ## Evidence
-- `commit:01750ff705b8b272c2e728f78f0e4dc6a3191bce`
+- `commit:94043354d8b81ff091f55e1ed3cf1b1b8138d707`
 - `path:VERSION`
 - `path:CHANGELOG.md`
 - `path:config/mcp-runtime-versions.env`

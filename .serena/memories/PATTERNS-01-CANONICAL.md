@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-06-09
 Last verified: 2026-06-09
-Last commit: 01750ff705b8b272c2e728f78f0e4dc6a3191bce chore(release): claude 1.1.43 (other)
+Last commit: 94043354d8b81ff091f55e1ed3cf1b1b8138d707 chore(release): claude 1.1.44 (other)
 Scope: canonical implementation and naming patterns
 Area: PATTERNS
 -->
@@ -22,14 +22,14 @@ canonical implementation and naming patterns
 
 ## Last verified
 - date: 2026-06-09
-- commit: `01750ff705b8b272c2e728f78f0e4dc6a3191bce`
+- commit: `94043354d8b81ff091f55e1ed3cf1b1b8138d707`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
 - Pattern memories record canonical naming, routing, versioning, and implementation patterns.
 
 ## Evidence
-- `commit:01750ff705b8b272c2e728f78f0e4dc6a3191bce`
+- `commit:94043354d8b81ff091f55e1ed3cf1b1b8138d707`
 - `path:README.md`
 - `path:config/rldyour-contract.json`
 
