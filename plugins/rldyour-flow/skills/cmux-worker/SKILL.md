@@ -16,3 +16,9 @@ Worker rules:
 - Return a JSON report with `status`, `files_changed`, `commands_run`, `findings`, `risks`, and `needs_orchestrator_action`.
 
 Runtime worker report files belong under `.serena/cache/cmux-orchestrator/<workspace-id>/<task-id>.json` and must not be committed.
+
+Completion signal: the orchestrator exports `RLDYOUR_TASK_ID` and
+`RLDYOUR_WORKER_ALLOWED_PATHS` at delegation time (empty allowed-paths means no
+delegated write scope). Finish every task with both signals: the JSON report and
+`cmux notify --title "worker ${RLDYOUR_WORKER_ID}" --body "task ${RLDYOUR_TASK_ID} exit <code>"`
+with the real exit code, because cmux emits no per-command exit-code event.
