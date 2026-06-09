@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-06-10
 Last verified: 2026-06-10
-Last commit: 79b581eed45a0d99bdc3392205b504bfa67ddda1 chore(release): claude 1.1.46 (other)
+Last commit: 095ca95fbbd5133f1c0e177fb62d71cd66f70d5e chore(release): claude 1.1.47 (other)
 Scope: rldyour SDLC command lifecycle
 Area: FLOW
 -->
@@ -20,14 +20,20 @@ rldyour SDLC command lifecycle
 
 ## Last verified
 - date: 2026-06-10
-- commit: `79b581eed45a0d99bdc3392205b504bfa67ddda1`
+- commit: `095ca95fbbd5133f1c0e177fb62d71cd66f70d5e`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
+- The flow plugin cmux-orchestrator and cmux-worker skills define cmux
+  delegation mechanics: per-task `RLDYOUR_TASK_ID` and
+  `RLDYOUR_WORKER_ALLOWED_PATHS` exported via `cmux send --surface`,
+  observation via `cmux read-screen`/`cmux events`, and a mandatory
+  report-plus-`cmux notify` completion signal (cmux emits no per-command
+  exit-code event; verified against manaflow-ai/cmux v0.64.14).
 - Flow memories record ry-init, ry-start, ry-newp, ry-review, ry-repair, ry-deploy, and ry-sync behavior.
 
 ## Evidence
-- `commit:79b581eed45a0d99bdc3392205b504bfa67ddda1`
+- `commit:095ca95fbbd5133f1c0e177fb62d71cd66f70d5e`
 - `path:plugins/rldyour-flow`
 
 ## Known pitfalls
