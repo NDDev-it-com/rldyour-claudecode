@@ -1,7 +1,7 @@
 <!-- Memory Metadata
-Last updated: 2026-06-09
-Last verified: 2026-06-09
-Last commit: 8aebb293feac6e02cd180ee0656cdc7df0a02787 chore(release): claude 1.1.45 (other)
+Last updated: 2026-06-10
+Last verified: 2026-06-10
+Last commit: 79b581eed45a0d99bdc3392205b504bfa67ddda1 chore(release): claude 1.1.46 (other)
 Scope: architecture decisions and owner-approved policy changes
 Area: ADR
 -->
@@ -19,15 +19,15 @@ architecture decisions and owner-approved policy changes
 - `path:docs/adr`
 
 ## Last verified
-- date: 2026-06-09
-- commit: `8aebb293feac6e02cd180ee0656cdc7df0a02787`
+- date: 2026-06-10
+- commit: `79b581eed45a0d99bdc3392205b504bfa67ddda1`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
 - ADR memories record decisions and policy shape. Meaning changes require explicit owner approval.
 
 ## Evidence
-- `commit:8aebb293feac6e02cd180ee0656cdc7df0a02787`
+- `commit:79b581eed45a0d99bdc3392205b504bfa67ddda1`
 - `path:docs/adr`
 
 ## Known pitfalls

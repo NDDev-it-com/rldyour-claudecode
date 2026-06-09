@@ -1,7 +1,7 @@
 <!-- Memory Metadata
-Last updated: 2026-06-09
-Last verified: 2026-06-09
-Last commit: 8aebb293feac6e02cd180ee0656cdc7df0a02787 chore(release): claude 1.1.45 (other)
+Last updated: 2026-06-10
+Last verified: 2026-06-10
+Last commit: 79b581eed45a0d99bdc3392205b504bfa67ddda1 chore(release): claude 1.1.46 (other)
 Scope: Claude Code adapter implementation surface
 Area: CLAUDE
 -->
@@ -21,15 +21,22 @@ Claude Code adapter implementation surface
 - `path:.claude-plugin/marketplace.json`
 
 ## Last verified
-- date: 2026-06-09
-- commit: `8aebb293feac6e02cd180ee0656cdc7df0a02787`
+- date: 2026-06-10
+- commit: `79b581eed45a0d99bdc3392205b504bfa67ddda1`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
+- Commit `9bd6c7c79d854cc3966b483a651d9ac85f205803` added installer stage 8:
+  `scripts/install-rldyour-marketplace.sh` writes the managed
+  `~/.claude/rldyour-statusline.sh` script and sets `settings.json`
+  `statusLine` (type `command`, padding 0) so owner sessions show model,
+  `context_window` used/left percentage, `rate_limits` five-hour/seven-day
+  remainder, and session cost. The status-line surface adoption row moved
+  from Future to Adopted in `references/claude-surface-adoption.md`.
 - Claude memories describe the Claude Code plugin marketplace, command, skill, hook, MCP, and LSP surfaces.
 
 ## Evidence
-- `commit:8aebb293feac6e02cd180ee0656cdc7df0a02787`
+- `commit:79b581eed45a0d99bdc3392205b504bfa67ddda1`
 - `path:config/rldyour-contract.json`
 - `path:.claude-plugin/marketplace.json`
 
