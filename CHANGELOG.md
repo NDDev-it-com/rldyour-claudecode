@@ -7,6 +7,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 ## [Unreleased]
 
 
+## [1.1.45] - 2026-06-09
+
+### Fixed
+
+- Correct Claude README command and ADR counts, trim SECURITY supported-versions scope, fix CONTRIBUTING bootstrap typo, and add the browser_providers contract parity section.
+
 ## [1.1.44] - 2026-06-09
 
 ### Fixed
