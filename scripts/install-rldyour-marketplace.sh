@@ -34,6 +34,7 @@
 #   5  add nddev-it-com/rldyour-claudecode as a new marketplace
 #   6  install 9 plugins from @rldyour-claudecode in dependency order
 #   7  verify final state and write migration-report.md into the backup directory
+#   8  install the managed rldyour status line (~/.claude/rldyour-statusline.sh + settings.json statusLine)
 
 set -euo pipefail
 IFS=$'\n\t'
@@ -68,6 +69,7 @@ readonly NEW_PLUGINS=(
 
 readonly CLAUDE_HOME="$HOME/.claude"
 readonly SETTINGS_PATH="$CLAUDE_HOME/settings.json"
+readonly STATUSLINE_PATH="$CLAUDE_HOME/rldyour-statusline.sh"
 readonly INSTALLED_PLUGINS_PATH="$CLAUDE_HOME/plugins/installed_plugins.json"
 readonly KNOWN_MARKETPLACES_PATH="$CLAUDE_HOME/plugins/known_marketplaces.json"
 readonly PLUGINS_CACHE_DIR="$CLAUDE_HOME/plugins/cache"
@@ -116,7 +118,7 @@ die() {
 }
 
 usage() {
-  sed -n '2,36p' "$0"
+  sed -n '2,37p' "$0"
 }
 
 require_command() {
@@ -514,6 +516,97 @@ stage_7_verify() {
   ok "all checks passed - see $REPORT_PATH"
 }
 
+# ----- stage 8: managed rldyour status line ----------------------------------
+
+# Single source of truth for the owner status line. The script receives the
+# Claude Code status-line JSON on stdin and prints one line: model name,
+# context-window usage, five-hour/seven-day rate-limit remainder, and session
+# cost. rate_limits fields appear only on Claude.ai subscription accounts after
+# the first API response, so every field degrades to absence, never to an error.
+write_statusline_script() {
+  cat <<'RLDYOUR_STATUSLINE_EOF'
+#!/usr/bin/env bash
+# rldyour-claudecode managed status line.
+# Installed by install-rldyour-marketplace.sh (stage 8); referenced from
+# ~/.claude/settings.json statusLine. Reads status-line JSON on stdin.
+set -euo pipefail
+
+if ! command -v jq >/dev/null 2>&1; then
+  printf 'rldyour statusline: jq not found\n'
+  exit 0
+fi
+
+jq -r '
+  [
+    (.model.display_name // .model.id // "model?"),
+    (if (.context_window.used_percentage // null) != null then
+      "ctx " + (.context_window.used_percentage | floor | tostring) + "% used"
+      + (if (.context_window.remaining_percentage // null) != null then
+          " / " + (.context_window.remaining_percentage | floor | tostring) + "% left"
+        else "" end)
+    else empty end),
+    (if (.rate_limits.five_hour.used_percentage // null) != null then
+      "5h " + ((100 - (.rate_limits.five_hour.used_percentage | floor)) | tostring) + "% left"
+    else empty end),
+    (if (.rate_limits.seven_day.used_percentage // null) != null then
+      "week " + ((100 - (.rate_limits.seven_day.used_percentage | floor)) | tostring) + "% left"
+    else empty end),
+    (if (.cost.total_cost_usd // null) != null then
+      "$" + ((.cost.total_cost_usd * 100 | round) / 100 | tostring)
+    else empty end)
+  ] | join(" | ")
+' 2>/dev/null || printf 'rldyour statusline: unreadable input\n'
+RLDYOUR_STATUSLINE_EOF
+}
+
+stage_8_statusline() {
+  step "Stage 8: install managed rldyour status line"
+
+  if [[ "$DRY_RUN" -eq 1 ]]; then
+    info "dry-run: would write $STATUSLINE_PATH (chmod 755)"
+    info "dry-run: would set settings.json statusLine -> {type: command, command: $STATUSLINE_PATH, padding: 0}"
+    return 0
+  fi
+
+  local tmp_script
+  tmp_script="$(mktemp "${STATUSLINE_PATH}.XXXXXX")"
+  write_statusline_script >"$tmp_script"
+  bash -n "$tmp_script" || { rm -f "$tmp_script"; die "generated status-line script failed bash -n"; }
+  chmod 755 "$tmp_script"
+  mv "$tmp_script" "$STATUSLINE_PATH"
+  ok "wrote $STATUSLINE_PATH"
+
+  local base="{}"
+  if [[ -f "$SETTINGS_PATH" ]]; then
+    base="$(cat "$SETTINGS_PATH")"
+  fi
+
+  local existing_cmd
+  existing_cmd="$(printf '%s' "$base" | jq -r '.statusLine.command // empty' 2>/dev/null || true)"
+  if [[ -n "$existing_cmd" && "$existing_cmd" != "$STATUSLINE_PATH" ]]; then
+    warn "replacing existing statusLine command: $existing_cmd (backup in $BACKUP_DIR)"
+  fi
+
+  local tmp_settings
+  tmp_settings="$(mktemp "${SETTINGS_PATH}.XXXXXX")"
+  if ! printf '%s' "$base" | jq --arg cmd "$STATUSLINE_PATH" \
+    '.statusLine = {type: "command", command: $cmd, padding: 0}' >"$tmp_settings"; then
+    rm -f "$tmp_settings"
+    die "jq rewrite of $SETTINGS_PATH for statusLine failed; original untouched"
+  fi
+  mv "$tmp_settings" "$SETTINGS_PATH"
+
+  local applied_cmd
+  applied_cmd="$(jq -r '.statusLine.command // empty' "$SETTINGS_PATH")"
+  [[ "$applied_cmd" == "$STATUSLINE_PATH" ]] || die "settings.json statusLine verification failed"
+
+  printf '{"model":{"display_name":"smoke"},"context_window":{"used_percentage":12.4,"remaining_percentage":87.6}}' \
+    | "$STATUSLINE_PATH" >/dev/null \
+    || die "status-line script smoke run failed"
+
+  ok "settings.json statusLine -> $STATUSLINE_PATH"
+}
+
 # ----- main -----------------------------------------------------------------
 
 main() {
@@ -535,6 +628,7 @@ main() {
   stage_should_run 5 && stage_5_add_marketplace
   stage_should_run 6 && stage_6_install
   stage_should_run 7 && stage_7_verify
+  stage_should_run 8 && stage_8_statusline
 
   printf '\n%s%sInstall finished.%s\n' "$C_GREEN" "$C_BOLD" "$C_RESET" >&2
   if [[ "$DRY_RUN" -eq 1 ]]; then
