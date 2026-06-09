@@ -11,7 +11,7 @@ That's the canonical way to extend this marketplace.
 ## Quick start
 
 ```bash
-# Required env (boostrap_check.sh enforces both before any MCP starts):
+# Required env (bootstrap_check.sh enforces both before any MCP starts):
 export CONTEXT7_API_KEY=<your-context7-key>
 export GITHUB_PERSONAL_ACCESS_TOKEN=<your-github-pat-repo+read:org>
 
@@ -20,7 +20,7 @@ git clone https://github.com/NDDev-it-com/rldyour-claudecode.git
 cd rldyour-claudecode
 bash scripts/install-rldyour-marketplace.sh
 
-# Required pre-flight check for env vars (bootstrap_check.sh, not boostrap):
+# Required pre-flight check for env vars:
 bash scripts/bootstrap_check.sh
 
 # Run the full validation harness before submitting any change:
