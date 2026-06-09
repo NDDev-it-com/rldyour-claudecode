@@ -26,8 +26,7 @@ Claude Code adapter implementation surface
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
-- Commit `9bd6c7c79d854cc3966b483a651d9ac85f205803` added installer stage 8:
-  `scripts/install-rldyour-marketplace.sh` writes the managed
+- Installer stage 8 in `scripts/install-rldyour-marketplace.sh` writes the managed
   `~/.claude/rldyour-statusline.sh` script and sets `settings.json`
   `statusLine` (type `command`, padding 0) so owner sessions show model,
   `context_window` used/left percentage, `rate_limits` five-hour/seven-day
