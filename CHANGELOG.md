@@ -7,6 +7,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 ## [Unreleased]
 
 
+## [1.1.47] - 2026-06-10
+
+### Fixed
+
+- Add the cmux delegation and completion-signal contract to the cmux orchestrator and worker skills, verified against manaflow-ai/cmux v0.64.14.
+
 ## [1.1.46] - 2026-06-10
 
 ### Fixed
