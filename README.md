@@ -47,7 +47,7 @@ Briefly:
 
 - **`rldyour-mcps`** - single-owner MCP transport (11 pinned servers: Serena, Sequential Thinking, Chrome DevTools, Context7, DeepWiki, Grep, shadcn, Dart/Flutter, Figma, OpenAI Docs, GitHub).
 - **`rldyour-serena-mcp`** - Serena-first semantic code workflow, numbered fact-only `.serena` memory sync via `flow-memory-sync` subagent, lifecycle hooks (UserPromptSubmit, PreToolUse:Bash, PostToolUse:Bash, Stop).
-- **`rldyour-flow`** - autonomous SDLC orchestration with six slash commands (`ry-init`, `ry-start`, `ry-newp`, `ry-review`, `ry-deploy`, `ry-sync`), six reviewer subagents (architecture/quality/consistency/integration/verification/security tracks), advisory SessionStart, PreToolUse:Bash, PostToolUse:Bash, and Stop hooks, scoped context packs, instruction docs sync, and post-task synchronization.
+- **`rldyour-flow`** - autonomous SDLC orchestration with seven slash commands (`ry-init`, `ry-start`, `ry-newp`, `ry-review`, `ry-deploy`, `ry-sync`, `ry-repair`), six reviewer subagents (architecture/quality/consistency/integration/verification/security tracks), advisory SessionStart, PreToolUse:Bash, PostToolUse:Bash, and Stop hooks, scoped context packs, instruction docs sync, and post-task synchronization.
 - **`rldyour-explore`** - deep multi-source research via `ry-explore` subagent (`model: opus[1m]`, `effort: max`) and tech/web research skills routing through Context7, DeepWiki, Grep, and authoritative web sources.
 - **`rldyour-security`** - non-blocking OWASP Top 10 2025 secure-implementation guidance plus the `ry-sec-review` defensive review skill.
 - **`rldyour-browser`** - provider-routed browser workflows for Webwright, Playwright CLI, and Chrome DevTools MCP.
@@ -169,7 +169,7 @@ scripts/collect_diagnostics.sh                 # local ignored diagnostics bundl
 
 Reference documents:
 
-- `docs/adr/` - Architecture Decision Records (MADR 4.0.0). Eleven ADRs cover irreversible decisions: fullrepo policy, dual-doc split, bilingual descriptions, reviewer transport, local GitHub MCP, ownership boundaries, MCP pinning, CI baseline, release/tag conventions, macOS egress trust gap, hook freshness invariants for branch-split projects. Start with `docs/adr/README.md`.
+- `docs/adr/` - Architecture Decision Records (MADR 4.0.0). Twelve ADRs cover irreversible decisions: fullrepo policy, dual-doc split, bilingual descriptions, reviewer transport, local GitHub MCP, ownership boundaries, MCP pinning, CI baseline, release/tag conventions, macOS egress trust gap, hook freshness invariants for branch-split projects, and the owner full-auto standard. Start with `docs/adr/README.md`.
 - `docs/release-process.md` - versioning, CHANGELOG, release evidence, `claude plugin tag --push` flow.
 - `docs/rollback-restore.md` - safe restore from previous tags or fullrepo snapshots.
 - `docs/dependency-updates.md` - pinned MCP runtime update policy.

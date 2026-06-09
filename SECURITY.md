@@ -2,7 +2,6 @@
 
 ## Supported Versions
 
-This is the rldyour AI CLI configuration for Claude Code: plugin marketplace, MCP/LSP, Serena memory, security review, browser/design workflows, and reviewer agents.
 Only the current exact numeric product release tag receives security fixes.
 Historical plugin-scoped tags are not the primary public GitHub Release
 coordinate. The `1.1.x` line label tracks only the latest released patch, not
