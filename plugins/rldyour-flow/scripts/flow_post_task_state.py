@@ -178,9 +178,9 @@ def _runtime_execution(effective_policy: dict[str, Any]) -> dict[str, Any]:
     if role not in {"auto", "standalone", "orchestrator", "worker"}:
         role = "auto"
     if role == "auto":
-        if mode == "orchestrator" and os.environ.get("RLDYOUR_ORCHESTRATOR") == "1":
-            role = "orchestrator"
-        elif mode == "orchestrator" and (
+        # Orchestrator activation is declarative (the user states the role in
+        # /ry-init); only workers stay machine-identified through env.
+        if mode == "orchestrator" and (
             os.environ.get("RLDYOUR_WORKER") == "1" or os.environ.get("RLDYOUR_WORKER_ID")
         ):
             role = "worker"
