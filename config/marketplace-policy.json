@@ -3,7 +3,10 @@
   "_description": "Centralized rldyour-claudecode marketplace invariants. Read by validate_marketplace.sh + future validate_boundaries.py. When you add a new plugin or change ownership boundaries, update this file in the same commit.",
   "verified_on": "2026-06-02",
   "mcp_owner": "rldyour-mcps",
-  "hook_owners": ["rldyour-flow", "rldyour-serena-mcp"],
+  "hook_owners": [
+    "rldyour-flow",
+    "rldyour-serena-mcp"
+  ],
   "lsp_owner": "rldyour-lsps",
   "skills_only_plugins": [
     "rldyour-browser",
@@ -14,14 +17,35 @@
   ],
   "plugin_dependencies": {
     "rldyour-mcps": [],
-    "rldyour-serena-mcp": ["rldyour-mcps"],
-    "rldyour-flow": ["rldyour-mcps", "rldyour-serena-mcp"],
-    "rldyour-explore": ["rldyour-mcps"],
-    "rldyour-security": ["rldyour-mcps"],
-    "rldyour-browser": ["rldyour-mcps"],
-    "rldyour-design": ["rldyour-mcps", "rldyour-browser"],
-    "rldyour-lsps": ["rldyour-mcps"],
-    "rldyour-rules": ["rldyour-mcps"]
+    "rldyour-serena-mcp": [
+      "rldyour-mcps"
+    ],
+    "rldyour-flow": [
+      "rldyour-mcps",
+      "rldyour-serena-mcp"
+    ],
+    "rldyour-explore": [
+      "rldyour-mcps"
+    ],
+    "rldyour-security": [
+      "rldyour-mcps"
+    ],
+    "rldyour-browser": [
+      "rldyour-mcps"
+    ],
+    "rldyour-design": [
+      "rldyour-mcps",
+      "rldyour-browser"
+    ],
+    "rldyour-lsps": [
+      "rldyour-mcps"
+    ],
+    "rldyour-rules": [
+      "rldyour-mcps"
+    ],
+    "rldyour-orchestrator": [
+      "rldyour-flow"
+    ]
   },
   "protected_branches": [
     "main",

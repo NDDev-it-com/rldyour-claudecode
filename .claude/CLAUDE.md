@@ -15,7 +15,7 @@ claims:
   skill_listing_budget_fraction: 0.04
   max_skill_description_chars: 1536
   fullrepo_branch: fullrepo
-  plugin_count: 9
+  plugin_count: 10
   skill_count: 38
   command_count: 11
   subagent_count: 8
@@ -28,7 +28,8 @@ claims:
 ```
 rldyour-mcps         transport     0 skills • 0 cmds • 0 agents • 0 hooks  • .mcp.json (11 pinned servers)
 rldyour-serena-mcp   semantic      2 skills • 0 cmds • 1 agent  • 4 hooks
-rldyour-flow         SDLC          10 skills • 7 cmds • 6 agents • 4 hooks  • 7 scripts • 7 references
+rldyour-flow         SDLC          8 skills • 7 cmds • 6 agents • 4 hooks  • 7 scripts • 7 references
+rldyour-orchestrator cmux (macOS)  2 skills • 0 cmds • 0 agents • 0 hooks  • macOS-only install
 rldyour-explore      research      2 skills • 1 cmd  • 1 agent  • 0 hooks
 rldyour-security     security      2 skills • 1 cmd  • 0 agents • 0 hooks
 rldyour-browser      browser       6 skills • 0 cmds • 0 agents • 0 hooks

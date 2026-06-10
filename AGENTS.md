@@ -19,7 +19,7 @@ claims:
   skill_listing_budget_fraction: 0.04
   max_skill_description_chars: 1536
   fullrepo_branch: fullrepo
-  plugin_count: 9
+  plugin_count: 10
   skill_count: 38
   command_count: 11
   subagent_count: 8
@@ -43,6 +43,7 @@ plugins/
   rldyour-mcps/        # transport - 11 pinned MCP servers (.mcp.json)
   rldyour-serena-mcp/  # Serena code workflow + memory sync + lifecycle hooks
   rldyour-flow/        # SDLC skills (ry-*) + reviewer subagents + hooks + scripts
+  rldyour-orchestrator/ # macOS-only cmux orchestrator + worker role skills
   rldyour-explore/     # ry-explore agent + tech/web research skills
   rldyour-security/    # OWASP impl skill + /ry-sec-review
   rldyour-browser/     # browser validation/debug/tool-routing
@@ -76,7 +77,7 @@ OpenAI Codex CLI reads `AGENTS.md` before starting work and runs commands listed
 
 ## SDLC Workflow
 
-Five orchestrated lifecycle skills, two cmux role skills, plus one explicit sync command (Russian-leading descriptions) live in `rldyour-flow`:
+Five orchestrated lifecycle skills plus one explicit sync command (Russian-leading descriptions) live in `rldyour-flow`; the two cmux role skills live in the macOS-only `rldyour-orchestrator` plugin and activate only when the user declares the orchestrator role during `/ry-init`:
 
 - `/rldyour-flow:ry-init` - read-only scope discovery and context pack.
 - `/rldyour-flow:ry-start` - full task lifecycle: init → research → plan → implement → quality gates → post-task sync; reviewer fan-out only when explicitly requested.

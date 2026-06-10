@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-06-10
 Last verified: 2026-06-10
-Last commit: 095ca95fbbd5133f1c0e177fb62d71cd66f70d5e chore(release): claude 1.1.47 (other)
+Last commit: 7ad2170742b38ffa28c64f058aa82b5c10899410 chore(release): claude 1.1.48 (other)
 Scope: rldyour SDLC command lifecycle
 Area: FLOW
 -->
@@ -20,11 +20,18 @@ rldyour SDLC command lifecycle
 
 ## Last verified
 - date: 2026-06-10
-- commit: `095ca95fbbd5133f1c0e177fb62d71cd66f70d5e`
+- commit: `7ad2170742b38ffa28c64f058aa82b5c10899410`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
-- The flow plugin cmux-orchestrator and cmux-worker skills define cmux
+- The cmux-orchestrator and cmux-worker skills live in the dedicated
+  macOS-only `rldyour-orchestrator` surface; installers skip it on
+  Linux/WSL/Windows. Orchestrator activation is declarative: the user
+  states the role during `ry-init` (macOS + cmux session + installed
+  surface preconditions), there is no orchestrator env switch, and auto
+  role resolution treats non-worker terminals as standalone. Workers stay
+  machine-identified through the worker launcher/layout environment.
+- The rldyour-orchestrator plugin cmux-orchestrator and cmux-worker skills define cmux
   delegation mechanics: per-task `RLDYOUR_TASK_ID` and
   `RLDYOUR_WORKER_ALLOWED_PATHS` exported via `cmux send --surface`,
   observation via `cmux read-screen`/`cmux events`, and a mandatory
@@ -33,7 +40,7 @@ rldyour SDLC command lifecycle
 - Flow memories record ry-init, ry-start, ry-newp, ry-review, ry-repair, ry-deploy, and ry-sync behavior.
 
 ## Evidence
-- `commit:095ca95fbbd5133f1c0e177fb62d71cd66f70d5e`
+- `commit:7ad2170742b38ffa28c64f058aa82b5c10899410`
 - `path:plugins/rldyour-flow`
 
 ## Known pitfalls
