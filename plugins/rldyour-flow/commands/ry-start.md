@@ -13,7 +13,7 @@ If `ry-start-workflow` is unavailable, Use the `ry-start` skill for this
 request. The skill is the fallback source of truth for workflow phases, quality
 gates, explicit-review routing, and post-task sync. Invoking `/ry-start` alone
 is not permission for parallel reviewer subagents; run reviewer tracks only when
-the user explicitly asks for review, audit, security review, rules review, or
+the owner explicitly asks for review, audit, security review, rules review, or
 `ry-review`.
 
 Reply in Russian.

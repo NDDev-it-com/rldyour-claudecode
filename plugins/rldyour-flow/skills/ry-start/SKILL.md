@@ -24,8 +24,8 @@ Implement a task to a high-quality, scalable, synchronized state. Speed is secon
 10. Fix all issues in touched scope plus affected integration path. If wider technical debt is found, ask whether to expand scope.
 11. Run quality gates using project scripts, `rldyour-lsps`, and detected stack checks.
 12. Trigger browser validation for UI/browser-visible work unless auth blocks it; if auth blocks, report the limitation and use available evidence.
-13. Apply security implementation guidance for security-sensitive changes; run security review only when the user explicitly asks for review/audit/security review.
-14. Run reviewer subagents only when the user explicitly asks for review, audit, security review, rules review, or `ry-review`; otherwise skip the expensive review phase.
+13. Apply security implementation guidance for security-sensitive changes; run security review only when the owner explicitly asks for review/audit/security review.
+14. Run reviewer subagents only when the owner explicitly asks for review, audit, security review, rules review, or `ry-review`; otherwise skip the expensive review phase.
 15. Run `flow-post-task-sync` before final response.
 
 ## Deploy Intent Routing
