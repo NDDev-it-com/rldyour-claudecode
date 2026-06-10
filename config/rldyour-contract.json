@@ -38,586 +38,1364 @@
     {
       "id": "browser",
       "description": "Browser validation, debugging, routing",
-      "claude": { "plugin": "rldyour-browser" },
-      "codex": { "plugin": "rldyour-browser" },
-      "opencode": { "plugin": "rldyour-browser" }
+      "claude": {
+        "plugin": "rldyour-browser"
+      },
+      "codex": {
+        "plugin": "rldyour-browser"
+      },
+      "opencode": {
+        "plugin": "rldyour-browser"
+      }
     },
     {
       "id": "design",
       "description": "Figma-to-code, UI systems, frontend architecture",
-      "claude": { "plugin": "rldyour-design" },
-      "codex": { "plugin": "rldyour-design" },
-      "opencode": { "plugin": "rldyour-design" }
+      "claude": {
+        "plugin": "rldyour-design"
+      },
+      "codex": {
+        "plugin": "rldyour-design"
+      },
+      "opencode": {
+        "plugin": "rldyour-design"
+      }
     },
     {
       "id": "explore",
       "description": "Technical and web research",
-      "claude": { "plugin": "rldyour-explore" },
-      "codex": { "plugin": "rldyour-explore" },
-      "opencode": { "plugin": "rldyour-explore" }
+      "claude": {
+        "plugin": "rldyour-explore"
+      },
+      "codex": {
+        "plugin": "rldyour-explore"
+      },
+      "opencode": {
+        "plugin": "rldyour-explore"
+      }
     },
     {
       "id": "flow",
       "description": "SDLC lifecycle orchestration",
-      "claude": { "plugin": "rldyour-flow" },
-      "codex": { "plugin": "rldyour-flow" },
-      "opencode": { "plugin": "rldyour-flow" }
+      "claude": {
+        "plugin": "rldyour-flow"
+      },
+      "codex": {
+        "plugin": "rldyour-flow"
+      },
+      "opencode": {
+        "plugin": "rldyour-flow"
+      }
     },
     {
       "id": "lsps",
       "description": "Language-server routing, setup, health checks",
-      "claude": { "plugin": "rldyour-lsps" },
-      "codex": { "plugin": "rldyour-lsps" },
-      "opencode": { "plugin": "rldyour-lsps" }
+      "claude": {
+        "plugin": "rldyour-lsps"
+      },
+      "codex": {
+        "plugin": "rldyour-lsps"
+      },
+      "opencode": {
+        "plugin": "rldyour-lsps"
+      }
     },
     {
       "id": "mcps",
       "description": "Single-owner MCP transport layer",
-      "claude": { "plugin": "rldyour-mcps" },
-      "codex": { "plugin": "rldyour-mcps" },
-      "opencode": { "plugin": "rldyour-mcps" }
+      "claude": {
+        "plugin": "rldyour-mcps"
+      },
+      "codex": {
+        "plugin": "rldyour-mcps"
+      },
+      "opencode": {
+        "plugin": "rldyour-mcps"
+      }
+    },
+    {
+      "id": "orchestrator",
+      "description": "macOS cmux orchestrator and worker terminal roles",
+      "claude": {
+        "plugin": "rldyour-orchestrator"
+      },
+      "codex": {
+        "plugin": "rldyour-orchestrator"
+      },
+      "opencode": {
+        "plugin": "rldyour-orchestrator"
+      }
     },
     {
       "id": "rules",
       "description": "Quality, architecture, dependency, verification rules",
-      "claude": { "plugin": "rldyour-rules" },
-      "codex": { "plugin": "rldyour-rules" },
-      "opencode": { "plugin": "rldyour-rules" }
+      "claude": {
+        "plugin": "rldyour-rules"
+      },
+      "codex": {
+        "plugin": "rldyour-rules"
+      },
+      "opencode": {
+        "plugin": "rldyour-rules"
+      }
     },
     {
       "id": "security",
       "description": "Defensive security guidance and review",
-      "claude": { "plugin": "rldyour-security" },
-      "codex": { "plugin": "rldyour-security" },
-      "opencode": { "plugin": "rldyour-security" }
+      "claude": {
+        "plugin": "rldyour-security"
+      },
+      "codex": {
+        "plugin": "rldyour-security"
+      },
+      "opencode": {
+        "plugin": "rldyour-security"
+      }
     },
     {
       "id": "serena-mcp",
       "description": "Serena semantic code workflow and memory sync",
-      "claude": { "plugin": "rldyour-serena-mcp" },
-      "codex": { "plugin": "rldyour-serena-mcp" },
-      "opencode": { "plugin": "rldyour-serena-mcp" }
+      "claude": {
+        "plugin": "rldyour-serena-mcp"
+      },
+      "codex": {
+        "plugin": "rldyour-serena-mcp"
+      },
+      "opencode": {
+        "plugin": "rldyour-serena-mcp"
+      }
     }
   ],
   "public_flows": [
     {
       "id": "design.ry-design",
       "description": "End-to-end design and UI implementation workflow",
-      "claude": { "kind": "command", "path": "plugins/rldyour-design/commands/ry-design.md", "invocation": "/rldyour-design:ry-design" },
-      "codex": { "kind": "skill", "name": "rldyour-design:ry-design", "invocation": "$rldyour-design:ry-design" },
-      "opencode": { "kind": "command", "name": "ry-design", "invocation": "/ry-design" }
+      "claude": {
+        "kind": "command",
+        "path": "plugins/rldyour-design/commands/ry-design.md",
+        "invocation": "/rldyour-design:ry-design"
+      },
+      "codex": {
+        "kind": "skill",
+        "name": "rldyour-design:ry-design",
+        "invocation": "$rldyour-design:ry-design"
+      },
+      "opencode": {
+        "kind": "command",
+        "name": "ry-design",
+        "invocation": "/ry-design"
+      }
     },
     {
       "id": "explore.ry-explore",
       "description": "Isolated deep research dispatch to the research agent",
-      "claude": { "kind": "command", "path": "plugins/rldyour-explore/commands/ry-explore.md", "invocation": "/rldyour-explore:ry-explore" },
-      "codex": { "kind": "skill-or-agent", "name": "rldyour-explore:tech-research + research-explorer", "invocation": "$rldyour-explore:tech-research" },
-      "opencode": { "kind": "command", "name": "ry-explore", "invocation": "/ry-explore" }
+      "claude": {
+        "kind": "command",
+        "path": "plugins/rldyour-explore/commands/ry-explore.md",
+        "invocation": "/rldyour-explore:ry-explore"
+      },
+      "codex": {
+        "kind": "skill-or-agent",
+        "name": "rldyour-explore:tech-research + research-explorer",
+        "invocation": "$rldyour-explore:tech-research"
+      },
+      "opencode": {
+        "kind": "command",
+        "name": "ry-explore",
+        "invocation": "/ry-explore"
+      }
     },
     {
       "id": "flow.init",
       "description": "Read-only project context initialization",
-      "claude": { "kind": "command", "path": "plugins/rldyour-flow/commands/ry-init.md", "invocation": "/rldyour-flow:ry-init" },
-      "codex": { "kind": "skill", "name": "rldyour-flow:ry-init", "invocation": "$rldyour-flow:ry-init" },
-      "opencode": { "kind": "command", "name": "ry-init", "invocation": "/ry-init" }
+      "claude": {
+        "kind": "command",
+        "path": "plugins/rldyour-flow/commands/ry-init.md",
+        "invocation": "/rldyour-flow:ry-init"
+      },
+      "codex": {
+        "kind": "skill",
+        "name": "rldyour-flow:ry-init",
+        "invocation": "$rldyour-flow:ry-init"
+      },
+      "opencode": {
+        "kind": "command",
+        "name": "ry-init",
+        "invocation": "/ry-init"
+      }
     },
     {
       "id": "flow.start",
       "description": "Full implementation lifecycle",
-      "claude": { "kind": "command", "path": "plugins/rldyour-flow/commands/ry-start.md", "invocation": "/rldyour-flow:ry-start" },
-      "codex": { "kind": "skill", "name": "rldyour-flow:ry-start", "invocation": "$rldyour-flow:ry-start" },
-      "opencode": { "kind": "command", "name": "ry-start", "invocation": "/ry-start" }
+      "claude": {
+        "kind": "command",
+        "path": "plugins/rldyour-flow/commands/ry-start.md",
+        "invocation": "/rldyour-flow:ry-start"
+      },
+      "codex": {
+        "kind": "skill",
+        "name": "rldyour-flow:ry-start",
+        "invocation": "$rldyour-flow:ry-start"
+      },
+      "opencode": {
+        "kind": "command",
+        "name": "ry-start",
+        "invocation": "/ry-start"
+      }
     },
     {
       "id": "flow.new-project",
       "description": "New-project planning and optional scaffold workflow",
-      "claude": { "kind": "command", "path": "plugins/rldyour-flow/commands/ry-newp.md", "invocation": "/rldyour-flow:ry-newp" },
-      "codex": { "kind": "skill", "name": "rldyour-flow:ry-newp", "invocation": "$rldyour-flow:ry-newp" },
-      "opencode": { "kind": "command", "name": "ry-newp", "invocation": "/ry-newp" }
+      "claude": {
+        "kind": "command",
+        "path": "plugins/rldyour-flow/commands/ry-newp.md",
+        "invocation": "/rldyour-flow:ry-newp"
+      },
+      "codex": {
+        "kind": "skill",
+        "name": "rldyour-flow:ry-newp",
+        "invocation": "$rldyour-flow:ry-newp"
+      },
+      "opencode": {
+        "kind": "command",
+        "name": "ry-newp",
+        "invocation": "/ry-newp"
+      }
     },
     {
       "id": "flow.review",
       "description": "Report-only deep review workflow",
-      "claude": { "kind": "command", "path": "plugins/rldyour-flow/commands/ry-review.md", "invocation": "/rldyour-flow:ry-review" },
-      "codex": { "kind": "skill", "name": "rldyour-flow:ry-review", "invocation": "$rldyour-flow:ry-review" },
-      "opencode": { "kind": "command", "name": "ry-review", "invocation": "/ry-review" }
+      "claude": {
+        "kind": "command",
+        "path": "plugins/rldyour-flow/commands/ry-review.md",
+        "invocation": "/rldyour-flow:ry-review"
+      },
+      "codex": {
+        "kind": "skill",
+        "name": "rldyour-flow:ry-review",
+        "invocation": "$rldyour-flow:ry-review"
+      },
+      "opencode": {
+        "kind": "command",
+        "name": "ry-review",
+        "invocation": "/ry-review"
+      }
     },
     {
       "id": "flow.repair",
       "description": "Repository repair and semantic entropy normalization workflow",
-      "claude": { "kind": "command", "path": "plugins/rldyour-flow/commands/ry-repair.md", "invocation": "/rldyour-flow:ry-repair" },
-      "codex": { "kind": "skill", "name": "rldyour-flow:ry-repair", "invocation": "$rldyour-flow:ry-repair" },
-      "opencode": { "kind": "command", "name": "ry-repair", "invocation": "/ry-repair" }
+      "claude": {
+        "kind": "command",
+        "path": "plugins/rldyour-flow/commands/ry-repair.md",
+        "invocation": "/rldyour-flow:ry-repair"
+      },
+      "codex": {
+        "kind": "skill",
+        "name": "rldyour-flow:ry-repair",
+        "invocation": "$rldyour-flow:ry-repair"
+      },
+      "opencode": {
+        "kind": "command",
+        "name": "ry-repair",
+        "invocation": "/ry-repair"
+      }
     },
     {
       "id": "flow.deploy",
       "description": "Deploy workflow with local, GitHub, server, logs, and sync closure",
-      "claude": { "kind": "command", "path": "plugins/rldyour-flow/commands/ry-deploy.md", "invocation": "/rldyour-flow:ry-deploy" },
-      "codex": { "kind": "skill", "name": "rldyour-flow:ry-deploy", "invocation": "$rldyour-flow:ry-deploy" },
-      "opencode": { "kind": "command", "name": "ry-deploy", "invocation": "/ry-deploy" }
+      "claude": {
+        "kind": "command",
+        "path": "plugins/rldyour-flow/commands/ry-deploy.md",
+        "invocation": "/rldyour-flow:ry-deploy"
+      },
+      "codex": {
+        "kind": "skill",
+        "name": "rldyour-flow:ry-deploy",
+        "invocation": "$rldyour-flow:ry-deploy"
+      },
+      "opencode": {
+        "kind": "command",
+        "name": "ry-deploy",
+        "invocation": "/ry-deploy"
+      }
     },
     {
       "id": "flow.sync.manual",
       "description": "Explicit post-task synchronization wrapper",
-      "claude": { "kind": "command", "path": "plugins/rldyour-flow/commands/ry-sync.md", "invocation": "/rldyour-flow:ry-sync" },
-      "codex": { "kind": "skill", "name": "rldyour-flow:flow-post-task-sync", "invocation": "$rldyour-flow:flow-post-task-sync" },
-      "opencode": { "kind": "command", "name": "ry-sync", "invocation": "/ry-sync" }
+      "claude": {
+        "kind": "command",
+        "path": "plugins/rldyour-flow/commands/ry-sync.md",
+        "invocation": "/rldyour-flow:ry-sync"
+      },
+      "codex": {
+        "kind": "skill",
+        "name": "rldyour-flow:flow-post-task-sync",
+        "invocation": "$rldyour-flow:flow-post-task-sync"
+      },
+      "opencode": {
+        "kind": "command",
+        "name": "ry-sync",
+        "invocation": "/ry-sync"
+      }
     },
     {
       "id": "rules.review",
       "description": "Rules and quality discipline review",
-      "claude": { "kind": "command", "path": "plugins/rldyour-rules/commands/ry-rules-review.md", "invocation": "/rldyour-rules:ry-rules-review" },
-      "codex": { "kind": "skill", "name": "rldyour-rules:ry-rules-review", "invocation": "$rldyour-rules:ry-rules-review" },
-      "opencode": { "kind": "command", "name": "ry-rules-review", "invocation": "/ry-rules-review" }
+      "claude": {
+        "kind": "command",
+        "path": "plugins/rldyour-rules/commands/ry-rules-review.md",
+        "invocation": "/rldyour-rules:ry-rules-review"
+      },
+      "codex": {
+        "kind": "skill",
+        "name": "rldyour-rules:ry-rules-review",
+        "invocation": "$rldyour-rules:ry-rules-review"
+      },
+      "opencode": {
+        "kind": "command",
+        "name": "ry-rules-review",
+        "invocation": "/ry-rules-review"
+      }
     },
     {
       "id": "security.review",
       "description": "Defensive security review",
-      "claude": { "kind": "command", "path": "plugins/rldyour-security/commands/ry-sec-review.md", "invocation": "/rldyour-security:ry-sec-review" },
-      "codex": { "kind": "skill", "name": "rldyour-security:ry-sec-review", "invocation": "$rldyour-security:ry-sec-review" },
-      "opencode": { "kind": "command", "name": "ry-sec-review", "invocation": "/ry-sec-review" }
+      "claude": {
+        "kind": "command",
+        "path": "plugins/rldyour-security/commands/ry-sec-review.md",
+        "invocation": "/rldyour-security:ry-sec-review"
+      },
+      "codex": {
+        "kind": "skill",
+        "name": "rldyour-security:ry-sec-review",
+        "invocation": "$rldyour-security:ry-sec-review"
+      },
+      "opencode": {
+        "kind": "command",
+        "name": "ry-sec-review",
+        "invocation": "/ry-sec-review"
+      }
     }
   ],
   "skills": [
     {
       "id": "browser.debug",
       "description": "Debug browser-only failures",
-      "claude": { "kind": "skill", "path": "plugins/rldyour-browser/skills/browser-debug/SKILL.md", "name": "browser-debug" },
-      "codex": { "kind": "skill", "name": "rldyour-browser:browser-debug" },
-      "opencode": { "kind": "skill", "name": "browser-debug" }
+      "claude": {
+        "kind": "skill",
+        "path": "plugins/rldyour-browser/skills/browser-debug/SKILL.md",
+        "name": "browser-debug"
+      },
+      "codex": {
+        "kind": "skill",
+        "name": "rldyour-browser:browser-debug"
+      },
+      "opencode": {
+        "kind": "skill",
+        "name": "browser-debug"
+      }
     },
     {
       "id": "browser.tool-routing",
       "description": "Route browser tasks to Playwright, Chrome DevTools, or both",
-      "claude": { "kind": "skill", "path": "plugins/rldyour-browser/skills/browser-tool-routing/SKILL.md", "name": "browser-tool-routing" },
-      "codex": { "kind": "skill", "name": "rldyour-browser:browser-tool-routing" },
-      "opencode": { "kind": "skill", "name": "browser-tool-routing" }
+      "claude": {
+        "kind": "skill",
+        "path": "plugins/rldyour-browser/skills/browser-tool-routing/SKILL.md",
+        "name": "browser-tool-routing"
+      },
+      "codex": {
+        "kind": "skill",
+        "name": "rldyour-browser:browser-tool-routing"
+      },
+      "opencode": {
+        "kind": "skill",
+        "name": "browser-tool-routing"
+      }
     },
     {
       "id": "browser.validation",
       "description": "Validate browser-visible UI and flows",
-      "claude": { "kind": "skill", "path": "plugins/rldyour-browser/skills/browser-validation/SKILL.md", "name": "browser-validation" },
-      "codex": { "kind": "skill", "name": "rldyour-browser:browser-validation" },
-      "opencode": { "kind": "skill", "name": "browser-validation" }
+      "claude": {
+        "kind": "skill",
+        "path": "plugins/rldyour-browser/skills/browser-validation/SKILL.md",
+        "name": "browser-validation"
+      },
+      "codex": {
+        "kind": "skill",
+        "name": "rldyour-browser:browser-validation"
+      },
+      "opencode": {
+        "kind": "skill",
+        "name": "browser-validation"
+      }
     },
     {
       "id": "design.system-implementation",
       "description": "Implement centralized design systems",
-      "claude": { "kind": "skill", "path": "plugins/rldyour-design/skills/design-system-implementation/SKILL.md", "name": "design-system-implementation" },
-      "codex": { "kind": "skill", "name": "rldyour-design:design-system-implementation" },
-      "opencode": { "kind": "skill", "name": "design-system-implementation" }
+      "claude": {
+        "kind": "skill",
+        "path": "plugins/rldyour-design/skills/design-system-implementation/SKILL.md",
+        "name": "design-system-implementation"
+      },
+      "codex": {
+        "kind": "skill",
+        "name": "rldyour-design:design-system-implementation"
+      },
+      "opencode": {
+        "kind": "skill",
+        "name": "design-system-implementation"
+      }
     },
     {
       "id": "design.validation",
       "description": "Validate design implementation",
-      "claude": { "kind": "skill", "path": "plugins/rldyour-design/skills/design-validation/SKILL.md", "name": "design-validation" },
-      "codex": { "kind": "skill", "name": "rldyour-design:design-validation" },
-      "opencode": { "kind": "skill", "name": "design-validation" }
+      "claude": {
+        "kind": "skill",
+        "path": "plugins/rldyour-design/skills/design-validation/SKILL.md",
+        "name": "design-validation"
+      },
+      "codex": {
+        "kind": "skill",
+        "name": "rldyour-design:design-validation"
+      },
+      "opencode": {
+        "kind": "skill",
+        "name": "design-validation"
+      }
     },
     {
       "id": "design.figma-to-code",
       "description": "Implement Figma designs",
-      "claude": { "kind": "skill", "path": "plugins/rldyour-design/skills/figma-to-code/SKILL.md", "name": "figma-to-code" },
-      "codex": { "kind": "skill", "name": "rldyour-design:figma-to-code" },
-      "opencode": { "kind": "skill", "name": "figma-to-code" }
+      "claude": {
+        "kind": "skill",
+        "path": "plugins/rldyour-design/skills/figma-to-code/SKILL.md",
+        "name": "figma-to-code"
+      },
+      "codex": {
+        "kind": "skill",
+        "name": "rldyour-design:figma-to-code"
+      },
+      "opencode": {
+        "kind": "skill",
+        "name": "figma-to-code"
+      }
     },
     {
       "id": "design.fsd-frontend-architecture",
       "description": "Apply strict FSD frontend placement",
-      "claude": { "kind": "skill", "path": "plugins/rldyour-design/skills/fsd-frontend-architecture/SKILL.md", "name": "fsd-frontend-architecture" },
-      "codex": { "kind": "skill", "name": "rldyour-design:fsd-frontend-architecture" },
-      "opencode": { "kind": "skill", "name": "fsd-frontend-architecture" }
+      "claude": {
+        "kind": "skill",
+        "path": "plugins/rldyour-design/skills/fsd-frontend-architecture/SKILL.md",
+        "name": "fsd-frontend-architecture"
+      },
+      "codex": {
+        "kind": "skill",
+        "name": "rldyour-design:fsd-frontend-architecture"
+      },
+      "opencode": {
+        "kind": "skill",
+        "name": "fsd-frontend-architecture"
+      }
     },
     {
       "id": "design.ry-design",
       "description": "End-to-end design/UI workflow",
-      "claude": { "kind": "skill", "path": "plugins/rldyour-design/skills/ry-design/SKILL.md", "name": "ry-design" },
-      "codex": { "kind": "skill", "name": "rldyour-design:ry-design" },
-      "opencode": { "kind": "skill", "name": "ry-design" }
+      "claude": {
+        "kind": "skill",
+        "path": "plugins/rldyour-design/skills/ry-design/SKILL.md",
+        "name": "ry-design"
+      },
+      "codex": {
+        "kind": "skill",
+        "name": "rldyour-design:ry-design"
+      },
+      "opencode": {
+        "kind": "skill",
+        "name": "ry-design"
+      }
     },
     {
       "id": "explore.tech-research",
       "description": "Research technical scope",
-      "claude": { "kind": "skill", "path": "plugins/rldyour-explore/skills/tech-research/SKILL.md", "name": "tech-research" },
-      "codex": { "kind": "skill", "name": "rldyour-explore:tech-research" },
-      "opencode": { "kind": "skill", "name": "tech-research" }
+      "claude": {
+        "kind": "skill",
+        "path": "plugins/rldyour-explore/skills/tech-research/SKILL.md",
+        "name": "tech-research"
+      },
+      "codex": {
+        "kind": "skill",
+        "name": "rldyour-explore:tech-research"
+      },
+      "opencode": {
+        "kind": "skill",
+        "name": "tech-research"
+      }
     },
     {
       "id": "explore.web-research",
       "description": "Research current web sources",
-      "claude": { "kind": "skill", "path": "plugins/rldyour-explore/skills/web-research/SKILL.md", "name": "web-research" },
-      "codex": { "kind": "skill", "name": "rldyour-explore:web-research" },
-      "opencode": { "kind": "skill", "name": "web-research" }
+      "claude": {
+        "kind": "skill",
+        "path": "plugins/rldyour-explore/skills/web-research/SKILL.md",
+        "name": "web-research"
+      },
+      "codex": {
+        "kind": "skill",
+        "name": "rldyour-explore:web-research"
+      },
+      "opencode": {
+        "kind": "skill",
+        "name": "web-research"
+      }
     },
     {
       "id": "flow.post-task-sync",
       "description": "Finalize task state",
-      "claude": { "kind": "skill", "path": "plugins/rldyour-flow/skills/flow-post-task-sync/SKILL.md", "name": "flow-post-task-sync" },
-      "codex": { "kind": "skill", "name": "rldyour-flow:flow-post-task-sync" },
-      "opencode": { "kind": "skill", "name": "flow-post-task-sync" }
+      "claude": {
+        "kind": "skill",
+        "path": "plugins/rldyour-flow/skills/flow-post-task-sync/SKILL.md",
+        "name": "flow-post-task-sync"
+      },
+      "codex": {
+        "kind": "skill",
+        "name": "rldyour-flow:flow-post-task-sync"
+      },
+      "opencode": {
+        "kind": "skill",
+        "name": "flow-post-task-sync"
+      }
     },
     {
       "id": "flow.instruction-docs-sync",
       "description": "Synchronize AGENTS.md and CLAUDE.md from verified facts",
-      "claude": { "kind": "skill", "path": "plugins/rldyour-flow/skills/instruction-docs-sync/SKILL.md", "name": "instruction-docs-sync" },
-      "codex": { "kind": "skill", "name": "rldyour-flow:instruction-docs-sync" },
-      "opencode": { "kind": "skill", "name": "instruction-docs-sync" }
+      "claude": {
+        "kind": "skill",
+        "path": "plugins/rldyour-flow/skills/instruction-docs-sync/SKILL.md",
+        "name": "instruction-docs-sync"
+      },
+      "codex": {
+        "kind": "skill",
+        "name": "rldyour-flow:instruction-docs-sync"
+      },
+      "opencode": {
+        "kind": "skill",
+        "name": "instruction-docs-sync"
+      }
     },
     {
       "id": "flow.ry-deploy",
       "description": "Deploy workflow",
-      "claude": { "kind": "skill", "path": "plugins/rldyour-flow/skills/ry-deploy/SKILL.md", "name": "ry-deploy" },
-      "codex": { "kind": "skill", "name": "rldyour-flow:ry-deploy" },
-      "opencode": { "kind": "skill", "name": "ry-deploy" }
+      "claude": {
+        "kind": "skill",
+        "path": "plugins/rldyour-flow/skills/ry-deploy/SKILL.md",
+        "name": "ry-deploy"
+      },
+      "codex": {
+        "kind": "skill",
+        "name": "rldyour-flow:ry-deploy"
+      },
+      "opencode": {
+        "kind": "skill",
+        "name": "ry-deploy"
+      }
     },
     {
       "id": "flow.ry-init",
       "description": "Initialize scoped project context",
-      "claude": { "kind": "skill", "path": "plugins/rldyour-flow/skills/ry-init/SKILL.md", "name": "ry-init" },
-      "codex": { "kind": "skill", "name": "rldyour-flow:ry-init" },
-      "opencode": { "kind": "skill", "name": "ry-init" }
+      "claude": {
+        "kind": "skill",
+        "path": "plugins/rldyour-flow/skills/ry-init/SKILL.md",
+        "name": "ry-init"
+      },
+      "codex": {
+        "kind": "skill",
+        "name": "rldyour-flow:ry-init"
+      },
+      "opencode": {
+        "kind": "skill",
+        "name": "ry-init"
+      }
     },
     {
       "id": "flow.ry-newp",
       "description": "Plan a new project",
-      "claude": { "kind": "skill", "path": "plugins/rldyour-flow/skills/ry-newp/SKILL.md", "name": "ry-newp" },
-      "codex": { "kind": "skill", "name": "rldyour-flow:ry-newp" },
-      "opencode": { "kind": "skill", "name": "ry-newp" }
+      "claude": {
+        "kind": "skill",
+        "path": "plugins/rldyour-flow/skills/ry-newp/SKILL.md",
+        "name": "ry-newp"
+      },
+      "codex": {
+        "kind": "skill",
+        "name": "rldyour-flow:ry-newp"
+      },
+      "opencode": {
+        "kind": "skill",
+        "name": "ry-newp"
+      }
     },
     {
       "id": "flow.ry-review",
       "description": "Report-only deep review",
-      "claude": { "kind": "skill", "path": "plugins/rldyour-flow/skills/ry-review/SKILL.md", "name": "ry-review" },
-      "codex": { "kind": "skill", "name": "rldyour-flow:ry-review" },
-      "opencode": { "kind": "skill", "name": "ry-review" }
+      "claude": {
+        "kind": "skill",
+        "path": "plugins/rldyour-flow/skills/ry-review/SKILL.md",
+        "name": "ry-review"
+      },
+      "codex": {
+        "kind": "skill",
+        "name": "rldyour-flow:ry-review"
+      },
+      "opencode": {
+        "kind": "skill",
+        "name": "ry-review"
+      }
     },
     {
       "id": "flow.ry-repair",
       "description": "Repository repair and semantic entropy normalization",
-      "claude": { "kind": "skill", "path": "plugins/rldyour-flow/skills/ry-repair/SKILL.md", "name": "ry-repair" },
-      "codex": { "kind": "skill", "name": "rldyour-flow:ry-repair" },
-      "opencode": { "kind": "skill", "name": "ry-repair" }
+      "claude": {
+        "kind": "skill",
+        "path": "plugins/rldyour-flow/skills/ry-repair/SKILL.md",
+        "name": "ry-repair"
+      },
+      "codex": {
+        "kind": "skill",
+        "name": "rldyour-flow:ry-repair"
+      },
+      "opencode": {
+        "kind": "skill",
+        "name": "ry-repair"
+      }
     },
     {
       "id": "flow.ry-start",
       "description": "Full task lifecycle",
-      "claude": { "kind": "skill", "path": "plugins/rldyour-flow/skills/ry-start/SKILL.md", "name": "ry-start" },
-      "codex": { "kind": "skill", "name": "rldyour-flow:ry-start" },
-      "opencode": { "kind": "skill", "name": "ry-start" }
+      "claude": {
+        "kind": "skill",
+        "path": "plugins/rldyour-flow/skills/ry-start/SKILL.md",
+        "name": "ry-start"
+      },
+      "codex": {
+        "kind": "skill",
+        "name": "rldyour-flow:ry-start"
+      },
+      "opencode": {
+        "kind": "skill",
+        "name": "ry-start"
+      }
     },
     {
       "id": "lsps.health-check",
       "description": "Check LSP and Serena prerequisites",
-      "claude": { "kind": "skill", "path": "plugins/rldyour-lsps/skills/lsp-health-check/SKILL.md", "name": "lsp-health-check" },
-      "codex": { "kind": "skill", "name": "rldyour-lsps:lsp-health-check" },
-      "opencode": { "kind": "skill", "name": "lsp-health-check" }
+      "claude": {
+        "kind": "skill",
+        "path": "plugins/rldyour-lsps/skills/lsp-health-check/SKILL.md",
+        "name": "lsp-health-check"
+      },
+      "codex": {
+        "kind": "skill",
+        "name": "rldyour-lsps:lsp-health-check"
+      },
+      "opencode": {
+        "kind": "skill",
+        "name": "lsp-health-check"
+      }
     },
     {
       "id": "lsps.routing",
       "description": "Route language-server usage",
-      "claude": { "kind": "skill", "path": "plugins/rldyour-lsps/skills/lsp-routing/SKILL.md", "name": "lsp-routing" },
-      "codex": { "kind": "skill", "name": "rldyour-lsps:lsp-routing" },
-      "opencode": { "kind": "skill", "name": "lsp-routing" }
+      "claude": {
+        "kind": "skill",
+        "path": "plugins/rldyour-lsps/skills/lsp-routing/SKILL.md",
+        "name": "lsp-routing"
+      },
+      "codex": {
+        "kind": "skill",
+        "name": "rldyour-lsps:lsp-routing"
+      },
+      "opencode": {
+        "kind": "skill",
+        "name": "lsp-routing"
+      }
     },
     {
       "id": "lsps.setup",
       "description": "Install, update, or repair language servers",
-      "claude": { "kind": "skill", "path": "plugins/rldyour-lsps/skills/lsp-setup/SKILL.md", "name": "lsp-setup" },
-      "codex": { "kind": "skill", "name": "rldyour-lsps:lsp-setup" },
-      "opencode": { "kind": "skill", "name": "lsp-setup" }
+      "claude": {
+        "kind": "skill",
+        "path": "plugins/rldyour-lsps/skills/lsp-setup/SKILL.md",
+        "name": "lsp-setup"
+      },
+      "codex": {
+        "kind": "skill",
+        "name": "rldyour-lsps:lsp-setup"
+      },
+      "opencode": {
+        "kind": "skill",
+        "name": "lsp-setup"
+      }
     },
     {
       "id": "lsps.serena-lsp-integration",
       "description": "Configure Serena MCP with project languages and LSP-backed symbols",
-      "claude": { "kind": "skill", "path": "plugins/rldyour-lsps/skills/serena-lsp-integration/SKILL.md", "name": "serena-lsp-integration" },
-      "codex": { "kind": "skill", "name": "rldyour-lsps:serena-lsp-integration" },
-      "opencode": { "kind": "skill", "name": "serena-lsp-integration" }
+      "claude": {
+        "kind": "skill",
+        "path": "plugins/rldyour-lsps/skills/serena-lsp-integration/SKILL.md",
+        "name": "serena-lsp-integration"
+      },
+      "codex": {
+        "kind": "skill",
+        "name": "rldyour-lsps:serena-lsp-integration"
+      },
+      "opencode": {
+        "kind": "skill",
+        "name": "serena-lsp-integration"
+      }
     },
     {
       "id": "rules.architecture-boundaries",
       "description": "Enforce architecture boundaries",
-      "claude": { "kind": "skill", "path": "plugins/rldyour-rules/skills/architecture-boundaries/SKILL.md", "name": "architecture-boundaries" },
-      "codex": { "kind": "skill", "name": "rldyour-rules:architecture-boundaries" },
-      "opencode": { "kind": "skill", "name": "architecture-boundaries" }
+      "claude": {
+        "kind": "skill",
+        "path": "plugins/rldyour-rules/skills/architecture-boundaries/SKILL.md",
+        "name": "architecture-boundaries"
+      },
+      "codex": {
+        "kind": "skill",
+        "name": "rldyour-rules:architecture-boundaries"
+      },
+      "opencode": {
+        "kind": "skill",
+        "name": "architecture-boundaries"
+      }
     },
     {
       "id": "rules.dependency-compatibility",
       "description": "Choose and update dependencies with source-backed versions",
-      "claude": { "kind": "skill", "path": "plugins/rldyour-rules/skills/dependency-compatibility-policy/SKILL.md", "name": "dependency-compatibility-policy" },
-      "codex": { "kind": "skill", "name": "rldyour-rules:dependency-compatibility-policy" },
-      "opencode": { "kind": "skill", "name": "dependency-compatibility-policy" }
+      "claude": {
+        "kind": "skill",
+        "path": "plugins/rldyour-rules/skills/dependency-compatibility-policy/SKILL.md",
+        "name": "dependency-compatibility-policy"
+      },
+      "codex": {
+        "kind": "skill",
+        "name": "rldyour-rules:dependency-compatibility-policy"
+      },
+      "opencode": {
+        "kind": "skill",
+        "name": "dependency-compatibility-policy"
+      }
     },
     {
       "id": "rules.implementation-discipline",
       "description": "Disciplined implementation rules",
-      "claude": { "kind": "skill", "path": "plugins/rldyour-rules/skills/implementation-discipline/SKILL.md", "name": "implementation-discipline" },
-      "codex": { "kind": "skill", "name": "rldyour-rules:implementation-discipline" },
-      "opencode": { "kind": "skill", "name": "implementation-discipline" }
+      "claude": {
+        "kind": "skill",
+        "path": "plugins/rldyour-rules/skills/implementation-discipline/SKILL.md",
+        "name": "implementation-discipline"
+      },
+      "codex": {
+        "kind": "skill",
+        "name": "rldyour-rules:implementation-discipline"
+      },
+      "opencode": {
+        "kind": "skill",
+        "name": "implementation-discipline"
+      }
     },
     {
       "id": "rules.project-instructions",
       "description": "Maintain project instructions and durable docs",
-      "claude": { "kind": "skill", "path": "plugins/rldyour-rules/skills/project-instructions-policy/SKILL.md", "name": "project-instructions-policy" },
-      "codex": { "kind": "skill", "name": "rldyour-rules:project-instructions-policy" },
-      "opencode": { "kind": "skill", "name": "project-instructions-policy" }
+      "claude": {
+        "kind": "skill",
+        "path": "plugins/rldyour-rules/skills/project-instructions-policy/SKILL.md",
+        "name": "project-instructions-policy"
+      },
+      "codex": {
+        "kind": "skill",
+        "name": "rldyour-rules:project-instructions-policy"
+      },
+      "opencode": {
+        "kind": "skill",
+        "name": "project-instructions-policy"
+      }
     },
     {
       "id": "rules.quality-first",
       "description": "Quality-first engineering",
-      "claude": { "kind": "skill", "path": "plugins/rldyour-rules/skills/quality-first-engineering/SKILL.md", "name": "quality-first-engineering" },
-      "codex": { "kind": "skill", "name": "rldyour-rules:quality-first-engineering" },
-      "opencode": { "kind": "skill", "name": "quality-first-engineering" }
+      "claude": {
+        "kind": "skill",
+        "path": "plugins/rldyour-rules/skills/quality-first-engineering/SKILL.md",
+        "name": "quality-first-engineering"
+      },
+      "codex": {
+        "kind": "skill",
+        "name": "rldyour-rules:quality-first-engineering"
+      },
+      "opencode": {
+        "kind": "skill",
+        "name": "quality-first-engineering"
+      }
     },
     {
       "id": "rules.review",
       "description": "Audit implementation against rldyour rules",
-      "claude": { "kind": "skill", "path": "plugins/rldyour-rules/skills/ry-rules-review/SKILL.md", "name": "ry-rules-review" },
-      "codex": { "kind": "skill", "name": "rldyour-rules:ry-rules-review" },
-      "opencode": { "kind": "skill", "name": "ry-rules-review" }
+      "claude": {
+        "kind": "skill",
+        "path": "plugins/rldyour-rules/skills/ry-rules-review/SKILL.md",
+        "name": "ry-rules-review"
+      },
+      "codex": {
+        "kind": "skill",
+        "name": "rldyour-rules:ry-rules-review"
+      },
+      "opencode": {
+        "kind": "skill",
+        "name": "ry-rules-review"
+      }
     },
     {
       "id": "rules.verification-gates",
       "description": "Run matching quality gates before delivery",
-      "claude": { "kind": "skill", "path": "plugins/rldyour-rules/skills/verification-quality-gates/SKILL.md", "name": "verification-quality-gates" },
-      "codex": { "kind": "skill", "name": "rldyour-rules:verification-quality-gates" },
-      "opencode": { "kind": "skill", "name": "verification-quality-gates" }
+      "claude": {
+        "kind": "skill",
+        "path": "plugins/rldyour-rules/skills/verification-quality-gates/SKILL.md",
+        "name": "verification-quality-gates"
+      },
+      "codex": {
+        "kind": "skill",
+        "name": "rldyour-rules:verification-quality-gates"
+      },
+      "opencode": {
+        "kind": "skill",
+        "name": "verification-quality-gates"
+      }
     },
     {
       "id": "security.owasp-top-10",
       "description": "Apply non-blocking OWASP Top 10 guidance",
-      "claude": { "kind": "skill", "path": "plugins/rldyour-security/skills/owasp-top-10-implementation/SKILL.md", "name": "owasp-top-10-implementation" },
-      "codex": { "kind": "skill", "name": "rldyour-security:owasp-top-10-implementation" },
-      "opencode": { "kind": "skill", "name": "owasp-top-10-implementation" }
+      "claude": {
+        "kind": "skill",
+        "path": "plugins/rldyour-security/skills/owasp-top-10-implementation/SKILL.md",
+        "name": "owasp-top-10-implementation"
+      },
+      "codex": {
+        "kind": "skill",
+        "name": "rldyour-security:owasp-top-10-implementation"
+      },
+      "opencode": {
+        "kind": "skill",
+        "name": "owasp-top-10-implementation"
+      }
     },
     {
       "id": "security.review",
       "description": "Defensive security review",
-      "claude": { "kind": "skill", "path": "plugins/rldyour-security/skills/ry-sec-review/SKILL.md", "name": "ry-sec-review" },
-      "codex": { "kind": "skill", "name": "rldyour-security:ry-sec-review" },
-      "opencode": { "kind": "skill", "name": "ry-sec-review" }
+      "claude": {
+        "kind": "skill",
+        "path": "plugins/rldyour-security/skills/ry-sec-review/SKILL.md",
+        "name": "ry-sec-review"
+      },
+      "codex": {
+        "kind": "skill",
+        "name": "rldyour-security:ry-sec-review"
+      },
+      "opencode": {
+        "kind": "skill",
+        "name": "ry-sec-review"
+      }
     },
     {
       "id": "serena.code-workflow",
       "description": "Serena-first semantic code inspection",
-      "claude": { "kind": "skill", "path": "plugins/rldyour-serena-mcp/skills/serena-code-workflow/SKILL.md", "name": "serena-code-workflow" },
-      "codex": { "kind": "skill", "name": "rldyour-serena-mcp:serena-code-workflow" },
-      "opencode": { "kind": "skill", "name": "serena-code-workflow" }
+      "claude": {
+        "kind": "skill",
+        "path": "plugins/rldyour-serena-mcp/skills/serena-code-workflow/SKILL.md",
+        "name": "serena-code-workflow"
+      },
+      "codex": {
+        "kind": "skill",
+        "name": "rldyour-serena-mcp:serena-code-workflow"
+      },
+      "opencode": {
+        "kind": "skill",
+        "name": "serena-code-workflow"
+      }
     },
     {
       "id": "serena.memory-sync",
       "description": "Synchronize Serena memory after durable changes",
-      "claude": { "kind": "skill", "path": "plugins/rldyour-serena-mcp/skills/serena-memory-sync/SKILL.md", "name": "serena-memory-sync" },
-      "codex": { "kind": "skill", "name": "rldyour-serena-mcp:serena-memory-sync" },
-      "opencode": { "kind": "skill", "name": "serena-memory-sync" }
+      "claude": {
+        "kind": "skill",
+        "path": "plugins/rldyour-serena-mcp/skills/serena-memory-sync/SKILL.md",
+        "name": "serena-memory-sync"
+      },
+      "codex": {
+        "kind": "skill",
+        "name": "rldyour-serena-mcp:serena-memory-sync"
+      },
+      "opencode": {
+        "kind": "skill",
+        "name": "serena-memory-sync"
+      }
     }
   ],
   "agent_roles": [
     {
       "id": "agent.explore.research",
       "description": "Isolated research explorer",
-      "claude": { "kind": "agent", "path": "plugins/rldyour-explore/agents/ry-explore.md", "name": "ry-explore" },
-      "codex": { "kind": "agent", "name": "research-explorer" },
-      "opencode": { "kind": "agent", "name": "ry-explore" }
+      "claude": {
+        "kind": "agent",
+        "path": "plugins/rldyour-explore/agents/ry-explore.md",
+        "name": "ry-explore"
+      },
+      "codex": {
+        "kind": "agent",
+        "name": "research-explorer"
+      },
+      "opencode": {
+        "kind": "agent",
+        "name": "ry-explore"
+      }
     },
     {
       "id": "agent.review.architecture",
       "description": "Architecture reviewer",
-      "claude": { "kind": "agent", "path": "plugins/rldyour-flow/agents/flow-architecture-review.md", "name": "flow-architecture-review" },
-      "codex": { "kind": "agent", "name": "architecture-reviewer" },
-      "opencode": { "kind": "agent", "name": "flow-architecture-review" }
+      "claude": {
+        "kind": "agent",
+        "path": "plugins/rldyour-flow/agents/flow-architecture-review.md",
+        "name": "flow-architecture-review"
+      },
+      "codex": {
+        "kind": "agent",
+        "name": "architecture-reviewer"
+      },
+      "opencode": {
+        "kind": "agent",
+        "name": "flow-architecture-review"
+      }
     },
     {
       "id": "agent.review.consistency",
       "description": "Consistency reviewer",
-      "claude": { "kind": "agent", "path": "plugins/rldyour-flow/agents/flow-consistency-review.md", "name": "flow-consistency-review" },
-      "codex": { "kind": "agent", "name": "consistency-reviewer" },
-      "opencode": { "kind": "agent", "name": "flow-consistency-review" }
+      "claude": {
+        "kind": "agent",
+        "path": "plugins/rldyour-flow/agents/flow-consistency-review.md",
+        "name": "flow-consistency-review"
+      },
+      "codex": {
+        "kind": "agent",
+        "name": "consistency-reviewer"
+      },
+      "opencode": {
+        "kind": "agent",
+        "name": "flow-consistency-review"
+      }
     },
     {
       "id": "agent.review.integration",
       "description": "Integration reviewer",
-      "claude": { "kind": "agent", "path": "plugins/rldyour-flow/agents/flow-integration-review.md", "name": "flow-integration-review" },
-      "codex": { "status": "covered by architecture-reviewer and quality-reviewer in Codex" },
-      "opencode": { "kind": "agent", "name": "flow-integration-review" }
+      "claude": {
+        "kind": "agent",
+        "path": "plugins/rldyour-flow/agents/flow-integration-review.md",
+        "name": "flow-integration-review"
+      },
+      "codex": {
+        "status": "covered by architecture-reviewer and quality-reviewer in Codex"
+      },
+      "opencode": {
+        "kind": "agent",
+        "name": "flow-integration-review"
+      }
     },
     {
       "id": "agent.review.quality",
       "description": "Quality reviewer",
-      "claude": { "kind": "agent", "path": "plugins/rldyour-flow/agents/flow-quality-review.md", "name": "flow-quality-review" },
-      "codex": { "kind": "agent", "name": "quality-reviewer" },
-      "opencode": { "kind": "agent", "name": "flow-quality-review" }
+      "claude": {
+        "kind": "agent",
+        "path": "plugins/rldyour-flow/agents/flow-quality-review.md",
+        "name": "flow-quality-review"
+      },
+      "codex": {
+        "kind": "agent",
+        "name": "quality-reviewer"
+      },
+      "opencode": {
+        "kind": "agent",
+        "name": "flow-quality-review"
+      }
     },
     {
       "id": "agent.review.security",
       "description": "Security reviewer",
-      "claude": { "kind": "agent", "path": "plugins/rldyour-flow/agents/flow-security-review.md", "name": "flow-security-review" },
-      "codex": { "kind": "agent", "name": "security-audit" },
-      "opencode": { "kind": "agent", "name": "flow-security-review" }
+      "claude": {
+        "kind": "agent",
+        "path": "plugins/rldyour-flow/agents/flow-security-review.md",
+        "name": "flow-security-review"
+      },
+      "codex": {
+        "kind": "agent",
+        "name": "security-audit"
+      },
+      "opencode": {
+        "kind": "agent",
+        "name": "flow-security-review"
+      }
     },
     {
       "id": "agent.review.verification",
       "description": "Verification and test reviewer",
-      "claude": { "kind": "agent", "path": "plugins/rldyour-flow/agents/flow-verification-review.md", "name": "flow-verification-review" },
-      "codex": { "kind": "agent", "name": "test-reviewer" },
-      "opencode": { "kind": "agent", "name": "flow-verification-review" }
+      "claude": {
+        "kind": "agent",
+        "path": "plugins/rldyour-flow/agents/flow-verification-review.md",
+        "name": "flow-verification-review"
+      },
+      "codex": {
+        "kind": "agent",
+        "name": "test-reviewer"
+      },
+      "opencode": {
+        "kind": "agent",
+        "name": "flow-verification-review"
+      }
     },
     {
       "id": "agent.sync.serena-memory",
       "description": "Serena memory synchronization agent",
-      "claude": { "kind": "agent", "path": "plugins/rldyour-serena-mcp/agents/flow-memory-sync.md", "name": "flow-memory-sync" },
-      "codex": { "kind": "agent", "name": "serena-sync" },
-      "opencode": { "kind": "agent", "name": "flow-memory-sync" }
+      "claude": {
+        "kind": "agent",
+        "path": "plugins/rldyour-serena-mcp/agents/flow-memory-sync.md",
+        "name": "flow-memory-sync"
+      },
+      "codex": {
+        "kind": "agent",
+        "name": "serena-sync"
+      },
+      "opencode": {
+        "kind": "agent",
+        "name": "flow-memory-sync"
+      }
     }
   ],
   "hook_lifecycle": [
     {
       "id": "session.start.worktree-bootstrap",
       "description": "Restore agent-only fullrepo context into new worktrees",
-      "claude": { "plugin": "rldyour-flow", "event": "SessionStart", "script": "plugins/rldyour-flow/hooks/session_start_worktree_bootstrap.sh" },
-      "codex": { "name": "session_start_worktree_bootstrap", "status": "plugin hook when hooks/list reports trusted hook" },
-      "opencode": { "name": "shell.env or startup plugin event", "status": "adapter-specific startup hook" }
+      "claude": {
+        "plugin": "rldyour-flow",
+        "event": "SessionStart",
+        "script": "plugins/rldyour-flow/hooks/session_start_worktree_bootstrap.sh"
+      },
+      "codex": {
+        "name": "session_start_worktree_bootstrap",
+        "status": "plugin hook when hooks/list reports trusted hook"
+      },
+      "opencode": {
+        "name": "shell.env or startup plugin event",
+        "status": "adapter-specific startup hook"
+      }
     },
     {
       "id": "session.start.context",
       "description": "Load lightweight session context",
-      "claude": { "plugin": "rldyour-flow", "event": "SessionStart", "script": "plugins/rldyour-flow/hooks/session_start_context.sh" },
-      "codex": { "name": "session_start_context", "status": "plugin hook when hooks/list reports trusted hook" },
-      "opencode": { "name": "shell.env or startup plugin event", "status": "adapter-specific startup hook" }
+      "claude": {
+        "plugin": "rldyour-flow",
+        "event": "SessionStart",
+        "script": "plugins/rldyour-flow/hooks/session_start_context.sh"
+      },
+      "codex": {
+        "name": "session_start_context",
+        "status": "plugin hook when hooks/list reports trusted hook"
+      },
+      "opencode": {
+        "name": "shell.env or startup plugin event",
+        "status": "adapter-specific startup hook"
+      }
     },
     {
       "id": "prompt.submit.sync-context",
       "description": "Inject Serena workflow context before prompt processing",
-      "claude": { "plugin": "rldyour-serena-mcp", "event": "UserPromptSubmit", "script": "plugins/rldyour-serena-mcp/hooks/user_prompt_submit.sh" },
-      "codex": { "name": "user_prompt_submit", "status": "plugin hook when hooks/list reports trusted hook" },
-      "opencode": { "name": "prompt submit plugin event", "status": "adapter-specific prompt hook" }
+      "claude": {
+        "plugin": "rldyour-serena-mcp",
+        "event": "UserPromptSubmit",
+        "script": "plugins/rldyour-serena-mcp/hooks/user_prompt_submit.sh"
+      },
+      "codex": {
+        "name": "user_prompt_submit",
+        "status": "plugin hook when hooks/list reports trusted hook"
+      },
+      "opencode": {
+        "name": "prompt submit plugin event",
+        "status": "adapter-specific prompt hook"
+      }
     },
     {
       "id": "tool.pre.git-auto-sync-baseline",
       "description": "Record Serena baseline before git history-changing commands",
-      "claude": { "plugin": "rldyour-serena-mcp", "event": "PreToolUse", "script": "plugins/rldyour-serena-mcp/hooks/prepare_auto_sync.sh" },
-      "codex": { "name": "prepare_auto_sync", "status": "plugin hook when hooks/list reports trusted hook" },
-      "opencode": { "name": "tool.execute.before", "status": "plugin before-tool hook" }
+      "claude": {
+        "plugin": "rldyour-serena-mcp",
+        "event": "PreToolUse",
+        "script": "plugins/rldyour-serena-mcp/hooks/prepare_auto_sync.sh"
+      },
+      "codex": {
+        "name": "prepare_auto_sync",
+        "status": "plugin hook when hooks/list reports trusted hook"
+      },
+      "opencode": {
+        "name": "tool.execute.before",
+        "status": "plugin before-tool hook"
+      }
     },
     {
       "id": "tool.pre.ci-advisory",
       "description": "Advisory guard for manual-first GitHub Actions usage",
-      "claude": { "plugin": "rldyour-flow", "event": "PreToolUse", "script": "plugins/rldyour-flow/hooks/pre_tool_use_ci_advisory.sh" },
-      "codex": { "name": "pre_tool_use_ci_advisory", "status": "plugin hook when hooks/list reports trusted hook" },
-      "opencode": { "name": "tool.execute.before", "status": "plugin before-tool hook" }
+      "claude": {
+        "plugin": "rldyour-flow",
+        "event": "PreToolUse",
+        "script": "plugins/rldyour-flow/hooks/pre_tool_use_ci_advisory.sh"
+      },
+      "codex": {
+        "name": "pre_tool_use_ci_advisory",
+        "status": "plugin hook when hooks/list reports trusted hook"
+      },
+      "opencode": {
+        "name": "tool.execute.before",
+        "status": "plugin before-tool hook"
+      }
     },
     {
       "id": "tool.post.serena-sync-required",
       "description": "Mark Serena sync as required after git history-changing commands",
-      "claude": { "plugin": "rldyour-serena-mcp", "event": "PostToolUse", "script": "plugins/rldyour-serena-mcp/hooks/mark_sync_required.sh" },
-      "codex": { "name": "mark_sync_required", "status": "plugin hook when hooks/list reports trusted hook" },
-      "opencode": { "name": "tool.execute.after", "status": "plugin after-tool hook" }
+      "claude": {
+        "plugin": "rldyour-serena-mcp",
+        "event": "PostToolUse",
+        "script": "plugins/rldyour-serena-mcp/hooks/mark_sync_required.sh"
+      },
+      "codex": {
+        "name": "mark_sync_required",
+        "status": "plugin hook when hooks/list reports trusted hook"
+      },
+      "opencode": {
+        "name": "tool.execute.after",
+        "status": "plugin after-tool hook"
+      }
     },
     {
       "id": "tool.post.commit-advice",
       "description": "Surface post-commit follow-up guidance",
-      "claude": { "plugin": "rldyour-flow", "event": "PostToolUse", "script": "plugins/rldyour-flow/hooks/post_tool_use_commit_advice.sh" },
-      "codex": { "name": "post_tool_use_commit_advice", "status": "plugin hook when hooks/list reports trusted hook" },
-      "opencode": { "name": "tool.execute.after", "status": "plugin after-tool hook" }
+      "claude": {
+        "plugin": "rldyour-flow",
+        "event": "PostToolUse",
+        "script": "plugins/rldyour-flow/hooks/post_tool_use_commit_advice.sh"
+      },
+      "codex": {
+        "name": "post_tool_use_commit_advice",
+        "status": "plugin hook when hooks/list reports trusted hook"
+      },
+      "opencode": {
+        "name": "tool.execute.after",
+        "status": "plugin after-tool hook"
+      }
     },
     {
       "id": "task.stop.memory-sync",
       "description": "Block final response when Serena memory sync is required via ordered flow dispatcher",
-      "claude": { "plugin": "rldyour-flow", "event": "Stop", "script": "plugins/rldyour-flow/hooks/stop_lifecycle_dispatcher.sh" },
-      "codex": { "name": "stop_memory_sync", "status": "plugin hook when hooks/list reports trusted hook" },
-      "opencode": { "name": "task stop plugin event", "status": "adapter-specific stop hook" }
+      "claude": {
+        "plugin": "rldyour-flow",
+        "event": "Stop",
+        "script": "plugins/rldyour-flow/hooks/stop_lifecycle_dispatcher.sh"
+      },
+      "codex": {
+        "name": "stop_memory_sync",
+        "status": "plugin hook when hooks/list reports trusted hook"
+      },
+      "opencode": {
+        "name": "task stop plugin event",
+        "status": "adapter-specific stop hook"
+      }
     },
     {
       "id": "task.stop.post-task-sync",
       "description": "Block final response when post-task sync is required",
-      "claude": { "plugin": "rldyour-flow", "event": "Stop", "script": "plugins/rldyour-flow/hooks/stop_lifecycle_dispatcher.sh" },
-      "codex": { "name": "stop_post_task_sync", "status": "plugin hook when hooks/list reports trusted hook" },
-      "opencode": { "name": "task stop plugin event", "status": "adapter-specific stop hook" }
+      "claude": {
+        "plugin": "rldyour-flow",
+        "event": "Stop",
+        "script": "plugins/rldyour-flow/hooks/stop_lifecycle_dispatcher.sh"
+      },
+      "codex": {
+        "name": "stop_post_task_sync",
+        "status": "plugin hook when hooks/list reports trusted hook"
+      },
+      "opencode": {
+        "name": "task stop plugin event",
+        "status": "adapter-specific stop hook"
+      }
     }
   ],
   "ci_baseline": [
     {
       "id": "validate-static",
       "description": "JSON schema, Python syntax, shell syntax, frontmatter, text hygiene",
-      "claude": { "workflow": ".github/workflows/validate.yml", "script": "scripts/validate_json_schemas.py" },
-      "codex": { "status": "adapter repository must provide equivalent static validation" },
-      "opencode": { "status": "adapter repository must provide equivalent static validation" }
+      "claude": {
+        "workflow": ".github/workflows/validate.yml",
+        "script": "scripts/validate_json_schemas.py"
+      },
+      "codex": {
+        "status": "adapter repository must provide equivalent static validation"
+      },
+      "opencode": {
+        "status": "adapter repository must provide equivalent static validation"
+      }
     },
     {
       "id": "validate-inventory",
       "description": "Generated inventory freshness",
-      "claude": { "workflow": ".github/workflows/validate.yml", "script": "scripts/generate_inventory.py" },
-      "codex": { "status": "adapter repository must provide equivalent inventory validation" },
-      "opencode": { "status": "adapter repository must provide equivalent inventory validation" }
+      "claude": {
+        "workflow": ".github/workflows/validate.yml",
+        "script": "scripts/generate_inventory.py"
+      },
+      "codex": {
+        "status": "adapter repository must provide equivalent inventory validation"
+      },
+      "opencode": {
+        "status": "adapter repository must provide equivalent inventory validation"
+      }
     },
     {
       "id": "validate-contract",
       "description": "Cross-tool business contract and generated matrix freshness",
-      "claude": { "workflow": ".github/workflows/validate.yml", "script": "scripts/validate_contract.py" },
-      "codex": { "status": "adapter repository must validate the same contract ID set" },
-      "opencode": { "status": "adapter repository must validate the same contract ID set" }
+      "claude": {
+        "workflow": ".github/workflows/validate.yml",
+        "script": "scripts/validate_contract.py"
+      },
+      "codex": {
+        "status": "adapter repository must validate the same contract ID set"
+      },
+      "opencode": {
+        "status": "adapter repository must validate the same contract ID set"
+      }
     },
     {
       "id": "validate-hooks-fixtures",
       "description": "Hook lifecycle smoke fixtures",
-      "claude": { "workflow": ".github/workflows/validate.yml", "script": "scripts/smoke_hooks.sh" },
-      "codex": { "status": "adapter repository must smoke hook fixtures" },
-      "opencode": { "status": "adapter repository must smoke hook/plugin-event fixtures" }
+      "claude": {
+        "workflow": ".github/workflows/validate.yml",
+        "script": "scripts/smoke_hooks.sh"
+      },
+      "codex": {
+        "status": "adapter repository must smoke hook fixtures"
+      },
+      "opencode": {
+        "status": "adapter repository must smoke hook/plugin-event fixtures"
+      }
     },
     {
       "id": "pytest-unit",
       "description": "Unit tests for validators and scripts",
-      "claude": { "workflow": ".github/workflows/pytest.yml", "command": "uv run --with pytest --with pytest-cov --with pyyaml python -m pytest" },
-      "codex": { "status": "adapter repository must run its unit test suite" },
-      "opencode": { "status": "adapter repository must run its unit test suite" }
+      "claude": {
+        "workflow": ".github/workflows/pytest.yml",
+        "command": "uv run --with pytest --with pytest-cov --with pyyaml python -m pytest"
+      },
+      "codex": {
+        "status": "adapter repository must run its unit test suite"
+      },
+      "opencode": {
+        "status": "adapter repository must run its unit test suite"
+      }
     },
     {
       "id": "native-cli-runtime-smoke",
       "description": "Native Claude plugin validator and runtime smoke",
-      "claude": { "workflow": ".github/workflows/validate.yml", "script": "scripts/validate_marketplace.sh" },
-      "codex": { "status": "adapter repository must run native CLI/runtime smoke when available" },
-      "opencode": { "status": "adapter repository must run native CLI/runtime smoke when available" }
+      "claude": {
+        "workflow": ".github/workflows/validate.yml",
+        "script": "scripts/validate_marketplace.sh"
+      },
+      "codex": {
+        "status": "adapter repository must run native CLI/runtime smoke when available"
+      },
+      "opencode": {
+        "status": "adapter repository must run native CLI/runtime smoke when available"
+      }
     },
     {
       "id": "codeql-upload",
       "description": "CodeQL SARIF upload for public repo security analysis",
-      "claude": { "workflow": ".github/workflows/codeql.yml" },
-      "codex": { "status": "adapter repository should run CodeQL or documented equivalent" },
-      "opencode": { "status": "adapter repository should run CodeQL or documented equivalent" }
+      "claude": {
+        "workflow": ".github/workflows/codeql.yml"
+      },
+      "codex": {
+        "status": "adapter repository should run CodeQL or documented equivalent"
+      },
+      "opencode": {
+        "status": "adapter repository should run CodeQL or documented equivalent"
+      }
     },
     {
       "id": "dependency-review",
       "description": "Pull-request dependency diff review",
-      "claude": { "workflow": ".github/workflows/dependency-review.yml" },
-      "codex": { "status": "adapter repository should run dependency review or documented equivalent" },
-      "opencode": { "status": "adapter repository should run dependency review or documented equivalent" }
+      "claude": {
+        "workflow": ".github/workflows/dependency-review.yml"
+      },
+      "codex": {
+        "status": "adapter repository should run dependency review or documented equivalent"
+      },
+      "opencode": {
+        "status": "adapter repository should run dependency review or documented equivalent"
+      }
     },
     {
       "id": "secret-scan",
       "description": "Secret scan and security pattern scan",
-      "claude": { "workflow": ".github/workflows/gitleaks.yml" },
-      "codex": { "status": "adapter repository must run secret scanning" },
-      "opencode": { "status": "adapter repository must run secret scanning" }
+      "claude": {
+        "workflow": ".github/workflows/gitleaks.yml"
+      },
+      "codex": {
+        "status": "adapter repository must run secret scanning"
+      },
+      "opencode": {
+        "status": "adapter repository must run secret scanning"
+      }
     },
     {
       "id": "actionlint",
       "description": "GitHub workflow lint",
-      "claude": { "workflow": ".github/workflows/actionlint.yml" },
-      "codex": { "status": "adapter repository must lint workflows" },
-      "opencode": { "status": "adapter repository must lint workflows" }
+      "claude": {
+        "workflow": ".github/workflows/actionlint.yml"
+      },
+      "codex": {
+        "status": "adapter repository must lint workflows"
+      },
+      "opencode": {
+        "status": "adapter repository must lint workflows"
+      }
     },
     {
       "id": "release-state",
       "description": "Version, changelog, manifests, tags, release manifest",
-      "claude": { "workflow": ".github/workflows/validate.yml", "script": "scripts/validate_release_state.py" },
-      "codex": { "status": "adapter repository must validate release state" },
-      "opencode": { "status": "adapter repository must validate release state" }
+      "claude": {
+        "workflow": ".github/workflows/validate.yml",
+        "script": "scripts/validate_release_state.py"
+      },
+      "codex": {
+        "status": "adapter repository must validate release state"
+      },
+      "opencode": {
+        "status": "adapter repository must validate release state"
+      }
     },
     {
       "id": "sbom",
       "description": "Release evidence bundle and SBOM-equivalent manifest",
-      "claude": { "workflow": ".github/workflows/release.yml", "script": "scripts/release_manifest.py" },
-      "codex": { "status": "adapter repository should publish release evidence" },
-      "opencode": { "status": "adapter repository should publish release evidence" }
+      "claude": {
+        "workflow": ".github/workflows/release.yml",
+        "script": "scripts/release_manifest.py"
+      },
+      "codex": {
+        "status": "adapter repository should publish release evidence"
+      },
+      "opencode": {
+        "status": "adapter repository should publish release evidence"
+      }
     }
   ],
   "browser_providers": {

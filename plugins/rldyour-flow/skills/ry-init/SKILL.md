@@ -24,6 +24,24 @@ Build a verified mental model of the requested project scope before implementati
 9. Synthesize a Russian report with exact source-of-truth paths, current behavior, data/contracts, integration points, quality gates, risks, gaps, and what Claude Code can now safely change.
 10. Do not run `serena-memory-sync` automatically. If initialization discovers useful durable facts that are missing from memories, report them under `Memory candidates (not written)` with exact source paths and ask before writing. Only run `serena-memory-sync` during `ry-init` when the user explicitly requested memory sync/update or a Stop/stale-memory hook requires it.
 
+## Role Declaration (Orchestrator)
+
+Session role is declarative, not auto-detected:
+
+- If the user's init request explicitly declares this terminal the orchestrator
+  (for example "я оркестратор", "this terminal is the orchestrator"), verify the
+  preconditions: macOS, a cmux session (`CMUX_WORKSPACE_ID`/`CMUX_SURFACE_ID`
+  present), and the `rldyour-orchestrator` plugin installed. When they hold,
+  adopt the orchestrator duties from `rldyour-orchestrator:cmux-orchestrator`
+  for the rest of the session: own user communication, task decomposition,
+  delegation, final validation, and sync. When a precondition fails, say which
+  one and continue in standard mode.
+- Without that explicit declaration, always run in standard mode - never
+  auto-activate orchestrator behavior from environment, policy, or guesswork.
+- Worker terminals are not declared by the user: they are machine-identified by
+  the launcher/layout environment (`RLDYOUR_AGENT_ROLE=worker`,
+  `RLDYOUR_WORKER_ID`) and follow `rldyour-orchestrator:cmux-worker`.
+
 ## Scope Rules
 
 - Empty scope means whole project.
