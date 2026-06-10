@@ -10,7 +10,7 @@ claims:
   reviewer_transport_marker: RLDYOUR_REPORT_EOF
   reviewer_report_dir_template: ".serena/reviews/<run_id>/"
   reviewer_run_id_format: "<UTC-ISO-compact>-<git-short-sha>"
-  claude_code_runtime_pin: "2.1.169"
+  claude_code_runtime_pin: "2.1.170"
   claude_code_feature_floor: "2.1.146"
   skill_listing_budget_fraction: 0.04
   max_skill_description_chars: 1536
@@ -29,7 +29,7 @@ claims:
 rldyour-mcps         transport     0 skills • 0 cmds • 0 agents • 0 hooks  • .mcp.json (11 pinned servers)
 rldyour-serena-mcp   semantic      2 skills • 0 cmds • 1 agent  • 4 hooks
 rldyour-flow         SDLC          8 skills • 7 cmds • 6 agents • 4 hooks  • 7 scripts • 7 references
-rldyour-orchestrator cmux (macOS)  2 skills • 0 cmds • 0 agents • 0 hooks  • macOS-only install
+rldyour-orchestrator cmux macOS   2 skills • 0 cmds • 0 agents • 0 hooks  • macOS-only
 rldyour-explore      research      2 skills • 1 cmd  • 1 agent  • 0 hooks
 rldyour-security     security      2 skills • 1 cmd  • 0 agents • 0 hooks
 rldyour-browser      browser       6 skills • 0 cmds • 0 agents • 0 hooks
@@ -37,7 +37,6 @@ rldyour-design       design        5 skills • 1 cmd  • 0 agents • 0 hooks
 rldyour-lsps         lsp           4 skills • 0 cmds • 0 agents • 0 hooks  • 2 scripts • 3 references
 rldyour-rules        rules         7 skills • 1 cmd  • 0 agents • 0 hooks  • 6 references
 ```
-
 Total: 38 skills, 11 slash commands, 8 subagents. Slash commands (SDLC + tool-routing), plugin dependency graph, MCP transport detail, and fullrepo branch policy are listed in `./AGENTS.md`.
 
 ## Subagent Frontmatter Matrix
@@ -123,9 +122,9 @@ Patterns verified against `anthropics/claude-plugins-official` snapshot `1a2f18b
 - **`alwaysLoad: true` for critical-path MCP servers** - community pattern in `tractorjuice/arc-kit`, `OMARVII/claude-alloy`, `darkroomengineering/cc-settings`. Our restraint (only `serena`) is appropriate scoping.
 - **Tag convention `<plugin-name>--v<version>`** - Anthropic-canonical via `claude plugin tag --push` (docs `code.claude.com/docs/en/plugin-dependencies`). Anthropic's own plugins-official marketplace doesn't apply tags yet, but the documented convention is the canonical one.
 
-## Changelog Adoption (v2.1.133 -> v2.1.169)
+## Changelog Adoption (v2.1.133 -> v2.1.170)
 
-Verified against `code.claude.com/docs/en/changelog`, `code.claude.com/docs/en/model-config`, `references/claude-baseline.json`, `package.json`, and npm package metadata on 2026-06-09. Runtime pin: **v2.1.169**. Feature compatibility floor: **v2.1.146+**.
+Verified against `code.claude.com/docs/en/changelog`, `code.claude.com/docs/en/model-config`, `references/claude-baseline.json`, `package.json`, and npm package metadata on 2026-06-09. Runtime pin: **v2.1.170**. Feature compatibility floor: **v2.1.146+**.
 
 Adopted:
 - v2.1.105 - `maxSkillDescriptionChars` and `skillListingBudgetFraction` user settings (Anthropic + claudekit-cli baseline is `0.03`; this repo recommends `0.04` - see Skill Listing Budget section above for the bilingual-description rationale). Per-entry skill description cap `1,536` chars, used by all 38 skills.
@@ -137,7 +136,7 @@ Adopted:
 Available, not adopted:
 - v2.1.133 `worktree.baseRef: "head"` - user-side setting (`~/.claude/settings.json`); recommendation documented in AGENTS.md Worktree Workflow but not forced. `ry-explore` uses `context: fork`, not `isolation: worktree`.
 - v2.1.133 hook input `effort.level` + `$CLAUDE_EFFORT` env var in Bash - could enrich hook telemetry; not yet wired into `flow_post_task_state.py` or `serena_memory_state.py`.
-- v2.1.142-2.1.146 refreshed the operational floor: agent CLI flags, HTTP `MCP_TOOL_TIMEOUT` fix, plugin dependency enforcement, `/plugin` context-cost/component previews, background/worktree/MCP pagination fixes, stricter `claude plugin validate`, and Auto mode `AskUserQuestion` behavior needed by decision gates. This repo keeps the feature compatibility floor at v2.1.146+ and the runtime pin at v2.1.169.
+- v2.1.142-2.1.146 refreshed the operational floor: agent CLI flags, HTTP `MCP_TOOL_TIMEOUT` fix, plugin dependency enforcement, `/plugin` context-cost/component previews, background/worktree/MCP pagination fixes, stricter `claude plugin validate`, and Auto mode `AskUserQuestion` behavior needed by decision gates. This repo keeps the feature compatibility floor at v2.1.146+ and the runtime pin at v2.1.170.
 - v2.1.152 - `disallowed-tools` frontmatter for skills and slash commands, `/reload-skills`, `SessionStart.reloadSkills`, and `MessageDisplay` hook event are tracked in `references/claude-surface-adoption.md`.
 - v2.1.153 - `skipLfs` marketplace-source option, npm update diagnostics in `/doctor`, status-line `COLUMNS`/`LINES`, and `claude agents` native command/bundled skill autocomplete are tracked in `references/claude-surface-adoption.md`.
 - v2.1.154 - Opus 4.8 support, dynamic workflows, Opus 4.8 fast mode, default streaming tool execution, `defaultEnabled: false` plugin metadata, and safer piped MCP pending-approval reporting are tracked in `references/claude-surface-adoption.md`.

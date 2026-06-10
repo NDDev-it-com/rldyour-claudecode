@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-06-10
 Last verified: 2026-06-10
-Last commit: 0fbe3f8364aaa7baf7f56eaeecc40e3c9819725a chore(release): claude 1.1.49 (other)
+Last commit: 4ae297e2a61c3fc146d6df4fd5a9a4f48fc2a5b8 chore(release): claude 1.1.50 (other)
 Scope: CLI runtime and package baselines
 Area: RUNTIME
 -->
@@ -20,14 +20,16 @@ CLI runtime and package baselines
 
 ## Last verified
 - date: 2026-06-10
-- commit: `0fbe3f8364aaa7baf7f56eaeecc40e3c9819725a`
+- commit: `4ae297e2a61c3fc146d6df4fd5a9a4f48fc2a5b8`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
+- Runtime baseline: Claude Code `2.1.170` (npm latest; Claude Fable 5 rollup,
+  no new adapter-owned config surface).
 - Runtime memories record pinned CLI/package baselines and freshness checks.
 
 ## Evidence
-- `commit:0fbe3f8364aaa7baf7f56eaeecc40e3c9819725a`
+- `commit:4ae297e2a61c3fc146d6df4fd5a9a4f48fc2a5b8`
 - `path:references/claude-baseline.json`
 
 ## Known pitfalls

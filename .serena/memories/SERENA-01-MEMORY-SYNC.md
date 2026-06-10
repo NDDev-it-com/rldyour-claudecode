@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-06-10
 Last verified: 2026-06-10
-Last commit: 0fbe3f8364aaa7baf7f56eaeecc40e3c9819725a chore(release): claude 1.1.49 (other)
+Last commit: 4ae297e2a61c3fc146d6df4fd5a9a4f48fc2a5b8 chore(release): claude 1.1.50 (other)
 Scope: Serena memory, fullrepo, and knowledge sync policy
 Area: SERENA
 -->
@@ -24,7 +24,7 @@ Serena memory, fullrepo, and knowledge sync policy
 
 ## Last verified
 - date: 2026-06-10
-- commit: `0fbe3f8364aaa7baf7f56eaeecc40e3c9819725a`
+- commit: `4ae297e2a61c3fc146d6df4fd5a9a4f48fc2a5b8`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
@@ -36,7 +36,7 @@ Serena memory, fullrepo, and knowledge sync policy
 - Serena memories record memory format, evidence, freshness, fullrepo, and runtime marker policy.
 
 ## Evidence
-- `commit:0fbe3f8364aaa7baf7f56eaeecc40e3c9819725a`
+- `commit:4ae297e2a61c3fc146d6df4fd5a9a4f48fc2a5b8`
 - `path:plugins/rldyour-serena-mcp`
 - `path:.serena/project.yml`
 - `path:README.md`

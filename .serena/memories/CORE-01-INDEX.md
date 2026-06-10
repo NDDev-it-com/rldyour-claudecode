@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-06-10
 Last verified: 2026-06-10
-Last commit: 0fbe3f8364aaa7baf7f56eaeecc40e3c9819725a chore(release): claude 1.1.49 (other)
+Last commit: 4ae297e2a61c3fc146d6df4fd5a9a4f48fc2a5b8 chore(release): claude 1.1.50 (other)
 Scope: repository identity and source-of-truth map
 Area: CORE
 -->
@@ -24,14 +24,14 @@ repository identity and source-of-truth map
 
 ## Last verified
 - date: 2026-06-10
-- commit: `0fbe3f8364aaa7baf7f56eaeecc40e3c9819725a`
+- commit: `4ae297e2a61c3fc146d6df4fd5a9a4f48fc2a5b8`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
 - Core memories index repository identity, source-of-truth files, and the current validation map.
 
 ## Evidence
-- `commit:0fbe3f8364aaa7baf7f56eaeecc40e3c9819725a`
+- `commit:4ae297e2a61c3fc146d6df4fd5a9a4f48fc2a5b8`
 - `path:README.md`
 - `path:VERSION`
 - `path:CHANGELOG.md`
