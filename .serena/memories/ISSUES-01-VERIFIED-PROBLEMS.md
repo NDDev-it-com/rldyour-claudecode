@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-06-10
 Last verified: 2026-06-10
-Last commit: 7ad2170742b38ffa28c64f058aa82b5c10899410 chore(release): claude 1.1.48 (other)
+Last commit: 0fbe3f8364aaa7baf7f56eaeecc40e3c9819725a chore(release): claude 1.1.49 (other)
 Scope: GitHub issue and PR evidence policy
 Area: ISSUES
 -->
@@ -22,7 +22,7 @@ GitHub issue and PR evidence policy
 
 ## Last verified
 - date: 2026-06-10
-- commit: `7ad2170742b38ffa28c64f058aa82b5c10899410`
+- commit: `0fbe3f8364aaa7baf7f56eaeecc40e3c9819725a`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
@@ -30,7 +30,7 @@ GitHub issue and PR evidence policy
 - Status policy: issues and PRs are evidence only after verification against current code/config.
 
 ## Evidence
-- `commit:7ad2170742b38ffa28c64f058aa82b5c10899410`
+- `commit:0fbe3f8364aaa7baf7f56eaeecc40e3c9819725a`
 - `path:README.md`
 - `path:plugins/rldyour-flow/skills/ry-review`
 

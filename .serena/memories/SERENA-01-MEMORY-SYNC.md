@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-06-10
 Last verified: 2026-06-10
-Last commit: 7ad2170742b38ffa28c64f058aa82b5c10899410 chore(release): claude 1.1.48 (other)
+Last commit: 0fbe3f8364aaa7baf7f56eaeecc40e3c9819725a chore(release): claude 1.1.49 (other)
 Scope: Serena memory, fullrepo, and knowledge sync policy
 Area: SERENA
 -->
@@ -24,14 +24,19 @@ Serena memory, fullrepo, and knowledge sync policy
 
 ## Last verified
 - date: 2026-06-10
-- commit: `7ad2170742b38ffa28c64f058aa82b5c10899410`
+- commit: `0fbe3f8364aaa7baf7f56eaeecc40e3c9819725a`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
+- Runtime Stop-lifecycle markers (`.serena/.flow_blocker_ack.json`,
+  `.serena/.stop_lifecycle_timeout_marker`, `.serena/.bootstrap_overrides.log`)
+  are registered in the fullrepo runtime list and the knowledge-commit
+  runtime pattern; they are runtime state and must never be tracked in
+  normal history or fullrepo knowledge commits.
 - Serena memories record memory format, evidence, freshness, fullrepo, and runtime marker policy.
 
 ## Evidence
-- `commit:7ad2170742b38ffa28c64f058aa82b5c10899410`
+- `commit:0fbe3f8364aaa7baf7f56eaeecc40e3c9819725a`
 - `path:plugins/rldyour-serena-mcp`
 - `path:.serena/project.yml`
 - `path:README.md`
