@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-06-10
 Last verified: 2026-06-10
-Last commit: 4ae297e2a61c3fc146d6df4fd5a9a4f48fc2a5b8 chore(release): claude 1.1.50 (other)
+Last commit: b026a9f54f32d27c7ea9de2fecf52e6ee3b15351 chore(release): claude 1.1.51 (other)
 Scope: rldyour SDLC command lifecycle
 Area: FLOW
 -->
@@ -20,10 +20,17 @@ rldyour SDLC command lifecycle
 
 ## Last verified
 - date: 2026-06-10
-- commit: `4ae297e2a61c3fc146d6df4fd5a9a4f48fc2a5b8`
+- commit: `b026a9f54f32d27c7ea9de2fecf52e6ee3b15351`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
+- `/ry-repair` has two modes: authoring repair for work projects, and
+  consumer system sync for the control plane and adapter config repos
+  (update the checkout FROM GitHub with ff-only pull plus submodule
+  update, run check/apply-system, and never author changes into the
+  repository; drift escalates to authoring repair only on explicit owner
+  instruction). Machine-readable: root ry-repair-sync contract
+  `repair_modes`.
 - The cmux-orchestrator and cmux-worker skills live in the dedicated
   macOS-only `rldyour-orchestrator` surface; installers skip it on
   Linux/WSL/Windows. Orchestrator activation is declarative: the user
@@ -40,7 +47,7 @@ rldyour SDLC command lifecycle
 - Flow memories record ry-init, ry-start, ry-newp, ry-review, ry-repair, ry-deploy, and ry-sync behavior.
 
 ## Evidence
-- `commit:4ae297e2a61c3fc146d6df4fd5a9a4f48fc2a5b8`
+- `commit:b026a9f54f32d27c7ea9de2fecf52e6ee3b15351`
 - `path:plugins/rldyour-flow`
 
 ## Known pitfalls
