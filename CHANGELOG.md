@@ -7,6 +7,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 ## [Unreleased]
 
 
+## [1.1.51] - 2026-06-10
+
+### Fixed
+
+- Define the ry-repair consumer system-sync mode for configuration repositories: update the checkout from GitHub and converge the installed system without authoring repository changes.
+
 ## [1.1.50] - 2026-06-10
 
 ### Changed
