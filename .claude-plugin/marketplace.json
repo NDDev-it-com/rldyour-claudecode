@@ -170,6 +170,26 @@
       "license": "AGPL-3.0-or-later"
     },
     {
+      "name": "rldyour-orchestrator",
+      "source": "./plugins/rldyour-orchestrator",
+      "description": "macOS cmux orchestrator-режим: оркестратор-терминал делегирует worker-терминалам через cmux send/read-screen/events; роль активируется декларацией в /ry-init. Устанавливается только на macOS.",
+      "version": "1.1.47",
+      "author": {
+        "name": "Danil Silantyev (github:rldyourmnd), CEO NDDev"
+      },
+      "category": "development",
+      "tags": [
+        "cmux",
+        "orchestrator",
+        "worker",
+        "macos",
+        "multi-agent",
+        "terminal",
+        "rldyour"
+      ],
+      "license": "AGPL-3.0-or-later"
+    },
+    {
       "name": "rldyour-rules",
       "source": "./plugins/rldyour-rules",
       "description": "Quality-first инженерные правила: clean architecture (FSD/VSA/Hexagonal), implementation discipline, dependency policy + supply chain (SLSA L2), verification gates (pyright/ruff/ESLint v9), AGENTS.md/.claude/CLAUDE.md/MADR 4.0.0, /ry-rules-review.",

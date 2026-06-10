@@ -18,6 +18,7 @@ This matrix is the human-readable projection of the machine-readable rldyour con
 | flow | SDLC lifecycle orchestration | rldyour-flow | rldyour-flow | rldyour-flow |
 | lsps | Language-server routing, setup, health checks | rldyour-lsps | rldyour-lsps | rldyour-lsps |
 | mcps | Single-owner MCP transport layer | rldyour-mcps | rldyour-mcps | rldyour-mcps |
+| orchestrator | macOS cmux orchestrator and worker terminal roles | rldyour-orchestrator | rldyour-orchestrator | rldyour-orchestrator |
 | rules | Quality, architecture, dependency, verification rules | rldyour-rules | rldyour-rules | rldyour-rules |
 | security | Defensive security guidance and review | rldyour-security | rldyour-security | rldyour-security |
 | serena-mcp | Serena semantic code workflow and memory sync | rldyour-serena-mcp | rldyour-serena-mcp | rldyour-serena-mcp |
