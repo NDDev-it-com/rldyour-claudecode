@@ -7,6 +7,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 ## [Unreleased]
 
 
+## [1.1.48] - 2026-06-10
+
+### Added
+
+- Add the macOS-only rldyour-orchestrator surface: dedicated cmux orchestrator/worker skills with declarative orchestrator activation via ry-init, OS-gated installs, and removal of the orchestrator env switch.
+
 ## [1.1.47] - 2026-06-10
 
 ### Fixed
