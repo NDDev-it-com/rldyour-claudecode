@@ -7,6 +7,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 ## [Unreleased]
 
 
+## [1.1.50] - 2026-06-10
+
+### Changed
+
+- Refresh the runtime baselines to Claude Code 2.1.170, Codex CLI 0.139.0, and OpenCode 1.17.1 with verified changelog surface decisions and the v1.17.1 vendored OpenCode config schema.
+
 ## [1.1.49] - 2026-06-10
 
 ### Fixed
