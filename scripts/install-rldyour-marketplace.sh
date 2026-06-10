@@ -2,7 +2,7 @@
 # install-rldyour-marketplace.sh - universal installer for the rldyour-claudecode Claude Code marketplace.
 #
 # Works on any Claude Code install:
-#   - Fresh CC (no rldyour-* present): installs rldyour-claudecode + 9 plugins.
+#   - Fresh CC (no rldyour-* present): installs rldyour-claudecode + the first-party plugins (rldyour-orchestrator only on macOS).
 #   - CC with the legacy `rldyour-claudecode` marketplace (NDDev-Platform): cleanly removes
 #     that marketplace, its plugins, cache, and stale settings.json keys; then installs the new
 #     marketplace and plugins.
@@ -32,7 +32,7 @@
 #   3  jq-scrub settings.json: extraKnownMarketplaces + enabledPlugins entries pointing at legacy marketplaces
 #   4  filesystem cleanup: ~/.claude/plugins/cache/<legacy>/ subtrees and known leftover symlinks
 #   5  add nddev-it-com/rldyour-claudecode as a new marketplace
-#   6  install 9 plugins from @rldyour-claudecode in dependency order
+#   6  install first-party plugins from @rldyour-claudecode in dependency order (macOS adds rldyour-orchestrator)
 #   7  verify final state and write migration-report.md into the backup directory
 #   8  install the managed rldyour status line (~/.claude/rldyour-statusline.sh + settings.json statusLine)
 
@@ -55,7 +55,9 @@ readonly LEGACY_CACHE_SYMLINKS=(
 )
 
 # Plugins to install from the new marketplace, in dependency order.
-readonly NEW_PLUGINS=(
+# rldyour-orchestrator is macOS-only: cmux (manaflow-ai/cmux) is a macOS
+# application, so Linux/WSL/Windows installs skip that plugin entirely.
+NEW_PLUGINS=(
   rldyour-mcps
   rldyour-serena-mcp
   rldyour-browser
@@ -66,6 +68,10 @@ readonly NEW_PLUGINS=(
   rldyour-design
   rldyour-flow
 )
+if [[ "$(uname -s)" == "Darwin" ]]; then
+  NEW_PLUGINS+=(rldyour-orchestrator)
+fi
+readonly NEW_PLUGINS
 
 readonly CLAUDE_HOME="$HOME/.claude"
 readonly SETTINGS_PATH="$CLAUDE_HOME/settings.json"
