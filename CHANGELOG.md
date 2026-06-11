@@ -7,6 +7,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 ## [Unreleased]
 
 
+## [1.2.0] - 2026-06-12
+
+### Added
+
+- Prepare four-adapter Gemini integration release.
+
 ## [1.1.55] - 2026-06-11
 
 ### Fixed
