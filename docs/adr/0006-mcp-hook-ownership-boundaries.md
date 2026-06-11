@@ -11,7 +11,7 @@ Claude Code plugins can each declare their own `.mcp.json` and
 ownership would create:
 
 - **MCP conflicts**: two plugins pinning incompatible Serena versions, or
-  two plugins both registering `playwright` with different flags.
+  two plugins both registering the same MCP server with different flags.
 - **Hook chaos**: stop-hook chains where the order is unpredictable; the
   Stop gate advisory pattern (exit 2 + loop-guard fingerprint) depends on
   exactly one Stop hook per layer running per cycle.
@@ -40,10 +40,12 @@ mcp_owner + hook_owners fields.
 
 Chosen option: **C**. Hard invariants:
 
-- **Only `rldyour-mcps` declares `.mcp.json`**. The 12 pinned MCP servers
-  (Serena, Sequential Thinking, Playwright, Chrome DevTools, Context7,
-  DeepWiki, Grep, shadcn, Dart/Flutter, Figma, OpenAI Docs,
-  GitHub) live in `plugins/rldyour-mcps/.mcp.json`.
+- **Only `rldyour-mcps` declares `.mcp.json`**. The 11 pinned MCP servers
+  (Serena, Sequential Thinking, Chrome DevTools, Context7, DeepWiki, Grep,
+  shadcn, Dart/Flutter, Figma, OpenAI Docs, GitHub) live in
+  `plugins/rldyour-mcps/.mcp.json`. Browser flow automation is routed through
+  Webwright and Playwright CLI outside MCP; Playwright MCP is retired and must
+  not be active.
 - **Only `rldyour-flow` and `rldyour-serena-mcp` declare `hooks/hooks.json`**.
   `rldyour-serena-mcp` owns memory-sync lifecycle (UserPromptSubmit,
   PreToolUse:Bash with `if` filter, PostToolUse:Bash with `if` filter).

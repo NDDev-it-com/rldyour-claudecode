@@ -18,8 +18,8 @@ End-to-end design workflows: Figma → tokens → FSD → shadcn/ui → ReactBit
 2. **Tokens** - map Figma variables to repo design tokens (CSS variables / Tailwind theme).
 3. **FSD placement** - components by layer (`shared` → `entities` → `features` → `widgets` → `pages`). Strict public API only.
 4. **shadcn/ui + ReactBits** - primitives via `shadcn` MCP.
-5. **Browser validation** - Playwright + Chrome DevTools for pixel-perfect/responsive/business-logic checks; screenshots under `browser/`.
+5. **Browser validation** - Playwright CLI evidence plus Chrome DevTools MCP diagnosis for pixel-perfect/responsive/business-logic checks; screenshots under `browser/`. Use Webwright only for long-horizon reusable web tasks when design work includes end-to-end web exploration.
 
 ## Dependencies
 
-`rldyour-mcps` (Figma, shadcn, Playwright, Chrome DevTools MCP servers live there).
+`rldyour-mcps` provides Figma, shadcn, and Chrome DevTools MCP. Browser flow automation is delegated to `rldyour-browser` through Playwright CLI and Webwright according to browser-provider policy.
