@@ -1,10 +1,10 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "schema_version": 1,
-  "verified_on": "2026-06-10",
+  "verified_on": "2026-06-11",
   "baseline": {
     "claude_code": {
-      "version": "2.1.170",
+      "version": "2.1.173",
       "npm_package": "@anthropic-ai/claude-code",
       "ref": "https://code.claude.com/docs/en/changelog",
       "package_ref": "https://www.npmjs.com/package/@anthropic-ai/claude-code",
@@ -30,7 +30,9 @@
       "claude-code-2-1-165-reliability-rollup",
       "fallback-model-and-deny-glob-policy",
       "claude-code-2-1-167-reliability-rollup",
-      "claude-code-2-1-168-reliability-rollup"
+      "claude-code-2-1-168-reliability-rollup",
+      "nested-subagents-and-background-agent-hardening",
+      "claude-code-2-1-173-fable-windows-fixes"
     ]
   }
 }

@@ -106,7 +106,7 @@
   ],
   "skill_listing_budget_fraction": 0.04,
   "max_skill_description_chars": 1536,
-  "claude_code_min_version": "2.1.170",
+  "claude_code_min_version": "2.1.173",
   "tag_conventions": {
     "marketplace": "marketplace--v<X.Y.Z>",
     "plugin": "<plugin-name>--v<X.Y.Z>"
