@@ -14,7 +14,7 @@ Run the checks that match the touched stack and risk:
 - Generated artifact checks.
 - Migration checks.
 - Security checks (project security scripts and CI security artifacts).
-- Browser checks for UI-visible work (Playwright + Chrome DevTools MCP).
+- Browser checks for UI-visible work (Playwright CLI evidence plus Chrome DevTools MCP diagnosis; Webwright for long-horizon reusable web tasks).
 - Deploy checks for server changes.
 
 ## May 2026 Tooling Defaults
