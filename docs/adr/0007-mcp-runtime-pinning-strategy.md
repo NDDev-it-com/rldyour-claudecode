@@ -21,7 +21,7 @@ Two source-of-truth files exist intentionally:
 
 Drift between these files is a real risk class (audit F-SYNC-01 originally
 flagged that dart-flutter was in `.mcp.json` but not in the env file or
-the checker - 11 of 12 servers enforceable before the host-binary rule).
+the checker before the host-binary rule closed that gap).
 
 Evidence: `plugins/rldyour-mcps/.mcp.json:1-101`,
 `config/mcp-runtime-versions.env`, `scripts/check_mcp_runtime_versions.py`
@@ -64,7 +64,8 @@ must be run after a bump.
 
 ### Consequences
 
-- Good: 12/12 servers enforceable after removing the static-analysis MCP server.
+- Good: all 11 active MCP servers are enforceable; browser flow automation
+  remains outside MCP through Webwright and Playwright CLI.
 - Good: env file readable by humans + scripts without JSON parsing.
 - Good: pin=None silently passing is structurally prevented.
 - Bad: bumps require two-file edits. Mitigation: project rule documented
@@ -72,8 +73,8 @@ must be run after a bump.
 
 ## Confirmation
 
-- `python3 scripts/check_mcp_runtime_versions.py` reports OK for all 12
-  servers (6 stdio + 4 HTTP + 2 host binaries).
+- `python3 scripts/check_mcp_runtime_versions.py` reports OK for all 11
+  active MCP servers (5 stdio + 4 HTTP + 2 host binaries).
 - `bash scripts/smoke_mcp_runtime.sh` exits non-zero on any pin=None
   outside HOST_BINARY_ALLOWLIST.
 - `bash scripts/smoke_mcp_capabilities.sh --server <name>` performs MCP
