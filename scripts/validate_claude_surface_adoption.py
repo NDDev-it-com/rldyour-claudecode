@@ -23,6 +23,8 @@ REQUIRED_BASELINE_SURFACES = {
     "fallback-model-and-deny-glob-policy": "`fallbackModel`",
     "claude-code-2-1-167-reliability-rollup": "2.1.167 reliability rollup",
     "claude-code-2-1-168-reliability-rollup": "2.1.168 reliability rollup",
+    "nested-subagents-and-background-agent-hardening": "nested sub-agents",
+    "claude-code-2-1-173-fable-windows-fixes": "Fable 5 model names",
 }
 
 REQUIRED_2_1_153_SURFACES = (
@@ -113,6 +115,18 @@ REQUIRED_2_1_170_SURFACES = (
     "2.1.170",
 )
 
+REQUIRED_2_1_172_SURFACES = (
+    "nested sub-agents",
+    "background agents",
+    "`availableModels`",
+)
+
+REQUIRED_2_1_173_SURFACES = (
+    "Fable 5 model names",
+    "Windows sandbox",
+    "2.1.173",
+)
+
 VALID_DECISIONS = ("Adopt", "Adopted", "Future", "Hybrid", "Intentionally unused")
 
 
@@ -190,6 +204,14 @@ def main() -> int:
         for marker in REQUIRED_2_1_170_SURFACES:
             if marker not in text:
                 errors.append(f"{ADOPTION.relative_to(ROOT)} missing 2.1.170 surface {marker}")
+    if parsed_version >= version_tuple("2.1.172"):
+        for marker in REQUIRED_2_1_172_SURFACES:
+            if marker not in text:
+                errors.append(f"{ADOPTION.relative_to(ROOT)} missing 2.1.172 surface {marker}")
+    if parsed_version >= version_tuple("2.1.173"):
+        for marker in REQUIRED_2_1_173_SURFACES:
+            if marker not in text:
+                errors.append(f"{ADOPTION.relative_to(ROOT)} missing 2.1.173 surface {marker}")
 
     for line in text.splitlines():
         if not line.startswith("| `") and not line.startswith("| `/"):

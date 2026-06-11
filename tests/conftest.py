@@ -44,7 +44,7 @@ def fake_repo(tmp_path: Path) -> Path:
         '{"name": "fixture-marketplace", "version": "0.4.0", '
         '"license": "AGPL-3.0-or-later", '
         '"author": {"name": "Danil Silantyev (github:rldyourmnd), CEO NDDev"}, '
-        '"devDependencies": {"@anthropic-ai/claude-code": "2.1.170"}}',
+        '"devDependencies": {"@anthropic-ai/claude-code": "2.1.173"}}',
         encoding="utf-8",
     )
     (tmp_path / "pyproject.toml").write_text(
@@ -67,7 +67,7 @@ def fake_repo(tmp_path: Path) -> Path:
         "<!-- sync_contract:\n"
         "claims:\n"
         '  shared: "value-a"\n'
-        '  claude_code_runtime_pin: "2.1.170"\n'
+        '  claude_code_runtime_pin: "2.1.173"\n'
         '  claude_code_feature_floor: "2.1.146"\n'
         "  plugin_count: 3\n"
         "  skill_count: 0\n"
@@ -133,11 +133,11 @@ def fake_repo(tmp_path: Path) -> Path:
     references_dir = tmp_path / "references"
     references_dir.mkdir()
     (references_dir / "claude-baseline.json").write_text(
-        '{"baseline": {"claude_code": {"version": "2.1.170"}}}',
+        '{"baseline": {"claude_code": {"version": "2.1.173"}}}',
         encoding="utf-8",
     )
     (config_dir / "mcp-runtime-versions.env").write_text(
-        "CLAUDE_CODE_MIN_VERSION=2.1.170\n",
+        "CLAUDE_CODE_MIN_VERSION=2.1.173\n",
         encoding="utf-8",
     )
     (config_dir / "cc-canon.json").write_text(
