@@ -4,7 +4,7 @@
 
 Only the current exact numeric product release tag receives security fixes.
 Historical plugin-scoped tags are not the primary public GitHub Release
-coordinate. The `1.1.x` line label tracks only the latest released patch, not
+coordinate. The `1.2.x` line label tracks only the latest released patch, not
 every historical patch in the line.
 
 | Version | Supported |
