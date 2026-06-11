@@ -14,7 +14,7 @@ claims:
   reviewer_transport_marker: RLDYOUR_REPORT_EOF
   reviewer_report_dir_template: ".serena/reviews/<run_id>/"
   reviewer_run_id_format: "<UTC-ISO-compact>-<git-short-sha>"
-  claude_code_runtime_pin: "2.1.170"
+  claude_code_runtime_pin: "2.1.173"
   claude_code_feature_floor: "2.1.146"
   skill_listing_budget_fraction: 0.04
   max_skill_description_chars: 1536
@@ -69,7 +69,7 @@ OpenAI Codex CLI reads `AGENTS.md` before starting work and runs commands listed
 - Tag releases: `claude plugin tag --push` (v2.1.118+). Convention: `<plugin-name>--v<version>` and `marketplace--v<version>`.
 - Inspect plugin inventory + projected context cost: `claude plugin details <name>` (v2.1.139+; v2.1.142 adds LSP).
 - Cross-tool contract gate: `python3 scripts/validate_contract.py && python3 scripts/generate_contract_matrix.py --check`.
-- **Claude Code runtime pin: v2.1.170. Feature compatibility floor: v2.1.146+.** The package pin in `package.json`, `references/claude-baseline.json`, and `config/mcp-runtime-versions.env` is the release/runtime source of truth. The floor covers every feature used by the marketplace: `opus[1m]` for Opus 4.8 extended context (v2.1.154+, account-gated), `alwaysLoad` (v2.1.121+), hook `if` filter (v2.1.118+), exec-form `args` (v2.1.139+), marketplace `displayName` support (v2.1.143+), Stop/SubagentStop `background_tasks` and `session_crons` input fields (v2.1.145+), Auto mode `AskUserQuestion` behavior needed by decision gates (v2.1.146+), `disallowed-tools`, `SessionStart.reloadSkills`, `MessageDisplay`, `skipLfs`, status-line terminal-size env, `claude agents` native command/bundled skill autocomplete, Opus 4.8 alias support, dynamic workflows, streaming tool execution default, piped MCP pending-approval reporting, 2.1.166 fallback-model/deny-glob/relayed-permission hardening, the 2.1.168 reliability rollup, and the 2.1.169 package/runtime rollup.
+- **Claude Code runtime pin: v2.1.173. Feature compatibility floor: v2.1.146+.** The package pin in `package.json`, `references/claude-baseline.json`, and `config/mcp-runtime-versions.env` is the release/runtime source of truth. The floor covers every feature used by the marketplace: `opus[1m]` for Opus 4.8 extended context (v2.1.154+, account-gated), `alwaysLoad` (v2.1.121+), hook `if` filter (v2.1.118+), exec-form `args` (v2.1.139+), marketplace `displayName` support (v2.1.143+), Stop/SubagentStop `background_tasks` and `session_crons` input fields (v2.1.145+), Auto mode `AskUserQuestion` behavior needed by decision gates (v2.1.146+), `disallowed-tools`, `SessionStart.reloadSkills`, `MessageDisplay`, `skipLfs`, status-line terminal-size env, `claude agents` native command/bundled skill autocomplete, Opus 4.8 alias support, dynamic workflows, streaming tool execution default, piped MCP pending-approval reporting, 2.1.166 fallback-model/deny-glob/relayed-permission hardening, the 2.1.168 reliability rollup, the 2.1.172 nested-subagent/background-agent hardening, and the 2.1.173 Fable/Windows sandbox fixes.
 - Bootstrap a fresh checkout: `bash scripts/bootstrap_check.sh` (fullrepo restore + claude validate + required env + dart SDK + pre-push hook advisory).
 - Audit git/branch/worktree: `bash plugins/rldyour-flow/scripts/git_sync_audit.sh`.
 - Quality checks for consumer projects: `bash plugins/rldyour-flow/scripts/detect_project_checks.sh`. LSP health: `bash plugins/rldyour-lsps/scripts/check_lsps.sh`. This repository has no runtime test suite by design.
