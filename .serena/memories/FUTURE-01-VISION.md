@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-06-11
 Last verified: 2026-06-11
-Last commit: 3e3d0372bcccb8574676579083f134cff67a580a docs(claude): sync runtime issue template (docs)
+Last commit: 3e3d0372bcccb8574676579083f134cff67a580a docs(claude): sync runtime issue template
 Scope: future architecture direction and scalability gravity
 Area: FUTURE
 -->
