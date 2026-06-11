@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-06-11
 Last verified: 2026-06-11
-Last commit: 3e3d0372bcccb8574676579083f134cff67a580a docs(claude): sync runtime issue template
+Last commit: a16466172149789807afe373e202a4e4d3f2dd0b chore(release): claude 1.1.54 (other)
 Scope: GitHub Actions and local CI policy
 Area: CI
 -->
@@ -22,7 +22,7 @@ GitHub Actions and local CI policy
 
 ## Last verified
 - date: 2026-06-11
-- commit: `3e3d0372bcccb8574676579083f134cff67a580a`
+- commit: `a16466172149789807afe373e202a4e4d3f2dd0b`
 - checked by: Codex ry-start docs/memory consistency audit
 
 ## Facts
@@ -37,7 +37,7 @@ GitHub Actions and local CI policy
   OS-independent.
 
 ## Evidence
-- `commit:3e3d0372bcccb8574676579083f134cff67a580a`
+- `commit:a16466172149789807afe373e202a4e4d3f2dd0b`
 - `path:.github/workflows`
 - `path:README.md`
 

@@ -7,6 +7,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 ## [Unreleased]
 
 
+## [1.1.54] - 2026-06-11
+
+### Fixed
+
+- Fix MCP inventory documentation and validation coverage.
+
 ## [1.1.53] - 2026-06-11
 
 ### Changed

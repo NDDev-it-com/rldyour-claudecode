@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-06-11
 Last verified: 2026-06-11
-Last commit: 3e3d0372bcccb8574676579083f134cff67a580a docs(claude): sync runtime issue template
+Last commit: a16466172149789807afe373e202a4e4d3f2dd0b chore(release): claude 1.1.54 (other)
 Scope: validation gates and test suites
 Area: TESTS
 -->
@@ -25,7 +25,7 @@ validation gates and test suites
 
 ## Last verified
 - date: 2026-06-11
-- commit: `3e3d0372bcccb8574676579083f134cff67a580a`
+- commit: `a16466172149789807afe373e202a4e4d3f2dd0b`
 - checked by: Codex ry-start automated release and metadata sync
 
 ## Facts
@@ -38,7 +38,7 @@ validation gates and test suites
   1 skipped after the Stop hook loop-guard hardening.
 
 ## Evidence
-- `commit:3e3d0372bcccb8574676579083f134cff67a580a`
+- `commit:a16466172149789807afe373e202a4e4d3f2dd0b`
 - `path:scripts`
 - `path:tests/test_flow_stop_state.py`
 - `path:.github/workflows`
