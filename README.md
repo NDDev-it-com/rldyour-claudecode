@@ -27,16 +27,16 @@ This project and all first-party marketplace plugins are licensed under the GNU 
 
 | Plugin | Version | Skills | Commands | Agents | Hooks | Scripts | References | MCP | LSP |
 |---|---|---|---|---|---|---|---|---|---|
-| `rldyour-mcps` | `1.1.53` | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 0 |
-| `rldyour-explore` | `1.1.53` | 2 | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| `rldyour-serena-mcp` | `1.1.53` | 2 | 0 | 1 | 4 | 3 | 0 | 0 | 0 |
-| `rldyour-security` | `1.1.53` | 2 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| `rldyour-browser` | `1.1.53` | 6 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| `rldyour-design` | `1.1.53` | 5 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| `rldyour-lsps` | `1.1.53` | 4 | 0 | 0 | 0 | 2 | 3 | 0 | 1 |
-| `rldyour-flow` | `1.1.53` | 8 | 7 | 6 | 6 | 8 | 7 | 0 | 0 |
-| `rldyour-orchestrator` | `1.1.53` | 2 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| `rldyour-rules` | `1.1.53` | 7 | 1 | 0 | 0 | 0 | 6 | 0 | 0 |
+| `rldyour-mcps` | `1.1.54` | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 0 |
+| `rldyour-explore` | `1.1.54` | 2 | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
+| `rldyour-serena-mcp` | `1.1.54` | 2 | 0 | 1 | 4 | 3 | 0 | 0 | 0 |
+| `rldyour-security` | `1.1.54` | 2 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
+| `rldyour-browser` | `1.1.54` | 6 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| `rldyour-design` | `1.1.54` | 5 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
+| `rldyour-lsps` | `1.1.54` | 4 | 0 | 0 | 0 | 2 | 3 | 0 | 1 |
+| `rldyour-flow` | `1.1.54` | 8 | 7 | 6 | 6 | 8 | 7 | 0 | 0 |
+| `rldyour-orchestrator` | `1.1.54` | 2 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| `rldyour-rules` | `1.1.54` | 7 | 1 | 0 | 0 | 0 | 6 | 0 | 0 |
 
 <!-- inventory:end -->
 
