@@ -7,6 +7,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 ## [Unreleased]
 
 
+## [1.1.55] - 2026-06-11
+
+### Fixed
+
+- Repair public provider docs and validation determinism.
+
 ## [1.1.54] - 2026-06-11
 
 ### Fixed
