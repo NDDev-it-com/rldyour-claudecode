@@ -7,6 +7,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 ## [Unreleased]
 
 
+## [1.3.0] - 2026-06-12
+
+### Changed
+
+- Align the public adapter with the coordinated four-configuration 1.3.0 stable contract.
+
 ## [1.2.1] - 2026-06-12
 
 ### Changed
