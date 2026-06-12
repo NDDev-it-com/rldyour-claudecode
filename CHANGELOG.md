@@ -7,6 +7,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 ## [Unreleased]
 
 
+## [1.3.2] - 2026-06-12
+
+### Fixed
+
+- State the current 1.3.x support line explicitly in public security policy.
+
 ## [1.3.1] - 2026-06-12
 
 ### Fixed
