@@ -46,6 +46,11 @@ Current inventory: 10 plugins, 38 skills, 11 slash commands, and 8 subagents.
 Only `rldyour-flow` and `rldyour-serena-mcp` own hooks. Stop hooks are advisory
 enforcement gates: they compute state and block with guidance, while the main
 workflow performs memory sync, tests, commits, pushes, and fullrepo publication.
+The single registered Claude Stop hook is the Flow dispatcher.
+
+| Event | Owner | Script | Timeout |
+|---|---|---|---|
+| Stop | rldyour-flow | `hooks/stop_lifecycle_dispatcher.sh` | 45s |
 
 ## Reviewer Contract
 

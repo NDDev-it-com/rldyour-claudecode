@@ -55,6 +55,17 @@ claims:
 - cmux orchestration is terminal-session-only. Claude subagents are not cmux
   orchestrators.
 
+## Hook Lifecycle
+
+| Event | Owner | Script | Timeout |
+|---|---|---|---|
+| Stop | rldyour-flow | `hooks/stop_lifecycle_dispatcher.sh` | 45s |
+
+The single registered Claude Stop hook is the Flow dispatcher above. Stop hooks
+are advisory enforcement gates. They compute sync state and block with guidance;
+the main workflow performs memory sync, validation, commits, pushes, and
+fullrepo publication.
+
 ## Validation
 
 Run after changes:
