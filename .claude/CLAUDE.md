@@ -66,5 +66,6 @@ user Claude settings so bilingual skill descriptions remain discoverable.
 ## Boundaries
 
 Claude subagents are not cmux orchestrators. Webwright, Playwright CLI, and
-Chrome DevTools MCP keep their global browser-provider roles. Do not introduce
-Playwright MCP or Semgrep-specific negative validator tombstones.
+Chrome DevTools MCP keep their global browser-provider roles. Configure only
+providers listed in the approved active inventory and avoid tool-specific
+negative validator tombstones.
