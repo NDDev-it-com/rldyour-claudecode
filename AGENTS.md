@@ -10,6 +10,8 @@ This file is agent-only context. It is published through `fullrepo`, excluded
 from normal `main`, and remains subordinate to current source files, tests,
 configuration, git state, and live GitHub state.
 
+Canonical public description: rldyour AI CLI configuration for Claude Code: plugin marketplace, MCP/LSP, Serena memory, security review, browser/design workflows, and reviewer agents.
+
 <!-- sync_contract:
 claims:
   mcp_owner: rldyour-mcps
