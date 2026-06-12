@@ -25,6 +25,7 @@ REQUIRED_BASELINE_SURFACES = {
     "claude-code-2-1-168-reliability-rollup": "2.1.168 reliability rollup",
     "nested-subagents-and-background-agent-hardening": "nested sub-agents",
     "claude-code-2-1-173-fable-windows-fixes": "Fable 5 model names",
+    "claude-code-2-1-175-enforce-available-models": "`enforceAvailableModels`",
 }
 
 REQUIRED_2_1_153_SURFACES = (
@@ -127,6 +128,12 @@ REQUIRED_2_1_173_SURFACES = (
     "2.1.173",
 )
 
+REQUIRED_2_1_175_SURFACES = (
+    "`enforceAvailableModels`",
+    "`availableModels`",
+    "2.1.175",
+)
+
 VALID_DECISIONS = ("Adopt", "Adopted", "Future", "Hybrid", "Intentionally unused")
 
 
@@ -212,6 +219,10 @@ def main() -> int:
         for marker in REQUIRED_2_1_173_SURFACES:
             if marker not in text:
                 errors.append(f"{ADOPTION.relative_to(ROOT)} missing 2.1.173 surface {marker}")
+    if parsed_version >= version_tuple("2.1.175"):
+        for marker in REQUIRED_2_1_175_SURFACES:
+            if marker not in text:
+                errors.append(f"{ADOPTION.relative_to(ROOT)} missing 2.1.175 surface {marker}")
 
     for line in text.splitlines():
         if not line.startswith("| `") and not line.startswith("| `/"):
