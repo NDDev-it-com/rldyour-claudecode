@@ -7,6 +7,13 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 ## [Unreleased]
 
 
+## [1.3.3] - 2026-06-13
+
+### Changed
+
+- Replace active browser-provider retired-tool tombstone wording with positive
+  active-inventory language in the MCP plugin README.
+
 ## [1.3.2] - 2026-06-12
 
 ### Fixed
