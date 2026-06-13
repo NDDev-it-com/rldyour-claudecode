@@ -7,6 +7,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 ## [Unreleased]
 
 
+## [1.3.6] - 2026-06-13
+
+### Changed
+
+- Correct rldyour-mcps description to 11 servers without phantom Playwright MCP; add validate_mcps_description_parity guard.
+
 ## [1.3.5] - 2026-06-13
 
 ### Changed
