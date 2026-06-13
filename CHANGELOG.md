@@ -7,6 +7,13 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 ## [Unreleased]
 
 
+## [1.3.5] - 2026-06-13
+
+### Changed
+
+- Refresh the Claude Code runtime baseline to 2.1.177 after npm latest and the
+  official GitHub release advanced past the pinned 2.1.175 target.
+
 ## [1.3.4] - 2026-06-13
 
 ### Fixed
