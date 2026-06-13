@@ -176,6 +176,13 @@ else
   echo "SKIP scripts/check_mcp_runtime_versions.py not yet present"
 fi
 
+step "rldyour-mcps description server-count parity"
+if [ -f scripts/validate_mcps_description_parity.py ]; then
+  python3 scripts/validate_mcps_description_parity.py
+else
+  echo "SKIP scripts/validate_mcps_description_parity.py not yet present"
+fi
+
 step "Hook lifecycle smoke"
 if [ -f scripts/smoke_hooks.sh ]; then
   bash scripts/smoke_hooks.sh
