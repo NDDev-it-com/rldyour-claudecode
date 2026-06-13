@@ -26,6 +26,8 @@ REQUIRED_BASELINE_SURFACES = {
     "nested-subagents-and-background-agent-hardening": "nested sub-agents",
     "claude-code-2-1-173-fable-windows-fixes": "Fable 5 model names",
     "claude-code-2-1-175-enforce-available-models": "`enforceAvailableModels`",
+    "claude-code-2-1-176-language-footer-and-policy-fixes": "`footerLinksRegexes`",
+    "claude-code-2-1-177-runtime-rollup": "2.1.177 runtime rollup",
 }
 
 REQUIRED_2_1_153_SURFACES = (
@@ -134,6 +136,19 @@ REQUIRED_2_1_175_SURFACES = (
     "2.1.175",
 )
 
+REQUIRED_2_1_176_SURFACES = (
+    "`footerLinksRegexes`",
+    "`language` setting",
+    "`ANTHROPIC_DEFAULT_*_MODEL`",
+    "`/fast`",
+    "hook `if` path matching",
+)
+
+REQUIRED_2_1_177_SURFACES = (
+    "2.1.177 runtime rollup",
+    "npm `@anthropic-ai/claude-code` latest",
+)
+
 VALID_DECISIONS = ("Adopt", "Adopted", "Future", "Hybrid", "Intentionally unused")
 
 
@@ -223,6 +238,14 @@ def main() -> int:
         for marker in REQUIRED_2_1_175_SURFACES:
             if marker not in text:
                 errors.append(f"{ADOPTION.relative_to(ROOT)} missing 2.1.175 surface {marker}")
+    if parsed_version >= version_tuple("2.1.176"):
+        for marker in REQUIRED_2_1_176_SURFACES:
+            if marker not in text:
+                errors.append(f"{ADOPTION.relative_to(ROOT)} missing 2.1.176 surface {marker}")
+    if parsed_version >= version_tuple("2.1.177"):
+        for marker in REQUIRED_2_1_177_SURFACES:
+            if marker not in text:
+                errors.append(f"{ADOPTION.relative_to(ROOT)} missing 2.1.177 surface {marker}")
 
     for line in text.splitlines():
         if not line.startswith("| `") and not line.startswith("| `/"):
