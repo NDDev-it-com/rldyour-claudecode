@@ -5,7 +5,9 @@
   "adapters": [
     "claude",
     "codex",
-    "opencode"
+    "opencode",
+    "gemini",
+    "mimocode"
   ],
   "runtime_policy": {
     "id": "owner-full-auto-standard",
@@ -46,6 +48,12 @@
       },
       "opencode": {
         "plugin": "rldyour-browser"
+      },
+      "gemini": {
+        "status": "native skills/agents"
+      },
+      "mimocode": {
+        "status": "native skills/agents"
       }
     },
     {
@@ -59,6 +67,12 @@
       },
       "opencode": {
         "plugin": "rldyour-design"
+      },
+      "gemini": {
+        "status": "native skills/agents"
+      },
+      "mimocode": {
+        "status": "native skills/agents"
       }
     },
     {
@@ -72,6 +86,12 @@
       },
       "opencode": {
         "plugin": "rldyour-explore"
+      },
+      "gemini": {
+        "status": "native skills/agents"
+      },
+      "mimocode": {
+        "status": "native skills/agents"
       }
     },
     {
@@ -85,6 +105,12 @@
       },
       "opencode": {
         "plugin": "rldyour-flow"
+      },
+      "gemini": {
+        "status": "native skills/agents"
+      },
+      "mimocode": {
+        "status": "native skills/agents"
       }
     },
     {
@@ -98,6 +124,12 @@
       },
       "opencode": {
         "plugin": "rldyour-lsps"
+      },
+      "gemini": {
+        "status": "adapter-specific: not provided as a native surface"
+      },
+      "mimocode": {
+        "status": "adapter-specific: not provided as a native surface"
       }
     },
     {
@@ -111,6 +143,12 @@
       },
       "opencode": {
         "plugin": "rldyour-mcps"
+      },
+      "gemini": {
+        "status": "native MCP servers in .gemini/settings.json"
+      },
+      "mimocode": {
+        "status": "native MCP servers in .mimocode/mimocode.jsonc"
       }
     },
     {
@@ -124,6 +162,12 @@
       },
       "opencode": {
         "plugin": "rldyour-orchestrator"
+      },
+      "gemini": {
+        "status": "worker-only: cmux-worker skill present; orchestrator unsupported"
+      },
+      "mimocode": {
+        "status": "worker-only: cmux-worker skill present; orchestrator unsupported"
       }
     },
     {
@@ -137,6 +181,12 @@
       },
       "opencode": {
         "plugin": "rldyour-rules"
+      },
+      "gemini": {
+        "status": "adapter-specific: not provided as a native surface"
+      },
+      "mimocode": {
+        "status": "native skills/agents via .mimocode/skills and .mimocode/command/rules-review.md"
       }
     },
     {
@@ -150,6 +200,12 @@
       },
       "opencode": {
         "plugin": "rldyour-security"
+      },
+      "gemini": {
+        "status": "native skills/agents"
+      },
+      "mimocode": {
+        "status": "native skills/agents"
       }
     },
     {
@@ -163,6 +219,12 @@
       },
       "opencode": {
         "plugin": "rldyour-serena-mcp"
+      },
+      "gemini": {
+        "status": "native skills/agents via serena-curator agent and serena-memory-sync skill"
+      },
+      "mimocode": {
+        "status": "native skills/agents via rldyour-memory-sync agent and serena-memory-sync skill"
       }
     }
   ],
@@ -184,6 +246,14 @@
         "kind": "command",
         "name": "ry-design",
         "invocation": "/ry-design"
+      },
+      "gemini": {
+        "status": "adapter-specific: not provided as a native command; covered by skills/design-review/SKILL.md and agents/design-reviewer.md"
+      },
+      "mimocode": {
+        "kind": "command",
+        "path": ".mimocode/command/design-review.md",
+        "invocation": "/design-review"
       }
     },
     {
@@ -203,6 +273,12 @@
         "kind": "command",
         "name": "ry-explore",
         "invocation": "/ry-explore"
+      },
+      "gemini": {
+        "status": "adapter-specific: not provided as a native command; codebase-investigator agent provides closest equivalent"
+      },
+      "mimocode": {
+        "status": "adapter-specific: not provided as a native command"
       }
     },
     {
@@ -221,6 +297,17 @@
       "opencode": {
         "kind": "command",
         "name": "ry-init",
+        "invocation": "/ry-init"
+      },
+      "gemini": {
+        "kind": "command",
+        "path": ".gemini/commands/ry/init.toml",
+        "name": "ry:init",
+        "invocation": "/ry:init"
+      },
+      "mimocode": {
+        "kind": "command",
+        "path": ".mimocode/command/ry-init.md",
         "invocation": "/ry-init"
       }
     },
@@ -241,6 +328,17 @@
         "kind": "command",
         "name": "ry-start",
         "invocation": "/ry-start"
+      },
+      "gemini": {
+        "kind": "command",
+        "path": ".gemini/commands/ry/start.toml",
+        "name": "ry:start",
+        "invocation": "/ry:start"
+      },
+      "mimocode": {
+        "kind": "command",
+        "path": ".mimocode/command/ry-start.md",
+        "invocation": "/ry-start"
       }
     },
     {
@@ -259,6 +357,17 @@
       "opencode": {
         "kind": "command",
         "name": "ry-newp",
+        "invocation": "/ry-newp"
+      },
+      "gemini": {
+        "kind": "command",
+        "path": ".gemini/commands/ry/newp.toml",
+        "name": "ry:newp",
+        "invocation": "/ry:newp"
+      },
+      "mimocode": {
+        "kind": "command",
+        "path": ".mimocode/command/ry-newp.md",
         "invocation": "/ry-newp"
       }
     },
@@ -279,6 +388,17 @@
         "kind": "command",
         "name": "ry-review",
         "invocation": "/ry-review"
+      },
+      "gemini": {
+        "kind": "command",
+        "path": ".gemini/commands/ry/review.toml",
+        "name": "ry:review",
+        "invocation": "/ry:review"
+      },
+      "mimocode": {
+        "kind": "command",
+        "path": ".mimocode/command/ry-review.md",
+        "invocation": "/ry-review"
       }
     },
     {
@@ -297,6 +417,17 @@
       "opencode": {
         "kind": "command",
         "name": "ry-repair",
+        "invocation": "/ry-repair"
+      },
+      "gemini": {
+        "kind": "command",
+        "path": ".gemini/commands/ry/repair.toml",
+        "name": "ry:repair",
+        "invocation": "/ry:repair"
+      },
+      "mimocode": {
+        "kind": "command",
+        "path": ".mimocode/command/ry-repair.md",
         "invocation": "/ry-repair"
       }
     },
@@ -317,6 +448,17 @@
         "kind": "command",
         "name": "ry-deploy",
         "invocation": "/ry-deploy"
+      },
+      "gemini": {
+        "kind": "command",
+        "path": ".gemini/commands/ry/deploy.toml",
+        "name": "ry:deploy",
+        "invocation": "/ry:deploy"
+      },
+      "mimocode": {
+        "kind": "command",
+        "path": ".mimocode/command/ry-deploy.md",
+        "invocation": "/ry-deploy"
       }
     },
     {
@@ -335,6 +477,17 @@
       "opencode": {
         "kind": "command",
         "name": "ry-sync",
+        "invocation": "/ry-sync"
+      },
+      "gemini": {
+        "kind": "command",
+        "path": ".gemini/commands/ry/sync.toml",
+        "name": "ry:sync",
+        "invocation": "/ry:sync"
+      },
+      "mimocode": {
+        "kind": "command",
+        "path": ".mimocode/command/ry-sync.md",
         "invocation": "/ry-sync"
       }
     },
@@ -355,6 +508,14 @@
         "kind": "command",
         "name": "ry-rules-review",
         "invocation": "/ry-rules-review"
+      },
+      "gemini": {
+        "status": "adapter-specific: not provided as a native command"
+      },
+      "mimocode": {
+        "kind": "command",
+        "path": ".mimocode/command/rules-review.md",
+        "invocation": "/rules-review"
       }
     },
     {
@@ -374,6 +535,17 @@
         "kind": "command",
         "name": "ry-sec-review",
         "invocation": "/ry-sec-review"
+      },
+      "gemini": {
+        "kind": "command",
+        "path": ".gemini/commands/security/review.toml",
+        "name": "security:review",
+        "invocation": "/security:review"
+      },
+      "mimocode": {
+        "kind": "command",
+        "path": ".mimocode/command/security-review.md",
+        "invocation": "/security-review"
       }
     }
   ],
@@ -393,6 +565,12 @@
       "opencode": {
         "kind": "skill",
         "name": "browser-debug"
+      },
+      "gemini": {
+        "status": "adapter-specific: not provided as a native skill"
+      },
+      "mimocode": {
+        "status": "adapter-specific: not provided as a native skill"
       }
     },
     {
@@ -410,6 +588,12 @@
       "opencode": {
         "kind": "skill",
         "name": "browser-tool-routing"
+      },
+      "gemini": {
+        "status": "adapter-specific: not provided as a native skill"
+      },
+      "mimocode": {
+        "status": "adapter-specific: not provided as a native skill"
       }
     },
     {
@@ -427,6 +611,16 @@
       "opencode": {
         "kind": "skill",
         "name": "browser-validation"
+      },
+      "gemini": {
+        "kind": "skill",
+        "path": ".gemini/skills/browser-validation/SKILL.md",
+        "name": "browser-validation"
+      },
+      "mimocode": {
+        "kind": "skill",
+        "path": ".mimocode/skills/browser-review/SKILL.md",
+        "name": "browser-review"
       }
     },
     {
@@ -444,6 +638,12 @@
       "opencode": {
         "kind": "skill",
         "name": "design-system-implementation"
+      },
+      "gemini": {
+        "status": "adapter-specific: not provided as a native skill"
+      },
+      "mimocode": {
+        "status": "adapter-specific: not provided as a native skill"
       }
     },
     {
@@ -461,6 +661,12 @@
       "opencode": {
         "kind": "skill",
         "name": "design-validation"
+      },
+      "gemini": {
+        "status": "adapter-specific: not provided as a native skill"
+      },
+      "mimocode": {
+        "status": "adapter-specific: not provided as a native skill"
       }
     },
     {
@@ -478,6 +684,12 @@
       "opencode": {
         "kind": "skill",
         "name": "figma-to-code"
+      },
+      "gemini": {
+        "status": "adapter-specific: not provided as a native skill"
+      },
+      "mimocode": {
+        "status": "adapter-specific: not provided as a native skill"
       }
     },
     {
@@ -495,6 +707,12 @@
       "opencode": {
         "kind": "skill",
         "name": "fsd-frontend-architecture"
+      },
+      "gemini": {
+        "status": "adapter-specific: not provided as a native skill"
+      },
+      "mimocode": {
+        "status": "adapter-specific: not provided as a native skill"
       }
     },
     {
@@ -512,6 +730,16 @@
       "opencode": {
         "kind": "skill",
         "name": "ry-design"
+      },
+      "gemini": {
+        "kind": "skill",
+        "path": ".gemini/skills/design-review/SKILL.md",
+        "name": "design-review"
+      },
+      "mimocode": {
+        "kind": "skill",
+        "path": ".mimocode/skills/design-review/SKILL.md",
+        "name": "design-review"
       }
     },
     {
@@ -529,6 +757,12 @@
       "opencode": {
         "kind": "skill",
         "name": "tech-research"
+      },
+      "gemini": {
+        "status": "adapter-specific: not provided as a native skill"
+      },
+      "mimocode": {
+        "status": "adapter-specific: not provided as a native skill"
       }
     },
     {
@@ -546,6 +780,12 @@
       "opencode": {
         "kind": "skill",
         "name": "web-research"
+      },
+      "gemini": {
+        "status": "adapter-specific: not provided as a native skill"
+      },
+      "mimocode": {
+        "status": "adapter-specific: not provided as a native skill"
       }
     },
     {
@@ -562,6 +802,16 @@
       },
       "opencode": {
         "kind": "skill",
+        "name": "flow-post-task-sync"
+      },
+      "gemini": {
+        "kind": "skill",
+        "path": ".gemini/skills/flow-post-task-sync/SKILL.md",
+        "name": "flow-post-task-sync"
+      },
+      "mimocode": {
+        "kind": "skill",
+        "path": ".mimocode/skills/flow-post-task-sync/SKILL.md",
         "name": "flow-post-task-sync"
       }
     },
@@ -580,6 +830,12 @@
       "opencode": {
         "kind": "skill",
         "name": "instruction-docs-sync"
+      },
+      "gemini": {
+        "status": "adapter-specific: not provided as a native skill"
+      },
+      "mimocode": {
+        "status": "adapter-specific: not provided as a native skill"
       }
     },
     {
@@ -597,6 +853,14 @@
       "opencode": {
         "kind": "skill",
         "name": "ry-deploy"
+      },
+      "gemini": {
+        "kind": "skill",
+        "path": ".gemini/skills/ry-deploy/SKILL.md",
+        "name": "ry-deploy"
+      },
+      "mimocode": {
+        "status": "adapter-specific: not provided as a native skill"
       }
     },
     {
@@ -614,6 +878,14 @@
       "opencode": {
         "kind": "skill",
         "name": "ry-init"
+      },
+      "gemini": {
+        "kind": "skill",
+        "path": ".gemini/skills/ry-init/SKILL.md",
+        "name": "ry-init"
+      },
+      "mimocode": {
+        "status": "adapter-specific: not provided as a native skill"
       }
     },
     {
@@ -631,6 +903,14 @@
       "opencode": {
         "kind": "skill",
         "name": "ry-newp"
+      },
+      "gemini": {
+        "kind": "skill",
+        "path": ".gemini/skills/ry-newp/SKILL.md",
+        "name": "ry-newp"
+      },
+      "mimocode": {
+        "status": "adapter-specific: not provided as a native skill"
       }
     },
     {
@@ -648,6 +928,14 @@
       "opencode": {
         "kind": "skill",
         "name": "ry-review"
+      },
+      "gemini": {
+        "kind": "skill",
+        "path": ".gemini/skills/ry-review/SKILL.md",
+        "name": "ry-review"
+      },
+      "mimocode": {
+        "status": "adapter-specific: not provided as a native skill"
       }
     },
     {
@@ -664,6 +952,16 @@
       },
       "opencode": {
         "kind": "skill",
+        "name": "ry-repair"
+      },
+      "gemini": {
+        "kind": "skill",
+        "path": ".gemini/skills/ry-repair/SKILL.md",
+        "name": "ry-repair"
+      },
+      "mimocode": {
+        "kind": "skill",
+        "path": ".mimocode/skills/ry-repair/SKILL.md",
         "name": "ry-repair"
       }
     },
@@ -682,6 +980,16 @@
       "opencode": {
         "kind": "skill",
         "name": "ry-start"
+      },
+      "gemini": {
+        "kind": "skill",
+        "path": ".gemini/skills/ry-start/SKILL.md",
+        "name": "ry-start"
+      },
+      "mimocode": {
+        "kind": "skill",
+        "path": ".mimocode/skills/ry-start/SKILL.md",
+        "name": "ry-start"
       }
     },
     {
@@ -699,6 +1007,12 @@
       "opencode": {
         "kind": "skill",
         "name": "lsp-health-check"
+      },
+      "gemini": {
+        "status": "adapter-specific: not provided as a native skill"
+      },
+      "mimocode": {
+        "status": "adapter-specific: not provided as a native skill"
       }
     },
     {
@@ -716,6 +1030,12 @@
       "opencode": {
         "kind": "skill",
         "name": "lsp-routing"
+      },
+      "gemini": {
+        "status": "adapter-specific: not provided as a native skill"
+      },
+      "mimocode": {
+        "status": "adapter-specific: not provided as a native skill"
       }
     },
     {
@@ -733,6 +1053,12 @@
       "opencode": {
         "kind": "skill",
         "name": "lsp-setup"
+      },
+      "gemini": {
+        "status": "adapter-specific: not provided as a native skill"
+      },
+      "mimocode": {
+        "status": "adapter-specific: not provided as a native skill"
       }
     },
     {
@@ -750,6 +1076,12 @@
       "opencode": {
         "kind": "skill",
         "name": "serena-lsp-integration"
+      },
+      "gemini": {
+        "status": "adapter-specific: not provided as a native skill"
+      },
+      "mimocode": {
+        "status": "adapter-specific: not provided as a native skill"
       }
     },
     {
@@ -767,6 +1099,12 @@
       "opencode": {
         "kind": "skill",
         "name": "architecture-boundaries"
+      },
+      "gemini": {
+        "status": "adapter-specific: not provided as a native skill"
+      },
+      "mimocode": {
+        "status": "adapter-specific: not provided as a native skill"
       }
     },
     {
@@ -784,6 +1122,12 @@
       "opencode": {
         "kind": "skill",
         "name": "dependency-compatibility-policy"
+      },
+      "gemini": {
+        "status": "adapter-specific: not provided as a native skill"
+      },
+      "mimocode": {
+        "status": "adapter-specific: not provided as a native skill"
       }
     },
     {
@@ -801,6 +1145,12 @@
       "opencode": {
         "kind": "skill",
         "name": "implementation-discipline"
+      },
+      "gemini": {
+        "status": "adapter-specific: not provided as a native skill"
+      },
+      "mimocode": {
+        "status": "adapter-specific: not provided as a native skill"
       }
     },
     {
@@ -818,6 +1168,12 @@
       "opencode": {
         "kind": "skill",
         "name": "project-instructions-policy"
+      },
+      "gemini": {
+        "status": "adapter-specific: not provided as a native skill"
+      },
+      "mimocode": {
+        "status": "adapter-specific: not provided as a native skill"
       }
     },
     {
@@ -835,6 +1191,12 @@
       "opencode": {
         "kind": "skill",
         "name": "quality-first-engineering"
+      },
+      "gemini": {
+        "status": "adapter-specific: not provided as a native skill"
+      },
+      "mimocode": {
+        "status": "adapter-specific: not provided as a native skill"
       }
     },
     {
@@ -852,6 +1214,12 @@
       "opencode": {
         "kind": "skill",
         "name": "ry-rules-review"
+      },
+      "gemini": {
+        "status": "adapter-specific: not provided as a native skill"
+      },
+      "mimocode": {
+        "status": "adapter-specific: not provided as a native skill"
       }
     },
     {
@@ -869,6 +1237,12 @@
       "opencode": {
         "kind": "skill",
         "name": "verification-quality-gates"
+      },
+      "gemini": {
+        "status": "adapter-specific: not provided as a native skill"
+      },
+      "mimocode": {
+        "status": "adapter-specific: not provided as a native skill"
       }
     },
     {
@@ -886,6 +1260,12 @@
       "opencode": {
         "kind": "skill",
         "name": "owasp-top-10-implementation"
+      },
+      "gemini": {
+        "status": "adapter-specific: not provided as a native skill"
+      },
+      "mimocode": {
+        "status": "adapter-specific: not provided as a native skill"
       }
     },
     {
@@ -903,6 +1283,16 @@
       "opencode": {
         "kind": "skill",
         "name": "ry-sec-review"
+      },
+      "gemini": {
+        "kind": "skill",
+        "path": ".gemini/skills/security-review/SKILL.md",
+        "name": "security-review"
+      },
+      "mimocode": {
+        "kind": "skill",
+        "path": ".mimocode/skills/security-review/SKILL.md",
+        "name": "security-review"
       }
     },
     {
@@ -920,6 +1310,12 @@
       "opencode": {
         "kind": "skill",
         "name": "serena-code-workflow"
+      },
+      "gemini": {
+        "status": "adapter-specific: not provided as a native skill; serena-curator agent provides equivalent"
+      },
+      "mimocode": {
+        "status": "adapter-specific: not provided as a native skill"
       }
     },
     {
@@ -936,6 +1332,16 @@
       },
       "opencode": {
         "kind": "skill",
+        "name": "serena-memory-sync"
+      },
+      "gemini": {
+        "kind": "skill",
+        "path": ".gemini/skills/serena-memory-sync/SKILL.md",
+        "name": "serena-memory-sync"
+      },
+      "mimocode": {
+        "kind": "skill",
+        "path": ".mimocode/skills/serena-memory-sync/SKILL.md",
         "name": "serena-memory-sync"
       }
     }
@@ -956,6 +1362,14 @@
       "opencode": {
         "kind": "agent",
         "name": "ry-explore"
+      },
+      "gemini": {
+        "kind": "agent",
+        "path": ".gemini/agents/codebase-investigator.md",
+        "name": "codebase-investigator"
+      },
+      "mimocode": {
+        "status": "adapter-specific: not provided as a named research agent; rldyour-plan agent provides read-only investigation"
       }
     },
     {
@@ -973,6 +1387,12 @@
       "opencode": {
         "kind": "agent",
         "name": "flow-architecture-review"
+      },
+      "gemini": {
+        "status": "adapter-specific: not provided as a dedicated architecture reviewer agent"
+      },
+      "mimocode": {
+        "status": "adapter-specific: not provided as a dedicated architecture reviewer agent; rldyour-review provides combined review"
       }
     },
     {
@@ -990,6 +1410,12 @@
       "opencode": {
         "kind": "agent",
         "name": "flow-consistency-review"
+      },
+      "gemini": {
+        "status": "adapter-specific: not provided as a dedicated consistency reviewer agent"
+      },
+      "mimocode": {
+        "status": "adapter-specific: not provided as a dedicated consistency reviewer agent; rldyour-review provides combined review"
       }
     },
     {
@@ -1006,6 +1432,12 @@
       "opencode": {
         "kind": "agent",
         "name": "flow-integration-review"
+      },
+      "gemini": {
+        "status": "adapter-specific: not provided as a dedicated integration reviewer agent"
+      },
+      "mimocode": {
+        "status": "adapter-specific: not provided as a dedicated integration reviewer agent; rldyour-review provides combined review"
       }
     },
     {
@@ -1023,6 +1455,14 @@
       "opencode": {
         "kind": "agent",
         "name": "flow-quality-review"
+      },
+      "gemini": {
+        "status": "adapter-specific: not provided as a dedicated quality reviewer agent"
+      },
+      "mimocode": {
+        "kind": "agent",
+        "path": ".mimocode/agent/rldyour-quality-review.md",
+        "name": "rldyour-quality-review"
       }
     },
     {
@@ -1040,6 +1480,16 @@
       "opencode": {
         "kind": "agent",
         "name": "flow-security-review"
+      },
+      "gemini": {
+        "kind": "agent",
+        "path": ".gemini/agents/security-reviewer.md",
+        "name": "security-reviewer"
+      },
+      "mimocode": {
+        "kind": "agent",
+        "path": ".mimocode/agent/rldyour-security-review.md",
+        "name": "rldyour-security-review"
       }
     },
     {
@@ -1057,6 +1507,12 @@
       "opencode": {
         "kind": "agent",
         "name": "flow-verification-review"
+      },
+      "gemini": {
+        "status": "adapter-specific: not provided as a dedicated verification reviewer agent"
+      },
+      "mimocode": {
+        "status": "adapter-specific: not provided as a dedicated verification reviewer agent"
       }
     },
     {
@@ -1074,6 +1530,16 @@
       "opencode": {
         "kind": "agent",
         "name": "flow-memory-sync"
+      },
+      "gemini": {
+        "kind": "agent",
+        "path": ".gemini/agents/serena-curator.md",
+        "name": "serena-curator"
+      },
+      "mimocode": {
+        "kind": "agent",
+        "path": ".mimocode/agent/rldyour-memory-sync.md",
+        "name": "rldyour-memory-sync"
       }
     }
   ],
@@ -1093,6 +1559,12 @@
       "opencode": {
         "name": "shell.env or startup plugin event",
         "status": "adapter-specific startup hook"
+      },
+      "gemini": {
+        "status": "adapter-specific: no worktree bootstrap hook; session_start_context.sh covers context load only"
+      },
+      "mimocode": {
+        "status": "adapter-specific: no native hook lifecycle; not provided"
       }
     },
     {
@@ -1110,6 +1582,14 @@
       "opencode": {
         "name": "shell.env or startup plugin event",
         "status": "adapter-specific startup hook"
+      },
+      "gemini": {
+        "event": "SessionStart",
+        "script": ".gemini/hooks/session_start_context.sh",
+        "name": "session-start-context"
+      },
+      "mimocode": {
+        "status": "adapter-specific: no native hook lifecycle; mimocode.jsonc has no hooks block"
       }
     },
     {
@@ -1127,6 +1607,12 @@
       "opencode": {
         "name": "prompt submit plugin event",
         "status": "adapter-specific prompt hook"
+      },
+      "gemini": {
+        "status": "adapter-specific: no UserPromptSubmit equivalent in Gemini CLI hook events"
+      },
+      "mimocode": {
+        "status": "adapter-specific: no native hook lifecycle; not provided"
       }
     },
     {
@@ -1144,6 +1630,14 @@
       "opencode": {
         "name": "tool.execute.before",
         "status": "plugin before-tool hook"
+      },
+      "gemini": {
+        "event": "BeforeTool",
+        "script": ".gemini/hooks/before_tool_policy.sh",
+        "name": "before-tool-policy"
+      },
+      "mimocode": {
+        "status": "adapter-specific: no native hook lifecycle; not provided"
       }
     },
     {
@@ -1161,6 +1655,12 @@
       "opencode": {
         "name": "tool.execute.before",
         "status": "plugin before-tool hook"
+      },
+      "gemini": {
+        "status": "covered by before_tool_policy.sh which handles destructive shell/git operations via BeforeTool event"
+      },
+      "mimocode": {
+        "status": "adapter-specific: no native hook lifecycle; not provided"
       }
     },
     {
@@ -1178,6 +1678,12 @@
       "opencode": {
         "name": "tool.execute.after",
         "status": "plugin after-tool hook"
+      },
+      "gemini": {
+        "status": "adapter-specific: no PostToolUse equivalent; AfterAgent event approximates via after_agent_post_task_sync.sh"
+      },
+      "mimocode": {
+        "status": "adapter-specific: no native hook lifecycle; not provided"
       }
     },
     {
@@ -1195,6 +1701,12 @@
       "opencode": {
         "name": "tool.execute.after",
         "status": "plugin after-tool hook"
+      },
+      "gemini": {
+        "status": "adapter-specific: no PostToolUse equivalent; after_agent_post_task_sync.sh covers post-agent state reporting"
+      },
+      "mimocode": {
+        "status": "adapter-specific: no native hook lifecycle; not provided"
       }
     },
     {
@@ -1212,6 +1724,14 @@
       "opencode": {
         "name": "task stop plugin event",
         "status": "adapter-specific stop hook"
+      },
+      "gemini": {
+        "event": "AfterAgent",
+        "script": ".gemini/hooks/after_agent_post_task_sync.sh",
+        "name": "after-agent-post-task-sync"
+      },
+      "mimocode": {
+        "status": "adapter-specific: no native hook lifecycle; not provided"
       }
     },
     {
@@ -1229,6 +1749,14 @@
       "opencode": {
         "name": "task stop plugin event",
         "status": "adapter-specific stop hook"
+      },
+      "gemini": {
+        "event": "AfterAgent",
+        "script": ".gemini/hooks/after_agent_post_task_sync.sh",
+        "name": "after-agent-post-task-sync"
+      },
+      "mimocode": {
+        "status": "adapter-specific: no native hook lifecycle; not provided"
       }
     }
   ],
@@ -1245,6 +1773,12 @@
       },
       "opencode": {
         "status": "adapter repository must provide equivalent static validation"
+      },
+      "gemini": {
+        "workflow": ".github/workflows/validate.yml"
+      },
+      "mimocode": {
+        "workflow": ".github/workflows/validate.yml"
       }
     },
     {
@@ -1258,6 +1792,12 @@
         "status": "adapter repository must provide equivalent inventory validation"
       },
       "opencode": {
+        "status": "adapter repository must provide equivalent inventory validation"
+      },
+      "gemini": {
+        "status": "adapter repository must provide equivalent inventory validation"
+      },
+      "mimocode": {
         "status": "adapter repository must provide equivalent inventory validation"
       }
     },
@@ -1273,6 +1813,12 @@
       },
       "opencode": {
         "status": "adapter repository must validate the same contract ID set"
+      },
+      "gemini": {
+        "workflow": ".github/workflows/validate.yml"
+      },
+      "mimocode": {
+        "workflow": ".github/workflows/validate.yml"
       }
     },
     {
@@ -1287,6 +1833,12 @@
       },
       "opencode": {
         "status": "adapter repository must smoke hook/plugin-event fixtures"
+      },
+      "gemini": {
+        "workflow": ".github/workflows/validate.yml"
+      },
+      "mimocode": {
+        "status": "adapter-specific: no hook fixtures; mimocode has no native hook lifecycle"
       }
     },
     {
@@ -1301,6 +1853,12 @@
       },
       "opencode": {
         "status": "adapter repository must run its unit test suite"
+      },
+      "gemini": {
+        "workflow": ".github/workflows/pytest.yml"
+      },
+      "mimocode": {
+        "workflow": ".github/workflows/pytest.yml"
       }
     },
     {
@@ -1315,6 +1873,12 @@
       },
       "opencode": {
         "status": "adapter repository must run native CLI/runtime smoke when available"
+      },
+      "gemini": {
+        "workflow": ".github/workflows/validate.yml"
+      },
+      "mimocode": {
+        "workflow": ".github/workflows/validate.yml"
       }
     },
     {
@@ -1328,6 +1892,12 @@
       },
       "opencode": {
         "status": "adapter repository should run CodeQL or documented equivalent"
+      },
+      "gemini": {
+        "workflow": ".github/workflows/codeql.yml"
+      },
+      "mimocode": {
+        "workflow": ".github/workflows/codeql.yml"
       }
     },
     {
@@ -1341,6 +1911,12 @@
       },
       "opencode": {
         "status": "adapter repository should run dependency review or documented equivalent"
+      },
+      "gemini": {
+        "workflow": ".github/workflows/dependency-review.yml"
+      },
+      "mimocode": {
+        "workflow": ".github/workflows/dependency-review.yml"
       }
     },
     {
@@ -1354,6 +1930,12 @@
       },
       "opencode": {
         "status": "adapter repository must run secret scanning"
+      },
+      "gemini": {
+        "workflow": ".github/workflows/secret-scan.yml"
+      },
+      "mimocode": {
+        "workflow": ".github/workflows/secret-scan.yml"
       }
     },
     {
@@ -1367,6 +1949,12 @@
       },
       "opencode": {
         "status": "adapter repository must lint workflows"
+      },
+      "gemini": {
+        "workflow": ".github/workflows/actionlint.yml"
+      },
+      "mimocode": {
+        "workflow": ".github/workflows/actionlint.yml"
       }
     },
     {
@@ -1381,6 +1969,12 @@
       },
       "opencode": {
         "status": "adapter repository must validate release state"
+      },
+      "gemini": {
+        "workflow": ".github/workflows/validate.yml"
+      },
+      "mimocode": {
+        "workflow": ".github/workflows/validate.yml"
       }
     },
     {
@@ -1395,6 +1989,12 @@
       },
       "opencode": {
         "status": "adapter repository should publish release evidence"
+      },
+      "gemini": {
+        "workflow": ".github/workflows/release.yml"
+      },
+      "mimocode": {
+        "workflow": ".github/workflows/release.yml"
       }
     }
   ],
