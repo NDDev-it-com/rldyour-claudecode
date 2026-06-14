@@ -1,6 +1,6 @@
 # ADR-0012: Owner Full-Auto Standard
 
-- **Status**: accepted
+- **Status**: superseded by ADR-0013 (Five-Adapter Owner Autonomous Standard)
 - **Date**: 2026-05-21
 - **Decision-Makers**: rldyourmnd
 - **Consulted**: cross-adapter control-plane audit

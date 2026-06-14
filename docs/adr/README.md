@@ -16,7 +16,8 @@ Decisions are recorded in MADR 4.0.0 format. The format and policy live in
 | 0009 | Accepted | [Release version and tag convention](./0009-release-version-and-tag-convention.md) |
 | 0010 | Superseded | [macOS runner egress trust gap and current cross-platform smoke](./0010-macos-egress-trust-gap.md) |
 | 0011 | Accepted | [Agent instruction knowledge equivalence](./0011-agent-instruction-knowledge-equivalence.md) |
-| 0012 | Accepted | [Owner full-auto standard](./0012-owner-full-auto-standard.md) |
+| 0012 | Superseded | [Owner full-auto standard](./0012-owner-full-auto-standard.md) |
+| 0013 | Accepted | [Five-adapter owner autonomous standard](./0013-five-adapter-owner-autonomous-standard.md) |
 
 ## When to write an ADR
 
