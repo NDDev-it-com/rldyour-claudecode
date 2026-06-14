@@ -8,7 +8,7 @@ argument-hint: "<scope or problem>"
 
 ## Purpose
 
-Normalize a repository so Claude Code, Codex, and OpenCode can operate from the same verified facts with minimal semantic entropy. This is a technical repair flow, not a permission to change business logic silently.
+Normalize a repository so Claude Code, Codex, OpenCode, Gemini CLI, and MiMoCode can operate from the same verified facts with minimal semantic entropy. This is a technical repair flow, not a permission to change business logic silently.
 
 For rldyour AI CLI configuration repositories, `/ry-repair` also verifies deterministic install/update/sync convergence through the root `config/ry-repair-sync-contract.json` and `scripts/ry_repair_sync.py` contract when that control plane is present.
 
@@ -18,7 +18,7 @@ For rldyour AI CLI configuration repositories, `/ry-repair` also verifies determ
 - **rldyour control plane or adapter config repo, goal = converge the installed
   system**: run consumer mode instead - update the checkout FROM GitHub
   (`git pull --ff-only`, `git submodule update --init --recursive`), then
-  `python3 scripts/ry_repair_sync.py --check` and `--apply --install-system`.
+  `python3 scripts/ry_repair_sync.py --check` and `--apply-system`.
   In consumer mode do NOT author changes into the repository: no commits, no
   doc/contract/memory edits, no fullrepo publication. If fast-forward fails or
   validators reveal repository drift, report it and switch to authoring repair
