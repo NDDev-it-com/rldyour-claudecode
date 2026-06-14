@@ -21,8 +21,8 @@ This is a configuration package for Claude Code, not a fork of the upstream Anth
 
 Claude Code reads these native config surfaces from this repository:
 
-- `.claude-plugin/marketplace.json` — active installable plugin catalog with per-entry relative sources (`source: "./plugins/<name>"`); this repo intentionally does not use `metadata.pluginRoot`.
-- `plugins/<plugin>/.claude-plugin/plugin.json` — plugin manifest. Each manifest declares `dependencies` as an array; `rldyour-mcps` is the base layer (no dependencies); all other plugins depend on it; `rldyour-flow` additionally depends on `rldyour-serena-mcp`.
+- `.claude-plugin/marketplace.json` - active installable plugin catalog with per-entry relative sources (`source: "./plugins/<name>"`); this repo intentionally does not use `metadata.pluginRoot`.
+- `plugins/<plugin>/.claude-plugin/plugin.json` - plugin manifest. Each manifest declares `dependencies` as an array; `rldyour-mcps` is the base layer (no dependencies); all other plugins depend on it; `rldyour-flow` additionally depends on `rldyour-serena-mcp`.
 - Manifest-linked files: `skills/<skill>/SKILL.md`, `agents/<agent>.md`, `commands/<name>.md`, `hooks/hooks.json`, `.mcp.json`, `references/`, `scripts/`.
 
 Source-only files (not automatically projected to the runtime): `docs/`, `config/`, `.serena/`, `AGENTS.md`, `.claude/CLAUDE.md`. Agent-only files (fullrepo branch) do not land on `main` history.
@@ -97,16 +97,16 @@ Run `python3 scripts/generate_inventory.py` to refresh counts.
 
 Plugin briefs:
 
-- **`rldyour-mcps`** — single-owner MCP transport (11 pinned servers: Serena, Sequential Thinking, Chrome DevTools, Context7, DeepWiki, Grep, shadcn, Dart/Flutter, Figma, OpenAI Docs, GitHub).
-- **`rldyour-serena-mcp`** — Serena-first semantic code workflow, numbered fact-only `.serena` memory sync via `flow-memory-sync` subagent, lifecycle hooks (UserPromptSubmit, PreToolUse:Bash, PostToolUse:Bash, Stop).
-- **`rldyour-flow`** — autonomous SDLC orchestration with seven slash commands (`ry-init`, `ry-start`, `ry-newp`, `ry-review`, `ry-deploy`, `ry-sync`, `ry-repair`), six reviewer subagents (architecture/quality/consistency/integration/verification/security tracks), advisory SessionStart, PreToolUse:Bash, PostToolUse:Bash, and Stop hooks, scoped context packs, instruction docs sync, and post-task synchronization.
-- **`rldyour-explore`** — deep multi-source research via `ry-explore` subagent (`model: opus[1m]`, `effort: max`) and tech/web research skills routing through Context7, DeepWiki, Grep, and authoritative web sources.
-- **`rldyour-security`** — non-blocking OWASP Top 10 2025 secure-implementation guidance plus the `ry-sec-review` defensive review skill.
-- **`rldyour-browser`** — provider-routed browser workflows for Webwright, Playwright CLI, and Chrome DevTools MCP.
-- **`rldyour-design`** — Figma → code, centralized token-based design system, strict Feature-Sliced Design frontend architecture, shadcn/ui, ReactBits, and browser-validation workflows.
-- **`rldyour-lsps`** — language-server routing, health checks, brew-first setup profiles, and Serena LSP integration guidance.
-- **`rldyour-orchestrator`** — macOS cmux orchestrator/worker role skills (opt-in; not the default execution mode).
-- **`rldyour-rules`** — quality-first engineering rules, architecture boundaries, implementation discipline, dependency compatibility (SLSA Level 2, SBOM, lockfile discipline), verification gates, project-instruction policy, MADR 4.0.0 ADR policy, and `ry-rules-review`.
+- **`rldyour-mcps`** - single-owner MCP transport (11 pinned servers: Serena, Sequential Thinking, Chrome DevTools, Context7, DeepWiki, Grep, shadcn, Dart/Flutter, Figma, OpenAI Docs, GitHub).
+- **`rldyour-serena-mcp`** - Serena-first semantic code workflow, numbered fact-only `.serena` memory sync via `flow-memory-sync` subagent, lifecycle hooks (UserPromptSubmit, PreToolUse:Bash, PostToolUse:Bash, Stop).
+- **`rldyour-flow`** - autonomous SDLC orchestration with seven slash commands (`ry-init`, `ry-start`, `ry-newp`, `ry-review`, `ry-deploy`, `ry-sync`, `ry-repair`), six reviewer subagents (architecture/quality/consistency/integration/verification/security tracks), advisory SessionStart, PreToolUse:Bash, PostToolUse:Bash, and Stop hooks, scoped context packs, instruction docs sync, and post-task synchronization.
+- **`rldyour-explore`** - deep multi-source research via `ry-explore` subagent (`model: opus[1m]`, `effort: max`) and tech/web research skills routing through Context7, DeepWiki, Grep, and authoritative web sources.
+- **`rldyour-security`** - non-blocking OWASP Top 10 2025 secure-implementation guidance plus the `ry-sec-review` defensive review skill.
+- **`rldyour-browser`** - provider-routed browser workflows for Webwright, Playwright CLI, and Chrome DevTools MCP.
+- **`rldyour-design`** - Figma → code, centralized token-based design system, strict Feature-Sliced Design frontend architecture, shadcn/ui, ReactBits, and browser-validation workflows.
+- **`rldyour-lsps`** - language-server routing, health checks, brew-first setup profiles, and Serena LSP integration guidance.
+- **`rldyour-orchestrator`** - macOS cmux orchestrator/worker role skills (opt-in; not the default execution mode).
+- **`rldyour-rules`** - quality-first engineering rules, architecture boundaries, implementation discipline, dependency compatibility (SLSA Level 2, SBOM, lockfile discipline), verification gates, project-instruction policy, MADR 4.0.0 ADR policy, and `ry-rules-review`.
 
 MCP permissions and model policy: declared in `plugins/rldyour-flow/references/` and `config/rldyour-contract.json`; projected to `docs/contract-matrix.md`.
 
@@ -114,9 +114,9 @@ MCP permissions and model policy: declared in `plugins/rldyour-flow/references/`
 
 Three browser providers are active in this adapter, each with a distinct role:
 
-- **Webwright** (`rldyour-browser` skills) — primary autonomous browser workflow skill for end-to-end web task automation, validation, and data extraction.
-- **Playwright CLI** (`rldyour-browser` skills) — CLI-driven Playwright test automation, spec generation, and assertion workflows.
-- **Chrome DevTools MCP** (`rldyour-mcps`, server `chrome-devtools`) — low-level DevTools Protocol access for performance profiling, network inspection, console capture, screenshot, and heap snapshots; always served through the pinned MCP server.
+- **Webwright** (`rldyour-browser` skills) - primary autonomous browser workflow skill for end-to-end web task automation, validation, and data extraction.
+- **Playwright CLI** (`rldyour-browser` skills) - CLI-driven Playwright test automation, spec generation, and assertion workflows.
+- **Chrome DevTools MCP** (`rldyour-mcps`, server `chrome-devtools`) - low-level DevTools Protocol access for performance profiling, network inspection, console capture, screenshot, and heap snapshots; always served through the pinned MCP server.
 
 Design workflows route through `rldyour-design`: Figma → code via the Figma MCP server, centralized design tokens, Feature-Sliced Design frontend architecture, shadcn/ui component integration, ReactBits patterns, and browser-validation confirmation steps.
 
@@ -153,7 +153,7 @@ The guard is branch-aware: product branches block agent-only paths and AI marker
 
 Secrets, tokens, cookies, and private keys are never stored in this repository. MCP server definitions are pinned with exact package versions in `plugins/rldyour-mcps/.mcp.json`; `@latest` and unpinned `uvx --from` specs are explicitly prohibited. MCP trust boundary: servers listed in `rldyour-mcps` are the only approved external tool providers; any new server requires an intentional version pin and capability smoke test before being added to the manifest.
 
-Owner full-auto posture: the standard launch mode is `claude --dangerously-skip-permissions` (the `cl` launcher alias). This is explicitly owner-directed; it is not appropriate for shared workstations or multi-user environments. Permissions configured in Claude Code user settings are not a sandbox — they are advisory defaults that the owner has consciously overridden.
+Owner full-auto posture: the standard launch mode is `claude --dangerously-skip-permissions` (the `cl` launcher alias). This is explicitly owner-directed; it is not appropriate for shared workstations or multi-user environments. Permissions configured in Claude Code user settings are not a sandbox - they are advisory defaults that the owner has consciously overridden.
 
 Hook scripts are advisory enforcement gates. The single registered Stop hook (`rldyour-flow/hooks/stop_lifecycle_dispatcher.sh`, 45 s timeout) computes post-task state and emits guidance; the main workflow (not the hook) performs memory sync, commits, pushes, and fullrepo publication.
 
@@ -207,7 +207,7 @@ NOT_PROVEN policy: any validation that requires a live network call, a running C
 
 ## Release / Rollback
 
-Releases are tag-driven: each public product version requires a matching numeric GitHub Release at `github.com/NDDev-it-com/rldyour-claudecode/releases`. A `VERSION` file bump alone is not sufficient — the GitHub Release must exist.
+Releases are tag-driven: each public product version requires a matching numeric GitHub Release at `github.com/NDDev-it-com/rldyour-claudecode/releases`. A `VERSION` file bump alone is not sufficient - the GitHub Release must exist.
 
 Marketplace release version lives in `VERSION`. Per-plugin behavior versions stay in `plugins/<plugin>/.claude-plugin/plugin.json`. Release notes live in `CHANGELOG.md` (Keep-a-Changelog format).
 
@@ -218,11 +218,11 @@ scripts/collect_diagnostics.sh                      # local diagnostics bundle f
 
 Reference documents:
 
-- `docs/adr/` — Architecture Decision Records (MADR 4.0.0). Twelve ADRs cover irreversible decisions: fullrepo policy, dual-doc split, bilingual descriptions, reviewer transport, local GitHub MCP, ownership boundaries, MCP pinning, CI baseline, release/tag conventions, macOS egress trust gap, hook freshness invariants, and the owner full-auto standard. Start with `docs/adr/README.md`.
-- `docs/release-process.md` — versioning, CHANGELOG, release evidence, `claude plugin tag --push` flow.
-- `docs/rollback-restore.md` — safe restore from previous tags or fullrepo snapshots.
-- `docs/dependency-updates.md` — pinned MCP runtime update policy.
-- `docs/observability.md` — diagnostics, CI artifacts, hook lifecycle debugging, failure triage.
+- `docs/adr/` - Architecture Decision Records (MADR 4.0.0). Twelve ADRs cover irreversible decisions: fullrepo policy, dual-doc split, bilingual descriptions, reviewer transport, local GitHub MCP, ownership boundaries, MCP pinning, CI baseline, release/tag conventions, macOS egress trust gap, hook freshness invariants, and the owner full-auto standard. Start with `docs/adr/README.md`.
+- `docs/release-process.md` - versioning, CHANGELOG, release evidence, `claude plugin tag --push` flow.
+- `docs/rollback-restore.md` - safe restore from previous tags or fullrepo snapshots.
+- `docs/dependency-updates.md` - pinned MCP runtime update policy.
+- `docs/observability.md` - diagnostics, CI artifacts, hook lifecycle debugging, failure triage.
 
 Default version movement is patch (`+0.0.1`) after a public GitHub Release exists. Minor (`+0.1.0`) and major (`+1.0.0`) bumps are owner-directed decisions only and are coordinated through the root control-plane release orchestrator.
 
@@ -232,12 +232,12 @@ Default version movement is patch (`+0.0.1`) after a public GitHub Release exist
 
 **Author:** Danil Silantyev (github:rldyourmnd), CEO NDDev.
 
-**Issues:** [github.com/NDDev-it-com/rldyour-claudecode/issues](https://github.com/NDDev-it-com/rldyour-claudecode/issues) — bug reports, regression evidence, missing-component requests.
+**Issues:** [github.com/NDDev-it-com/rldyour-claudecode/issues](https://github.com/NDDev-it-com/rldyour-claudecode/issues) - bug reports, regression evidence, missing-component requests.
 
-**Discussions:** [github.com/NDDev-it-com/rldyour-claudecode/discussions](https://github.com/NDDev-it-com/rldyour-claudecode/discussions) — general questions, workflow advice, plugin behaviour clarifications, sharing usage patterns.
+**Discussions:** [github.com/NDDev-it-com/rldyour-claudecode/discussions](https://github.com/NDDev-it-com/rldyour-claudecode/discussions) - general questions, workflow advice, plugin behaviour clarifications, sharing usage patterns.
 
-**Releases:** [github.com/NDDev-it-com/rldyour-claudecode/releases](https://github.com/NDDev-it-com/rldyour-claudecode/releases) — numeric product tags (`X.Y.Z`) with release notes from CHANGELOG.
+**Releases:** [github.com/NDDev-it-com/rldyour-claudecode/releases](https://github.com/NDDev-it-com/rldyour-claudecode/releases) - numeric product tags (`X.Y.Z`) with release notes from CHANGELOG.
 
 **Security contact:** Report vulnerabilities via [GitHub Security Advisories](https://github.com/NDDev-it-com/rldyour-claudecode/security/advisories) for this repository. Do not open public issues for security reports.
 
-This is a personal marketplace — response time is best-effort, no SLA. Feel free to fork and tailor to your own workflow.
+This is a personal marketplace - response time is best-effort, no SLA. Feel free to fork and tailor to your own workflow.
