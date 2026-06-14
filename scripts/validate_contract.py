@@ -18,7 +18,7 @@ from collections.abc import Iterable, Mapping
 from pathlib import Path
 from typing import Any
 
-REQUIRED_ADAPTERS = ("claude", "codex", "opencode")
+REQUIRED_ADAPTERS = ("claude", "codex", "opencode", "gemini", "mimocode")
 CONTRACT_PATH = Path("config/rldyour-contract.json")
 
 

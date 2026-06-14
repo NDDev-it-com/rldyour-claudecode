@@ -54,7 +54,7 @@ def _write_minimal_contract(repo: Path) -> None:
         "schema_version": 1,
         "verified_on": "2026-05-30",
         "owner_repo": "fixture",
-        "adapters": ["claude", "codex", "opencode"],
+        "adapters": ["claude", "codex", "opencode", "gemini", "mimocode"],
         "domains": [
             {
                 "id": "sample",
@@ -62,6 +62,8 @@ def _write_minimal_contract(repo: Path) -> None:
                 "claude": {"plugin": "sample-plugin"},
                 "codex": {"plugin": "sample-plugin"},
                 "opencode": {"plugin": "sample-plugin"},
+                "gemini": {"status": "fixture"},
+                "mimocode": {"status": "fixture"},
             },
             {
                 "id": "mcps",
@@ -69,6 +71,8 @@ def _write_minimal_contract(repo: Path) -> None:
                 "claude": {"plugin": "rldyour-mcps"},
                 "codex": {"plugin": "rldyour-mcps"},
                 "opencode": {"plugin": "rldyour-mcps"},
+                "gemini": {"status": "fixture"},
+                "mimocode": {"status": "fixture"},
             },
             {
                 "id": "flow",
@@ -76,6 +80,8 @@ def _write_minimal_contract(repo: Path) -> None:
                 "claude": {"plugin": "rldyour-flow"},
                 "codex": {"plugin": "rldyour-flow"},
                 "opencode": {"plugin": "rldyour-flow"},
+                "gemini": {"status": "fixture"},
+                "mimocode": {"status": "fixture"},
             },
         ],
         "public_flows": [
@@ -85,6 +91,8 @@ def _write_minimal_contract(repo: Path) -> None:
                 "claude": {"path": "plugins/rldyour-flow/commands/ry-start.md"},
                 "codex": {"name": "ry-start"},
                 "opencode": {"name": "ry-start"},
+                "gemini": {"status": "fixture"},
+                "mimocode": {"status": "fixture"},
             }
         ],
         "skills": [
@@ -94,6 +102,8 @@ def _write_minimal_contract(repo: Path) -> None:
                 "claude": {"path": "plugins/sample-plugin/skills/sample-skill/SKILL.md"},
                 "codex": {"name": "sample-skill"},
                 "opencode": {"name": "sample-skill"},
+                "gemini": {"status": "fixture"},
+                "mimocode": {"status": "fixture"},
             }
         ],
         "agent_roles": [
@@ -103,6 +113,8 @@ def _write_minimal_contract(repo: Path) -> None:
                 "claude": {"path": "plugins/rldyour-flow/agents/flow-quality-review.md"},
                 "codex": {"name": "quality-reviewer"},
                 "opencode": {"name": "flow-quality-review"},
+                "gemini": {"status": "fixture"},
+                "mimocode": {"status": "fixture"},
             }
         ],
         "hook_lifecycle": [
@@ -116,6 +128,8 @@ def _write_minimal_contract(repo: Path) -> None:
                 },
                 "codex": {"status": "fixture"},
                 "opencode": {"status": "fixture"},
+                "gemini": {"status": "fixture"},
+                "mimocode": {"status": "fixture"},
             }
         ],
         "ci_baseline": [
@@ -125,6 +139,8 @@ def _write_minimal_contract(repo: Path) -> None:
                 "claude": {"workflow": ".github/workflows/validate.yml"},
                 "codex": {"status": "fixture"},
                 "opencode": {"status": "fixture"},
+                "gemini": {"status": "fixture"},
+                "mimocode": {"status": "fixture"},
             }
         ],
     }
