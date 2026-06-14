@@ -10,11 +10,11 @@
 ## Context and Problem Statement
 
 ADR-0012 recorded the owner full-auto standard for the original three adapters
-(Claude Code, Codex, OpenCode). The rldyour toolchain now spans five adapters —
+(Claude Code, Codex, OpenCode). The rldyour toolchain now spans five adapters -
 Claude Code, Codex, OpenCode, Gemini CLI, and MiMoCode. The owner's product
 policy is unchanged and explicit: every adapter must operate in a fully
-autonomous agent posture — no approval prompts, no permission asking, and no
-sandbox — as the standard operating mode.
+autonomous agent posture - no approval prompts, no permission asking, and no
+sandbox - as the standard operating mode.
 
 Each adapter expresses autonomy through its own native runtime surface, and two
 of the five cannot express full autonomy purely in committed config:
@@ -33,7 +33,7 @@ of the five cannot express full autonomy purely in committed config:
   toolchain.
 - Cross-adapter policy must be machine-readable so audits do not treat
   full-auto as accidental drift.
-- Each adapter must stay native — do not copy one adapter's config dialect into
+- Each adapter must stay native - do not copy one adapter's config dialect into
   another (for example, Codex `approval_policy`/`sandbox_mode` keys are
   meaningless in Gemini `.gemini/settings.json`).
 - Where a CLI cannot commit full autonomy, the gap is closed by an owner
