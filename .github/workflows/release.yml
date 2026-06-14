@@ -12,7 +12,7 @@ name: release
 on:
   push:
     tags:
-      - '[0-9]*.[0-9]*.[0-9]*'
+      - '[0-9]+.[0-9]+.[0-9]+'
   workflow_dispatch:
     inputs:
       version:
@@ -29,6 +29,7 @@ concurrency:
 jobs:
   release:
     name: Validate + publish GitHub Release
+    if: github.event_name == 'workflow_dispatch' || matches(github.ref_name, '^[0-9]+\\.[0-9]+\\.[0-9]+$')
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
@@ -36,6 +37,13 @@ jobs:
       id-token: write
       attestations: write
     steps:
+      - name: Guard against non-product tags
+        if: github.event_name == 'push'
+        run: |
+          if [[ ! "${GITHUB_REF_NAME}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "ERROR: release workflow triggered by non-product tag '${GITHUB_REF_NAME}'" >&2
+            exit 1
+          fi
       - name: Harden runner (egress block + explicit allowlist)
         uses: step-security/harden-runner@9af89fc71515a100421586dfdb3dc9c984fbf411  # v2.19.4
         with:
