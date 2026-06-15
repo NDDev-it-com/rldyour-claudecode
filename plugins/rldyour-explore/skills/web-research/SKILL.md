@@ -29,7 +29,7 @@ Skip when: question can be answered by docs or code (use `tech-research`), or it
 
 ## Output style
 
-- Date-stamp every claim ("As of 2026-05-…", "vN.M.K release notes")
+- Date-stamp every claim ("As of 2026-05-...", "vN.M.K release notes")
 - Cite source URL inline next to each claim
 - Distinguish vendor statements from third-party analysis
 - Mark blog posts as opinion, not fact

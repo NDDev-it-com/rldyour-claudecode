@@ -9,7 +9,6 @@
 | Adapter version | `1.3.8` |
 | Runtime baseline | Claude Code `2.1.177` (`@anthropic-ai/claude-code`) |
 | GitHub release tag | `1.3.8` |
-| Pinned commit | `87c07c6a6de17ef0358f0952f5d12b6a0d671ff4` |
 
 Runtime pin sources: `package.json`, `references/claude-baseline.json`, `config/mcp-runtime-versions.env`. Compatibility floor: `v2.1.146+`.
 
