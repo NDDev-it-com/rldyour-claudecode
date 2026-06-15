@@ -40,7 +40,7 @@
     "SessionStart", "Setup", "UserPromptSubmit", "UserPromptExpansion",
     "PreToolUse", "PermissionRequest", "PermissionDenied",
     "PostToolUse", "PostToolUseFailure", "PostToolBatch",
-    "Notification", "SubagentStart", "SubagentStop",
+    "Notification", "MessageDisplay", "SubagentStart", "SubagentStop",
     "TaskCreated", "TaskCompleted",
     "Stop", "StopFailure",
     "TeammateIdle", "InstructionsLoaded",
