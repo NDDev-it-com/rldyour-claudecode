@@ -7,6 +7,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 ## [Unreleased]
 
 
+## [1.5.2] - 2026-06-16
+
+### Fixed
+
+- patch: advance past system-instruction tracking (.gemini/, AGENTS.md) and empty-tree fullrepo fix
+
 ## [1.5.1] - 2026-06-15
 
 ### Changed
