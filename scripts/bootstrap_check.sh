@@ -80,7 +80,6 @@ else
     ".claude"
     ".codex"
     ".cursor/rules"
-    ".gemini"
     ".roo"
     ".windsurf"
     ".openhands"
