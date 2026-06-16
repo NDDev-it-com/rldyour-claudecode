@@ -331,11 +331,10 @@ def build_fullrepo_tree(root: Path) -> tuple[str, list[str]]:
     with tempfile.NamedTemporaryFile(prefix="rldyour-fullrepo-index.") as tmp_index:
         env = os.environ.copy()
         env["GIT_INDEX_FILE"] = tmp_index.name
-        _git("read-tree", "HEAD", env=env)
-
-        head_agent_paths = tracked_agent_paths("HEAD")
-        if head_agent_paths:
-            _git("rm", "--cached", "-q", "--ignore-unmatch", "--", *head_agent_paths, env=env)
+        # Start from the well-known empty tree so non-agent main content
+        # (e.g. .gemini/ files that are now tracked on main) does not leak
+        # into the fullrepo commit.
+        _git("read-tree", "4b825dc642cb6eb9a060e54bf8d69288fbee4904", env=env)
 
         if agent_paths:
             _git("add", "-f", "--", *agent_paths, env=env)
