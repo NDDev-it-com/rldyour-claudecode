@@ -1609,7 +1609,7 @@
         "status": "adapter-specific prompt hook"
       },
       "gemini": {
-        "status": "adapter-specific: no UserPromptSubmit equivalent in Gemini CLI hook events"
+        "status": "adapter-specific: no UserPromptSubmit equivalent in Antigravity CLI hook events"
       },
       "mimocode": {
         "status": "adapter-specific: no native hook lifecycle; not provided"

@@ -11,7 +11,7 @@
 
 ADR-0012 recorded the owner full-auto standard for the original three adapters
 (Claude Code, Codex, OpenCode). The rldyour toolchain now spans five adapters -
-Claude Code, Codex, OpenCode, Gemini CLI, and MiMoCode. The owner's product
+Claude Code, Codex, OpenCode, Antigravity CLI, and MiMoCode. The owner's product
 policy is unchanged and explicit: every adapter must operate in a fully
 autonomous agent posture - no approval prompts, no permission asking, and no
 sandbox - as the standard operating mode.
@@ -19,7 +19,7 @@ sandbox - as the standard operating mode.
 Each adapter expresses autonomy through its own native runtime surface, and two
 of the five cannot express full autonomy purely in committed config:
 
-- **Gemini CLI** rejects a committed `yolo` approval mode. Its
+- **Antigravity CLI** rejects a committed `yolo` approval mode. Its
   `general.defaultApprovalMode` enum is `default | auto_edit | plan`; a committed
   `yolo` value is silently downgraded to `default` by the config loader. Full
   YOLO is therefore launcher-only (`--approval-mode=yolo`).
@@ -35,7 +35,7 @@ of the five cannot express full autonomy purely in committed config:
   full-auto as accidental drift.
 - Each adapter must stay native - do not copy one adapter's config dialect into
   another (for example, Codex `approval_policy`/`sandbox_mode` keys are
-  meaningless in Gemini `.gemini/settings.json`).
+  meaningless in Antigravity `.gemini/settings.json`).
 - Where a CLI cannot commit full autonomy, the gap is closed by an owner
   launcher, not by faking an unsupported committed value.
 
@@ -50,14 +50,15 @@ with an owner launcher.**
 | Claude Code | n/a (no committed approval file) | `claude --dangerously-skip-permissions` (`cl`) | launcher |
 | Codex | `approval_policy = "never"`, `sandbox_mode = "danger-full-access"` (legacy sandbox dialect, no active `default_permissions`) | `codex --profile rldyour-yolo --dangerously-bypass-approvals-and-sandbox` (`cx`) | committed + launcher |
 | OpenCode | top-level + `build`/`plan` `permission.*: "allow"` | runtime `OPENCODE_CONFIG_CONTENT` allow-all (`oc`) | committed + launcher |
-| Gemini CLI | `general.defaultApprovalMode = "auto_edit"`, `security.disableYoloMode = false`, `security.toolSandboxing = false` | `GEMINI_SANDBOX=false gemini --approval-mode=yolo` (`gm`) | launcher (YOLO is CLI-only) |
+| Antigravity CLI | `general.defaultApprovalMode = "auto_edit"`, `security.disableYoloMode = false`, `security.toolSandboxing = false` | native `agy` runtime; full-auto flags are `NOT_PROVEN` until live Antigravity evidence is collected | committed config only |
 | MiMoCode | `.mimocode/mimocode.jsonc` permission ruleset `allow` for every key; `build`/`compose` agents `allow` | runtime `MIMOCODE_CONFIG_CONTENT` allow-all (`mm`) | committed + launcher |
 
 The Claude contract keeps `runtime_policy.id = "owner-full-auto-standard"` with
 aliases `yolo`, `full-auto`, and `dangerously-skip-permissions`. The root control
 plane enforces the cross-adapter posture through
 `scripts/validate_owner_full_auto_policy.py`, which now validates all five
-adapters and their `cx`/`cl`/`oc`/`gm`/`mm` launchers.
+adapters and their `cx`/`cl`/`oc`/`mm` launchers plus Antigravity's `agy`
+runtime baseline.
 
 ### Defensive carve-outs (not approval prompts)
 
