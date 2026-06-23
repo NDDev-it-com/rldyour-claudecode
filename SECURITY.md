@@ -4,12 +4,12 @@
 
 Only the current exact numeric product release tag receives security fixes.
 Historical plugin-scoped tags are not the primary public GitHub Release
-coordinate. The `1.5.x` line label tracks only the latest released patch, not
+coordinate. The `1.6.x` line label tracks only the latest released patch, not
 every historical patch in the line.
 
 | Version | Supported |
 |---------|-----------|
-| Current exact tag `1.5.2` | yes |
+| Current exact tag `1.6.0` | yes |
 | Older `1.1.*` tags | no; upgrade to current exact tag |
 | Older minor / major lines | no |
 
