@@ -7,6 +7,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 ## [Unreleased]
 
 
+## [1.6.0] - 2026-06-24
+
+### Changed
+
+- cmux protocol v3 projections and latest MCP runtime pins (chrome-devtools-mcp 1.4.0, context7 3.2.2)
+
 ## [1.5.2] - 2026-06-16
 
 ### Fixed
