@@ -32,7 +32,7 @@
     "chrome-devtools": {
       "command": "bunx",
       "args": [
-        "chrome-devtools-mcp@1.2.0",
+        "chrome-devtools-mcp@1.4.0",
         "--headless",
         "--isolated",
         "--no-usage-statistics",
@@ -42,7 +42,7 @@
     "context7": {
       "command": "bunx",
       "args": [
-        "@upstash/context7-mcp@3.2.1"
+        "@upstash/context7-mcp@3.2.2"
       ],
       "env": {
         "CONTEXT7_API_KEY": "${CONTEXT7_API_KEY}"
