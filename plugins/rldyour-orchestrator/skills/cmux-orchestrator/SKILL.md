@@ -1,6 +1,6 @@
 ---
 name: cmux-orchestrator
-description: "Оркестратор cmux v3 для Claude Code: macOS cmux orchestrator, multi-agent terminal workflow, видимый head terminal, typed task envelopes, report-authoritative completion. Используй для: cmux orchestrator, делегируй воркерам. EN: cmux v3 head, visible-terminal orchestration."
+description: "Оркестратор cmux v3 для Claude Code: macOS cmux orchestrator, multi-agent terminal workflow, видимый head terminal, typed task envelopes, report-authoritative completion. Используй для: cmux orchestrator, делегируй воркерам. EN triggers: cmux v3 head, visible-terminal orchestration. EN: cmux v3 head."
 ---
 
 # cmux-orchestrator

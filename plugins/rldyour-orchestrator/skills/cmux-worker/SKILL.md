@@ -1,6 +1,6 @@
 ---
 name: cmux-worker
-description: "Воркер cmux v3 для Claude Code: cmux worker role, typed task envelope, heartbeat, scoped JSON report, no push/fullrepo. Используй для: cmux worker, worker report. EN: cmux v3 worker."
+description: "Воркер cmux v3 для Claude Code: cmux worker role, typed task envelope, heartbeat, scoped JSON report, no push/fullrepo. Используй для: cmux worker, worker report. EN triggers: cmux v3 worker. EN: cmux v3 worker."
 ---
 
 # cmux-worker
