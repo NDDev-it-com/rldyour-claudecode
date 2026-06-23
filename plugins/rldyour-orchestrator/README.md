@@ -1,35 +1,27 @@
-# rldyour-orchestrator
+# rldyour cmux Orchestrator Projection
 
-macOS-only cmux orchestrator plugin: one user-facing orchestrator terminal
-delegates scoped tasks to worker terminals inside a single cmux workspace.
+This directory contains generated native skill projections for rldyour cmux orchestration.
 
-## Skills
+- Source: root `config/cmux-adapter-projections.json`.
+- Protocol: root cmux orchestration protocol `3.0.0`.
+- Do not edit generated projection files manually.
 
-- `cmux-orchestrator` - orchestrator duties: policy read, task decomposition,
-  delegation via `cmux send --surface` with per-task `RLDYOUR_TASK_ID` and
-  `RLDYOUR_WORKER_ALLOWED_PATHS`, observation via `cmux read-screen`/`cmux events`,
-  report collection, final validation and sync ownership.
-- `cmux-worker` - worker role: scoped work only, JSON report plus the mandatory
-  `cmux notify` exit-code completion signal, no push/fullrepo/system installs.
+## Native Adapter Notes
 
-## Activation Model
+- Claude Code may be a visible head or a visible worker when the root run manifest assigns that role.
+- Native Stop hooks must not create another global sync loop in worker mode; the head owns final sync.
 
-The orchestrator role is declarative: the user states the role explicitly when
-initializing the session (`/ry-init` with an orchestrator declaration). Without
-that declaration, and on sessions without this plugin, everything runs in
-standard mode - nothing breaks and no orchestrator behavior activates.
+## Current Implementation Status
 
-Worker terminals stay machine-identified through the launcher/layout
-environment (`RLDYOUR_EXECUTION_MODE=orchestrator`, `RLDYOUR_AGENT_ROLE=worker`,
-`RLDYOUR_WORKER_ID`) because worker restrictions are enforced by flow state
-scripts, not by conversation context.
+- `typed-task-report-protocol`: `IMPLEMENTED`.
+- `live-start-fail-closed`: `IMPLEMENTED`.
+- `compact-template`: `IMPLEMENTED`.
+- `workspace-group-topology`: `PLANNED`.
+- `delegation-command`: `PLANNED`.
+- `worktree-scheduler`: `PLANNED`.
+- `adapter-native-projections`: `IMPLEMENTED`.
+- `stop-finalization-receipt`: `PLANNED`.
 
-## Platform
+Treat `PLANNED` and `NOT_PROVEN` entries as unavailable in production.
 
-cmux is a macOS application (`manaflow-ai/cmux`). This plugin is installed only
-on macOS; Linux, WSL, and Windows installs skip it entirely.
-
-## Dependencies
-
-Depends on `rldyour-flow` for the Stop-lifecycle state machinery that enforces
-worker scope and post-task synchronization.
+The stable contract uses immutable task envelopes and schema-valid reports. Completion authority is the root schema-valid report; terminal input is only a wake-up channel and never carries task text or write scopes.
