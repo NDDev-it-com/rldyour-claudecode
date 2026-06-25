@@ -10,6 +10,7 @@ import subprocess
 from pathlib import Path
 from typing import Any
 
+
 SCHEMA_VERSION = 1
 TRACKED_POLICY = ".rldyour/project-policy.json"
 LOCAL_POLICY = ".rldyour/project-policy.local.json"
@@ -24,9 +25,8 @@ PROTECTED_BRANCHES = (
     "staging",
     "production",
     "prod",
-    "fullrepo",
 )
-WORKFLOW_BRANCH_PREFIXES = ("ai/", "claude/", "ry-", "rldyour/")
+WORKFLOW_BRANCH_PREFIXES = ("ai/", "codex/", "ry-", "rldyour/")
 
 DEFAULT_POLICY: dict[str, Any] = {
     "schema_version": SCHEMA_VERSION,
@@ -71,12 +71,10 @@ DEFAULT_POLICY: dict[str, Any] = {
         "owns_task_delegation": True,
         "owns_commits": True,
         "owns_push": True,
-        "owns_fullrepo": True,
         "owns_system_install": True,
         "worker_permissions": {
             "commit": "forbidden-unless-delegated",
             "push": "forbidden",
-            "fullrepo": "forbidden",
             "system_install": "forbidden",
             "branch_cleanup": "forbidden",
         },
@@ -94,31 +92,22 @@ DEFAULT_POLICY: dict[str, Any] = {
         "default_base_branch": "main",
         "default_integration_branch": "dev",
     },
-    "fullrepo": {
-        "mode": "auto",
-        "restore": True,
-        "publish": True,
-        "migrate_main": True,
-        "install_exclude": True,
-        "create_if_missing": False,
-        "block_stop": True,
-    },
     "normal_branch_policy": {
-        "agent_files": "strict-fullrepo-default",
-        "ai_marker_additions": "strict-fullrepo-default",
-        "instruction_docs": "auto",
+        "agent_files": "allowed",
+        "ai_marker_additions": "allowed",
+        "instruction_docs": "tracked-main",
         "runtime_markers": "forbidden",
         "secrets": "forbidden",
     },
     "instruction_docs": {
-        "mode": "auto",
+        "mode": "tracked-main",
         "codex": "AGENTS.md",
         "claude": ".claude/CLAUDE.md",
         "opencode": ".opencode/",
     },
     "serena": {
         "mode": "enabled",
-        "memory_storage": "fullrepo-auto",
+        "memory_storage": "tracked-main",
         "allow_memory_commits": True,
         "forbid_runtime_markers": True,
     },
@@ -134,7 +123,6 @@ DEFAULT_POLICY: dict[str, Any] = {
     "stop_hook": {
         "block_on_dirty_source": True,
         "block_on_ahead_behind": True,
-        "block_on_fullrepo": True,
         "block_on_branch_cleanup": False,
         "allow_same_fingerprint_after_report": True,
     },
@@ -151,7 +139,6 @@ KNOWN_KEYS: dict[str, set[str]] = {
         "cmux",
         "orchestrator",
         "branches",
-        "fullrepo",
         "normal_branch_policy",
         "instruction_docs",
         "serena",
@@ -198,7 +185,6 @@ KNOWN_KEYS: dict[str, set[str]] = {
         "owns_task_delegation",
         "owns_commits",
         "owns_push",
-        "owns_fullrepo",
         "owns_system_install",
         "worker_permissions",
         "concurrency",
@@ -206,7 +192,6 @@ KNOWN_KEYS: dict[str, set[str]] = {
     "orchestrator.worker_permissions": {
         "commit",
         "push",
-        "fullrepo",
         "system_install",
         "branch_cleanup",
     },
@@ -222,15 +207,6 @@ KNOWN_KEYS: dict[str, set[str]] = {
         "protected_branches",
         "default_base_branch",
         "default_integration_branch",
-    },
-    "fullrepo": {
-        "mode",
-        "restore",
-        "publish",
-        "migrate_main",
-        "install_exclude",
-        "create_if_missing",
-        "block_stop",
     },
     "normal_branch_policy": {
         "agent_files",
@@ -253,7 +229,6 @@ KNOWN_KEYS: dict[str, set[str]] = {
     "stop_hook": {
         "block_on_dirty_source",
         "block_on_ahead_behind",
-        "block_on_fullrepo",
         "block_on_branch_cleanup",
         "allow_same_fingerprint_after_report",
     },
@@ -279,21 +254,19 @@ ALLOWED_VALUES: dict[tuple[str, str], set[str]] = {
     ("orchestrator", "agent"): {"codex", "claude", "opencode"},
     ("orchestrator.worker_permissions", "commit"): {"forbidden", "forbidden-unless-delegated", "delegated"},
     ("orchestrator.worker_permissions", "push"): {"forbidden", "delegated"},
-    ("orchestrator.worker_permissions", "fullrepo"): {"forbidden", "delegated"},
     ("orchestrator.worker_permissions", "system_install"): {"forbidden", "delegated"},
     ("orchestrator.worker_permissions", "branch_cleanup"): {"forbidden", "delegated"},
     ("orchestrator.concurrency", "default_strategy"): {"single-writer", "worktree-per-worker"},
     ("orchestrator.concurrency", "parallel_same_file_edits"): {"forbidden"},
     ("orchestrator.concurrency", "commit_owner"): {"orchestrator", "delegated-worker"},
-    ("fullrepo", "mode"): {"required", "auto", "advisory", "disabled"},
-    ("normal_branch_policy", "agent_files"): {"allowed", "strict-fullrepo-default"},
-    ("normal_branch_policy", "ai_marker_additions"): {"allowed", "strict-fullrepo-default"},
-    ("normal_branch_policy", "instruction_docs"): {"auto", "tracked-normal-branch", "fullrepo-managed", "disabled"},
+    ("normal_branch_policy", "agent_files"): {"allowed", "strict"},
+    ("normal_branch_policy", "ai_marker_additions"): {"allowed", "strict"},
+    ("normal_branch_policy", "instruction_docs"): {"tracked-main", "disabled"},
     ("normal_branch_policy", "runtime_markers"): {"forbidden"},
     ("normal_branch_policy", "secrets"): {"forbidden"},
-    ("instruction_docs", "mode"): {"auto", "tracked-normal-branch", "fullrepo-managed", "disabled"},
+    ("instruction_docs", "mode"): {"tracked-main", "disabled"},
     ("serena", "mode"): {"enabled", "disabled"},
-    ("serena", "memory_storage"): {"fullrepo-auto", "fullrepo", "normal-branch", "disabled"},
+    ("serena", "memory_storage"): {"tracked-main", "disabled"},
     ("branch_cleanup", "mode"): {"disabled", "advisory", "strict"},
 }
 
@@ -312,16 +285,9 @@ BOOL_FIELDS = {
     ("orchestrator", "owns_task_delegation"),
     ("orchestrator", "owns_commits"),
     ("orchestrator", "owns_push"),
-    ("orchestrator", "owns_fullrepo"),
     ("orchestrator", "owns_system_install"),
     ("orchestrator.concurrency", "read_only_workers_same_worktree"),
     ("orchestrator.concurrency", "write_workers_require_worktree_or_file_scope"),
-    ("fullrepo", "restore"),
-    ("fullrepo", "publish"),
-    ("fullrepo", "migrate_main"),
-    ("fullrepo", "install_exclude"),
-    ("fullrepo", "create_if_missing"),
-    ("fullrepo", "block_stop"),
     ("serena", "allow_memory_commits"),
     ("serena", "forbid_runtime_markers"),
     ("branch_cleanup", "block_stop"),
@@ -329,7 +295,6 @@ BOOL_FIELDS = {
     ("branch_cleanup", "delete_remote_branches"),
     ("stop_hook", "block_on_dirty_source"),
     ("stop_hook", "block_on_ahead_behind"),
-    ("stop_hook", "block_on_fullrepo"),
     ("stop_hook", "block_on_branch_cleanup"),
     ("stop_hook", "allow_same_fingerprint_after_report"),
 }
@@ -483,14 +448,9 @@ def _validate_effective(policy: dict[str, Any], *, strict: bool) -> tuple[list[s
     if isinstance(execution, dict):
         worker_min = execution.get("worker_count_min")
         worker_max = execution.get("worker_count_max")
-        if (
-            isinstance(worker_min, int)
-            and not isinstance(worker_min, bool)
-            and isinstance(worker_max, int)
-            and not isinstance(worker_max, bool)
-            and worker_min > worker_max
-        ):
-            errors.append("execution.worker_count_min must be <= execution.worker_count_max")
+        if isinstance(worker_min, int) and not isinstance(worker_min, bool) and isinstance(worker_max, int) and not isinstance(worker_max, bool):
+            if worker_min > worker_max:
+                errors.append("execution.worker_count_min must be <= execution.worker_count_max")
 
     return errors, warnings
 
@@ -512,9 +472,6 @@ def _apply_safe_invalid_fallback(policy: dict[str, Any]) -> dict[str, Any]:
     fallback["normal_branch_policy"]["secrets"] = "forbidden"
     fallback.setdefault("serena", {})
     fallback["serena"]["forbid_runtime_markers"] = True
-    fallback.setdefault("fullrepo", {})
-    if fallback["fullrepo"].get("mode") not in {"required", "auto", "advisory", "disabled"}:
-        fallback["fullrepo"]["mode"] = "auto"
     fallback.setdefault("branch_cleanup", {})
     if fallback["branch_cleanup"].get("mode") not in {"disabled", "advisory", "strict"}:
         fallback["branch_cleanup"]["mode"] = "advisory"
@@ -590,7 +547,6 @@ def validate_policy_file(path: Path, *, strict: bool = False) -> dict[str, Any]:
 
 def shell_payload(policy: dict[str, Any]) -> dict[str, str]:
     effective = policy.get("effective", {})
-    fullrepo = effective.get("fullrepo", {})
     normal = effective.get("normal_branch_policy", {})
     instruction_docs = effective.get("instruction_docs", {})
     branch_cleanup = effective.get("branch_cleanup", {})
@@ -599,18 +555,11 @@ def shell_payload(policy: dict[str, Any]) -> dict[str, str]:
         "RLDYOUR_PROJECT_POLICY_SOURCE": str(policy.get("source", "")),
         "RLDYOUR_PROJECT_POLICY_SOURCE_KIND": str(policy.get("source_kind", "")),
         "RLDYOUR_PROJECT_POLICY_VALID": "1" if policy.get("valid") else "0",
-        "RLDYOUR_FULLREPO_MODE": str(fullrepo.get("mode", "auto")),
-        "RLDYOUR_FULLREPO_RESTORE": "1" if fullrepo.get("restore") else "0",
-        "RLDYOUR_FULLREPO_PUBLISH": "1" if fullrepo.get("publish") else "0",
-        "RLDYOUR_FULLREPO_MIGRATE_MAIN": "1" if fullrepo.get("migrate_main") else "0",
-        "RLDYOUR_FULLREPO_INSTALL_EXCLUDE": "1" if fullrepo.get("install_exclude") else "0",
-        "RLDYOUR_FULLREPO_CREATE_IF_MISSING": "1" if fullrepo.get("create_if_missing") else "0",
-        "RLDYOUR_AGENT_FILES_POLICY": str(normal.get("agent_files", "strict-fullrepo-default")),
-        "RLDYOUR_AI_MARKER_ADDITIONS_POLICY": str(normal.get("ai_marker_additions", "strict-fullrepo-default")),
-        "RLDYOUR_INSTRUCTION_DOCS_MODE": str(instruction_docs.get("mode", "auto")),
+        "RLDYOUR_AGENT_FILES_POLICY": str(normal.get("agent_files", "allowed")),
+        "RLDYOUR_AI_MARKER_ADDITIONS_POLICY": str(normal.get("ai_marker_additions", "allowed")),
+        "RLDYOUR_INSTRUCTION_DOCS_MODE": str(instruction_docs.get("mode", "tracked-main")),
         "RLDYOUR_BRANCH_CLEANUP_MODE": str(branch_cleanup.get("mode", "advisory")),
         "RLDYOUR_BRANCH_CLEANUP_BLOCK_STOP": "1" if branch_cleanup.get("block_stop") else "0",
-        "RLDYOUR_STOP_BLOCK_ON_FULLREPO": "1" if stop_hook.get("block_on_fullrepo") else "0",
         "RLDYOUR_STOP_BLOCK_ON_BRANCH_CLEANUP": "1" if stop_hook.get("block_on_branch_cleanup") else "0",
         "RLDYOUR_STOP_ALLOW_SAME_FINGERPRINT_AFTER_REPORT": "1"
         if stop_hook.get("allow_same_fingerprint_after_report")
@@ -620,15 +569,12 @@ def shell_payload(policy: dict[str, Any]) -> dict[str, str]:
 
 def explain(policy: dict[str, Any]) -> str:
     effective = policy.get("effective", {})
-    fullrepo = effective.get("fullrepo", {})
     normal = effective.get("normal_branch_policy", {})
     instruction_docs = effective.get("instruction_docs", {})
     branch_cleanup = effective.get("branch_cleanup", {})
     lines = [
         f"policy source: {policy.get('source')} ({policy.get('source_kind')})",
         f"valid: {policy.get('valid')}",
-        f"fullrepo.mode: {fullrepo.get('mode')}",
-        f"fullrepo.create_if_missing: {fullrepo.get('create_if_missing')}",
         f"normal_branch_policy.agent_files: {normal.get('agent_files')}",
         f"normal_branch_policy.ai_marker_additions: {normal.get('ai_marker_additions')}",
         f"instruction_docs.mode: {instruction_docs.get('mode')}",

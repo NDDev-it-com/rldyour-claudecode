@@ -38,7 +38,7 @@ Fix quality issues inside the touched scope and affected integration path. If se
 Use [Conventional Commits v1.0.0](https://www.conventionalcommits.org/en/v1.0.0/) - stable as of May 2026. Eleven canonical types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, `revert`. Subject ≤72 chars. Scope optional in parentheses. Use `!` after type/scope or `BREAKING CHANGE:` footer for breaking changes.
 
 Clean history is required. Split unrelated implementation, tests, validators,
-docs/instructions, license/metadata, generated artifacts, and Serena/fullrepo
+docs/instructions, license/metadata, generated artifacts, and Serena/tracked-context
 sync into separate commits when they are independently reviewable. Do not
 rewrite already-pushed history without explicit owner approval; use a follow-up
 commit for published branches.

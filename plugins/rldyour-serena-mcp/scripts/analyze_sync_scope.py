@@ -22,7 +22,7 @@ MEMORY_TAXONOMY = {
         {"area": "MCP", "purpose": "MCP transport, runtime pins, capability smoke contracts"},
         {"area": "SERENA", "purpose": "Serena memory sync, freshness state, analyzer contracts"},
         {"area": "HOOKS", "purpose": "Claude Code lifecycle hooks and advisory gate coordination"},
-        {"area": "FLOW", "purpose": "ry-* SDLC workflow, fullrepo, worktree, post-task sync"},
+        {"area": "FLOW", "purpose": "ry-* SDLC workflow, tracked context, worktree, post-task sync"},
         {"area": "DOCS", "purpose": "AGENTS.md, CLAUDE.md, durable instruction policy"},
         {"area": "RELEASE", "purpose": "versioning, changelog, validation and release gates"},
         {"area": "TECHDEBT", "purpose": "open debt, closed error patterns, anti-regression rules"},

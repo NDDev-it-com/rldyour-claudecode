@@ -3,16 +3,6 @@ set -euo pipefail
 IFS=$'\n\t'
 unset CDPATH
 
-# Defensive python3 resolution: subprocess shells (e.g. Claude Code hook runner)
-# may have a sanitized PATH that omits ~/.local/bin, and uv-managed Python
-# symlinks can be transiently broken during interpreter upgrades. Resolve once
-# and exit 0 if no working interpreter exists - hooks must stay non-blocking
-# when Python is unavailable. Canonical pattern (tw93/Mole, rsyslog).
-PYTHON_BIN="${PYTHON_BIN:-$(command -v python3 2>/dev/null || command -v python 2>/dev/null || true)}"
-if [ -z "${PYTHON_BIN}" ] || [ ! -x "${PYTHON_BIN}" ]; then
-  exit 0
-fi
-
 if [ "${RLDYOUR_SKIP_FLOW_SESSION_CONTEXT:-0}" = "1" ]; then
   exit 0
 fi
@@ -26,197 +16,267 @@ cd "$ROOT"
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PLUGIN_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
-STATE_SCRIPT="$PLUGIN_DIR/scripts/flow_post_task_state.py"
-HOOK_INPUT=$(cat 2>/dev/null || true)
 
-if [ ! -f "$STATE_SCRIPT" ]; then
-  exit 0
-fi
+HOOK_INPUT_FILE=$(mktemp "${TMPDIR:-/tmp}/rldyour-session-context-input.XXXXXX")
+trap 'rm -f "$HOOK_INPUT_FILE"' EXIT
+cat > "$HOOK_INPUT_FILE"
 
-STATE_JSON=$("${PYTHON_BIN}" "$STATE_SCRIPT" 2>/dev/null || true)
-if [ -z "$STATE_JSON" ]; then
-  exit 0
-fi
+python3 - "$ROOT" "$HOOK_INPUT_FILE" "$PLUGIN_DIR/scripts/project_flow_policy.py" <<'PY'
+from __future__ import annotations
 
-SOURCE=$(printf "%s" "$HOOK_INPUT" | "${PYTHON_BIN}" -c '
 import json
+import os
+import subprocess
 import sys
+from pathlib import Path
 
-try:
-    payload = json.load(sys.stdin)
-except Exception:
-    payload = {}
+ROOT = Path(sys.argv[1])
+HOOK_INPUT = Path(sys.argv[2]).read_text(encoding="utf-8", errors="replace")
+POLICY_SCRIPT = Path(sys.argv[3])
+GIT_TIMEOUT = 0.8
+DOC_FILES = ("AGENTS.md", ".claude/CLAUDE.md", "CLAUDE.md", "REVIEW.md")
 
-source = payload.get("source", "unknown")
-print(source if isinstance(source, str) else "unknown")
-' 2>/dev/null || echo "unknown")
 
-CONTEXT=$("${PYTHON_BIN}" - "$ROOT" "$SOURCE" "$STATE_JSON" <<'PY'
-import json
-import sys
+def parse_source(raw: str) -> str:
+    try:
+        payload = json.loads(raw)
+    except Exception:
+        return "unknown"
+    source = payload.get("source", "unknown")
+    return source if isinstance(source, str) else "unknown"
 
-root, source, raw_state = sys.argv[1:4]
 
-try:
-    state = json.loads(raw_state)
-except json.JSONDecodeError:
-    raise SystemExit(0)
+def git(args: list[str], timeout: float = GIT_TIMEOUT) -> tuple[int, str]:
+    try:
+        proc = subprocess.run(
+            ["git", *args],
+            cwd=ROOT,
+            check=False,
+            capture_output=True,
+            text=True,
+            timeout=timeout,
+        )
+    except subprocess.TimeoutExpired:
+        return 124, ""
+    return proc.returncode, proc.stdout.rstrip("\n")
 
-dirty_files = state.get("dirty_files", [])
-if not isinstance(dirty_files, list):
-    dirty_files = []
 
-shown_dirty = dirty_files[:12]
-remaining_dirty = max(len(dirty_files) - len(shown_dirty), 0)
+def git_stdout(args: list[str], default: str = "") -> str:
+    status, output = git(args)
+    return output if status == 0 and output else default
 
-serena_state = state.get("serena_state", {})
-if not isinstance(serena_state, dict):
-    serena_state = {}
 
-serena_current = state.get("serena_current", True)
-serena_text = "current" if serena_current else "stale"
-memory_count = serena_state.get("memory_count")
-newest_synced = serena_state.get("newest_synced_sha") or "none"
-fullrepo_state = state.get("fullrepo_state", {})
-if not isinstance(fullrepo_state, dict):
-    fullrepo_state = {}
-tracked_agent_paths = fullrepo_state.get("tracked_agent_paths", [])
-if not isinstance(tracked_agent_paths, list):
-    tracked_agent_paths = []
-branch_cleanup_state = state.get("branch_cleanup_state", {})
-if not isinstance(branch_cleanup_state, dict):
-    branch_cleanup_state = {}
-project_policy = state.get("project_policy", {})
-if not isinstance(project_policy, dict):
-    project_policy = {}
-effective_policy = project_policy.get("effective", {})
-if not isinstance(effective_policy, dict):
-    effective_policy = {}
-fullrepo_policy = effective_policy.get("fullrepo", {})
-if not isinstance(fullrepo_policy, dict):
-    fullrepo_policy = {}
-normal_policy = effective_policy.get("normal_branch_policy", {})
-if not isinstance(normal_policy, dict):
-    normal_policy = {}
-instruction_policy = effective_policy.get("instruction_docs", {})
-if not isinstance(instruction_policy, dict):
-    instruction_policy = {}
-cleanup_policy = effective_policy.get("branch_cleanup", {})
-if not isinstance(cleanup_policy, dict):
-    cleanup_policy = {}
-execution_state = state.get("execution", {})
-if not isinstance(execution_state, dict):
-    execution_state = {}
-cmux_policy = effective_policy.get("cmux", {})
-if not isinstance(cmux_policy, dict):
-    cmux_policy = {}
-local_merged = branch_cleanup_state.get("local_merged_branches", [])
-if not isinstance(local_merged, list):
-    local_merged = []
-remote_merged = branch_cleanup_state.get("remote_merged_branches", [])
-if not isinstance(remote_merged, list):
-    remote_merged = []
-worktree_cleanup = branch_cleanup_state.get("worktree_cleanup_candidates", [])
-if not isinstance(worktree_cleanup, list):
-    worktree_cleanup = []
+def split_porcelain_path(line: str) -> str:
+    path = line[3:] if len(line) > 3 else line
+    if " -> " in path:
+        path = path.split(" -> ", 1)[1]
+    return path.strip()
 
-lines = [
-    "rldyour-flow session context (non-blocking, read-only):",
-    f"- Session source: {source}.",
-    f"- Repository: {root}.",
-    (
-        "- Git: "
-        f"branch {state.get('branch') or 'unknown'}, "
-        f"HEAD {state.get('head_sha') or 'unknown'}, "
-        f"upstream {state.get('upstream') or 'none'}, "
-        f"ahead {state.get('ahead', 0)}, behind {state.get('behind', 0)}."
-    ),
-    f"- Worktrees detected: {state.get('worktree_count', 0)}.",
-    (
-        "- Serena memories: "
-        f"{serena_text}, memory_count {memory_count if memory_count is not None else 'unknown'}, "
-        f"newest synced commit {newest_synced}."
-    ),
-    (
-        "- Fullrepo sync: "
-        f"branch {fullrepo_state.get('fullrepo_branch', 'fullrepo')}, "
-        f"remote exists {bool(fullrepo_state.get('remote_fullrepo_exists'))}, "
-        f"exclude installed {bool(fullrepo_state.get('exclude_installed', False))}, "
-        f"tracked agent-only paths {len(tracked_agent_paths)}."
-    ),
-    (
-        "- Project policy: "
-        f"source {project_policy.get('source', 'built-in defaults')}, "
-        f"fullrepo.mode {fullrepo_policy.get('mode', 'auto')}, "
-        f"agent_files {normal_policy.get('agent_files', 'strict-fullrepo-default')}, "
-        f"instruction_docs.mode {instruction_policy.get('mode', 'auto')}, "
-        f"branch_cleanup.mode {cleanup_policy.get('mode', 'advisory')}."
-    ),
-    (
-        "- Execution: "
-        f"mode {execution_state.get('execution_mode', 'standard')}, "
-        f"agent_role {execution_state.get('agent_role', 'standalone')}, "
-        f"cmux.enabled {cmux_policy.get('enabled', False)}, "
-        f"workspace {execution_state.get('cmux_workspace_id') or 'none'}, "
-        f"surface {execution_state.get('cmux_surface_id') or 'none'}."
-    ),
-    (
-        "- Branch cleanup: "
-        f"base {branch_cleanup_state.get('base') or 'unknown'}, "
-        f"local merged {len(local_merged)}, "
-        f"remote merged {len(remote_merged)}, "
-        f"worktree candidates {len(worktree_cleanup)}."
-    ),
-]
 
-if dirty_files:
-    lines.append(f"- Dirty files ({len(dirty_files)}):")
-    lines.extend(f"  - {path}" for path in shown_dirty)
-    if remaining_dirty:
-        lines.append(f"  - ... plus {remaining_dirty} more")
-else:
-    lines.append("- Dirty files: none.")
+def dirty_paths() -> tuple[list[str], bool]:
+    status, output = git(["status", "--porcelain=v1", "--untracked-files=no"], timeout=1.2)
+    if status == 124:
+        return [], True
+    if status != 0 or not output:
+        return [], False
+    return [split_porcelain_path(line) for line in output.splitlines() if line.strip()], False
 
-doc_files = state.get("doc_files_present", [])
-if doc_files:
-    lines.append("- Project instruction docs present: " + ", ".join(str(item) for item in doc_files) + ".")
 
-if state.get("needs_flow_sync"):
-    lines.append(
-        "- Flow sync signal: pending. Before final delivery, run flow-post-task-sync after Serena memories are current and follow the effective project policy."
+def ahead_behind(upstream: str) -> tuple[int, int, bool]:
+    if not upstream:
+        return 0, 0, False
+    status, output = git(["rev-list", "--left-right", "--count", f"HEAD...{upstream}"])
+    if status == 124:
+        return 0, 0, True
+    if status != 0 or not output:
+        return 0, 0, False
+    parts = output.split()
+    if len(parts) != 2:
+        return 0, 0, False
+    try:
+        return int(parts[0]), int(parts[1]), False
+    except ValueError:
+        return 0, 0, False
+
+
+def worktree_count() -> tuple[int, bool]:
+    status, output = git(["worktree", "list", "--porcelain"])
+    if status == 124:
+        return 0, True
+    if status != 0 or not output:
+        return 1, False
+    return max(1, sum(1 for line in output.splitlines() if line.startswith("worktree "))), False
+
+
+def tracked_agent_count() -> tuple[int, bool]:
+    status, output = git(["ls-files", "--", "AGENTS.md", ".claude/CLAUDE.md", "CLAUDE.md", "REVIEW.md", ".serena"])
+    if status == 124:
+        return 0, True
+    if status != 0 or not output:
+        return 0, False
+    return len([line for line in output.splitlines() if line.strip()]), False
+
+
+def memory_count() -> int | None:
+    memories = ROOT / ".serena" / "memories"
+    if not memories.is_dir():
+        return None
+    try:
+        return sum(1 for path in memories.rglob("*.md") if path.is_file())
+    except OSError:
+        return None
+
+
+def project_policy() -> dict:
+    if not POLICY_SCRIPT.is_file():
+        return {}
+    try:
+        proc = subprocess.run(
+            ["python3", str(POLICY_SCRIPT), "--json"],
+            cwd=ROOT,
+            check=False,
+            capture_output=True,
+            text=True,
+            timeout=1.2,
+        )
+    except subprocess.TimeoutExpired:
+        return {}
+    if proc.returncode != 0 and not proc.stdout.strip():
+        return {}
+    try:
+        payload = json.loads(proc.stdout)
+    except json.JSONDecodeError:
+        return {}
+    return payload if isinstance(payload, dict) else {}
+
+
+def main() -> int:
+    source = parse_source(HOOK_INPUT)
+    branch = git_stdout(["branch", "--show-current"], "detached")
+    head = git_stdout(["rev-parse", "--short=7", "HEAD"], "unknown")
+    upstream = git_stdout(["rev-parse", "--abbrev-ref", "--symbolic-full-name", "@{upstream}"], "none")
+    if upstream == "none":
+        ahead, behind, ahead_timeout = 0, 0, False
+    else:
+        ahead, behind, ahead_timeout = ahead_behind(upstream)
+    dirty, dirty_timeout = dirty_paths()
+    shown_dirty = dirty[:12]
+    remaining_dirty = max(len(dirty) - len(shown_dirty), 0)
+    wt_count, wt_timeout = worktree_count()
+    tracked_agents, tracked_timeout = tracked_agent_count()
+    policy = project_policy()
+    effective_policy = policy.get("effective", {}) if isinstance(policy.get("effective"), dict) else {}
+    normal_policy = (
+        effective_policy.get("normal_branch_policy", {})
+        if isinstance(effective_policy.get("normal_branch_policy"), dict)
+        else {}
     )
-else:
-    lines.append("- Flow sync signal: clean.")
+    branch_cleanup_policy = (
+        effective_policy.get("branch_cleanup", {})
+        if isinstance(effective_policy.get("branch_cleanup"), dict)
+        else {}
+    )
+    execution_policy = (
+        effective_policy.get("execution", {})
+        if isinstance(effective_policy.get("execution"), dict)
+        else {}
+    )
+    cmux_policy = (
+        effective_policy.get("cmux", {})
+        if isinstance(effective_policy.get("cmux"), dict)
+        else {}
+    )
+    instruction_docs_policy = (
+        effective_policy.get("instruction_docs", {})
+        if isinstance(effective_policy.get("instruction_docs"), dict)
+        else {}
+    )
+    docs_present = [path for path in DOC_FILES if (ROOT / path).is_file()]
+    mem_count = memory_count()
+    serena_sync_marker = (ROOT / ".serena" / ".serena_sync_state.json").is_file()
+    flow_marker = (ROOT / ".serena" / ".flow_sync_marker").is_file() or (
+        ROOT / ".serena" / ".flow_post_task_state.json"
+    ).is_file()
+    needs_attention = bool(dirty or ahead or behind or serena_sync_marker or flow_marker)
 
-lines.extend(
-    [
-        "- If a task starts with insufficient context, trigger scoped ry-init before editing.",
-        "- At init, restore agent-only context from fullrepo only when effective project policy allows it.",
-        "- Before edits, pass the context sufficiency gate: code paths, symbols, data contracts, integration points, existing patterns, checks, and research evidence must be known or explicitly marked as unknown.",
-        "- This context is advisory only. Do not block execution only because this hook emitted warnings.",
+    lines = [
+        "rldyour-flow session context (fast, offline, read-only):",
+        f"- Session source: {source}.",
+        f"- Repository: {ROOT}.",
+        (
+            "- Git: "
+            f"branch {branch}, HEAD {head}, upstream {upstream}, "
+            f"ahead {ahead}, behind {behind}."
+        ),
+        f"- Worktrees detected: {'unknown' if wt_timeout else wt_count}.",
+        (
+            "- Serena memories: "
+            f"{'sync marker pending' if serena_sync_marker else 'no sync marker'}, "
+            f"memory_count {mem_count if mem_count is not None else 'unknown'}."
+        ),
+        (
+            "- Agent context: tracked normally on main "
+            f"(tracked agent-context paths {'unknown' if tracked_timeout else tracked_agents})."
+        ),
+        (
+            "- Project policy: "
+            f"source {policy.get('source', 'built-in defaults')}, "
+            f"agent_files {normal_policy.get('agent_files', 'allowed')}, "
+            f"instruction_docs.mode {instruction_docs_policy.get('mode', 'tracked-main')}, "
+            f"branch_cleanup.mode {branch_cleanup_policy.get('mode', 'advisory')}."
+        ),
+        (
+            "- Execution policy: "
+            f"mode {os.environ.get('RLDYOUR_EXECUTION_MODE') or execution_policy.get('mode', 'standard')}, "
+            f"agent_role {os.environ.get('RLDYOUR_AGENT_ROLE') or execution_policy.get('agent_role', 'auto')}, "
+            f"cmux.enabled {cmux_policy.get('enabled', False)}, "
+            f"workspace {os.environ.get('CMUX_WORKSPACE_ID') or 'none'}, "
+            f"surface {os.environ.get('CMUX_SURFACE_ID') or 'none'}."
+        ),
+        "- Branch cleanup: not evaluated during SessionStart; run flow-post-task-sync before final delivery.",
     ]
-)
 
-print("\n".join(lines))
-PY
-)
+    if ahead_timeout:
+        lines.append("- Git upstream drift check timed out; treat ahead/behind as unknown until ry-init.")
+    if dirty_timeout:
+        lines.append("- Dirty file check timed out; inspect git status during ry-init.")
+    elif dirty:
+        lines.append(f"- Tracked dirty files ({len(dirty)}):")
+        lines.extend(f"  - {path}" for path in shown_dirty)
+        if remaining_dirty:
+            lines.append(f"  - ... plus {remaining_dirty} more")
+    else:
+        lines.append("- Tracked dirty files: none.")
 
-if [ -z "$CONTEXT" ]; then
-  exit 0
-fi
+    if docs_present:
+        lines.append("- Project instruction docs present: " + ", ".join(docs_present) + ".")
 
-"${PYTHON_BIN}" - "$CONTEXT" <<'PY'
-import json
-import sys
+    if needs_attention:
+        lines.append("- Flow sync signal: maybe pending. Before final delivery, run flow-post-task-sync after Serena memories are current and follow the effective project policy.")
+    else:
+        lines.append("- Flow sync signal: no startup marker or tracked dirty signal detected.")
 
-print(
-    json.dumps(
-        {
-            "hookSpecificOutput": {
-                "hookEventName": "SessionStart",
-                "additionalContext": sys.argv[1],
-            }
-        }
+    lines.extend(
+        [
+            "- If a task starts with insufficient context, trigger scoped ry-init before editing.",
+            "- Agent context (.serena/, AGENTS.md, .claude/) is tracked normally on main; read it directly from the checked-out tree.",
+            "- Before edits, pass the context sufficiency gate: code paths, symbols, data contracts, integration points, existing patterns, checks, and research evidence must be known or explicitly marked as unknown.",
+            "- This context is advisory only. Do not block execution only because this hook emitted warnings.",
+        ]
     )
-)
+
+    print(
+        json.dumps(
+            {
+                "hookSpecificOutput": {
+                    "hookEventName": "SessionStart",
+                    "additionalContext": "\n".join(lines),
+                }
+            }
+        )
+    )
+    return 0
+
+
+raise SystemExit(main())
 PY

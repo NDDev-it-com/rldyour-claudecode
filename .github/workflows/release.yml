@@ -91,14 +91,6 @@ jobs:
       - name: Install Python deps for schema validation
         run: pip install --user 'jsonschema>=4.21' 'attrs>=23.2'
 
-      - name: Restore agent-only files from origin/fullrepo
-        # AGENTS.md, .claude/CLAUDE.md, .serena/memories/*, .serena/project.yml
-        # live on the `fullrepo` branch (ADR-0001). validate_marketplace.sh's
-        # "Instruction docs presence" step requires them via --require-agent-docs,
-        # so they must be restored into the runner worktree before the harness runs.
-        # --restore never publishes; it only fetches and writes agent-only paths.
-        run: python3 plugins/rldyour-flow/scripts/fullrepo_sync.py --restore
-
       - name: Validate marketplace (full harness)
         run: bash scripts/validate_marketplace.sh
 

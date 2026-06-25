@@ -2,15 +2,15 @@
 
 Primary sources used for this workflow:
 
+- OpenAI Codex AGENTS.md: https://developers.openai.com/codex/guides/agents-md
+- OpenAI Codex Skills: https://developers.openai.com/codex/skills
+- OpenAI Codex Hooks: https://developers.openai.com/codex/hooks
+- OpenAI Codex best practices: https://developers.openai.com/codex/learn/best-practices
+- OpenAI Codex Subagents: https://developers.openai.com/codex/subagents
 - Claude Code memory and CLAUDE.md: https://code.claude.com/docs/en/memory
 - Claude Code best practices: https://code.claude.com/docs/en/best-practices
 - Claude Code extension model: https://code.claude.com/docs/en/features-overview
 - Claude Code hooks: https://code.claude.com/docs/en/hooks
-- Claude Code plugins reference: https://code.claude.com/docs/en/plugins-reference
-- Claude Code subagents: https://code.claude.com/docs/en/sub-agents
-- Claude Code skills: https://code.claude.com/docs/en/skills
-- Claude Code slash commands: https://code.claude.com/docs/en/slash-commands
-- AGENTS.md cross-tool standard: https://agents.md/
 - Git ignore rules: https://git-scm.com/docs/gitignore
 - Git push force-with-lease: https://git-scm.com/docs/git-push
 - GitHub protected branches: https://docs.github.com/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches
@@ -28,11 +28,9 @@ Primary sources used for this workflow:
 Engineering conclusions:
 
 - Skills should stay focused and use references/scripts for progressive disclosure.
-- Hooks should be deterministic and non-destructive; they should ask Claude Code to continue rather than silently mutating code.
-- Multiple Stop hooks can run independently, so the registered Flow Stop hook uses `stop_lifecycle_dispatcher.sh` to run Serena before Flow while preserving state checks and loop markers (`stop_hook_active` field on stdin).
+- Hooks should be deterministic and non-destructive; they should ask Codex to continue rather than silently mutating code.
+- Multiple Stop hooks run independently, so post-task sync must coordinate with Serena using state checks and loop markers.
 - Subagents are useful for parallel reviews, but prompts must be self-contained and bounded.
-- `AGENTS.md` is the concise root project-instruction file (cross-tool standard, see https://agents.md/) while `.claude/CLAUDE.md` is the Claude Code-native deep project memory in rldyour projects. Keep both independently useful instead of reducing one to a thin import of the other.
-- `.git/info/exclude` is local exclude state, so it is appropriate for per-repository agent-only files that should exist locally but not in normal branch history.
-- Use `--force-with-lease` for generated `fullrepo` snapshots so unexpected remote updates are not overwritten silently.
-- Reviewer subagents (`agents/*.md`) are preferred over flag-disabled skills for orchestrated-only review tracks because Claude Code's plugin `disable-model-invocation` flag has known limitations as of May 2026.
-- PostToolUse `additionalContext` injection has known issues; PreToolUse with matcher-based filtering is more reliable for command intercept patterns.
+- `AGENTS.md` is Codex-native and `.claude/CLAUDE.md` is Claude Code-native in rldyour projects. Keep both optimized for their own CLI instead of reducing one to a thin import of the other.
+- Agent context (`.serena/`, `AGENTS.md`, `.claude/`) is tracked normally on `main` as ordinary source; only runtime-local cache/state/markers stay gitignored.
+- Use `--force-with-lease` instead of a blind `--force` for any rare force update so unexpected remote changes are not overwritten silently. Never force-push `main`.

@@ -189,11 +189,6 @@ def fake_repo(tmp_path: Path) -> Path:
     )
     flow_scripts_dir = tmp_path / "plugins" / "rldyour-flow" / "scripts"
     flow_scripts_dir.mkdir(parents=True)
-    (flow_scripts_dir / "fullrepo_sync.py").write_text(
-        'AGENT_ONLY_PATTERNS = ("AGENTS.md", ".codex/**")\n'
-        'RUNTIME_EXCLUDE_PATTERNS = (".serena/.gitignore",)\n',
-        encoding="utf-8",
-    )
     (config_dir / "marketplace-policy.json").write_text(
         '{'
         '"mcp_owner": "rldyour-mcps",'
@@ -201,7 +196,7 @@ def fake_repo(tmp_path: Path) -> Path:
         '"plugin_dependencies": {'
         '"sample-plugin": [], "rldyour-mcps": [], "rldyour-flow": []'
         '},'
-        '"agent_only_path_globs": ["AGENTS.md", ".codex/**"],'
+        '"tracked_context_globs": ["AGENTS.md", ".serena/memories/**"],'
         '"runtime_exclude_globs": [".serena/.gitignore"]'
         '}',
         encoding="utf-8",

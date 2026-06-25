@@ -1,6 +1,6 @@
 ---
 name: cmux-worker
-description: "Воркер cmux v3 для Claude Code: cmux worker role, typed task envelope, heartbeat, scoped JSON report, no push/fullrepo. Используй для: cmux worker, worker report. EN triggers: cmux v3 worker. EN: cmux v3 worker."
+description: "Воркер cmux v3 для Claude Code: cmux worker role, typed task envelope, heartbeat, scoped JSON report, no push/tracked-context. Используй для: cmux worker, worker report. EN triggers: cmux v3 worker. EN: cmux v3 worker."
 ---
 
 # cmux-worker
@@ -52,7 +52,7 @@ Treat `PLANNED` and `NOT_PROVEN` entries as unavailable in production.
 
 ## Forbidden Actions
 
-- Do not push, force-push, tag, publish fullrepo, delete branches, mutate project policy, run system install, or run final sync.
+- Do not push, force-push, tag, publish tracked-context, delete branches, mutate project policy, run system install, or run final sync.
 - Do not delegate nested visible workers.
 - Do not create hidden or daemon-style orchestration processes.
 - Do not treat native subagents, compose jobs, hooks, or background tasks as rldyour cmux workers.

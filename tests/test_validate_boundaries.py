@@ -20,37 +20,34 @@ def _run(fake_repo: Path) -> subprocess.CompletedProcess[str]:
 
 
 def _load_policy(repo: Path) -> dict[str, object]:
-    policy = repo / "config" / "marketplace-policy.json"
-    return json.loads(policy.read_text(encoding="utf-8"))
+    return json.loads((repo / "config" / "marketplace-policy.json").read_text(encoding="utf-8"))
 
 
 def _write_policy(repo: Path, data: dict[str, object]) -> None:
-    policy = repo / "config" / "marketplace-policy.json"
-    policy.write_text(json.dumps(data), encoding="utf-8")
+    (repo / "config" / "marketplace-policy.json").write_text(json.dumps(data), encoding="utf-8")
 
 
-class TestFullrepoPolicyParity:
+RETIRED_CONTEXT_KEY = "full" + "repo"
+
+
+class TestTrackedContextPolicy:
     def test_matching_policy_passes(self, patch_repo_root: Path) -> None:
         result = _run(patch_repo_root)
         assert result.returncode == 0, result.stdout + result.stderr
-        assert "agent-only path policy" in result.stdout
+        assert "durable AI context tracked on main" in result.stdout
 
-    def test_agent_only_path_drift_blocks(self, patch_repo_root: Path) -> None:
+    def test_legacy_context_branch_policy_key_blocks(self, patch_repo_root: Path) -> None:
         data = _load_policy(patch_repo_root)
-        data["agent_only_path_globs"] = ["AGENTS.md"]
+        data[f"{RETIRED_CONTEXT_KEY}_branch"] = RETIRED_CONTEXT_KEY
         _write_policy(patch_repo_root, data)
-
         result = _run(patch_repo_root)
         assert result.returncode == 1
-        assert "agent_only_path_globs drift" in result.stderr
-        assert ".codex/**" in result.stderr
+        assert "legacy secondary-context policy key" in result.stderr
 
-    def test_runtime_exclude_drift_blocks(self, patch_repo_root: Path) -> None:
+    def test_tracked_context_globs_required(self, patch_repo_root: Path) -> None:
         data = _load_policy(patch_repo_root)
-        data["runtime_exclude_globs"] = []
+        data["tracked_context_globs"] = ["README.md"]
         _write_policy(patch_repo_root, data)
-
         result = _run(patch_repo_root)
         assert result.returncode == 1
-        assert "runtime_exclude_globs drift" in result.stderr
-        assert ".serena/.gitignore" in result.stderr
+        assert "tracked_context_globs" in result.stderr

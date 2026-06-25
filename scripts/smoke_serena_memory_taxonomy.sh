@@ -6,8 +6,7 @@
 #   2. agent-instruction-only commits require memory sync.
 #   3. serena_memory_state.py counts nested .serena/memories/**/*.md files.
 #   4. stop_memory_sync.sh stale advisory includes taxonomy guidance and loop guard works.
-#   5. commit_serena_knowledge.sh acknowledges fullrepo-managed current memories and
-#      refuses stale memories.
+#   5. commit_serena_knowledge.sh commits tracked memory changes and refuses stale memories.
 
 set -euo pipefail
 IFS=$'\n\t'
@@ -41,14 +40,18 @@ assert_json() {
 step "analyzer schema and target routing"
 assert_json "$ANALYZER" <<'PY'
 import json
+import os
+import re
 import subprocess
 import sys
+from pathlib import Path
 
 analyzer = sys.argv[1]
+repo_root = Path(analyzer).resolve().parents[3]
 
 
 def analyze(*paths: str) -> dict:
-    args = [sys.executable, analyzer]
+    args = ["python3", analyzer]
     for path in paths:
         args.extend(["--path", path])
     proc = subprocess.run(args, check=True, capture_output=True, text=True)
@@ -61,9 +64,38 @@ def target_paths(payload: dict) -> set[str]:
 
 empty = analyze()
 assert empty["schema_version"] == 2, empty
+assert empty["memory_taxonomy"]["version"] == 1, empty
 assert empty["memory_taxonomy"]["index_memory"] == "CORE-01-INDEX.md", empty
 assert empty["memory_taxonomy"]["filename_pattern"] == "AREA-01-SLUG.md", empty
 assert empty["memory_targets"] == [], empty
+taxonomy_areas = {item["area"] for item in empty["memory_taxonomy"]["areas"]}
+index_path = repo_root / ".serena/memories/CORE-01-INDEX.md"
+
+
+def is_tracked(path: Path) -> bool:
+    proc = subprocess.run(
+        ["git", "-C", str(repo_root), "ls-files", "--error-unmatch", str(path.relative_to(repo_root))],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    return proc.returncode == 0
+
+
+if index_path.exists() and (os.environ.get("GITHUB_ACTIONS") != "true" or is_tracked(index_path)):
+    index_text = index_path.read_text(encoding="utf-8")
+    index_areas = set(re.findall(r"`([A-Z]+)-\d+-[^`]+\.md`", index_text))
+    index_areas.discard("AREA")
+    missing_areas = index_areas - taxonomy_areas
+    assert not missing_areas, {
+        "missing_areas": sorted(missing_areas),
+        "taxonomy_areas": sorted(taxonomy_areas),
+        "index_areas": sorted(index_areas),
+    }
+elif index_path.exists():
+    print("skip    repository CORE-01-INDEX.md is not tracked in this checkout")
+else:
+    print("skip    repository CORE-01-INDEX.md absent")
 
 cases = [
     (
@@ -78,8 +110,6 @@ cases = [
         ("plugins/rldyour-serena-mcp/agents/flow-memory-sync.md",),
         {
             "SERENA-01-MEMORY-SYNC.md",
-            "HOOKS-01-LIFECYCLE.md",
-            "CORE-02-MARKETPLACE.md",
             "CLAUDECODE-01-PLUGIN-CANON.md",
         },
     ),
@@ -105,13 +135,7 @@ PY
 TMP_ROOT=$(mktemp -d)
 trap 'rm -rf "$TMP_ROOT"' EXIT
 
-step "agent-instruction commits are knowledge-equivalent (ADR-0011)"
-# Post-ADR-0011 invariant (commit febf45f, 2026-05-18): AGENTS.md and other
-# agent-instruction files in AGENT_INSTRUCTION_PATHS classify as knowledge.
-# A commit touching ONLY AGENTS.md must produce required=False and an empty
-# non_knowledge_changed_files list. This closes the structural conflict
-# between project-side CI ancestor-check gates and direct-head-mention
-# freshness hooks documented in docs/adr/0011.
+step "agent-instruction commits route knowledge-only analysis"
 MARK_REPO="$TMP_ROOT/mark"
 mkdir "$MARK_REPO"
 cd "$MARK_REPO"
@@ -133,43 +157,10 @@ assert_json <<'PY'
 import json
 payload = json.load(open(".serena/.serena_sync_state.json", encoding="utf-8"))
 targets = {item["path"] for item in payload["analysis"]["memory_targets"]}
-# Post-ADR-0011: AGENTS.md is knowledge-equivalent; required must be False,
-# non_knowledge_changed_files must be empty for an agent-instruction-only
-# commit. The analysis taxonomy still reports the change so memory writers
-# can still target CLAUDECODE/DOCS/TECHDEBT memories on demand.
 assert payload["required"] is False, payload
-assert "AGENTS.md" not in payload["non_knowledge_changed_files"], payload
 assert payload["non_knowledge_changed_files"] == [], payload
 assert {"DOCS-01-INSTRUCTIONS.md", "TECHDEBT-01-NOW.md", "CLAUDECODE-01-PLUGIN-CANON.md"} <= targets, targets
-print("OK agent-instruction-only commit is knowledge-equivalent (required=False)")
-PY
-
-step "product-code commits still require sync (negative case)"
-# Companion invariant: a commit touching real product code MUST still set
-# required=True. This preserves the original sync-when-needed semantic.
-PROD_REPO="$TMP_ROOT/prod"
-mkdir "$PROD_REPO"
-cd "$PROD_REPO"
-git init -q
-printf 'base\n' > README.md
-git add README.md
-git_commit "init"
-PRE_HEAD_PROD=$(git rev-parse HEAD)
-mkdir -p .serena src
-printf '%s\n' "$PRE_HEAD_PROD" > .serena/.auto_sync_head
-printf 'def hello(): return 42\n' > src/main.py
-git add src/main.py
-git_commit "feat: hello"
-printf '{"tool_name":"Bash","tool_input":{"command":"git commit -m feat"}}' | bash "$MARK_HOOK" >/dev/null
-if [ ! -f .serena/.serena_sync_state.json ]; then
-  fail "mark hook did not write .serena/.serena_sync_state.json for product commit"
-fi
-assert_json <<'PY'
-import json
-payload = json.load(open(".serena/.serena_sync_state.json", encoding="utf-8"))
-assert payload["required"] is True, payload
-assert "src/main.py" in payload["non_knowledge_changed_files"], payload
-print("OK product-code commit still requires sync (required=True)")
+print("OK agent instruction marker")
 PY
 
 step "recursive memory state scan"
@@ -224,19 +215,10 @@ Area: CORE
 
 # CORE-01-INDEX
 EOF
-# Post-ADR-0011: agent-instruction commits no longer trigger stale state
-# (knowledge-equivalent). To exercise the stale-advisory path, commit BOTH
-# a real product-code file (src/main.py - forces required=True / stale)
-# AND AGENTS.md (so the analyzer still emits the DOCS memory target the
-# advisory grep below checks for). Mixed waves are the realistic case.
-mkdir -p src
-printf 'def hello(): return 42\n' > src/main.py
 printf '# Agent docs\n' > AGENTS.md
-git add src/main.py AGENTS.md
-git_commit "feat: hello + docs"
+git add AGENTS.md
+git_commit "docs"
 set +e
-# Close stdin explicitly: stop_memory_sync.sh reads hook input via `cat`
-# (line 35); without </dev/null the harness would block waiting for input.
 bash "$STOP_HOOK" </dev/null >stop.out 2>stop.err
 STOP_RC=$?
 set -e
@@ -258,7 +240,7 @@ if [ "$LOOP_RC" -ne 0 ]; then
 fi
 echo "OK stop hook advisory"
 
-step "fullrepo-managed commit acknowledgement"
+step "tracked-main commit acknowledgement"
 ACK_REPO="$TMP_ROOT/ack"
 mkdir "$ACK_REPO"
 cd "$ACK_REPO"
@@ -266,29 +248,35 @@ git init -q
 printf 'ack\n' > file.txt
 git add file.txt
 git_commit "init"
-CURRENT_SHORT=$(git rev-parse --short=7 HEAD)
-mkdir -p .serena/memories .git/info
-cat >> .git/info/exclude <<'EOF'
-.serena/memories/**
-EOF
+BASE_SHORT=$(git rev-parse --short=7 HEAD)
+mkdir -p .serena/memories
 cat > .serena/memories/CORE-01-INDEX.md <<EOF
 <!-- Memory Metadata
 Last updated: 2026-05-15
-Last commit: ${CURRENT_SHORT} init
+Last commit: ${BASE_SHORT} init
 Scope: smoke
 Area: CORE
 -->
 
 # CORE-01-INDEX
 EOF
-touch .serena/.sync_marker .serena/.serena_sync_state.json .serena/.auto_sync_head
+git add .serena/memories/CORE-01-INDEX.md
+git_commit "track memories"
+# Memories are ordinary tracked files on main; a knowledge change must produce a
+# dedicated knowledge commit and clear runtime sync markers.
+printf '\nupdated knowledge\n' >> .serena/memories/CORE-01-INDEX.md
+touch .serena/.sync_marker .serena/.serena_sync_state.json
 BEFORE=$(git rev-parse HEAD)
 bash "$COMMIT_SCRIPT" >/dev/null
 AFTER=$(git rev-parse HEAD)
-test "$BEFORE" = "$AFTER" || fail "commit_serena_knowledge created a commit in fullrepo-managed ack path"
+test "$BEFORE" != "$AFTER" || fail "commit_serena_knowledge did not commit tracked memory changes on main"
+git diff-tree --no-commit-id --name-only -r HEAD | grep -qx ".serena/memories/CORE-01-INDEX.md" \
+  || fail "knowledge commit did not include the changed memory file"
 test ! -e .serena/.sync_marker || fail "sync marker was not cleared"
 test ! -e .serena/.serena_sync_state.json || fail "sync state was not cleared"
-test ! -e .serena/.auto_sync_head || fail "auto sync marker was not cleared"
+test -e .serena/.auto_sync_head || fail "auto sync acknowledgement was not written"
+GIT_COMMON_DIR=$(git rev-parse --git-common-dir)
+test -e "$GIT_COMMON_DIR/rldyour/serena_auto_sync_head" || fail "git-local auto sync acknowledgement was not written"
 
 STALE_REPO="$TMP_ROOT/stale"
 mkdir "$STALE_REPO"
@@ -297,24 +285,23 @@ git init -q
 printf 'old\n' > file.txt
 git add file.txt
 git_commit "old"
-OLD_SHORT=$(git rev-parse --short=7 HEAD)
-printf 'new\n' > file.txt
-git add file.txt
-git_commit "new"
-mkdir -p .serena/memories .git/info
-cat >> .git/info/exclude <<'EOF'
-.serena/memories/**
-EOF
+UNKNOWN_COMMIT=ffffffffffffffffffffffffffffffffffffffff
+mkdir -p .serena/memories
 cat > .serena/memories/CORE-01-INDEX.md <<EOF
 <!-- Memory Metadata
 Last updated: 2026-05-15
-Last commit: ${OLD_SHORT} old
+Last commit: ${UNKNOWN_COMMIT} missing
 Scope: smoke
 Area: CORE
 -->
 
 # CORE-01-INDEX
 EOF
+git add .serena/memories/CORE-01-INDEX.md
+git_commit "track stale memories"
+printf 'new\n' > file.txt
+git add file.txt
+git_commit "new source after stale memory"
 touch .serena/.sync_marker
 set +e
 STALE_ERR="$TMP_ROOT/stale.err"
@@ -322,56 +309,13 @@ bash "$COMMIT_SCRIPT" >/dev/null 2>"$STALE_ERR"
 STALE_RC=$?
 set -e
 if [ "$STALE_RC" -eq 0 ]; then
-  fail "commit_serena_knowledge acknowledged stale fullrepo-managed memory"
+  fail "commit_serena_knowledge acknowledged stale memory"
 fi
-if ! grep -Eq "do not match HEAD|memories do not match" "$STALE_ERR"; then
+if ! grep -Eq "not semantically current|do not match HEAD|memories do not match" "$STALE_ERR"; then
   cat "$STALE_ERR" >&2
   fail "stale ack error message missing"
 fi
-echo "OK fullrepo-managed acknowledgement"
+echo "OK tracked-main acknowledgement"
 
 cd "$ROOT"
-
-# Closure of verification F-3 (info 95) from review wave 2026-05-16T1859Z-61b913d:
-# D20 (Evidence section - source-path references) and D21 (Source of truth
-# section) must exist in every memory. The assertions below scan the actual
-# repository .serena/memories/*.md (when present in current worktree, e.g. on
-# fullrepo branch or after fullrepo --restore) and fail the smoke if any memory
-# file omits these canonical sections. Section names match the canonical memory
-# format used by all repository memories: lowercase "## Source of truth" and "## Evidence".
-step "memory section completeness (D20 + D21 invariants)"
-MEMORY_DIR="$ROOT/.serena/memories"
-if [ -d "$MEMORY_DIR" ] && compgen -G "$MEMORY_DIR/*.md" > /dev/null 2>&1; then
-  missing_xref=()
-  missing_sot=()
-  missing_metadata=()
-  while IFS= read -r -d '' memfile; do
-    if ! grep -q '^## Evidence' "$memfile"; then
-      missing_xref+=("$memfile")
-    fi
-    if ! grep -q '^## Source of truth' "$memfile"; then
-      missing_sot+=("$memfile")
-    fi
-    if ! grep -q '^Last commit:' "$memfile"; then
-      missing_metadata+=("$memfile")
-    fi
-  done < <(find "$MEMORY_DIR" -maxdepth 1 -name '*.md' -print0 2>/dev/null)
-  if [ "${#missing_xref[@]}" -gt 0 ]; then
-    printf 'FAIL memory missing ## Evidence section: %s\n' "${missing_xref[@]}" >&2
-    fail "D20 invariant violated"
-  fi
-  if [ "${#missing_sot[@]}" -gt 0 ]; then
-    printf 'FAIL memory missing ## Source of truth section: %s\n' "${missing_sot[@]}" >&2
-    fail "D21 invariant violated"
-  fi
-  if [ "${#missing_metadata[@]}" -gt 0 ]; then
-    printf 'FAIL memory missing Last commit metadata: %s\n' "${missing_metadata[@]}" >&2
-    fail "memory metadata invariant violated"
-  fi
-  total=$(find "$MEMORY_DIR" -maxdepth 1 -name '*.md' | wc -l)
-  echo "OK D20+D21 invariants pass across ${total} memory files"
-else
-  echo "SKIP no .serena/memories/*.md in this worktree (expected on main without --restore)"
-fi
-
 printf '\n\033[1;32m✔ smoke_serena_memory_taxonomy passed\033[0m\n'

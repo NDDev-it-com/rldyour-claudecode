@@ -6,6 +6,14 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+## [1.7.0] - 2026-06-26
+
+### Changed
+
+- Retire the secondary context branch model. Durable AI context (`AGENTS.md`, `.claude/CLAUDE.md`, `.serena/project.yml`, and `.serena/memories/`) is now tracked on `main`; runtime-local Serena state remains ignored.
+- Remove context restore/publish scripts, workflow restore steps, branch-protection metadata, flow policy keys, and post-task blockers tied to the retired branch model.
+- Preserve the current Claude Code runtime and MCP package baselines; runtime upgrades are intentionally separate from this architecture migration.
+
 
 ## [1.6.1] - 2026-06-25
 

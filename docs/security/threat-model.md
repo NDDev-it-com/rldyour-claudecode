@@ -17,7 +17,7 @@ the user installs.
 |---|---|---|---|
 | `plugins/rldyour-flow/hooks/*.sh` | `rldyour-flow` | Bash, runs in user session | Strict mode trio (`set -euo pipefail` + IFS + unset CDPATH); advisory-only (no push/merge/publish); `if` filters limit invocation to `Bash(git commit*)` family. |
 | `plugins/rldyour-serena-mcp/hooks/*.sh` | `rldyour-serena-mcp` | Bash, runs in user session | Same strict mode; Stop hook exits 2 advisory (no destructive ops); fingerprint loop guard. |
-| `plugins/rldyour-flow/scripts/fullrepo_sync.py` | `rldyour-flow` | Filesystem + git plumbing | `bootstrap_check.sh` divergence guard refuses `--bootstrap-init` when local agent-only files differ from `origin/fullrepo`; `--publish` uses `--force-with-lease` (not `--force`); `local_git_ai_guard.sh` pre-push blocks agent-only paths on product branches. |
+| `plugins/rldyour-flow/scripts/flow_post_task_state.py` | `rldyour-flow` | Filesystem + git plumbing | `bootstrap_check.sh` divergence guard refuses `--tracked-context review` when local durable AI context files differ from `origin/main`; `--publish` uses `--force-with-lease` (not `--force`); `local_git_ai_guard.sh` pre-push blocks agent-only paths on product branches. |
 | `plugins/rldyour-mcps/.mcp.json` | `rldyour-mcps` | Spawns MCP servers (stdio + HTTP) | All 11 servers pinned (`==X.Y.Z` / `@X.Y.Z` / exact URL / host-binary version); `scripts/check_mcp_runtime_versions.py` enforces parity; `scripts/smoke_mcp_runtime.sh` HOST_BINARY_ALLOWLIST fails pin=None for unknown servers; `scripts/probe_mcp_upstream.py` weekly drift check. |
 | `.github/workflows/*.yml` | CI | runs-on GitHub-hosted runners | SHA-pinned actions; `permissions: {}` top-level (deny-all); harden-runner egress block + explicit allowlist per workflow; `concurrency.cancel-in-progress` to bound minute spend. |
 | `scripts/*.{sh,py}` | repo root | Runs in local validation context | Strict mode trio in all shell scripts; Python scripts use stdlib only where possible (no pip dependency to validate locally except jsonschema for G9 schemas - graceful SKIP if unavailable). |
@@ -30,7 +30,7 @@ the user installs.
 without review, pushes a malicious plugin manifest or hook.
 
 **Mitigations**:
-- ADR-0001 (fullrepo) keeps agent-only context out of `main`; product
+- ADR-0001 (tracked-context) keeps durable AI context out of `main`; product
   changes on `main` are scoped.
 - ADR-0008 (CI baseline): `permissions: {}` top-level + per-job
   least-privilege; release.yml is the only workflow with
@@ -217,7 +217,7 @@ Three boundaries exist:
   (`plugins/rldyour-flow/scripts/local_git_ai_guard.sh`).
   The 90-day post-private monitoring window is a local conservative transition
   control, not a GitHub platform limitation.
-- **fullrepo `--force-with-lease`**: intentional per ADR-0001. Cannot
+- **tracked-context `--force-with-lease`**: intentional per ADR-0001. Cannot
   share `main`'s no-force-push rule.
 
 ## Update policy

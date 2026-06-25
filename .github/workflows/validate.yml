@@ -129,14 +129,6 @@ jobs:
         # when MED-2 graduates from advisory to hard-fail.
         run: pip install --user 'jsonschema>=4.21' 'attrs>=23.2' 'ruff>=0.7' 'pyright>=1.1' 'pyyaml>=6' 'pytest>=8'
 
-      - name: Restore agent-only files from origin/fullrepo
-        # ADR-0001: AGENTS.md, .claude/CLAUDE.md, .serena/memories/*,
-        # .serena/project.yml live only on origin/fullrepo. Several
-        # validators (validate_instruction_docs --require-agent-docs;
-        # generate_inventory --check counting .serena/memories) require
-        # them in the worktree to behave consistently with local runs.
-        run: python3 plugins/rldyour-flow/scripts/fullrepo_sync.py --restore
-
       - name: JSON Schema validation (marketplace + plugin + mcp + lsp + hooks)
         run: python3 scripts/validate_json_schemas.py
 
@@ -279,9 +271,6 @@ jobs:
 
       - name: Serena memory taxonomy smoke
         run: bash scripts/smoke_serena_memory_taxonomy.sh
-
-      - name: Bootstrap R5 divergence guard smoke
-        run: bash scripts/smoke_bootstrap_check.sh
 
       - name: Reviewer output transport contract drift
         run: bash scripts/validate_reviewer_contracts.sh

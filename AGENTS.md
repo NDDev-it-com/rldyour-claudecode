@@ -9,7 +9,7 @@ no runtime application service.
 This file is a system file for the Claude Code install surface. It is
 tracked on `main` so that `git clone` followed by the Claude install
 script (or Claude Code's own `.claude/CLAUDE.md` discovery) picks it up
-without depending on the `fullrepo` overlay. The companion file
+without depending on the `tracked-context` overlay. The companion file
 `.claude/CLAUDE.md` is also tracked on main for the same reason.
 
 Canonical public description: rldyour AI CLI configuration for Claude Code: plugin marketplace, MCP/LSP, Serena memory, security review, browser/design workflows, and reviewer agents.
@@ -26,7 +26,7 @@ claims:
   claude_code_feature_floor: "2.1.146"
   skill_listing_budget_fraction: 0.04
   max_skill_description_chars: 1536
-  fullrepo_branch: fullrepo
+  tracked-context_branch: tracked-context
   plugin_count: 10
   skill_count: 38
   command_count: 11
@@ -66,7 +66,7 @@ claims:
 The single registered Claude Stop hook is the Flow dispatcher above. Stop hooks
 are advisory enforcement gates. They compute sync state and block with guidance;
 the main workflow performs memory sync, validation, commits, pushes, and
-fullrepo publication.
+git synchronization.
 
 ## Validation
 
@@ -81,9 +81,9 @@ python3 scripts/validate_claude_surface_adoption.py
 uv run --with pytest --with pyyaml python -m pytest -q
 ```
 
-## Fullrepo Policy
+## Tracked context Policy
 
 `.serena/project.yml` and the rest of the `.serena/` agent context are restored
-and published through `fullrepo`. `AGENTS.md` and `.claude/CLAUDE.md` are tracked
+and published through `tracked-context`. `AGENTS.md` and `.claude/CLAUDE.md` are tracked
 system instruction files on `main` (see the top of this file); only the
-`.serena/` agent-only context is excluded from `main`.
+`.serena/` durable AI context is excluded from `main`.

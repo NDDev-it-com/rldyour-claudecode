@@ -70,7 +70,6 @@
         "owns_task_delegation": { "type": "boolean" },
         "owns_commits": { "type": "boolean" },
         "owns_push": { "type": "boolean" },
-        "owns_fullrepo": { "type": "boolean" },
         "owns_system_install": { "type": "boolean" },
         "worker_permissions": {
           "type": "object",
@@ -78,7 +77,6 @@
           "properties": {
             "commit": { "enum": ["forbidden", "forbidden-unless-delegated", "delegated"] },
             "push": { "enum": ["forbidden", "delegated"] },
-            "fullrepo": { "enum": ["forbidden", "delegated"] },
             "system_install": { "enum": ["forbidden", "delegated"] },
             "branch_cleanup": { "enum": ["forbidden", "delegated"] }
           }
@@ -106,26 +104,13 @@
         "default_integration_branch": { "type": "string" }
       }
     },
-    "fullrepo": {
-      "type": "object",
-      "additionalProperties": false,
-      "properties": {
-        "mode": { "enum": ["required", "auto", "advisory", "disabled"] },
-        "restore": { "type": "boolean" },
-        "publish": { "type": "boolean" },
-        "migrate_main": { "type": "boolean" },
-        "install_exclude": { "type": "boolean" },
-        "create_if_missing": { "type": "boolean" },
-        "block_stop": { "type": "boolean" }
-      }
-    },
     "normal_branch_policy": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "agent_files": { "enum": ["allowed", "strict-fullrepo-default"] },
-        "ai_marker_additions": { "enum": ["allowed", "strict-fullrepo-default"] },
-        "instruction_docs": { "enum": ["auto", "tracked-normal-branch", "fullrepo-managed", "disabled"] },
+        "agent_files": { "enum": ["allowed", "strict"] },
+        "ai_marker_additions": { "enum": ["allowed", "strict"] },
+        "instruction_docs": { "enum": ["tracked-main", "disabled"] },
         "runtime_markers": { "const": "forbidden" },
         "secrets": { "const": "forbidden" }
       }
@@ -134,7 +119,7 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "mode": { "enum": ["auto", "tracked-normal-branch", "fullrepo-managed", "disabled"] },
+        "mode": { "enum": ["tracked-main", "disabled"] },
         "codex": { "type": "string" },
         "claude": { "type": "string" },
         "opencode": { "type": "string" }
@@ -145,7 +130,7 @@
       "additionalProperties": false,
       "properties": {
         "mode": { "enum": ["enabled", "disabled"] },
-        "memory_storage": { "enum": ["fullrepo-auto", "fullrepo", "normal-branch", "disabled"] },
+        "memory_storage": { "enum": ["tracked-main", "disabled"] },
         "allow_memory_commits": { "type": "boolean" },
         "forbid_runtime_markers": { "type": "boolean" }
       }
@@ -169,7 +154,6 @@
       "properties": {
         "block_on_dirty_source": { "type": "boolean" },
         "block_on_ahead_behind": { "type": "boolean" },
-        "block_on_fullrepo": { "type": "boolean" },
         "block_on_branch_cleanup": { "type": "boolean" },
         "allow_same_fingerprint_after_report": { "type": "boolean" }
       }

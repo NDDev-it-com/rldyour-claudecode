@@ -55,7 +55,6 @@ jobs:
               "README.md",
               ".claude-plugin/marketplace.json",
               ".github/branch-protection/main.json",
-              ".github/branch-protection/fullrepo.json",
           ]
           missing = [path for path in required if not Path(path).exists()]
           if missing:
@@ -63,7 +62,6 @@ jobs:
 
           json.loads(Path(".claude-plugin/marketplace.json").read_text(encoding="utf-8"))
           json.loads(Path(".github/branch-protection/main.json").read_text(encoding="utf-8"))
-          json.loads(Path(".github/branch-protection/fullrepo.json").read_text(encoding="utf-8"))
 
           if not compileall.compile_dir("scripts", quiet=1):
               raise SystemExit("scripts/ Python compile failed")

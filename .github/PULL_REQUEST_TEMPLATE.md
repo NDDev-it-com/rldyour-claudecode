@@ -53,7 +53,7 @@ gh workflow run cross-platform.yml --ref <branch>
 - [ ] No secrets, tokens, PII added to any file
 - [ ] No `latest` pins introduced
 - [ ] Agent-only files (AGENTS.md, .claude/, .serena/, etc.) stay on
-      `fullrepo` and are NOT committed to `main`
+      runtime-local state and are NOT committed to `main`
 
 ## Related
 

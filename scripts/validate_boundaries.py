@@ -1,272 +1,79 @@
 #!/usr/bin/env python3
-"""validate_boundaries.py - plugin ownership boundary enforcement.
+"""Validate Claude marketplace structural boundaries.
 
-Reads `config/marketplace-policy.json` (the canonical invariant database)
-and verifies at HEAD that the actual repository structure matches the
-declared boundaries:
-
-  1. mcp_owner: exactly one plugin owns a `.mcp.json` file, and its
-     directory name matches `policy.mcp_owner`. The .mcp.json file is a
-     transport-layer artifact; spreading it across multiple plugins
-     defeats the single-source-of-truth contract that makes pinning,
-     drift detection, and capability smoke meaningful.
-
-  2. hook_owners: the set of plugins owning `hooks/hooks.json` matches
-     `policy.hook_owners` exactly (no extras, no missing). Hooks are
-     advisory enforcement gates that run in the user session; only the
-     two flow-control plugins should ship them.
-
-  3. plugin.json self-consistency: the `name` field matches the directory
-     name (catches accidental copy-paste during plugin scaffolding).
-
-  4. plugin.json dependencies parity: `data.get("dependencies", [])`
-     matches `policy.plugin_dependencies[<plugin>]` exactly (sorted).
-     Catches drift where a plugin gains/loses a dependency without
-     updating the policy file, which is the source of truth for the
-     dependency graph documented in ADR-0006.
-
-  5. agent_only_path_globs parity: policy paths match
-     fullrepo_sync.AGENT_ONLY_PATTERNS exactly.
-
-  6. runtime_exclude_globs parity: policy runtime excludes match
-     fullrepo_sync.RUNTIME_EXCLUDE_PATTERNS exactly.
-
-Closes the ADR-0006 self-acknowledged gap: the Confirmation section
-previously stated "a future validate_boundaries.py (not yet implemented)
-will enforce them" - this script is that implementation.
-
-SKIPs gracefully (exit 0) if config/marketplace-policy.json is absent so
-the harness keeps moving forward on a fresh checkout that has not yet
-shipped the policy file.
-
-Exit codes: 0 clean (or SKIP), 1 on any boundary violation.
-
-Companion to validate_plugin_versions.py (version parity) and
-validate_release_state.py (release-cycle parity). This script covers
-structural boundaries - what's where, not what version it is.
+The tracked-context model stores durable AI context on main. This validator
+keeps ownership boundaries strict without depending on a secondary branch.
 """
-
 from __future__ import annotations
 
 import json
-import re
 import sys
 from pathlib import Path
 
 POLICY_PATH = Path("config/marketplace-policy.json")
-FULLREPO_SYNC_PATH = Path("plugins/rldyour-flow/scripts/fullrepo_sync.py")
-TUPLE_RE_TEMPLATE = r"^{name}\s*=\s*\((.*?)\)"
+RETIRED_CONTEXT_BRANCH = "full" + "repo"
+FORBIDDEN_POLICY_KEYS = {
+    RETIRED_CONTEXT_BRANCH,
+    f"{RETIRED_CONTEXT_BRANCH}_branch",
+    "agent_only_path_globs",
+}
 
 
-def _load_policy(root: Path) -> dict[str, object] | None:
-    policy_file = root / POLICY_PATH
-    if not policy_file.is_file():
-        return None
-    return json.loads(policy_file.read_text(encoding="utf-8"))
+def fail(message: str) -> None:
+    print(message, file=sys.stderr)
+    raise SystemExit(1)
 
 
-def _check_mcp_owner(root: Path, expected_owner: str | None, failures: list[str]) -> None:
-    mcp_files = sorted((root / "plugins").glob("*/.mcp.json"))
+def main() -> int:
+    if not POLICY_PATH.is_file():
+        print("SKIP config/marketplace-policy.json absent")
+        return 0
+    policy = json.loads(POLICY_PATH.read_text(encoding="utf-8"))
+    forbidden = sorted(FORBIDDEN_POLICY_KEYS & set(policy))
+    if forbidden:
+        fail(f"legacy secondary-context policy key(s) present: {forbidden}")
+    tracked = policy.get("tracked_context_globs")
+    if not isinstance(tracked, list) or "AGENTS.md" not in tracked or ".serena/memories/**" not in tracked:
+        fail("tracked_context_globs must include AGENTS.md and .serena/memories/**")
+    if RETIRED_CONTEXT_BRANCH in policy.get("protected_branches", []):
+        fail("protected_branches must not include retired secondary context branch")
+
+    expected_mcp_owner = policy.get("mcp_owner")
+    mcp_files = sorted(Path("plugins").glob("*/.mcp.json"))
     if len(mcp_files) != 1:
-        failures.append(
-            f".mcp.json ownership: expected exactly 1 file (owner: {expected_owner!r}), "
-            f"found {len(mcp_files)} at {[str(f.relative_to(root)) for f in mcp_files]}"
-        )
-        return
-    actual_owner = mcp_files[0].parent.name
-    if expected_owner is not None and actual_owner != expected_owner:
-        failures.append(
-            f".mcp.json ownership: declared owner is {expected_owner!r} but file lives "
-            f"under plugins/{actual_owner}/"
-        )
+        fail(f".mcp.json ownership: expected exactly 1 file, found {len(mcp_files)}")
+    actual_mcp_owner = mcp_files[0].parent.name
+    if expected_mcp_owner and actual_mcp_owner != expected_mcp_owner:
+        fail(f".mcp.json owner drift: expected {expected_mcp_owner}, found {actual_mcp_owner}")
 
+    expected_hooks = set(policy.get("hook_owners", []))
+    actual_hooks = {path.parent.parent.name for path in Path("plugins").glob("*/hooks/hooks.json")}
+    if actual_hooks != expected_hooks:
+        fail(f"hooks.json owner drift: expected {sorted(expected_hooks)}, found {sorted(actual_hooks)}")
 
-def _check_hook_owners(
-    root: Path, expected_owners: set[str], failures: list[str]
-) -> None:
-    hooks_files = sorted((root / "plugins").glob("*/hooks/hooks.json"))
-    actual_owners = {f.parent.parent.name for f in hooks_files}
-    extra = actual_owners - expected_owners
-    missing = expected_owners - actual_owners
-    if extra:
-        failures.append(
-            f"hooks.json ownership: unexpected owners {sorted(extra)} (not declared in "
-            f"policy.hook_owners={sorted(expected_owners)})"
-        )
-    if missing:
-        failures.append(
-            f"hooks.json ownership: missing owners {sorted(missing)} (declared in "
-            f"policy.hook_owners but no hooks/hooks.json found)"
-        )
-
-
-def _check_plugin_manifests(
-    root: Path,
-    plugin_dependencies: dict[str, list[str]],
-    failures: list[str],
-) -> None:
-    for plugin_dir in sorted((root / "plugins").iterdir()):
+    deps = policy.get("plugin_dependencies", {})
+    failures: list[str] = []
+    for plugin_dir in sorted(Path("plugins").iterdir()):
         if not plugin_dir.is_dir():
             continue
         manifest = plugin_dir / ".claude-plugin" / "plugin.json"
         if not manifest.is_file():
             failures.append(f"{plugin_dir.name}: missing .claude-plugin/plugin.json")
             continue
-        try:
-            data = json.loads(manifest.read_text(encoding="utf-8"))
-        except json.JSONDecodeError as exc:
-            failures.append(f"{plugin_dir.name}: plugin.json is not valid JSON: {exc}")
-            continue
-        name = data.get("name")
-        if name != plugin_dir.name:
-            failures.append(
-                f"{plugin_dir.name}: plugin.json name={name!r} differs from directory name"
-            )
-            continue
-        # Per the 0.5.0 schema expansion, each dependency item may be either
-        # a bare string ("rldyour-mcps") OR a {name, version} object. Normalize
-        # both forms to the plugin name before comparison.
-        raw_deps = data.get("dependencies", [])
-        if isinstance(raw_deps, list):
-            actual_names: list[str] = []
-            for item in raw_deps:
-                if isinstance(item, dict):
-                    nm = item.get("name")
-                    if isinstance(nm, str):
-                        actual_names.append(nm)
-                elif isinstance(item, str):
-                    actual_names.append(item)
-            actual_deps = sorted(actual_names)
-        else:
-            actual_deps = []
-        expected_deps = sorted(plugin_dependencies.get(name, []))
-        if actual_deps != expected_deps:
-            failures.append(
-                f"{name}: dependencies drift - plugin.json={actual_deps} vs "
-                f"policy.plugin_dependencies={expected_deps}"
-            )
-
-
-def _extract_tuple_constant(path: Path, name: str) -> list[str]:
-    if not path.is_file():
-        raise FileNotFoundError(path)
-    text = path.read_text(encoding="utf-8")
-    pattern = TUPLE_RE_TEMPLATE.format(name=re.escape(name))
-    match = re.search(pattern, text, re.DOTALL | re.MULTILINE)
-    if not match:
-        raise ValueError(f"{name} tuple not found in {path}")
-    return re.findall(r'"([^"]+)"', match.group(1))
-
-
-def _check_fullrepo_policy_paths(
-    root: Path,
-    policy: dict[str, object],
-    failures: list[str],
-) -> None:
-    sync_path = root / FULLREPO_SYNC_PATH
-    try:
-        agent_only_patterns = sorted(_extract_tuple_constant(sync_path, "AGENT_ONLY_PATTERNS"))
-        runtime_excludes = sorted(_extract_tuple_constant(sync_path, "RUNTIME_EXCLUDE_PATTERNS"))
-    except (FileNotFoundError, ValueError) as exc:
-        failures.append(f"fullrepo policy source unreadable: {exc}")
-        return
-
-    raw_agent_only = policy.get("agent_only_path_globs", [])
-    if not isinstance(raw_agent_only, list):
-        failures.append(
-            f"policy.agent_only_path_globs must be a list, got "
-            f"{type(raw_agent_only).__name__}"
-        )
-        raw_agent_only = []
-    policy_agent_only = sorted(str(p) for p in raw_agent_only)
-    if policy_agent_only != agent_only_patterns:
-        failures.append(
-            "agent_only_path_globs drift - "
-            f"policy={policy_agent_only} vs fullrepo_sync.AGENT_ONLY_PATTERNS={agent_only_patterns}"
-        )
-
-    raw_runtime_excludes = policy.get("runtime_exclude_globs", [])
-    if not isinstance(raw_runtime_excludes, list):
-        failures.append(
-            f"policy.runtime_exclude_globs must be a list, got "
-            f"{type(raw_runtime_excludes).__name__}"
-        )
-        raw_runtime_excludes = []
-    policy_runtime_excludes = sorted(str(p) for p in raw_runtime_excludes)
-    if policy_runtime_excludes != runtime_excludes:
-        failures.append(
-            "runtime_exclude_globs drift - "
-            f"policy={policy_runtime_excludes} vs "
-            f"fullrepo_sync.RUNTIME_EXCLUDE_PATTERNS={runtime_excludes}"
-        )
-
-
-def main() -> int:
-    root = Path(__file__).resolve().parent.parent
-    policy = _load_policy(root)
-    if policy is None:
-        print(f"SKIP {POLICY_PATH} not present; boundary enforcement disabled")
-        return 0
-
-    failures: list[str] = []
-
-    mcp_owner = policy.get("mcp_owner")
-    if not isinstance(mcp_owner, str | type(None)):
-        failures.append(
-            f"policy.mcp_owner must be a string or null, got {type(mcp_owner).__name__}"
-        )
-        mcp_owner = None
-    _check_mcp_owner(root, mcp_owner, failures)
-
-    raw_hook_owners = policy.get("hook_owners", [])
-    if not isinstance(raw_hook_owners, list):
-        failures.append(
-            f"policy.hook_owners must be a list, got {type(raw_hook_owners).__name__}"
-        )
-        raw_hook_owners = []
-    hook_owners = {str(h) for h in raw_hook_owners}
-    _check_hook_owners(root, hook_owners, failures)
-
-    raw_plugin_deps = policy.get("plugin_dependencies", {})
-    if not isinstance(raw_plugin_deps, dict):
-        failures.append(
-            f"policy.plugin_dependencies must be an object, "
-            f"got {type(raw_plugin_deps).__name__}"
-        )
-        raw_plugin_deps = {}
-    # Per `config/schemas/plugin.json` (0.5.0 expansion), each dependency item
-    # may be either a bare string ("rldyour-mcps") OR a {name, version} object.
-    # Normalize both forms to the plugin name for comparison against
-    # policy.plugin_dependencies (which holds plain strings).
-    def _dep_name(d: object) -> str:
-        if isinstance(d, dict):
-            name = d.get("name")
-            return str(name) if isinstance(name, str) else ""
-        return str(d)
-
-    plugin_deps: dict[str, list[str]] = {
-        str(k): [_dep_name(d) for d in v if _dep_name(d)] if isinstance(v, list) else []
-        for k, v in raw_plugin_deps.items()
-    }
-    _check_plugin_manifests(root, plugin_deps, failures)
-    _check_fullrepo_policy_paths(root, policy, failures)
-
+        data = json.loads(manifest.read_text(encoding="utf-8"))
+        if data.get("name") != plugin_dir.name:
+            failures.append(f"{plugin_dir.name}: manifest name drift {data.get('name')!r}")
+        expected = sorted(deps.get(plugin_dir.name, []))
+        actual = sorted(data.get("dependencies", []))
+        if actual != expected:
+            failures.append(f"{plugin_dir.name}: dependency drift expected={expected} actual={actual}")
     if failures:
-        for line in failures:
-            print(f"FAIL {line}", file=sys.stderr)
-        print(
-            f"\nTotal: {len(failures)} boundary violation(s).", file=sys.stderr
-        )
+        for item in failures:
+            print(item, file=sys.stderr)
         return 1
-
-    print(
-        f"OK boundaries: mcp_owner={mcp_owner!r}, "
-        f"hook_owners={sorted(hook_owners)}, "
-        f"{len(plugin_deps)} plugin dependency contract(s), "
-        f"agent-only path policy, and runtime excludes verified"
-    )
+    print("ok: marketplace boundaries valid; durable AI context tracked on main")
     return 0
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    raise SystemExit(main())
