@@ -6,9 +6,9 @@
 
 | Field | Value |
 |---|---|
-| Adapter version | `1.7.4` |
+| Adapter version | `1.7.5` |
 | Runtime baseline | Claude Code `2.1.190` (`@anthropic-ai/claude-code`) |
-| GitHub release tag | `1.7.4` |
+| GitHub release tag | `1.7.5` |
 
 Runtime pin sources: `package.json`, `references/claude-baseline.json`, `config/mcp-runtime-versions.env`. Compatibility floor: `v2.1.146+`.
 
@@ -24,7 +24,7 @@ Claude Code reads these native config surfaces from this repository:
 - `plugins/<plugin>/.claude-plugin/plugin.json` - plugin manifest. Each manifest declares `dependencies` as an array; `rldyour-mcps` is the base layer (no dependencies); all other plugins depend on it; `rldyour-flow` additionally depends on `rldyour-serena-mcp`.
 - Manifest-linked files: `skills/<skill>/SKILL.md`, `agents/<agent>.md`, `commands/<name>.md`, `hooks/hooks.json`, `.mcp.json`, `references/`, `scripts/`.
 
-Source-only files (not automatically projected to the runtime): `docs/`, `config/`, `.serena/`, `AGENTS.md`, `.claude/CLAUDE.md`. Durable AI context files (tracked-context branch) do not land on `main` history.
+Source-only files (not automatically projected to the runtime): `docs/`, `config/`, `.serena/`, `AGENTS.md`, `.claude/CLAUDE.md`. Durable AI context files are tracked on `main`; runtime-local Serena state remains ignored.
 
 Extension surfaces active in this adapter: skills, slash commands, subagents, hook scripts, MCP server definitions (via `rldyour-mcps`), and one LSP integration (via `rldyour-lsps`).
 
@@ -79,16 +79,16 @@ git status -sb
 
 | Plugin | Version | Skills | Commands | Agents | Hooks | Scripts | References | MCP | LSP |
 |---|---|---|---|---|---|---|---|---|---|
-| `rldyour-mcps` | `1.7.4` | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 0 |
-| `rldyour-explore` | `1.7.4` | 2 | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| `rldyour-serena-mcp` | `1.7.4` | 2 | 0 | 1 | 4 | 3 | 0 | 0 | 0 |
-| `rldyour-security` | `1.7.4` | 2 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| `rldyour-browser` | `1.7.4` | 6 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| `rldyour-design` | `1.7.4` | 5 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| `rldyour-lsps` | `1.7.4` | 4 | 0 | 0 | 0 | 2 | 3 | 0 | 1 |
-| `rldyour-flow` | `1.7.4` | 8 | 7 | 6 | 5 | 7 | 7 | 0 | 0 |
-| `rldyour-orchestrator` | `1.7.4` | 2 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| `rldyour-rules` | `1.7.4` | 7 | 1 | 0 | 0 | 0 | 6 | 0 | 0 |
+| `rldyour-mcps` | `1.7.5` | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 0 |
+| `rldyour-explore` | `1.7.5` | 2 | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
+| `rldyour-serena-mcp` | `1.7.5` | 2 | 0 | 1 | 4 | 3 | 0 | 0 | 0 |
+| `rldyour-security` | `1.7.5` | 2 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
+| `rldyour-browser` | `1.7.5` | 6 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| `rldyour-design` | `1.7.5` | 5 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
+| `rldyour-lsps` | `1.7.5` | 4 | 0 | 0 | 0 | 2 | 3 | 0 | 1 |
+| `rldyour-flow` | `1.7.5` | 8 | 7 | 6 | 5 | 7 | 7 | 0 | 0 |
+| `rldyour-orchestrator` | `1.7.5` | 2 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| `rldyour-rules` | `1.7.5` | 7 | 1 | 0 | 0 | 0 | 6 | 0 | 0 |
 
 <!-- inventory:end -->
 
@@ -146,7 +146,7 @@ scripts/install_local_git_hooks.sh --dry-run
 scripts/install_local_git_hooks.sh --apply
 ```
 
-The guard is branch-aware: product branches block agent-only paths and AI markers; the tracked-context branch allows durable AI context while still blocking secrets, runtime markers, browser artifacts, and local env files.
+The guard is branch-aware: product branches block agent-only paths and AI markers; the tracked-context model allows durable AI context while still blocking secrets, runtime markers, browser artifacts, and local env files.
 
 ## Security Boundary
 

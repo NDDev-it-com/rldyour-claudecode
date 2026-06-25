@@ -63,7 +63,7 @@ EXECUTION_MODE=$(printf "%s" "$STATE_JSON" | python3 -c 'import json,sys; p=json
 AGENT_ROLE=$(printf "%s" "$STATE_JSON" | python3 -c 'import json,sys; p=json.load(sys.stdin).get("execution", {}); print(p.get("agent_role", "standalone") if isinstance(p, dict) else "standalone")' 2>/dev/null || echo "standalone")
 WORKER_ID=$(printf "%s" "$STATE_JSON" | python3 -c 'import json,sys; p=json.load(sys.stdin).get("execution", {}); print(p.get("worker_id") or p.get("agent_role", "worker") if isinstance(p, dict) else "worker")' 2>/dev/null || echo "worker")
 
-# Serena owns memory freshness. Flow waits for Serena Stop hook to finish first.
+# Serena owns memory freshness. Flow waits for Serena memory refresh to finish first.
 if [ "$SERENA_CURRENT" != "true" ]; then
   exit 0
 fi
