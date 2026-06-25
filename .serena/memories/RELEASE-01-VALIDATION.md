@@ -22,7 +22,7 @@ release readiness, versioning, and artifact hygiene
 - checked by: tracked-context Claude migration
 
 ## Facts
-- Current rldyour-claudecode adapter VERSION is `1.7.1`; the release workflow publishes the matching numeric GitHub Release tag at the released commit.
+- Current rldyour-claudecode adapter VERSION is `1.7.2`; the release workflow publishes the matching numeric GitHub Release tag at the released commit.
 - Release memories record numeric versioning, tags, CI gates, and clean artifact hygiene.
 
 ## Evidence
