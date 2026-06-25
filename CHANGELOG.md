@@ -6,6 +6,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+## [1.7.1] - 2026-06-26
+
+### Fixed
+
+- Configure git author identity inside the Serena memory taxonomy smoke test's temporary acknowledgement repository so GitHub-hosted runners can exercise `commit_serena_knowledge.sh` without relying on global git config.
+
 ## [1.7.0] - 2026-06-26
 
 ### Changed
