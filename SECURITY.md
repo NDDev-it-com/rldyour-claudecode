@@ -4,12 +4,12 @@
 
 Only the current exact numeric product release tag receives security fixes.
 Historical plugin-scoped tags are not the primary public GitHub Release
-coordinate. The `1.6.x` line label tracks only the latest released patch, not
+coordinate. The `1.7.x` line label tracks only the latest released patch, not
 every historical patch in the line.
 
 | Version | Supported |
 |---------|-----------|
-| Current exact tag `1.7.4` | yes |
+| Current exact tag `1.7.5` | yes |
 | Older `1.1.*` tags | no; upgrade to current exact tag |
 | Older minor / major lines | no |
 
@@ -51,7 +51,7 @@ threat model focuses on:
   colleague-owned repositories, `.rldyour/project-policy.json` is the
   executable source of truth and may disable tracked-context, allow instruction docs
   on normal branches, and disable branch-cleanup blockers.
-- **Hook freshness invariants for branch-split projects**: see ADR-0011.
+- **Hook freshness invariants for tracked-context projects**: see ADR-0011.
 
 ## What does NOT count
 

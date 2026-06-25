@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.7.5] - 2026-06-26
+
+### Fixed
+
+- Update Claude security-policy wording and Stop lifecycle comments for the tracked-context model so root adapter-health and public governance gates no longer see stale branch-separation phrasing.
+
 ## [1.7.4] - 2026-06-26
 
 ### Fixed
@@ -16,7 +22,7 @@
 
 ### Fixed
 
-- Sync generated cmux worker/orchestrator skill projections with the tracked-context branch model.
+- Sync generated cmux worker/orchestrator skill projections with the tracked-context model model.
 
 All notable changes to this project are documented in this file.
 
