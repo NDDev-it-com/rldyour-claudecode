@@ -49,10 +49,10 @@ jobs:
       - name: Download actionlint (pinned + checksum-verified)
         run: |
           set -euo pipefail
-          # actionlint v1.7.22 - release SHA 914e7df21a07ef503a81201c76d2b11c789d3fca
+          # actionlint v1.7.12 - release SHA 914e7df21a07ef503a81201c76d2b11c789d3fca
           # Linux amd64 tarball SHA256 from upstream checksums.txt at
-          # https://github.com/rhysd/actionlint/releases/download/v1.7.22/actionlint_1.7.22_checksums.txt
-          ACTIONLINT_VERSION='1.7.22'
+          # https://github.com/rhysd/actionlint/releases/download/v1.7.12/actionlint_1.7.32_checksums.txt
+          ACTIONLINT_VERSION='1.7.12'
           ACTIONLINT_SHA256='8aca8db96f1b94770f1b0d72b6dddcb1ebb8123cb3712530b08cc387b349a3d8'
           curl -fsSL -o /tmp/actionlint.tar.gz \
             "https://github.com/rhysd/actionlint/releases/download/v${ACTIONLINT_VERSION}/actionlint_${ACTIONLINT_VERSION}_linux_amd64.tar.gz"
