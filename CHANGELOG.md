@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.7.3] - 2026-06-26
+
+### Fixed
+
+- Fix the pinned actionlint workflow download version to match the verified upstream `v1.7.12` checksum.
+
 ## [1.7.2] - 2026-06-26
 
 ### Fixed
