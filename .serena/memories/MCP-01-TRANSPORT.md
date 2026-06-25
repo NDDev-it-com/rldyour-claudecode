@@ -1,7 +1,7 @@
 <!-- Memory Metadata
-Last updated: 2026-06-25
-Last verified: 2026-06-25
-Last commit: e56ecf05f68969cac2f1ec6ee8f25d44a463d12d chore(release): claude 1.6.1
+Last updated: 2026-06-26
+Last verified: 2026-06-26
+Last commit: fa1a49c refactor(policy): track claude agent context on main
 Scope: MCP runtime transport and pin policy
 Area: MCP
 -->
@@ -16,15 +16,15 @@ MCP runtime transport and pin policy
 - `path:README.md`
 
 ## Last verified
-- date: 2026-06-25
-- commit: `e56ecf05f68969cac2f1ec6ee8f25d44a463d12d`
-- checked by: Codex ry-start memory taxonomy sync
+- date: 2026-06-26
+- commit: `fa1a49c`
+- checked by: tracked-context Claude migration
 
 ## Facts
 - MCP memories record server ownership, transports, versions, and toolset constraints.
 
 ## Evidence
-- `commit:e56ecf05f68969cac2f1ec6ee8f25d44a463d12d`
+- `commit:fa1a49c`
 - `path:plugins/rldyour-mcps/.mcp.json`
 - `path:README.md`
 

@@ -1,7 +1,7 @@
 <!-- Memory Metadata
-Last updated: 2026-06-25
-Last verified: 2026-06-25
-Last commit: e56ecf05f68969cac2f1ec6ee8f25d44a463d12d chore(release): claude 1.6.1
+Last updated: 2026-06-26
+Last verified: 2026-06-26
+Last commit: fa1a49c refactor(policy): track claude agent context on main
 Scope: verified current technical debt
 Area: TECHDEBT
 -->
@@ -16,15 +16,15 @@ verified current technical debt
 - `path:CHANGELOG.md`
 
 ## Last verified
-- date: 2026-06-25
-- commit: `e56ecf05f68969cac2f1ec6ee8f25d44a463d12d`
-- checked by: Codex ry-start memory taxonomy sync
+- date: 2026-06-26
+- commit: `fa1a49c`
+- checked by: tracked-context Claude migration
 
 ## Facts
 - Technical debt memories record verified open debt only when it has code/config evidence.
 
 ## Evidence
-- `commit:e56ecf05f68969cac2f1ec6ee8f25d44a463d12d`
+- `commit:fa1a49c`
 - `path:README.md`
 - `path:CHANGELOG.md`
 
