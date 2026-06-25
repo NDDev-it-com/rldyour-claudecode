@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-06-26
 Last verified: 2026-06-26
-Last commit: e56ecf05f68969cac2f1ec6ee8f25d44a463d12d fix(docs): use ASCII punctuation in surface-adoption matrix
+Last commit: fa1a49c refactor(policy): track claude agent context on main
 Scope: release readiness, versioning, and artifact hygiene
 Area: RELEASE
 -->
@@ -17,16 +17,16 @@ release readiness, versioning, and artifact hygiene
 - `path:.github/workflows/release.yml`
 
 ## Last verified
-- date: 2026-06-25
-- commit: `e56ecf05f68969cac2f1ec6ee8f25d44a463d12d`
-- checked by: Codex ry-start memory taxonomy sync
+- date: 2026-06-26
+- commit: `fa1a49c`
+- checked by: tracked-context Claude migration
 
 ## Facts
 - Current rldyour-claudecode adapter VERSION is `1.7.0`; the release workflow publishes the matching numeric GitHub Release tag at the released commit.
 - Release memories record numeric versioning, tags, CI gates, and clean artifact hygiene.
 
 ## Evidence
-- `commit:e56ecf05f68969cac2f1ec6ee8f25d44a463d12d`
+- `commit:fa1a49c`
 - `path:VERSION`
 - `path:CHANGELOG.md`
 - `path:.github/workflows/release.yml`
