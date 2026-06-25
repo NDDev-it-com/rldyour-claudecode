@@ -125,7 +125,7 @@ For each verified-or-not claim, choose exactly one action:
 
 ### Step 6 - Commit
 
-Run `bash plugins/rldyour-serena-mcp/scripts/commit_serena_knowledge.sh`. This is the existing helper - it acknowledges the sync state, removes runtime markers, and (in fullrepo-managed projects like this one) does **not** commit AI files to the current branch. Capture exit status.
+Run `bash plugins/rldyour-serena-mcp/scripts/commit_serena_knowledge.sh`. This is the existing helper - it acknowledges the sync state, removes runtime markers, and (in tracked-context-managed projects like this one) does **not** commit AI files to the current branch. Capture exit status.
 
 ### Step 7 - Final report
 
@@ -141,7 +141,7 @@ Do not emit prose around the JSON. The orchestrator will parse this directly.
 
 This subagent's only responsibility is `.serena/memories/`. Other tasks belong to other handlers:
 - Git pipeline (push / merge / cleanup) - handled by `rldyour-flow` Stop hook (`stop_post_task_sync.sh`).
-- `fullrepo_sync.py --publish` - handled by `rldyour-flow` Stop hook after git pipeline completes.
+- `flow_post_task_state.py --publish` - handled by `rldyour-flow` Stop hook after git pipeline completes.
 - Editing `AGENTS.md` and `.claude/CLAUDE.md` - owned by `instruction-docs-sync` / `flow-post-task-sync`.
 - Writing `.serena/plans/` and `.serena/research/` - owned by the main `serena-memory-sync` workflow when a reusable plan or source-backed research archive is explicitly needed; this subagent only writes `.serena/memories/`.
 
@@ -150,7 +150,7 @@ This subagent's only responsibility is `.serena/memories/`. Other tasks belong t
 - Using `Edit`, `Write`, `NotebookEdit` tools (disallowed by frontmatter - attempting them returns errors).
 - Writing speculative claims ("this likely does", "should support", "is intended to").
 - Copying conversation history, chat tone, TODOs, or human plans into memories.
-- Storing secrets, env values, tokens, cookies, OAuth scopes, private keys, or any string matching the `SECRET_RE` patterns from `fullrepo_sync.py`.
+- Storing secrets, env values, tokens, cookies, OAuth scopes, private keys, or any string matching the `SECRET_RE` patterns from `flow_post_task_state.py`.
 - Stopping without emitting the final JSON report.
 
 ## Anti-hallucination guards (verbatim, do not paraphrase in memories)
@@ -167,7 +167,7 @@ When writing or editing a memory:
 
 This is a Claude Code plugin marketplace (`rldyour-claudecode`). Specifics that affect your work:
 
-- Memory location: `.serena/memories/` (project-level, agent-only on `fullrepo` branch).
+- Memory location: `.serena/memories/` (project-level, agent-only on `main` branch).
 - Memory files are in the `.git/info/exclude` block, so `git status` shows them clean - `commit_serena_knowledge.sh` handles the no-tracked-changes case correctly.
 - Active project memories use the numbered taxonomy. `CORE-01-INDEX.md` is the navigation map. Current canonical topics include:
   `CORE-02-MARKETPLACE.md`,
@@ -179,4 +179,4 @@ This is a Claude Code plugin marketplace (`rldyour-claudecode`). Specifics that 
   `DOCS-01-INSTRUCTIONS.md`,
   `RELEASE-01-VALIDATION.md`,
   `TECHDEBT-01-NOW.md`.
-- After your work, the `rldyour-flow` Stop hook (`stop_post_task_sync.sh`) takes over and runs the git pipeline + fullrepo publish automatically.
+- After your work, the `rldyour-flow` Stop hook (`stop_post_task_sync.sh`) takes over and runs the git pipeline + git synchronization automatically.

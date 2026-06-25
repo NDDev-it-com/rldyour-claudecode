@@ -1,17 +1,13 @@
 ---
 name: serena-memory-sync
-description: "Синхронизация .serena/memories - fact-only заметки из кода/диффов/тестов. Используй для: обнови memories, синхронизируй память, после коммита, после Stop-хука, .serena/plans, .serena/research, долгоживущие изменения. EN triggers: sync memories, refresh project knowledge, fact-only memory audit, post-commit sync, post-Stop sync, durable changes, update Serena memories."
-allowed-tools:
-  - mcp__plugin_rldyour-mcps_serena__*
-  - Read
-  - Bash
+description: "Синхронизация Serena memories в .serena/memories: fact-only durable knowledge. Используй для: обнови memories. EN: sync memories, refresh project knowledge."
 ---
 
 # Serena Memory Sync
 
 ## Purpose
 
-Keep `.serena/` useful for future Claude Code, Codex, and other GPT-based agent sessions without creating hallucinated project lore. Memories must explain what the code actually does, where it lives, how it behaves, which invariants matter, and how to safely change and verify the area.
+Keep `.serena/` useful for future Codex, Claude Code, and other GPT-based coding agent sessions without creating hallucinated project lore. Memories must explain what the code actually does, where it lives, how it behaves, which invariants matter, and how to safely change and verify the area.
 
 User-facing conversation stays in Russian. All stored `.serena/` knowledge files are written in English.
 
@@ -23,7 +19,7 @@ Use this skill without waiting for explicit invocation when:
 - A Stop hook, commit-like action, or stale-memory marker indicates project knowledge should be synchronized.
 - Durable facts were discovered while making or verifying project changes, and those facts are now encoded in code, configuration, workflow files, committed docs, or stable tests.
 - `.serena/memories`, `.serena/plans`, or `.serena/research` may be stale or need a fact-only audit.
-- A future Claude Code, Codex, or GPT-based agent session would need verified source-of-truth paths, invariants, contracts, entry points, or verification commands to implement confidently.
+- A future Codex, Claude Code, or GPT-based agent session would need verified source-of-truth paths, invariants, contracts, entry points, or verification commands to implement confidently.
 
 Do not auto-invoke this skill for read-only context discovery, log/server audits, report-only reviews, exploratory debugging, or current-status snapshots unless the user explicitly asked to update/synchronize memories or a Stop/stale-memory hook requires it. In those read-only workflows, list useful candidates in the user report and wait for permission before writing `.serena`.
 
@@ -35,15 +31,15 @@ Do not create memory noise for trivial formatting, purely mechanical edits, curr
 - `.serena/plans/`: non-trivial implementation plans that are worth preserving across sessions.
 - `.serena/research/`: complex or long research results with source links and implementation impact.
 
-In normal product repositories, these knowledge files are agent-only context. They are restored from and published to `fullrepo`, then ignored through `.git/info/exclude` instead of being committed to `main`. Repositories that are themselves agent tooling may intentionally track selected `.serena` knowledge files when they are part of the product source of truth.
+These knowledge files are tracked normally on `main` as ordinary source, with no separate agent-only branch or overlay; the knowledge-only commit lands on `main` like any other source change.
 
-Local/runtime files must not be committed or published by this plugin: `.serena/cache/`, `.serena/.gitignore`, `.serena/project.local.yml`, `.serena/.sync_marker`, `.serena/.serena_sync_state.json`, `.serena/.auto_sync_head`, `.serena/.active_workflow_intent.json`, `.serena/.dirty_stop_ack`, `.serena/.flow_sync_marker`, `.serena/.flow_post_task_state.json`, `.serena/.stop_lifecycle_timeout_marker`.
+Local/runtime files must not be committed or published by this plugin: `.serena/cache/`, `.serena/.gitignore`, `.serena/project.local.yml`, `.serena/.sync_marker`, `.serena/.serena_sync_state.json`, `.serena/.auto_sync_head`, `.serena/.active_workflow_intent.json`, `.serena/.dirty_stop_ack`, `.serena/.flow_sync_marker`, `.serena/.flow_post_task_state.json`.
 
 ## Memory Structure
 
 Name memory files as `AREA-01-SLUG.md`.
 
-Default cross-project areas: `CORE`, `BACKEND`, `FRONTEND`, `MOBILE`, `INFRA`, `API`, `AUTH`, `DATA`, `SEC`, `TEST`, `DESIGN`, `CLI`, `MCP`, `DOCS`, `RELEASE`, `TECHDEBT`. Agent-tooling repositories may add tool-specific areas such as `CLAUDECODE` when they are clearer than overloading `CORE`.
+Default cross-project areas: `CORE`, `BACKEND`, `FRONTEND`, `MOBILE`, `INFRA`, `API`, `AUTH`, `DATA`, `SEC`, `TEST`, `DESIGN`, `CLI`, `MCP`, `DOCS`, `RELEASE`, `TECHDEBT`. Agent-tooling repositories may add tool-specific areas such as `CODEX` when they are clearer than overloading `CORE`.
 
 Create custom area prefixes only when the project needs a clearer domain boundary. Keep files narrow and split large memories instead of creating broad catch-all files.
 
@@ -167,7 +163,7 @@ Do not write:
 6. Save non-trivial plans to `.serena/plans/` only when they will help future sessions continue work.
 7. Save long research summaries to `.serena/research/` only when the research was complex, source-backed, and likely reusable.
 8. Keep exact paths, symbol names, commands, contracts, invariants, verification checks, and behavior. Avoid generic advice.
-9. Run the plugin's `commit_serena_knowledge.sh` script (path provided by the Stop hook message, or `${CLAUDE_PLUGIN_ROOT}/scripts/commit_serena_knowledge.sh` when the plugin is enabled). In repositories where `.serena` knowledge is still tracked, this creates the knowledge-only commit. In fullrepo-managed repositories, it acknowledges current memories and clears runtime sync markers without committing AI files to the current branch; `flow-post-task-sync` publishes the final `fullrepo` snapshot.
+9. Run the plugin's `commit_serena_knowledge.sh` script (path provided by the Stop hook message, or `${CLAUDE_PLUGIN_ROOT}/scripts/commit_serena_knowledge.sh` when the plugin is enabled). `.serena` knowledge is tracked normally on `main`, so this creates the knowledge-only commit and clears runtime sync markers.
 
 ## Quality Rules
 
@@ -188,4 +184,4 @@ Report:
 - `New memories`: new files, if any.
 - `Plans/research archived`: files written, if any.
 - `Unresolved gaps`: anything that could not be verified from code.
-- `Commit`: whether the Serena knowledge-only auto-commit was created or fullrepo-managed knowledge was acknowledged for later `fullrepo` publish.
+- `Commit`: whether the Serena knowledge-only commit on `main` was created.

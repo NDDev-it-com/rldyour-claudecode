@@ -39,14 +39,14 @@ These scripts emit JSON for scripting / dashboards / failure triage:
 # Serena memory freshness vs HEAD
 python3 plugins/rldyour-serena-mcp/scripts/serena_memory_state.py
 
-# Flow post-task state (dirty files, ahead/behind, fullrepo state, branch cleanup candidates)
+# Flow post-task state (dirty files, ahead/behind, tracked-context state, branch cleanup candidates)
 python3 plugins/rldyour-flow/scripts/flow_post_task_state.py
 
 # Instruction docs state (AGENTS.md, .claude/CLAUDE.md presence + review need)
 python3 plugins/rldyour-flow/scripts/instruction_docs_state.py --json
 
-# Fullrepo branch sync status
-python3 plugins/rldyour-flow/scripts/fullrepo_sync.py --status-json
+# Tracked context sync status
+plugins/rldyour-flow/scripts/flow_post_task_state.py
 
 # Release manifest snapshot
 python3 scripts/release_manifest.py
@@ -94,7 +94,7 @@ Hooks return discriminated-union JSON:
 Both Stop hooks write fingerprint markers to detect "stop already attempted with this state" loops:
 
 - `.serena/.sync_marker` - Serena memory sync: stores compound `${HEAD_SHA}:${NEWEST_SHA:-none}` fingerprint, capturing both project HEAD and the newest memory-sync commit (D32 fix). A partial memory sync that writes memories without advancing HEAD changes `NEWEST_SHA`, so the next Stop sees a different fingerprint and re-fires the advisory instead of silently passing.
-- `.serena/.flow_sync_marker` - Flow post-task: stores SHA-256 content-hash fingerprint of a 10-field payload covering `(HEAD, dirty_files, ahead/behind, branch_cleanup, serena_current, doc_files_changed, fullrepo_needs_attention, instruction_docs_state.needs_instruction_docs_review)` (D31 fix added the last three fields so all contributors to `needs_flow_sync` enter the hash).
+- `.serena/.flow_sync_marker` - Flow post-task: stores SHA-256 content-hash fingerprint of a 10-field payload covering `(HEAD, dirty_files, ahead/behind, branch_cleanup, serena_current, doc_files_changed, tracked-context_needs_attention, instruction_docs_state.needs_instruction_docs_review)` (D31 fix added the last three fields so all contributors to `needs_flow_sync` enter the hash).
 
 If `stop_hook_active=true` (from event payload, set when same Stop has fired before) AND the fingerprint matches, the hook exits 0 silently - letting Stop succeed without re-emitting the same advisory. This is what prevents infinite-loop "you must run X" prompts.
 
@@ -109,7 +109,7 @@ rm -f .serena/.sync_marker .serena/.flow_sync_marker .serena/.serena_sync_state.
 
 ## Diagnostics bundle for off-machine review
 
-`scripts/collect_diagnostics.sh` writes a timestamped tarball under `.serena/diagnostics/` (gitignored) containing CLI version, plugin list, manifest snapshots, MCP config, hook scripts inventory, current branch state, fullrepo sync state, runtime markers. Use when sharing a bug report or escalating triage:
+`scripts/collect_diagnostics.sh` writes a timestamped tarball under `.serena/diagnostics/` (gitignored) containing CLI version, plugin list, manifest snapshots, MCP config, hook scripts inventory, current branch state, tracked-context state, runtime markers. Use when sharing a bug report or escalating triage:
 
 ```bash
 scripts/collect_diagnostics.sh

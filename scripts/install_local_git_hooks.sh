@@ -1,97 +1,137 @@
 #!/usr/bin/env bash
-# install_local_git_hooks.sh - install rldyour pre-push guard in a consumer repo.
-#
-# The guard is the local_git_ai_guard.sh shipped in plugins/rldyour-flow/scripts/.
-# It is branch-aware: product branches get strict protection against agent-only
-# paths (AGENTS.md, .claude/**, .serena/{memories,plans,research,...}, AI tool
-# config) and AI-marker additions. The configured fullrepo branch
-# (`fullrepo` by default, or `RLDYOUR_FULLREPO_BRANCH`) allows durable AI
-# context but still blocks definite secrets, runtime markers, browser
-# artifacts, and local env files.
-#
-# Usage:
-#   scripts/install_local_git_hooks.sh                              # current repo, dry-run
-#   scripts/install_local_git_hooks.sh --apply                       # current repo, install
-#   scripts/install_local_git_hooks.sh --repo /path/to/project --apply
-#   scripts/install_local_git_hooks.sh --uninstall --repo /path
-#
-# Idempotent: re-running --apply overwrites the existing pre-push hook with
-# the latest version of local_git_ai_guard.sh.
-
 set -euo pipefail
-IFS=$'\n\t'
-unset CDPATH
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
-GUARD_SOURCE="$ROOT/plugins/rldyour-flow/scripts/local_git_ai_guard.sh"
-
-REPO=""
 APPLY=0
-UNINSTALL=0
+TARGET_REPO=.
 
-while [ $# -gt 0 ]; do
+usage() {
+  cat <<'EOF'
+Usage: scripts/install_local_git_hooks.sh [--repo PATH] [--dry-run] [--apply]
+
+Installs rldyour local Git hooks for the current repository. The pre-push hook
+delegates to plugins/rldyour-flow/scripts/local_git_ai_guard.sh.
+EOF
+}
+
+while [ "$#" -gt 0 ]; do
   case "$1" in
-    --repo)
-      REPO="$2"; shift 2 ;;
-    --apply)
-      APPLY=1; shift ;;
     --dry-run)
-      APPLY=0; shift ;;
-    --uninstall)
-      UNINSTALL=1; shift ;;
+      APPLY=0
+      ;;
+    --apply)
+      APPLY=1
+      ;;
+    --repo)
+      shift
+      TARGET_REPO=${1:?--repo requires a path}
+      ;;
     -h|--help)
-      sed -n '2,17p' "$0"; exit 0 ;;
+      usage
+      exit 0
+      ;;
     *)
-      echo "Unknown flag: $1" >&2; exit 2 ;;
+      printf 'Unknown argument: %s\n' "$1" >&2
+      usage >&2
+      exit 2
+      ;;
   esac
+  shift
 done
 
-if [ -z "$REPO" ]; then
-  REPO="$(pwd)"
+SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+SOURCE_ROOT=$(git -C "$SCRIPT_DIR/.." rev-parse --show-toplevel)
+SOURCE_GUARD="$SOURCE_ROOT/plugins/rldyour-flow/scripts/local_git_ai_guard.sh"
+ROOT=$(git -C "$TARGET_REPO" rev-parse --show-toplevel)
+GIT_DIR=$(git -C "$ROOT" rev-parse --git-dir)
+if [[ $GIT_DIR != /* ]]; then
+  GIT_DIR="$ROOT/$GIT_DIR"
 fi
+HOOK_DIR="$GIT_DIR/hooks"
+PRE_PUSH="$HOOK_DIR/pre-push"
+LOCAL_GUARD="$HOOK_DIR/_local_guard_ai.sh"
+PREVIOUS_PRE_PUSH="$HOOK_DIR/pre-push.rldyour-previous"
+STAMP=$(date +%Y%m%d%H%M%S)
 
-REPO="$(cd "$REPO" && pwd)"
+managed_pre_push() {
+  [ -f "$PRE_PUSH" ] && grep -F "rldyour local git hook manager" "$PRE_PUSH" >/dev/null 2>&1
+}
 
-if ! git -C "$REPO" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-  echo "FAIL $REPO is not a git working tree" >&2
-  exit 1
-fi
-
-GIT_DIR="$(git -C "$REPO" rev-parse --git-dir)"
-HOOK_PATH="$GIT_DIR/hooks/pre-push"
-
-if [ "$UNINSTALL" -eq 1 ]; then
-  if [ -f "$HOOK_PATH" ] && grep -q "rldyour local_git_ai_guard" "$HOOK_PATH"; then
-    rm -f "$HOOK_PATH"
-    echo "REMOVED $HOOK_PATH"
-  else
-    echo "SKIP $HOOK_PATH does not look like an rldyour-installed guard"
+write_file() {
+  local path=$1
+  local mode=$2
+  local tmp
+  tmp=$(mktemp)
+  cat >"$tmp"
+  if [ "$APPLY" -eq 0 ]; then
+    printf 'dry-run: would write %s\n' "$path"
+    rm -f "$tmp"
+    return
   fi
-  exit 0
+  install -m "$mode" "$tmp" "$path"
+  rm -f "$tmp"
+}
+
+mkdir -p "$HOOK_DIR"
+
+if [ -f "$PRE_PUSH" ] && ! managed_pre_push; then
+  if [ "$APPLY" -eq 0 ]; then
+    printf 'dry-run: would preserve existing %s as %s\n' "$PRE_PUSH" "$PREVIOUS_PRE_PUSH"
+    if [ -f "$PREVIOUS_PRE_PUSH" ]; then
+      printf 'dry-run: would back up existing %s to %s.bak.%s\n' "$PREVIOUS_PRE_PUSH" "$PREVIOUS_PRE_PUSH" "$STAMP"
+    fi
+  else
+    if [ -f "$PREVIOUS_PRE_PUSH" ]; then
+      mv "$PREVIOUS_PRE_PUSH" "$PREVIOUS_PRE_PUSH.bak.$STAMP"
+      printf 'backed up existing previous pre-push to %s.bak.%s\n' "$PREVIOUS_PRE_PUSH" "$STAMP"
+    fi
+    mv "$PRE_PUSH" "$PREVIOUS_PRE_PUSH"
+    chmod +x "$PREVIOUS_PRE_PUSH"
+    printf 'preserved existing pre-push as %s\n' "$PREVIOUS_PRE_PUSH"
+  fi
 fi
 
-if [ ! -f "$GUARD_SOURCE" ]; then
-  echo "FAIL guard source missing: $GUARD_SOURCE" >&2
-  exit 1
+write_file "$LOCAL_GUARD" 0755 <<EOF_GUARD
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT=\$(git rev-parse --show-toplevel)
+for guard in \\
+  "\$ROOT/plugins/rldyour-flow/scripts/local_git_ai_guard.sh" \\
+  "$SOURCE_GUARD" \\
+  "\${CODEX_HOME:-\$HOME/.codex}/plugins/cache/rldyour-codex/rldyour-flow"/*/scripts/local_git_ai_guard.sh \\
+  "\${CODEX_HOME:-\$HOME/.codex}/plugins/cache/rldyour-codex/rldyour-flow/local/scripts/local_git_ai_guard.sh"; do
+  if [ -f "\$guard" ]; then
+    exec bash "\$guard" "\$@"
+  fi
+done
+
+printf 'rldyour local Git AI guard script not found\\n' >&2
+exit 1
+EOF_GUARD
+
+write_file "$PRE_PUSH" 0755 <<'EOF_PRE_PUSH'
+#!/usr/bin/env bash
+# rldyour local git hook manager
+set -euo pipefail
+
+HOOK_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+INPUT=$(mktemp)
+cleanup() {
+  rm -f "$INPUT"
+}
+trap cleanup EXIT
+
+cat >"$INPUT"
+
+bash "$HOOK_DIR/_local_guard_ai.sh" "$@" <"$INPUT"
+
+if [ -x "$HOOK_DIR/pre-push.rldyour-previous" ]; then
+  "$HOOK_DIR/pre-push.rldyour-previous" "$@" <"$INPUT"
 fi
+EOF_PRE_PUSH
 
 if [ "$APPLY" -eq 0 ]; then
-  echo "DRY-RUN - would install:"
-  echo "  source: $GUARD_SOURCE"
-  echo "  target: $HOOK_PATH"
-  exit 0
+  printf 'dry-run complete. Re-run with --apply to install local Git hooks.\n'
+else
+  printf 'installed rldyour local Git pre-push guard in %s\n' "$HOOK_DIR"
 fi
-
-mkdir -p "$(dirname "$HOOK_PATH")"
-{
-  echo "#!/usr/bin/env bash"
-  echo "# rldyour local_git_ai_guard pre-push hook"
-  echo "# Installed by $(basename "$0") on $(date -u +%Y-%m-%dT%H:%M:%SZ)"
-  echo "exec bash $GUARD_SOURCE \"\$@\""
-} > "$HOOK_PATH"
-chmod +x "$HOOK_PATH"
-
-echo "INSTALLED $HOOK_PATH (delegates to $GUARD_SOURCE)"
-echo "Note: the guard reads stdin per-ref, so it is invoked automatically by 'git push'."
-echo "      Set RLDYOUR_FULLREPO_BRANCH to override the default fullrepo branch name."

@@ -7,7 +7,7 @@ Safe rollback paths when a `rldyour-claudecode` change breaks consumer projects 
 There are three independent surfaces that can need rollback:
 
 1. **Marketplace `main`** - the source-of-truth git history.
-2. **`fullrepo` branch** - agent-only file snapshot.
+2. **`main` branch** - agent-only file snapshot.
 3. **User local Claude Code state** - installed plugin cache under `~/.claude/plugins/`.
 
 Each has a different rollback technique. Pick the narrowest one that fixes the problem.
@@ -34,17 +34,17 @@ git push origin main
 
 Re-run the pre-release checks (`scripts/validate_marketplace.sh`) after rollback before re-tagging.
 
-## Rollback `fullrepo`
+## Rollback `tracked-context`
 
-`fullrepo` is rebuilt from `HEAD` of the normal branch + local agent-only files. To rollback, restore `main` first, then republish:
+`tracked-context` is rebuilt from `HEAD` of the normal branch + local durable AI context files. To rollback, restore `main` first, then republish:
 
 ```bash
 # After main is back to a known-good state:
-python3 plugins/rldyour-flow/scripts/fullrepo_sync.py --publish
+git status -sb
 
-# Or restore agent-only context from a previous fullrepo SHA without changing main:
-git fetch origin fullrepo
-python3 plugins/rldyour-flow/scripts/fullrepo_sync.py --restore
+# Or restore durable AI context from a previous tracked-context SHA without changing main:
+git fetch origin tracked-context
+git status -sb
 ```
 
 `--publish` uses safe `--force-with-lease` so concurrent pushes from another machine are detected and refused.
@@ -70,15 +70,15 @@ Restart Claude Code so plugin agents and hooks reload.
 
 ## Bootstrap from scratch on a new machine
 
-When pulling the repo for the first time, agent-only context lives on `fullrepo`, not `main`. Restore it locally:
+When pulling the repo for the first time, durable AI context lives on `tracked-context`, not `main`. Restore it locally:
 
 ```bash
 git clone https://github.com/nddev-it-com/rldyour-claudecode.git
 cd rldyour-claudecode
-python3 plugins/rldyour-flow/scripts/fullrepo_sync.py --bootstrap-init
+git status -sb
 ```
 
-`--bootstrap-init` installs the `.git/info/exclude` block for agent-only files, restores `AGENTS.md`, `.claude/CLAUDE.md`, `.serena/memories/**`, etc. from `origin/fullrepo`, and migrates any tracked agent-only files out of `main`'s index.
+`--tracked-context review` installs the `.git/info/exclude` block for durable AI context files, restores `AGENTS.md`, `.claude/CLAUDE.md`, `.serena/memories/**`, etc. from `origin/main`, and migrates any tracked durable AI context files out of `main`'s index.
 
 ## Recover from runtime markers stuck
 
@@ -100,8 +100,8 @@ Then trigger a normal sync to repopulate markers correctly.
 Memories are agent-only. To restore the last known-good version:
 
 ```bash
-git fetch origin fullrepo
-git show origin/fullrepo:.serena/memories/<name>.md > .serena/memories/<name>.md
+git fetch origin tracked-context
+git show origin/main:.serena/memories/<name>.md > .serena/memories/<name>.md
 bash plugins/rldyour-serena-mcp/scripts/commit_serena_knowledge.sh
 ```
 

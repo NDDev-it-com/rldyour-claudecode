@@ -70,7 +70,7 @@ Subject ≤72 chars. Optional scope in parentheses (`feat(auth): ...`). Use `!` 
 
 Atomic commits per logical change. Split unrelated implementation, tests,
 validators, docs/instructions, license/metadata, generated artifacts, and
-Serena/fullrepo sync when they are independently reviewable. Never amend after
+Serena/tracked context sync when they are independently reviewable. Never amend after
 pre-commit hook failure (commit did not happen, so amending modifies the
 previous commit). Do not rewrite already-pushed history without explicit owner
 approval; use a follow-up commit for published branches.

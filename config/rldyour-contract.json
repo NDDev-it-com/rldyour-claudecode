@@ -1545,29 +1545,6 @@
   ],
   "hook_lifecycle": [
     {
-      "id": "session.start.worktree-bootstrap",
-      "description": "Restore agent-only fullrepo context into new worktrees",
-      "claude": {
-        "plugin": "rldyour-flow",
-        "event": "SessionStart",
-        "script": "plugins/rldyour-flow/hooks/session_start_worktree_bootstrap.sh"
-      },
-      "codex": {
-        "name": "session_start_worktree_bootstrap",
-        "status": "plugin hook when hooks/list reports trusted hook"
-      },
-      "opencode": {
-        "name": "shell.env or startup plugin event",
-        "status": "adapter-specific startup hook"
-      },
-      "gemini": {
-        "status": "adapter-specific: no worktree bootstrap hook; session_start_context.sh covers context load only"
-      },
-      "mimocode": {
-        "status": "adapter-specific: no native hook lifecycle; not provided"
-      }
-    },
-    {
       "id": "session.start.context",
       "description": "Load lightweight session context",
       "claude": {

@@ -22,7 +22,6 @@ Run from repo root before tagging:
 scripts/validate_marketplace.sh           # full harness - must be green
 scripts/smoke_mcp_runtime.sh              # MCP servers reachable / pinned
 scripts/smoke_hooks.sh                    # hook lifecycle smoke
-scripts/smoke_fullrepo_sync.sh            # fullrepo state machine
 python3 scripts/release_manifest.py       # capture release evidence
 ```
 
@@ -32,7 +31,7 @@ Verify final state:
 
 ```bash
 git status -sb                            # clean of non-agent files
-python3 plugins/rldyour-flow/scripts/fullrepo_sync.py --status-json
+plugins/rldyour-flow/scripts/flow_post_task_state.py
 plugins/rldyour-flow/scripts/flow_post_task_state.py | python3 -m json.tool
 plugins/rldyour-serena-mcp/scripts/serena_memory_state.py | python3 -m json.tool
 ```
@@ -75,12 +74,12 @@ Each release should carry:
 
 The `collect_diagnostics.sh` script can bundle the snapshot into a tarball under `.serena/diagnostics/` for archival without committing it.
 
-## Synchronizing fullrepo
+## Synchronizing tracked-context
 
-After tagging on `main`, refresh `fullrepo` so the agent-only context for the tagged release is preserved:
+After tagging on `main`, refresh `tracked-context` so the durable AI context for the tagged release is preserved:
 
 ```bash
-python3 plugins/rldyour-flow/scripts/fullrepo_sync.py --publish
+git status -sb
 ```
 
-The fullrepo branch is rebuilt from the current `HEAD` plus local agent-only files, with safe `--force-with-lease` push.
+The tracked-context branch is rebuilt from the current `HEAD` plus local durable AI context files, with safe `--force-with-lease` push.

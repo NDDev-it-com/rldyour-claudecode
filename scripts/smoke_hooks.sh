@@ -95,7 +95,6 @@ test "$fail_count" -eq 0 || fail "hook script checks failed"
 step "skip-flag exit 0"
 SKIP_TESTS=(
   "RLDYOUR_SKIP_FLOW_SESSION_CONTEXT=1:plugins/rldyour-flow/hooks/session_start_context.sh"
-  "RLDYOUR_SKIP_WORKTREE_BOOTSTRAP=1:plugins/rldyour-flow/hooks/session_start_worktree_bootstrap.sh"
   "RLDYOUR_SKIP_FLOW_COMMIT_ADVICE=1:plugins/rldyour-flow/hooks/post_tool_use_commit_advice.sh"
   "RLDYOUR_SKIP_STOP_GATES=1:plugins/rldyour-flow/hooks/stop_post_task_sync.sh"
   "RLDYOUR_SKIP_STOP_GATES=1:plugins/rldyour-serena-mcp/hooks/stop_memory_sync.sh"

@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 """validate_instruction_docs.py - verify AGENTS.md and .claude/CLAUDE.md hygiene.
 
-For the rldyour-claudecode marketplace these files are agent-only (live on the
-`fullrepo` branch, excluded from `main` via `.git/info/exclude`). The validator
-only inspects the worktree state - it does not require the files to be tracked
-in the current branch.
+For the rldyour-claudecode marketplace these files are durable AI context
+tracked on `main`; runtime-local Serena state remains ignored.
 
 Checks:
 1. Both `AGENTS.md` and `.claude/CLAUDE.md` exist in the worktree (when
@@ -16,7 +14,7 @@ Checks:
 4. Active version/count claims match package, baseline, runtime-env, and
    filesystem inventory.
 5. No secret-looking strings in either file (lightweight scan against the
-   patterns SECRET_RE in fullrepo_sync.py).
+   local SECRET_RE patterns).
 
 Exit codes: 0 success, 1 hard failure.
 """

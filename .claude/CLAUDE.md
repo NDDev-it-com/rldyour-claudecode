@@ -16,7 +16,6 @@ claims:
   claude_code_feature_floor: "2.1.146"
   skill_listing_budget_fraction: 0.04
   max_skill_description_chars: 1536
-  fullrepo_branch: fullrepo
   plugin_count: 10
   skill_count: 38
   command_count: 11
@@ -45,7 +44,7 @@ Current inventory: 10 plugins, 38 skills, 11 slash commands, and 8 subagents.
 
 Only `rldyour-flow` and `rldyour-serena-mcp` own hooks. Stop hooks are advisory
 enforcement gates: they compute state and block with guidance, while the main
-workflow performs memory sync, tests, commits, pushes, and fullrepo publication.
+workflow performs memory sync, tests, commits, pushes, and release synchronization.
 The single registered Claude Stop hook is the Flow dispatcher.
 
 | Event | Owner | Script | Timeout |

@@ -4,6 +4,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -14,6 +15,7 @@ if str(SCRIPT_DIR) not in sys.path:
     sys.path.insert(0, str(SCRIPT_DIR))
 
 from project_flow_policy import load_policy  # noqa: E402
+
 
 RUNTIME_IGNORED = {
     ".serena/.sync_marker",
@@ -33,8 +35,55 @@ UNTRACKED_BOOTSTRAP_IGNORED = {
 }
 
 DOC_FILES = ("AGENTS.md", ".claude/CLAUDE.md", "CLAUDE.md")
-PROTECTED_BRANCHES = {"main", "master", "dev", "develop", "development", "staging", "production", "prod", "fullrepo"}
-WORKFLOW_BRANCH_PREFIXES = ("ai/", "claude/", "ry-", "rldyour/")
+PROTECTED_BRANCHES = {"main", "master", "dev", "develop", "development", "staging", "production", "prod"}
+WORKFLOW_BRANCH_PREFIXES = ("ai/", "codex/", "ry-", "rldyour/")
+
+
+def _codex_home() -> Path:
+    return Path(os.environ.get("CODEX_HOME") or Path.home() / ".codex")
+
+
+def _semver_key(value: str) -> tuple[int, int, int, str]:
+    match = re.match(r"^(\d+)\.(\d+)\.(\d+)(.*)$", value)
+    if not match:
+        return (0, 0, 0, value)
+    return (int(match.group(1)), int(match.group(2)), int(match.group(3)), match.group(4))
+
+
+def _installed_plugin_root(plugin: str) -> Path:
+    base = _codex_home() / "plugins/cache/rldyour-codex" / plugin
+    candidates: list[tuple[tuple[int, int, int, str], Path]] = []
+    if base.is_dir():
+        for child in base.iterdir():
+            if not child.is_dir() or child.name == "local":
+                continue
+            manifest_path = child / ".codex-plugin/plugin.json"
+            try:
+                manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            except (FileNotFoundError, json.JSONDecodeError):
+                continue
+            if not isinstance(manifest, dict):
+                continue
+            if manifest.get("name") != plugin:
+                continue
+            version = manifest.get("version")
+            if isinstance(version, str):
+                candidates.append((_semver_key(version), child))
+    if candidates:
+        return max(candidates, key=lambda item: item[0])[1]
+    return base / "local"
+
+
+def _installed_script(plugin: str, relative_path: str) -> Path:
+    return _installed_plugin_root(plugin) / relative_path
+
+
+def _flow_plugin_root() -> Path:
+    return Path(__file__).resolve().parents[1]
+
+
+def _sibling_plugin_script(plugin: str, relative_path: str) -> Path:
+    return _flow_plugin_root().parent / plugin / relative_path
 
 
 def _git(*args: str) -> subprocess.CompletedProcess[str]:
@@ -53,6 +102,21 @@ def _subprocess_timeout() -> float:
         return 10.0
 
 
+def _head_commit() -> str:
+    proc = _git("rev-parse", "--verify", "HEAD^{commit}")
+    if proc.returncode != 0:
+        return ""
+    return proc.stdout.strip()
+
+
+def _untracked_paths(path: str) -> list[str]:
+    candidate = path.rstrip("/")
+    if not candidate or not Path(candidate).is_dir():
+        return [path]
+    raw = _stdout("ls-files", "--others", "--exclude-standard", "--", path)
+    return [line for line in raw.splitlines() if line]
+
+
 def _porcelain_paths() -> list[str]:
     raw = _git("status", "--porcelain").stdout.rstrip("\n")
     paths: list[str] = []
@@ -63,12 +127,15 @@ def _porcelain_paths() -> list[str]:
         path = line[3:].strip()
         if " -> " in path:
             path = path.split(" -> ", 1)[1]
-        if (
-            path
-            and path not in RUNTIME_IGNORED
-            and not (status == "??" and path in UNTRACKED_BOOTSTRAP_IGNORED)
-        ):
-            paths.append(path)
+        if not path:
+            continue
+        candidates = _untracked_paths(path) if status == "??" else [path]
+        for candidate in candidates:
+            if candidate in RUNTIME_IGNORED:
+                continue
+            if status == "??" and candidate in UNTRACKED_BOOTSTRAP_IGNORED:
+                continue
+            paths.append(candidate)
     return sorted(paths)
 
 
@@ -283,134 +350,62 @@ def _branch_cleanup_state(current_branch: str, policy: dict[str, Any]) -> dict[s
     }
 
 
-def _resolve_sibling_plugin_script(plugin: str, relative: str) -> Path | None:
-    """Find a script in a sibling plugin via repo-relative or CLAUDE_PLUGIN_ROOT fallback.
-
-    Co-location assumption (closure of architecture F-4, info 90, from review
-    wave `2026-05-16T1859Z-61b913d`): `rldyour-flow` and the named sibling
-    plugin are expected to live inside the same marketplace repo under
-    per-entry relative sources (`./plugins/<name>`). Both lookup paths reflect this:
-
-      1. `plugins/<plugin>/<relative>` - resolves when the script runs with
-         cwd == repo root (the standard invocation pattern through
-         `bash scripts/...` or hook scripts that `cd "$(git rev-parse
-         --show-toplevel)"`).
-      2. `${CLAUDE_PLUGIN_ROOT}/../<plugin>/<relative>` - fallback when
-         Claude Code injects `CLAUDE_PLUGIN_ROOT` pointing at the calling
-         plugin's root; `..` walks back to the shared `plugins/` parent.
-
-    Neither path declares an explicit plugin dependency, which is intentional:
-    the marketplace ships all nine plugins together. If `rldyour-flow` is
-    ever installed without `rldyour-serena-mcp`, this returns `None` and
-    `_serena_current` falls back to `(True, {})` rather than crashing.
-    The canonical alternative path pattern is
-    `"$(git rev-parse --show-toplevel)"/plugins/<plugin>/...` per
-    PATTERNS-01-CANONICAL; that pattern is used in skill bodies but not
-    here because this is a long-lived Python script with multiple call
-    sites, not a one-shot shell expansion.
-    """
-    candidates = [
-        Path(__file__).resolve().parents[1].parent / plugin / relative,
-        Path(f"plugins/{plugin}/{relative}"),
-    ]
-    plugin_root_env = os.environ.get("CLAUDE_PLUGIN_ROOT")
-    if plugin_root_env:
-        candidates.append((Path(plugin_root_env) / ".." / plugin / relative).resolve())
-    for candidate in candidates:
-        if candidate.is_file():
-            return candidate
-    return None
-
-
 def _serena_current() -> tuple[bool, dict[str, Any]]:
-    candidate = _resolve_sibling_plugin_script("rldyour-serena-mcp", "scripts/serena_memory_state.py")
-    if candidate is None:
-        return True, {}
-    try:
-        proc = subprocess.run(
-            [sys.executable, str(candidate)],
-            check=False,
-            capture_output=True,
-            text=True,
-            timeout=_subprocess_timeout(),
-        )
-    except subprocess.TimeoutExpired:
-        return True, {"not_proven": "serena memory state timed out"}
-    if proc.returncode != 0 or not proc.stdout.strip():
-        return True, {}
-    try:
-        payload = json.loads(proc.stdout)
-    except json.JSONDecodeError:
-        return True, {}
-    return bool(payload.get("is_current", True)), payload
-
-
-def _self_plugin_script(relative: str) -> Path | None:
-    """Find a script in this plugin (rldyour-flow) via repo-relative or CLAUDE_PLUGIN_ROOT."""
     candidates = [
-        Path(__file__).resolve().parents[1] / relative,
-        Path(f"plugins/rldyour-flow/{relative}"),
+        _sibling_plugin_script("rldyour-serena-mcp", "scripts/serena_memory_state.py"),
+        Path("plugins/rldyour-serena-mcp/scripts/serena_memory_state.py"),
+        _installed_script("rldyour-serena-mcp", "scripts/serena_memory_state.py"),
     ]
-    plugin_root_env = os.environ.get("CLAUDE_PLUGIN_ROOT")
-    if plugin_root_env:
-        candidates.append((Path(plugin_root_env) / relative).resolve())
     for candidate in candidates:
-        if candidate.is_file():
-            return candidate
-    return None
-
-
-def _fullrepo_state() -> dict[str, Any]:
-    candidate = _self_plugin_script("scripts/fullrepo_sync.py")
-    if candidate is None:
-        return {}
-    args = [sys.executable, str(candidate), "--status-json"]
-    if os.environ.get("RLDYOUR_FLOW_STATE_LOCAL_ONLY") == "1":
-        args.append("--local-only")
-    try:
-        proc = subprocess.run(
-            args,
-            check=False,
-            capture_output=True,
-            text=True,
-            timeout=_subprocess_timeout(),
-        )
-    except subprocess.TimeoutExpired:
-        return {}
-    if proc.returncode != 0 or not proc.stdout.strip():
-        return {}
-    try:
-        payload = json.loads(proc.stdout)
-    except json.JSONDecodeError:
-        return {}
-    return payload if isinstance(payload, dict) else {}
+        if not candidate.is_file():
+            continue
+        try:
+            proc = subprocess.run(
+                ["python3", str(candidate)],
+                check=False,
+                capture_output=True,
+                text=True,
+                timeout=_subprocess_timeout(),
+            )
+        except subprocess.TimeoutExpired:
+            continue
+        if proc.returncode != 0 or not proc.stdout.strip():
+            continue
+        try:
+            payload = json.loads(proc.stdout)
+        except json.JSONDecodeError:
+            continue
+        return bool(payload.get("is_current", True)), payload
+    return True, {}
 
 
 def _instruction_docs_state() -> dict[str, Any]:
-    candidate = _self_plugin_script("scripts/instruction_docs_state.py")
-    if candidate is None:
-        return {}
-    env = os.environ.copy()
-    if os.environ.get("RLDYOUR_FLOW_STATE_LOCAL_ONLY") == "1":
-        env["RLDYOUR_FULLREPO_STATUS_LOCAL_ONLY"] = "1"
-    try:
-        proc = subprocess.run(
-            [sys.executable, str(candidate), "--json"],
-            check=False,
-            capture_output=True,
-            text=True,
-            env=env,
-            timeout=_subprocess_timeout(),
-        )
-    except subprocess.TimeoutExpired:
-        return {}
-    if proc.returncode != 0 or not proc.stdout.strip():
-        return {}
-    try:
-        payload = json.loads(proc.stdout)
-    except json.JSONDecodeError:
-        return {}
-    return payload if isinstance(payload, dict) else {}
+    candidates = [
+        _flow_plugin_root() / "scripts/instruction_docs_state.py",
+        Path("plugins/rldyour-flow/scripts/instruction_docs_state.py"),
+        _installed_script("rldyour-flow", "scripts/instruction_docs_state.py"),
+    ]
+    for candidate in candidates:
+        if not candidate.is_file():
+            continue
+        try:
+            proc = subprocess.run(
+                ["python3", str(candidate), "--json"],
+                check=False,
+                capture_output=True,
+                text=True,
+                timeout=_subprocess_timeout(),
+            )
+        except subprocess.TimeoutExpired:
+            continue
+        if proc.returncode != 0 or not proc.stdout.strip():
+            continue
+        try:
+            payload = json.loads(proc.stdout)
+        except json.JSONDecodeError:
+            continue
+        return payload if isinstance(payload, dict) else {}
+    return {}
 
 
 def state() -> dict[str, Any]:
@@ -419,16 +414,14 @@ def state() -> dict[str, Any]:
 
     project_policy = load_policy(Path.cwd())
     effective_policy = _effective_policy(project_policy)
-    fullrepo_policy = _dict_section(effective_policy.get("fullrepo"))
     stop_policy = _dict_section(effective_policy.get("stop_hook"))
     serena_policy = _dict_section(effective_policy.get("serena"))
-    fullrepo_mode = str(fullrepo_policy.get("mode", "auto"))
     runtime_execution = _runtime_execution(effective_policy)
     execution_mode = str(runtime_execution["execution_mode"])
     agent_role = str(runtime_execution["agent_role"])
     is_worker = execution_mode == "orchestrator" and agent_role == "worker"
 
-    head_full = _stdout("rev-parse", "HEAD")
+    head_full = _head_commit()
     head_sha = head_full[:7] if head_full else ""
     branch = _stdout("branch", "--show-current") or "detached"
     dirty_files = _porcelain_paths()
@@ -437,51 +430,8 @@ def state() -> dict[str, Any]:
     doc_files_present = [path for path in DOC_FILES if Path(path).is_file()]
     doc_files_changed = [path for path in dirty_files if path in DOC_FILES]
     worktree_count = _worktree_count()
-    fullrepo_state = _fullrepo_state()
     instruction_docs_state = _instruction_docs_state()
     branch_cleanup_state = _branch_cleanup_state(branch, project_policy)
-
-    worktree_agent_paths = fullrepo_state.get("worktree_agent_paths")
-    if not isinstance(worktree_agent_paths, list):
-        worktree_agent_paths = []
-    tracked_agent_paths = fullrepo_state.get("tracked_agent_paths")
-    if not isinstance(tracked_agent_paths, list):
-        tracked_agent_paths = []
-    has_existing_fullrepo_context = bool(
-        tracked_agent_paths
-        or fullrepo_state.get("remote_fullrepo_exists")
-        or fullrepo_state.get("local_fullrepo_sha")
-        or fullrepo_state.get("exclude_installed")
-    )
-    has_agent_paths = bool(worktree_agent_paths or tracked_agent_paths)
-    network_checked = bool(fullrepo_state.get("network_checked", True))
-    remote_configured = bool(fullrepo_state.get("remote_configured", True))
-    remote_missing_attention = bool(
-        fullrepo_mode == "required"
-        and worktree_agent_paths
-        and network_checked
-        and remote_configured
-        and not bool(fullrepo_state.get("remote_fullrepo_exists", False))
-    )
-    fullrepo_mismatch = bool(
-        fullrepo_state
-        and has_agent_paths
-        and not bool(fullrepo_state.get("fullrepo_matches_worktree", True))
-    )
-    exclude_missing = bool(
-        fullrepo_state
-        and has_existing_fullrepo_context
-        and not bool(fullrepo_state.get("exclude_installed", True))
-    )
-    fullrepo_attention_candidate = bool(exclude_missing or remote_missing_attention or fullrepo_mismatch)
-    fullrepo_blocks_stop = bool(stop_policy.get("block_on_fullrepo", True)) and bool(
-        fullrepo_policy.get("block_stop", True)
-    )
-    fullrepo_needs_attention = False
-    if fullrepo_mode == "required":
-        fullrepo_needs_attention = fullrepo_attention_candidate and fullrepo_blocks_stop
-    elif fullrepo_mode == "auto":
-        fullrepo_needs_attention = bool(has_existing_fullrepo_context and fullrepo_attention_candidate and fullrepo_blocks_stop)
 
     blocking_reasons: list[str] = []
     advisory_reasons: list[str] = []
@@ -497,8 +447,6 @@ def state() -> dict[str, Any]:
             advisory_reasons.append("worker-serena-stale-report")
         if ahead or behind:
             advisory_reasons.append("worker-branch-drift-report")
-        if fullrepo_attention_candidate:
-            advisory_reasons.append("worker-fullrepo-report")
         if bool(branch_cleanup_state.get("needs_cleanup")):
             advisory_reasons.append("worker-branch-cleanup-report")
         if bool(instruction_docs_state.get("needs_instruction_docs_review")):
@@ -510,10 +458,6 @@ def state() -> dict[str, Any]:
             blocking_reasons.append("dirty-worktree")
         if (ahead or behind) and bool(stop_policy.get("block_on_ahead_behind", True)):
             blocking_reasons.append("branch-ahead-behind")
-        if fullrepo_needs_attention:
-            blocking_reasons.append("fullrepo-sync-required")
-        elif fullrepo_attention_candidate and fullrepo_mode in {"auto", "advisory"}:
-            advisory_reasons.append("fullrepo-sync-advisory")
         branch_cleanup_blocks_stop = bool(stop_policy.get("block_on_branch_cleanup", False)) or bool(
             branch_cleanup_state.get("block_stop")
         )
@@ -533,12 +477,8 @@ def state() -> dict[str, Any]:
         "ahead": ahead,
         "behind": behind,
         "branch_cleanup": branch_cleanup_state,
+        "instruction_docs_review": instruction_docs_state.get("needs_instruction_docs_review"),
         "serena_current": serena_current,
-        "doc_files_changed": doc_files_changed,
-        "fullrepo_needs_attention": fullrepo_needs_attention,
-        "instruction_docs_needs_review": bool(
-            instruction_docs_state.get("needs_instruction_docs_review")
-        ),
         "blocking_reasons": blocking_reasons,
         "advisory_reasons": advisory_reasons,
         "policy_source": project_policy.get("source"),
@@ -572,10 +512,8 @@ def state() -> dict[str, Any]:
             "warnings": project_policy.get("warnings", []),
             "effective": effective_policy,
         },
-        "fullrepo_state": fullrepo_state,
         "instruction_docs_state": instruction_docs_state,
         "branch_cleanup_state": branch_cleanup_state,
-        "fullrepo_needs_attention": fullrepo_needs_attention,
         "blocking_reasons": blocking_reasons,
         "advisory_reasons": advisory_reasons,
         "needs_flow_sync": needs_flow_sync,

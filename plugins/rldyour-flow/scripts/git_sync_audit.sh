@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 set -euo pipefail
-IFS=$'\n\t'
-unset CDPATH
 
 if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
   echo "not a git repository"
@@ -43,7 +41,7 @@ fi
 echo
 echo "Merged local branches cleanup candidates (base: $BASE_REF):"
 git branch --format='%(refname:short)' --merged "$BASE_REF" \
-  | grep -Ev '^(main|master|develop|development|staging|production|prod|fullrepo)$' \
+  | grep -Ev '^(main|master|develop|development|staging|production|prod)$' \
   | grep -Fvx "$(git branch --show-current 2>/dev/null || true)" \
   || true
 
@@ -51,5 +49,5 @@ echo
 echo "Merged remote branches cleanup candidates (base: $BASE_REF):"
 git branch -r --format='%(refname:short) %(symref)' --merged "$BASE_REF" \
   | awk '$2 == "" { print $1 }' \
-  | grep -Ev '(/HEAD| -> |^(origin/)?(main|master|develop|development|staging|production|prod|fullrepo)$)' \
+  | grep -Ev '(/HEAD| -> |^(origin/)?(main|master|develop|development|staging|production|prod)$)' \
   || true

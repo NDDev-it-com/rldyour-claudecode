@@ -14,11 +14,11 @@
 
 Keep it concise. It is loaded as a high-signal entry point at session start, so it should contain high-signal project rules only.
 
-For default rldyour-managed product repositories, project-root `AGENTS.md` is agent-only context. Keep it local and in the `fullrepo` branch, and add it to `.git/info/exclude` through the rldyour fullrepo workflow instead of tracking it in normal branches. Project policy may explicitly set `normal_branch_policy.agent_files=allowed` or `instruction_docs.mode=tracked-normal-branch`; then `AGENTS.md` is a normal tracked project file.
+For default rldyour-managed product repositories, project-root `AGENTS.md` is agent-only context. Keep it local and in the `tracked context` branch, and add it to `.git/info/exclude` through the rldyour tracked context workflow instead of tracking it in normal branches. Project policy may explicitly set `normal_branch_policy.agent_files=allowed` or `instruction_docs.mode=tracked-normal-branch`; then `AGENTS.md` is a normal tracked project file.
 
 ## .claude/CLAUDE.md
 
-Create or update `.claude/CLAUDE.md` in every fullrepo-managed project. This file is Claude Code project memory and must be optimized for Claude Code, not treated as a thin wrapper around `AGENTS.md`.
+Create or update `.claude/CLAUDE.md` in every tracked context-managed project. This file is Claude Code project memory and must be optimized for Claude Code, not treated as a thin wrapper around `AGENTS.md`.
 
 Include:
 
@@ -29,7 +29,7 @@ Include:
 
 Keep it concise and first-class. Do not make the file only `@AGENTS.md`. Do not create root `CLAUDE.md` by default; it is a legacy location in the rldyour workflow.
 
-For default rldyour-managed product repositories, `.claude/CLAUDE.md` is agent-only context and follows the same `fullrepo` branch policy as project-root `AGENTS.md`. In tracked-normal-branch projects, it may be committed as a first-class project instruction file.
+For default rldyour-managed product repositories, `.claude/CLAUDE.md` is agent-only context and follows the same `tracked context` branch policy as project-root `AGENTS.md`. In tracked-normal-branch projects, it may be committed as a first-class project instruction file.
 
 ## REVIEW.md
 
@@ -76,9 +76,9 @@ Use the **bare** template variant for minimal overhead, **full** variant for imp
 - Breaking public API or contract change.
 - Long-lived tradeoff that future agents must preserve.
 
-## Agent-Only Files And Fullrepo
+## Agent-Only Files And Tracked context
 
-Default rldyour-managed policy keeps agent-only files that reveal or preserve AI workflow state out of normal project branches. Store them locally, ignore them through `.git/info/exclude`, and publish them to the `fullrepo` branch through `rldyour-flow` (`python3 ${CLAUDE_PLUGIN_ROOT}/../rldyour-flow/scripts/fullrepo_sync.py`). Foreign or colleague-owned repositories may opt into tracked AI instruction files through `.rldyour/project-policy.json`.
+Default rldyour-managed policy keeps agent-only files that reveal or preserve AI workflow state out of normal project branches. Store them locally, ignore them through `.git/info/exclude`, and publish them to the `tracked context` branch through `rldyour-flow` (`python3 ${CLAUDE_PLUGIN_ROOT}/../rldyour-flow/scripts/tracked context_sync.py`). Foreign or colleague-owned repositories may opt into tracked AI instruction files through `.rldyour/project-policy.json`.
 
 Default agent-only paths include:
 
@@ -86,4 +86,4 @@ Default agent-only paths include:
 - `.serena/project.yml`, `.serena/memories/`, `.serena/plans/`, `.serena/research/`, `.serena/newproj/`, and `.serena/deploy/`.
 - `.claude/`, `.cursor/rules/`, `.agents/skills/`, `.agents/commands/`, `.agents/hooks/`, `.github/instructions/`, and `.github/prompts/`.
 
-Never publish runtime markers, caches, local env files, browser evidence, secrets, tokens, cookies, or credentials to `main` or `fullrepo`.
+Never publish runtime markers, caches, local env files, browser evidence, secrets, tokens, cookies, or credentials to `main` or `tracked context`.

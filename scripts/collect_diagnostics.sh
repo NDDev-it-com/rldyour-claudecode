@@ -5,7 +5,7 @@
 # captures everything an off-machine reviewer would need to investigate a
 # Claude Code marketplace bug without access to the local box: CLI version,
 # plugin list, manifest snapshots, MCP server config, hook scripts, current
-# branch state, fullrepo sync state, runtime state files, recent CI logs.
+# branch state, tracked-context state, runtime state files, recent CI logs.
 #
 # The bundle never contains secrets - env vars are filtered, .env files are
 # skipped, and OAuth/API tokens never appear because we only read from the
@@ -52,7 +52,6 @@ dump "git-log.txt" git log --oneline -20
 dump "git-worktree.txt" git worktree list
 dump "git-branches.txt" git branch -avv
 
-dump "fullrepo-status.json" python3 plugins/rldyour-flow/scripts/fullrepo_sync.py --status-json
 dump "flow-post-task-state.json" python3 plugins/rldyour-flow/scripts/flow_post_task_state.py
 dump "instruction-docs-state.json" python3 plugins/rldyour-flow/scripts/instruction_docs_state.py --json
 dump "serena-memory-state.json" python3 plugins/rldyour-serena-mcp/scripts/serena_memory_state.py

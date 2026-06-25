@@ -22,8 +22,8 @@ Core order:
 
 1. Git sync audit: dirty state, current branch, upstream ahead/behind, worktrees, local/remote branches.
 2. If uncommitted, unmerged, or stale merged branch/worktree state exists, deeply review it. If correct and consistent, synchronize it into `main`, merge safe branches, push, and remove merged worktrees/branches. If risky, ask the user with concrete options.
-3. Bootstrap agent-only context with `fullrepo_sync.py --bootstrap-init` before treating `AGENTS.md`, `CLAUDE.md`, `.serena/*`, `.claude/*`, or similar files as missing. This restores an existing `fullrepo`, publishes local agent-only files when no `fullrepo` exists, installs `.git/info/exclude`, and removes tracked agent-only files from the current branch index when migration is needed.
-4. Serena readiness: `check_onboarding_performed`, onboarding if needed, `list_memories`, relevant `read_memory`.
+3. Read tracked agent context directly from the checked-out tree. `AGENTS.md`, `CLAUDE.md`, `.serena/*`, `.claude/*`, `.codex/*`, and similar files are ordinary tracked source on `main`; there is no bootstrap, restore, or migrate step for them.
+4. Serena readiness: `initial_instructions`, `list_memories`, relevant `read_memory`, and `onboarding` only when no usable project context exists.
 5. Scope detection: project, module, sphere, or feature. For a sphere such as backend, inspect the whole sphere and its integration points.
 6. Semantic map: `get_symbols_overview`, targeted `find_symbol`, `find_referencing_symbols`, `search_for_pattern` only when needed.
 7. Data and contract map: database tables/fields, schemas, migrations, API contracts, generated artifacts, configuration keys, environment variables, and integration boundaries that affect the scope.
@@ -49,43 +49,39 @@ Core order:
 8. Create or select branch/worktree and implement through atomic commits.
 9. Run progress checkpoints after meaningful milestones or every 2-3 plan groups: compare implementation against the plan, context pack, existing patterns, and touched integration path.
 10. Run quality gates and fix all issues in touched scope plus integration path.
-11. Run reviewer workflow only when the user explicitly asks for review, audit, security review, rules review, or `ry-review`. Use parallel subagents (`flow-*-review` agents) only for that explicit review path. Apply the file-first **Output Transport** contract documented in `${CLAUDE_PLUGIN_ROOT}/references/reviewer-protocol.md` section "Output Transport": generate one `run_id = <UTC-ISO-compact>-<git-short-sha>` per wave, compute `report_dir = .serena/reviews/<run_id>/`, inject both into every reviewer prompt, read per-reviewer report files for every critical and high finding, write a consolidated `<report_dir>/_summary.md` when any track reported findings.
+11. Run reviewer workflow only when the user explicitly asks for review, audit, security review, rules review, or `ry-review`. Use subagents only for that explicit review path.
 12. Run browser/security/design/LSP workflows when triggered by the change type.
-13. Synchronize Serena memories, agent-only files, AGENTS.md/CLAUDE.md when present, git, GitHub, `fullrepo`, and worktree cleanup through `flow-post-task-sync`.
+13. Synchronize Serena memories, AGENTS.md/CLAUDE.md when present, git, GitHub, and worktree cleanup through `flow-post-task-sync`. Agent context is committed as ordinary tracked source on `main`.
 
 ## Session Context
 
-The SessionStart hook is advisory and read-only. It adds compact state at session startup or resume so Claude Code knows whether repository sync, Serena memory freshness, docs, dirty files, or worktrees need attention. This context informs planning; it is not a blocker.
-
-The Stop lifecycle dispatcher drains stdin before any early exit, runs Serena and Flow children with bounded process-group timeouts, and uses local-only fullrepo status for the hook hot path. Stop must not fetch, push, publish, or perform remote fullrepo checks; those operations belong to explicit `flow-post-task-sync`, doctor, or validation commands.
+The SessionStart hook is advisory, fast, offline, and read-only. It adds compact startup state so Codex knows whether local repository markers, docs, tracked dirty files, or worktrees need attention. Deep Serena freshness and branch cleanup are handled by `ry-init`, Stop, doctor, or explicit validation rather than SessionStart.
 
 The PostToolUse commit advice hook is advisory and read-only. It checks recently created commits for conventional commit format, suspicious sensitive paths, runtime markers, browser evidence, and broad commit scope. It informs the next model step without rejecting the command.
 
-## Fullrepo Branch Standard
+The PreToolUse cwd guard blocks Bash commands that would rename or remove the active Codex session directory or repository root. This is a runtime safety boundary: Codex hook commands run with the session cwd, so a manually renamed or deleted cwd can prevent future hook processes from starting with `No such file or directory` before any hook script can recover.
 
-Default rldyour-managed product branches such as `main` contain product source, tests, public docs, CI, and deployable configuration. Agent-only files that reveal or preserve AI workflow state normally live locally and in the `fullrepo` branch. A repository may override this with `.rldyour/project-policy.json`: `normal_branch_policy.agent_files=allowed` and `instruction_docs.mode=tracked-normal-branch` make configured AI instruction files normal tracked project files.
+The Stop lifecycle dispatcher drains stdin before any early exit, runs Serena and Flow children with bounded process-group timeouts, and uses local repository status for the hook hot path. Stop must not fetch or push; those operations belong to explicit `flow-post-task-sync`, doctor, or validation commands.
 
-Agent-only examples:
+## Agent Context Standard
+
+Agent context - `.serena/memories/`, `.serena/project.yml`, `.serena/plans/`, `.serena/research/`, `.serena/newproj/`, `.serena/deploy/`, `AGENTS.md`, and `.claude/` - is tracked normally on `main` as ordinary source. There is no separate agent-context branch and no agent-only overlay; tooling reads the checked-out tree directly. A repository may opt into stricter handling with `.rldyour/project-policy.json`: `normal_branch_policy.agent_files=strict` keeps configured AI files out of pushes.
+
+Tracked agent-context examples:
 
 - root `AGENTS.md`, `CLAUDE.md`, `REVIEW.md`, `GEMINI.md`, and `QWEN.md`;
 - `.serena/project.yml`, `.serena/memories/`, `.serena/plans/`, `.serena/research/`, `.serena/newproj/`, and `.serena/deploy/`;
-- `.claude/`, `.cursor/rules/`, `.agents/skills/`, `.agents/commands/`, `.agents/hooks/`, `.github/instructions/`, and `.github/prompts/`.
+- `.claude/`, `.codex/`, `.cursor/rules/`, `.agents/skills/`, `.agents/commands/`, `.agents/hooks/`, `.github/instructions/`, and `.github/prompts/`.
 
-Runtime files, secrets, caches, local env files, browser artifacts, tokens, cookies, and credentials must not be published to either branch.
+Runtime-local state stays gitignored and must never be committed: `.serena/cache/`, `.serena/reviews/`, `.serena/diagnostics/`, `.serena/project.local.yml`, the `.serena/.*` markers/state/locks, secrets, caches, local env files, browser artifacts, tokens, cookies, and credentials.
 
-Use `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/fullrepo_sync.py`:
-
-- `--restore`: fetch and restore agent-only files from `origin/fullrepo` into the worktree and install `.git/info/exclude`.
-- `--migrate-main`: remove currently tracked agent-only files from the current branch index through `git rm --cached`, leaving files in the worktree.
-- `--publish`: build a snapshot tree from current `HEAD` plus local agent-only files and push it to `fullrepo` with `--force-with-lease`; refused when project policy disables fullrepo.
-- `--bootstrap-init`: install excludes and restore existing remote `fullrepo` context when policy allows it. Creating a missing fullrepo branch requires policy `fullrepo.create_if_missing=true` or explicit current user instruction.
-- `--status-json`: emit machine-readable state for hooks and diagnostics.
-
-Use `--force-with-lease` for `fullrepo` because it protects against overwriting unexpected remote changes. Never force-push `main`.
+Never force-push `main`.
 
 ## Local Git Pre-Push Guard
 
-Use `${CLAUDE_PLUGIN_ROOT}/scripts/local_git_ai_guard.sh` as the pre-push policy in product repositories that need local protection. The guard reads Git pre-push stdin per ref. For normal product refs it blocks runtime/local-only paths, definite secrets, and, by default, agent-only paths plus AI-marker additions. If project policy allows tracked agent files, those paths are allowed while runtime markers, browser artifacts, local env files, and definite secrets remain blocked.
+Use `scripts/install_local_git_hooks.sh --apply` in product repositories that need local protection before pushes. The installer writes a managed `.git/hooks/pre-push` wrapper and delegates policy to `plugins/rldyour-flow/scripts/local_git_ai_guard.sh`.
+
+The guard reads Git pre-push stdin per ref. For normal product refs it blocks runtime/local-only paths, definite secrets, and, by default, agent-only paths plus AI-marker additions. If project policy allows tracked agent files, those paths are allowed while runtime markers, browser artifacts, local env files, and definite secrets remain blocked. Mixed pushes are evaluated per ref.
 
 ## ry-newp
 
@@ -126,15 +122,13 @@ Reviewer tracks:
 - Verification and manual tests
 - Security when sensitive or explicitly requested
 
-Reviewer subagents follow the file-first **Output Transport** contract in `${CLAUDE_PLUGIN_ROOT}/references/reviewer-protocol.md` section "Output Transport". The orchestrator (`ry-review` skill body) generates one `run_id = <UTC-ISO-compact>-<git-short-sha>` per wave, computes `report_dir = .serena/reviews/<run_id>/` (gitignored runtime artefact), injects both into every reviewer prompt, must `Read` per-reviewer report files for every critical and high finding before disposition, and writes `<report_dir>/_summary.md` whenever any track reported one or more findings. Each reviewer writes its long-form report to `<report_dir>/<reviewer-name>.md` via `Bash` heredoc with marker `RLDYOUR_REPORT_EOF` and returns only a compact summary ≤ 4 KB. Rationale: works around Claude Code 2.0.77+ `task.output` regression (Anthropic [`#16789`](https://github.com/anthropics/claude-code/issues/16789), [`#20531`](https://github.com/anthropics/claude-code/issues/20531), [`#23463`](https://github.com/anthropics/claude-code/issues/23463), all closed as "not planned"); 6 tracks × ≤ 4 KB = ≤ 24 KB injected into parent context, structurally preventing the overflow class.
-
 ## ry-deploy
 
 Purpose: synchronize local repo, GitHub, and server, then deploy and verify.
 
 Deploy order:
 
-1. Read deploy contract from `AGENTS.md`, `.claude/CLAUDE.md`, or `.serena/deploy/*.md` in that priority.
+1. Read deploy contract from `AGENTS.md`, `CLAUDE.md`, or `.serena/deploy/*.md` in that priority.
 2. Verify local branch, PR, quality gates, Serena memories, docs, and GitHub sync.
 3. Inspect server baseline: git status, current SHA, logs before restart, disk space, process manager.
 4. Pull or sync code to server.

@@ -3,15 +3,7 @@ set -euo pipefail
 IFS=$'\n\t'
 unset CDPATH
 
-# Defensive python3 resolution: subprocess shells (e.g. Claude Code hook runner)
-# may have a sanitized PATH that omits ~/.local/bin, and uv-managed Python
-# symlinks can be transiently broken during interpreter upgrades. Resolve once
-# and exit 0 if no working interpreter exists - hooks must stay non-blocking
-# when Python is unavailable. Canonical pattern (tw93/Mole, rsyslog).
-PYTHON_BIN="${PYTHON_BIN:-$(command -v python3 2>/dev/null || command -v python 2>/dev/null || true)}"
-if [ -z "${PYTHON_BIN}" ] || [ ! -x "${PYTHON_BIN}" ]; then
-  exit 0
-fi
+INPUT=$(cat 2>/dev/null || true)
 
 if [ "${RLDYOUR_SKIP_FLOW_COMMIT_ADVICE:-0}" = "1" ]; then
   exit 0
@@ -21,8 +13,7 @@ if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
   exit 0
 fi
 
-INPUT=$(cat 2>/dev/null || true)
-COMMAND=$(printf "%s" "$INPUT" | "${PYTHON_BIN}" -c '
+COMMAND=$(printf "%s" "$INPUT" | python3 -c '
 import json
 import sys
 
@@ -54,85 +45,11 @@ if [ -z "$HEAD_SHA" ] || [ -z "$SUBJECT" ]; then
   exit 0
 fi
 
-WARNINGS=$("${PYTHON_BIN}" - "$HEAD_SHA" "$SUBJECT" "$FILES" <<'PY'
+WARNINGS=$(python3 - "$HEAD_SHA" "$SUBJECT" "$FILES" <<'PY'
 import re
 import sys
 
 head_sha, subject, raw_files = sys.argv[1:4]
-
-# Sanitize commit subject before echoing back into LLM context. The hook's
-# warnings text travels via `additionalContext` to the model, so an
-# attacker-controlled subject (e.g., auto-merged PR from a fork, or a
-# branch-rename attack on a shared repo) could theoretically inject prompts.
-# Defence-in-depth - not a complete mitigation, but reduces the vector:
-#   1. Truncate to 200 chars. Conventional Commits subjects are ≤72 by policy,
-#      so this only fires for abnormal subjects.
-#   2. Collapse control chars and newlines to spaces - subjects are single-line.
-#   3. Strip known prompt-injection markers (system tags, instruction overrides,
-#      turn-boundary tokens). Replace with `[REDACTED]` so the audit trail shows
-#      the subject was modified rather than silently dropping content.
-MAX_SUBJECT_LEN = 200
-# Prompt-injection markers - defence-in-depth, not exhaustive. Covers known LLM
-# system-tag patterns (Anthropic/OpenAI/Llama/Gemini families) and English/Russian
-# instruction-override phrases. Add patterns conservatively when new attack
-# vectors emerge in commit messages.
-INJECTION_MARKERS = re.compile(
-    r"\[(?:SYSTEM|ASSISTANT|USER|INST|СИСТЕМА|АССИСТЕНТ|ПОЛЬЗОВАТЕЛЬ)\]"
-    r"|</?(?:INST|SYS|role|turn|system(?:-reminder)?)>"
-    r"|<<SYS>>"
-    r"|<\|?(?:im_start|im_end|begin_of_text|end_of_text|bos|eos)\|?>"
-    r"|<\|?/?(?:user|assistant|system)\|?>"
-    r"|---system---"
-    r"|(?:BEGIN|END) PROMPT"
-    r"|ignore (?:all |any )?(?:previous|prior|above|preceding) (?:instructions|prompts|messages)"
-    r"|you are now\b"
-    r"|from now on(?: you will)?\b"
-    r"|игнорируй (?:все )?(?:предыдущие |ранее )?(?:инструкции|команды|указания|сообщения)"
-    r"|забудь (?:все )?(?:предыдущие |ранее )?(?:инструкции|команды|сообщения)"
-    r"|теперь ты\b"
-    # 2026 tool-call / function-call format tags (Anthropic, OpenAI, generic
-    # MCP-style). Defence-in-depth against tool-injection where a hostile
-    # commit subject mimics a function-call wrapper to coax the parent
-    # session into invoking a tool with attacker-chosen arguments.
-    r"|</?(?:tool|function)[_-]?(?:call|use|result|invoke|invocations|calls)s?\b[^>]*>"
-    r"|</?antml:(?:[a-z_-]+)\b[^>]*>",
-    re.IGNORECASE | re.UNICODE,
-)
-
-# Unicode BiDi direction-override / isolate control characters - the Trojan
-# Source attack family. Render invisible but reorder text so the displayed
-# string differs from the byte order. Replace with [REDACTED-BIDI] so the
-# audit trail shows the subject contained suspicious invisible characters.
-BIDI_CONTROLS = re.compile(
-    "["
-    "‪‫‬‭‮"  # LRE/RLE/PDF/LRO/RLO
-    "⁦⁧⁨⁩"  # LRI/RLI/FSI/PDI
-    "]"
-)
-
-
-def sanitize_for_advisory(text: str, max_len: int = MAX_SUBJECT_LEN) -> str:
-    """Sanitize user-controlled text before embedding it in advisory output.
-
-    Order:
-      1. Collapse C0/C1 control chars + DEL to spaces (subjects/paths are
-         single-line; control chars distort terminal output).
-      2. Replace BiDi direction-override / isolate characters with a marker
-         (Trojan Source attack family, security F-3 sibling of D18).
-      3. Strip known prompt-injection / tool-call markers via INJECTION_MARKERS
-         and replace with [REDACTED].
-      4. Truncate to max_len to bound the advisory payload size.
-    """
-    cleaned = re.sub(r"[\x00-\x1f\x7f]+", " ", text)
-    cleaned = BIDI_CONTROLS.sub("[REDACTED-BIDI]", cleaned)
-    cleaned = INJECTION_MARKERS.sub("[REDACTED]", cleaned)
-    if len(cleaned) > max_len:
-        cleaned = cleaned[:max_len] + "...[truncated]"
-    return cleaned
-
-
-subject = sanitize_for_advisory(subject)
-
 files = [line for line in raw_files.splitlines() if line]
 warnings: list[str] = []
 
@@ -166,33 +83,18 @@ sensitive_patterns = [
 for path in files:
     if any(pattern.search(path) for pattern in sensitive_patterns):
         warnings.append(
-            f"commit includes sensitive-looking path `{sanitize_for_advisory(path)}`; verify no secrets or credentials were committed"
+            f"commit includes sensitive-looking path `{path}`; verify no secrets or credentials were committed"
         )
         break
 
 runtime_patterns = [
-    re.compile(r"^\.serena/\.(flow_sync_marker|flow_post_task_state\.json|stop_lifecycle_timeout_marker|sync_marker|serena_sync_state\.json|auto_sync_head|active_workflow_intent\.json|dirty_stop_ack)$"),
+    re.compile(r"^\.serena/\.(flow_sync_marker|flow_post_task_state\.json|sync_marker|serena_sync_state\.json|auto_sync_head|active_workflow_intent\.json|dirty_stop_ack)$"),
     re.compile(r"^browser/.*\.(png|jpg|jpeg|webp|gif)$", re.IGNORECASE),
 ]
 for path in files:
     if any(pattern.search(path) for pattern in runtime_patterns):
         warnings.append(
-            f"commit includes runtime/browser evidence path `{sanitize_for_advisory(path)}`; remove it unless the user explicitly requested it"
-        )
-        break
-
-agent_only_patterns = [
-    re.compile(r"^(AGENTS|CLAUDE|REVIEW|GEMINI|QWEN)\.md$"),
-    re.compile(r"^\.(claude|gemini|roo|windsurf|openhands)/"),
-    re.compile(r"^\.cursor/rules/"),
-    re.compile(r"^\.agents/(skills|commands|hooks)/"),
-    re.compile(r"^\.github/(copilot-instructions\.md|instructions/|prompts/)"),
-    re.compile(r"^\.serena/(project\.yml|memories/|plans/|research/|newproj/|deploy/)"),
-]
-for path in files:
-    if any(pattern.search(path) for pattern in agent_only_patterns):
-        warnings.append(
-            f"commit includes agent-only path `{sanitize_for_advisory(path)}`; verify this repository intentionally tracks AI files in the current branch or move them to fullrepo"
+            f"commit includes runtime/browser evidence path `{path}`; remove it unless the owner explicitly requested it"
         )
         break
 
@@ -212,18 +114,9 @@ if [ -z "$WARNINGS" ]; then
   exit 0
 fi
 
-"${PYTHON_BIN}" - "$WARNINGS" <<'PY'
+python3 - "$WARNINGS" <<'PY'
 import json
 import sys
 
-print(
-    json.dumps(
-        {
-            "hookSpecificOutput": {
-                "hookEventName": "PostToolUse",
-                "additionalContext": sys.argv[1],
-            }
-        }
-    )
-)
+print(json.dumps({"systemMessage": sys.argv[1]}))
 PY

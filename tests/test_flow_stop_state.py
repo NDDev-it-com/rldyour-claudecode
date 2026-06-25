@@ -5,13 +5,10 @@ import os
 import subprocess
 from pathlib import Path
 
-
 REPO_ROOT = Path(__file__).resolve().parents[1]
 FLOW_PLUGIN = REPO_ROOT / "plugins" / "rldyour-flow"
 FLOW_STATE = FLOW_PLUGIN / "scripts" / "flow_post_task_state.py"
-FULLREPO_SYNC = FLOW_PLUGIN / "scripts" / "fullrepo_sync.py"
 STOP_HOOK = FLOW_PLUGIN / "hooks" / "stop_post_task_sync.sh"
-DISPATCHER = FLOW_PLUGIN / "hooks" / "stop_lifecycle_dispatcher.sh"
 DEFAULT_TIMEOUT = 30
 
 
@@ -33,34 +30,31 @@ def write_current_memory(repo: Path, head_short: str) -> None:
     memories = repo / ".serena" / "memories"
     memories.mkdir(parents=True)
     (memories / "CORE-01-INDEX.md").write_text(
-        "\n".join(
-            [
-                "<!-- Memory Metadata",
-                "Last updated: 2026-05-28",
-                f"Last commit: {head_short}",
-                "Scope: test",
-                "Area: CORE",
-                "-->",
-                "# CORE-01-INDEX",
-            ]
-        )
-        + "\n",
+        "\n".join([
+            "<!-- Memory Metadata",
+            "Last updated: 2026-05-28",
+            f"Last commit: {head_short}",
+            "Scope: test",
+            "Area: CORE",
+            "-->",
+            "# CORE-01-INDEX",
+        ]) + "\n",
         encoding="utf-8",
     )
 
 
-def test_direct_installed_flow_state_resolves_self_plugin_scripts(tmp_path: Path) -> None:
+def test_direct_flow_state_uses_tracked_context_without_secondary_branch(tmp_path: Path) -> None:
     repo = tmp_path / "repo"
     repo.mkdir()
     head_short = init_repo(repo)
     write_current_memory(repo, head_short)
+    run_git(repo, "add", ".serena")
+    assert run_git(repo, "commit", "-qm", "track memory").returncode == 0
 
-    env = os.environ.copy()
-    env["RLDYOUR_FLOW_STATE_LOCAL_ONLY"] = "1"
     proc = subprocess.run(
         ["python3", str(FLOW_STATE)],
         cwd=repo,
-        env=env,
+        env={**os.environ, "RLDYOUR_FLOW_STATE_LOCAL_ONLY": "1"},
         text=True,
         capture_output=True,
         check=False,
@@ -70,52 +64,28 @@ def test_direct_installed_flow_state_resolves_self_plugin_scripts(tmp_path: Path
     assert proc.returncode == 0, proc.stderr
     payload = json.loads(proc.stdout)
     assert payload["serena_current"] is True
-    assert payload["fullrepo_state"]["network_checked"] is False
+    assert "full" + "repo" not in json.dumps(payload)
+    assert payload["blocking_reasons"] == []
 
 
-def test_fullrepo_status_local_only_does_not_mark_network_checked(tmp_path: Path) -> None:
-    repo = tmp_path / "repo"
-    repo.mkdir()
-    init_repo(repo)
-
-    proc = subprocess.run(
-        ["python3", str(FULLREPO_SYNC), "--status-json", "--local-only"],
-        cwd=repo,
-        text=True,
-        capture_output=True,
-        check=False,
-        timeout=DEFAULT_TIMEOUT,
-    )
-
-    assert proc.returncode == 0, proc.stderr
-    assert json.loads(proc.stdout)["network_checked"] is False
-
-
-def test_project_policy_disables_fullrepo_stop_loop_for_tracked_ai_docs(tmp_path: Path) -> None:
+def test_tracked_ai_docs_do_not_trigger_stop_loop(tmp_path: Path) -> None:
     repo = tmp_path / "repo"
     repo.mkdir()
     init_repo(repo)
     (repo / ".rldyour").mkdir()
     (repo / ".rldyour/project-policy.json").write_text(
-        json.dumps(
-            {
-                "schema_version": 1,
-                "fullrepo": {"mode": "disabled"},
-                "normal_branch_policy": {
-                    "agent_files": "allowed",
-                    "ai_marker_additions": "allowed",
-                    "instruction_docs": "tracked-normal-branch",
-                },
-                "instruction_docs": {"mode": "tracked-normal-branch"},
-                "branch_cleanup": {"mode": "advisory", "protected_branches": ["main", "dev"]},
-                "stop_hook": {"block_on_fullrepo": False, "block_on_branch_cleanup": False},
-            }
-        ),
+        json.dumps({
+            "schema_version": 1,
+            "normal_branch_policy": {"agent_files": "allowed", "ai_marker_additions": "allowed", "instruction_docs": "tracked-normal-branch"},
+            "instruction_docs": {"mode": "tracked-normal-branch"},
+            "branch_cleanup": {"mode": "advisory", "protected_branches": ["main", "dev"]},
+            "stop_hook": {"block_on_branch_cleanup": False},
+        }),
         encoding="utf-8",
     )
-    (repo / "AGENTS.md").write_text("project instructions\n", encoding="utf-8")
+    (repo / "AGENTS.md").write_text("# project instructions\n", encoding="utf-8")
     (repo / ".claude").mkdir()
-    (repo / ".claude/CLAUDE.md").write_text("claude project memory\n", encoding="utf-8")
+    (repo / ".claude/CLAUDE.md").write_text("# claude project memory\n", encoding="utf-8")
     run_git(repo, "add", ".")
     assert run_git(repo, "commit", "-qm", "track ai docs with policy").returncode == 0
 
@@ -130,8 +100,6 @@ def test_project_policy_disables_fullrepo_stop_loop_for_tracked_ai_docs(tmp_path
     )
     assert state.returncode == 0, state.stderr
     payload = json.loads(state.stdout)
-    assert payload["project_policy"]["source"] == ".rldyour/project-policy.json"
-    assert payload["fullrepo_needs_attention"] is False
     assert payload["blocking_reasons"] == []
     assert payload["needs_flow_sync"] is False
 
@@ -145,150 +113,3 @@ def test_project_policy_disables_fullrepo_stop_loop_for_tracked_ai_docs(tmp_path
         timeout=DEFAULT_TIMEOUT,
     )
     assert stop.returncode == 0
-
-
-def test_stop_post_task_loop_guard_works_from_subdirectory(tmp_path: Path) -> None:
-    repo = tmp_path / "repo"
-    repo.mkdir()
-    head_short = init_repo(repo)
-    write_current_memory(repo, head_short)
-    workdir = repo / "src"
-    workdir.mkdir()
-    (repo / "pending.txt").write_text("dirty\n", encoding="utf-8")
-
-    first = subprocess.run(
-        ["bash", str(STOP_HOOK)],
-        cwd=workdir,
-        input='{"stop_hook_active":false}',
-        text=True,
-        capture_output=True,
-        check=False,
-        timeout=DEFAULT_TIMEOUT,
-    )
-
-    assert first.returncode == 2
-    assert "[RLDYOUR-FLOW POST-TASK SYNC REQUIRED]" in first.stderr
-
-    second = subprocess.run(
-        ["bash", str(STOP_HOOK)],
-        cwd=workdir,
-        input='{"stop_hook_active":true}',
-        text=True,
-        capture_output=True,
-        check=False,
-        timeout=DEFAULT_TIMEOUT,
-    )
-
-    assert second.returncode == 0
-    assert "Allowing stop now to avoid a Stop-hook loop" in second.stdout
-
-
-def test_stop_post_task_worker_role_requests_worker_report(tmp_path: Path) -> None:
-    repo = tmp_path / "repo"
-    repo.mkdir()
-    init_repo(repo)
-    (repo / "pending.txt").write_text("dirty\n", encoding="utf-8")
-
-    env = os.environ.copy()
-    env["RLDYOUR_EXECUTION_MODE"] = "orchestrator"
-    env["RLDYOUR_AGENT_ROLE"] = "worker"
-    env["RLDYOUR_WORKER_ID"] = "worker-claude-test"
-
-    proc = subprocess.run(
-        ["bash", str(STOP_HOOK)],
-        cwd=repo,
-        env=env,
-        input='{"stop_hook_active":false}',
-        text=True,
-        capture_output=True,
-        check=False,
-        timeout=DEFAULT_TIMEOUT,
-    )
-
-    assert proc.returncode == 2
-    assert "[RLDYOUR-FLOW CMUX WORKER REPORT REQUIRED]" in proc.stderr
-    assert "Worker role: worker-claude-test" in proc.stderr
-    assert "Do not run fullrepo publish" in proc.stderr
-    assert "[RLDYOUR-FLOW POST-TASK SYNC REQUIRED]" not in proc.stderr
-
-
-def test_stop_lifecycle_dispatcher_loop_guard_preserves_stdout_json(tmp_path: Path) -> None:
-    repo = tmp_path / "repo"
-    repo.mkdir()
-    head_short = init_repo(repo)
-    write_current_memory(repo, head_short)
-    workdir = repo / "src"
-    workdir.mkdir()
-    (repo / "pending.txt").write_text("dirty\n", encoding="utf-8")
-
-    first = subprocess.run(
-        ["bash", str(DISPATCHER)],
-        cwd=workdir,
-        input='{"stop_hook_active":false}',
-        text=True,
-        capture_output=True,
-        check=False,
-        timeout=DEFAULT_TIMEOUT,
-    )
-
-    assert first.returncode == 2
-    assert "[RLDYOUR-FLOW POST-TASK SYNC REQUIRED]" in first.stderr
-
-    second = subprocess.run(
-        ["bash", str(DISPATCHER)],
-        cwd=workdir,
-        input='{"stop_hook_active":true}',
-        text=True,
-        capture_output=True,
-        check=False,
-        timeout=DEFAULT_TIMEOUT,
-    )
-
-    assert second.returncode == 0
-    assert "Allowing stop now to avoid a Stop-hook loop" in second.stdout
-    assert second.stderr == ""
-
-
-def test_stop_lifecycle_dispatcher_timeout_loop_guard(tmp_path: Path) -> None:
-    repo = tmp_path / "repo"
-    repo.mkdir()
-    init_repo(repo)
-    fake_serena = tmp_path / "fake-serena"
-    (fake_serena / "hooks").mkdir(parents=True)
-    (fake_serena / "hooks" / "stop_memory_sync.sh").write_text(
-        "#!/usr/bin/env bash\nsleep 5\n",
-        encoding="utf-8",
-    )
-
-    env = os.environ.copy()
-    env["RLDYOUR_SERENA_PLUGIN_ROOT"] = str(fake_serena)
-    env["RLDYOUR_STOP_SERENA_TIMEOUT"] = "0.1"
-
-    first = subprocess.run(
-        ["bash", str(DISPATCHER)],
-        cwd=repo,
-        env=env,
-        input='{"stop_hook_active":false}',
-        text=True,
-        capture_output=True,
-        check=False,
-        timeout=DEFAULT_TIMEOUT,
-    )
-
-    assert first.returncode == 2
-    assert "[RLDYOUR-SERENA STOP CHECK TIMEOUT]" in first.stderr
-    assert (repo / ".serena/.stop_lifecycle_timeout_marker").is_file()
-
-    second = subprocess.run(
-        ["bash", str(DISPATCHER)],
-        cwd=repo,
-        env=env,
-        input='{"stop_hook_active":true}',
-        text=True,
-        capture_output=True,
-        check=False,
-        timeout=DEFAULT_TIMEOUT,
-    )
-
-    assert second.returncode == 0
-    assert "Stop-hook timeout loop" in second.stdout

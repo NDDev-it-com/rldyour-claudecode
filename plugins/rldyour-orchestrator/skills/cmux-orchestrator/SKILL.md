@@ -43,14 +43,14 @@ Treat `PLANNED` and `NOT_PROVEN` entries as unavailable in production.
 3. Create immutable task envelopes and task-local instructions; never put task text into cmux terminal input.
 4. Wake workers with a bounded helper command containing only run/task identifiers.
 5. Collect schema-valid worker reports, verify task/attempt/worker/scope binding, then integrate changes as the head.
-6. Own final validation, commits, push, fullrepo publication, Serena sync, and owner-facing summary.
+6. Own final validation, commits, push, git synchronization, Serena sync, and owner-facing summary.
 
 ## Forbidden Delegation Patterns
 
 - Do not send arbitrary task prose through cmux input.
 - Do not pass write scopes through shell environment snippets.
 - Do not treat `read-screen`, event streams, or notifications as completion authority.
-- Do not let workers push, publish fullrepo, mutate project policy, run system install, delete branches, or run final sync.
+- Do not let workers push, publish tracked-context, mutate project policy, run system install, delete branches, or run final sync.
 - Do not claim Workspace Groups, isolated worktree scheduling, retry materialization, or durable Stop receipts unless the status registry marks them `IMPLEMENTED`.
 
 ## Worker Wake-Up Shape

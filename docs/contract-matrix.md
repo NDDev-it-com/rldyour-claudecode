@@ -94,7 +94,6 @@ This matrix is the human-readable projection of the machine-readable rldyour con
 
 | ID | Description | Claude | Codex | OpenCode | Gemini | MiMoCode | Claude Path |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| session.start.worktree-bootstrap | Restore agent-only fullrepo context into new worktrees | rldyour-flow | session_start_worktree_bootstrap | shell.env or startup plugin event | adapter-specific: no worktree bootstrap hook; session_start_context.sh covers context load only | adapter-specific: no native hook lifecycle; not provided | `plugins/rldyour-flow/hooks/session_start_worktree_bootstrap.sh` |
 | session.start.context | Load lightweight session context | rldyour-flow | session_start_context | shell.env or startup plugin event | session-start-context | adapter-specific: no native hook lifecycle; mimocode.jsonc has no hooks block | `plugins/rldyour-flow/hooks/session_start_context.sh` |
 | prompt.submit.sync-context | Inject Serena workflow context before prompt processing | rldyour-serena-mcp | user_prompt_submit | prompt submit plugin event | adapter-specific: no UserPromptSubmit equivalent in Antigravity CLI hook events | adapter-specific: no native hook lifecycle; not provided | `plugins/rldyour-serena-mcp/hooks/user_prompt_submit.sh` |
 | tool.pre.git-auto-sync-baseline | Record Serena baseline before git history-changing commands | rldyour-serena-mcp | prepare_auto_sync | tool.execute.before | before-tool-policy | adapter-specific: no native hook lifecycle; not provided | `plugins/rldyour-serena-mcp/hooks/prepare_auto_sync.sh` |

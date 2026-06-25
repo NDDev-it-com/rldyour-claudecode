@@ -55,12 +55,12 @@ read them when present. Leaving them unset is the production default.
 | Variable | Hook | Effect when `=1` |
 | --- | --- | --- |
 | `RLDYOUR_SKIP_FLOW_SESSION_CONTEXT` | rldyour-flow SessionStart context | Skip session-start context advisory. |
-| `RLDYOUR_SKIP_WORKTREE_BOOTSTRAP` | rldyour-flow SessionStart worktree bootstrap | Skip auto-restore of agent-only files in a fresh worktree. |
+| `RLDYOUR_SKIP_WORKTREE_BOOTSTRAP` | rldyour-flow SessionStart worktree bootstrap | Skip auto-restore of durable AI context files in a fresh worktree. |
 | `RLDYOUR_SKIP_FLOW_COMMIT_ADVICE` | rldyour-flow PostToolUse:Bash | Skip commit-subject advisory check. |
 | `RLDYOUR_SKIP_STOP_GATES` | registered Flow Stop dispatcher | Skip the dispatcher and all child Stop gates. |
 | `RLDYOUR_SKIP_FLOW_SYNC` | Flow Stop child gate | Skip flow post-task child gate only. |
 | `RLDYOUR_SKIP_SERENA_SYNC` | Serena memory child gate | Skip Serena memory child gate only. |
-| `RLDYOUR_FORCE_BOOTSTRAP` | `scripts/bootstrap_check.sh` | Bypass agent-only divergence guard before `--bootstrap-init`. Audit-trailed in `.serena/.bootstrap_overrides.log`. |
+| `RLDYOUR_FORCE_BOOTSTRAP` | `scripts/bootstrap_check.sh` | Bypass agent-only divergence guard before `--tracked-context review`. Audit-trailed in `.serena/.bootstrap_overrides.log`. |
 | `RLDYOUR_SKIP_USER_PROMPT_HINT` | rldyour-serena-mcp UserPromptSubmit | Skip Serena-first context injection (parity with other rldyour skip flags). |
 
 ### Why `RLDYOUR_SKIP_ENV_CHECK` is intentionally absent

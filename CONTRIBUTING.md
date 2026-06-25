@@ -55,7 +55,7 @@ PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 python3 -m pytest tests/ -m "not integration"
   pattern is explicit `tools:` allowlist - see
   `scripts/validate_agent_tools.py`).
 - **Memory edits outside `flow-memory-sync` subagent**. Memories live
-  on the `fullrepo` branch and follow the `AREA-NN-SLUG.md` taxonomy.
+  on the `main` branch and follow the `AREA-NN-SLUG.md` taxonomy.
 
 ## Engineering invariants
 
@@ -75,7 +75,7 @@ PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 python3 -m pytest tests/ -m "not integration"
 - **Atomic commits**: one logical change per commit. Separate mechanical
   refactors from behavior changes. Separate source / docs / Serena
   knowledge. Split license/metadata, validators/tests, generated artifacts,
-  and fullrepo/Serena sync when they are independently reviewable.
+  and Serena sync when they are independently reviewable.
 - **Published history**: do not rewrite already-pushed history without explicit
   maintainer approval; use a follow-up commit instead.
 - **No** `--no-verify` unless explicitly requested by the maintainer.
@@ -102,9 +102,9 @@ gh workflow run cross-platform.yml --ref <branch>
 
 ### Branch policy
 
-- `main`: product code + docs + tests. No agent-only files. Protected.
-- `fullrepo`: `main` + agent-only files (AGENTS.md, .claude/, .serena/,
-  IDE configs). Force-push allowed only via `fullrepo_sync.py --publish`
+- `main`: product code + docs + tests. No durable AI context files. Protected.
+- `tracked-context`: `main` + durable AI context files (AGENTS.md, .claude/, .serena/,
+  IDE configs). Force-push allowed only via `flow_post_task_state.py --publish`
   (`--force-with-lease`).
 - `feat/*`, `fix/*`, `chore/*`: feature branches. Open a PR to `main`.
 
@@ -135,7 +135,7 @@ When a PR lands:
    / verification / security). Findings get triaged: must-fix / should-fix
    / defer / accept.
 3. Memory and instruction-doc impact assessment via `flow-memory-sync`
-   subagent on the `fullrepo` branch (does NOT touch `main`).
+   subagent on the `main` branch (does NOT touch `main`).
 
 ## License
 

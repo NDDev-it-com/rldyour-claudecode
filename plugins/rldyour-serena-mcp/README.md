@@ -11,7 +11,7 @@ Serena-first semantic code workflow + fact-only memory sync + lifecycle hooks.
 
 ## Coordination contract
 
-Serena owns memory freshness. The flow plugin's Stop hook derives `serena_current` from `serena_memory_state.py` before checking git/docs/fullrepo state - so memory sync runs first, then post-task pipeline.
+Serena owns memory freshness. The flow plugin's Stop hook derives `serena_current` from `serena_memory_state.py` before checking git/docs/tracked-context state - so memory sync runs first, then post-task pipeline.
 
 Memory taxonomy is explicit and stable: `CORE-01-INDEX.md` is the map, topic files use `AREA-01-SLUG.md`, and the analyzer emits `analysis.memory_taxonomy` + `analysis.memory_targets` so the Stop hook and `flow-memory-sync` agent work from the same scope.
 
