@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.7.6] - 2026-06-26
+
+### Fixed
+
+- Refresh tracked Serena release memory for the Claude adapter so root strict memory semantics recognizes the current tracked-context release line.
+
 ## [1.7.5] - 2026-06-26
 
 ### Fixed
