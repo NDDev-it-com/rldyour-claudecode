@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.7.7] - 2026-06-26
+
+### Fixed
+
+- Refresh README memory heading and tracked Serena release memory for root strict gates.
+
 ## [1.7.6] - 2026-06-26
 
 ### Fixed
