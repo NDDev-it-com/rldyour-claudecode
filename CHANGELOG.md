@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.7.4] - 2026-06-26
+
+### Fixed
+
+- Restore the actionlint checksum comment URL to the verified upstream `v1.7.12` asset after the release-version bump.
+
 ## [1.7.3] - 2026-06-26
 
 ### Fixed
