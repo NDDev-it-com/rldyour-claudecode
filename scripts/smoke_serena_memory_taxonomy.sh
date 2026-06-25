@@ -245,6 +245,8 @@ ACK_REPO="$TMP_ROOT/ack"
 mkdir "$ACK_REPO"
 cd "$ACK_REPO"
 git init -q
+git config user.name "rldyour smoke"
+git config user.email "smoke@example.invalid"
 printf 'ack\n' > file.txt
 git add file.txt
 git_commit "init"
