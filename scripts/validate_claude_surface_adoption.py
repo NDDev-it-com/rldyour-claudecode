@@ -28,7 +28,7 @@ REQUIRED_BASELINE_SURFACES = {
     "claude-code-2-1-175-enforce-available-models": "`enforceAvailableModels`",
     "claude-code-2-1-176-language-footer-and-policy-fixes": "`footerLinksRegexes`",
     "claude-code-2-1-177-runtime-rollup": "2.1.177 runtime rollup",
-    "claude-code-2-1-193-runtime-rollup": "2.1.193 runtime rollup",
+    "claude-code-2-1-195-runtime-rollup": "2.1.195 runtime rollup",
 }
 
 REQUIRED_2_1_153_SURFACES = (
