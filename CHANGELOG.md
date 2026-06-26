@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.7.11] - 2026-06-27
+
+### Fixed
+
+- Deduplicate Claude Code 2.1.193 runtime-rollup evidence and enforce unique runtime-fix entries in the surface-adoption validator.
+
 ## [1.7.10] - 2026-06-26
 
 ### Changed

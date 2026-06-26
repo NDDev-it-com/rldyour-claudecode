@@ -164,6 +164,18 @@ def main() -> int:
     required = baseline.get("baseline", {}).get("required_runtime_fixes") or []
     text = ADOPTION.read_text(encoding="utf-8") if ADOPTION.is_file() else ""
 
+    if len(required) != len(set(required)):
+        seen: set[str] = set()
+        duplicates: list[str] = []
+        for item in required:
+            if item in seen and item not in duplicates:
+                duplicates.append(str(item))
+            seen.add(item)
+        errors.append(
+            f"{BASELINE.relative_to(ROOT)} baseline.required_runtime_fixes contains duplicate entries: "
+            + ", ".join(duplicates)
+        )
+
     if not text:
         errors.append(f"{ADOPTION.relative_to(ROOT)} is missing")
     for key in required:
