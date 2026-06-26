@@ -1,6 +1,8 @@
 # Changelog
 
-## 1.7.13 - 2026-06-27
+## [1.7.14] - 2026-06-27
+
+### Changed
 
 - Refresh Claude Code runtime baseline to 2.1.195.
 
