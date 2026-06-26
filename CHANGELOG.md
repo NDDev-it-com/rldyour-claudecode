@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.7.9] - 2026-06-26
+
+### Changed
+
+- Refresh CLI runtime and MCP pins to latest stable versions.
+
 ## [1.7.8] - 2026-06-26
 
 ### Fixed
@@ -47,6 +53,7 @@ All notable changes to this project are documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and marketplace/plugin versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
+
 
 ## [1.7.1] - 2026-06-26
 

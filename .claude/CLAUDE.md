@@ -12,7 +12,7 @@ claims:
   reviewer_transport_marker: RLDYOUR_REPORT_EOF
   reviewer_report_dir_template: ".serena/reviews/<run_id>/"
   reviewer_run_id_format: "<UTC-ISO-compact>-<git-short-sha>"
-  claude_code_runtime_pin: "2.1.190"
+  claude_code_runtime_pin: "2.1.193"
   claude_code_feature_floor: "2.1.146"
   skill_listing_budget_fraction: 0.04
   max_skill_description_chars: 1536
@@ -24,7 +24,7 @@ claims:
 
 ## Runtime
 
-Claude Code runtime pin is `2.1.190`. The compatibility floor is `2.1.146`.
+Claude Code runtime pin is `2.1.193`. The compatibility floor is `2.1.146`.
 The pin sources are `package.json`, `references/claude-baseline.json`, and
 `config/mcp-runtime-versions.env`.
 
