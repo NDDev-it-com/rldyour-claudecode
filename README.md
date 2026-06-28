@@ -64,7 +64,7 @@ for p in plugins/*/; do claude plugin validate "$p"; done
 scripts/validate_marketplace.sh
 ```
 
-**First-time tracked-context bootstrap on a fresh checkout:**
+**First-time repository state check on a fresh checkout:**
 
 ```bash
 git status -sb
@@ -123,20 +123,20 @@ Skill routing: Claude Code resolves the correct provider through skill descripti
 
 ## Repository Context / Serena Memory
 
-`main` branch contains only product history: plugin manifests, skills, agents, commands, hooks, scripts, references, docs, and CI. Durable AI context files (`AGENTS.md`, `.claude/CLAUDE.md`, `.serena/project.yml`, `.serena/memories/**`) live on the `main` branch and are excluded from `main` through `.git/info/exclude`.
+`main` tracks product history and durable AI context together: plugin manifests, skills, agents, commands, hooks, scripts, references, docs, CI, `AGENTS.md`, `.claude/CLAUDE.md`, `.serena/project.yml`, and `.serena/memories/**`. Runtime-local Serena cache, reviews, diagnostics, markers, locks, local project files, browser artifacts, and secrets remain ignored and must not be committed.
 
-This is the default rldyour-owned repository policy. In external or colleague-owned repositories, `.rldyour/project-policy.json` is the executable source of truth and may disable tracked-context or allow instruction docs on normal branches.
+This is the default rldyour-owned repository policy. In external or colleague-owned repositories, `.rldyour/project-policy.json` is the executable source of truth and may disable tracked AI context or change instruction-doc tracking rules.
 
 Serena memory domains are governed by `config/rldyour-contract.json` (root control-plane). Memory freshness is enforced by the `rldyour-serena-mcp` Stop hook and by post-task sync (`ry-sync` / `flow-post-task-sync`). Only numbered, fact-only `.serena/memories/*.md` files are stored; plans, chat history, and speculation are never committed to memory.
 
-Tracked context lifecycle commands:
+Tracked context validation commands:
 
 ```bash
-git status -sb   # first-time setup
-plugins/rldyour-flow/scripts/flow_post_task_state.py      # machine-readable state
-git status -sb          # restore durable AI context files
-git status -sb     # remove durable AI context files from index
-git status -sb          # push tracked-context with --force-with-lease
+git status -sb
+python3 scripts/validate_repository_context_policy.py --strict
+python3 scripts/validate_no_fullrepo_residue.py --strict
+python3 scripts/validate_serena_memory_schema.py --scope all --strict-mode strict-all
+python3 scripts/validate_serena_memory_semantics.py --scope all --strict-current-facts --strict-metadata-dates --strict-evidence-commits
 ```
 
 Local product repositories that consume this marketplace can install the rldyour Git pre-push guard:
@@ -146,7 +146,7 @@ scripts/install_local_git_hooks.sh --dry-run
 scripts/install_local_git_hooks.sh --apply
 ```
 
-The guard is branch-aware: product branches block agent-only paths and AI markers; the tracked-context model allows durable AI context while still blocking secrets, runtime markers, browser artifacts, and local env files.
+The guard is branch-aware: source branches allow durable AI context while still blocking secrets, runtime markers, browser artifacts, and local env files.
 
 ## Security Boundary
 
@@ -216,9 +216,9 @@ scripts/collect_diagnostics.sh                      # local diagnostics bundle f
 
 Reference documents:
 
-- `docs/adr/` - Architecture Decision Records (MADR 4.0.0). Twelve ADRs cover irreversible decisions: tracked-context policy, dual-doc split, bilingual descriptions, reviewer transport, local GitHub MCP, ownership boundaries, MCP pinning, CI baseline, release/tag conventions, macOS egress trust gap, hook freshness invariants, and the owner full-auto standard. Start with `docs/adr/README.md`.
+- `docs/adr/` - Architecture Decision Records (MADR 4.0.0). Twelve ADRs cover irreversible decisions: tracked-on-main context policy, dual-doc split, bilingual descriptions, reviewer transport, local GitHub MCP, ownership boundaries, MCP pinning, CI baseline, release/tag conventions, macOS egress trust gap, hook freshness invariants, and the owner full-auto standard. Start with `docs/adr/README.md`.
 - `docs/release-process.md` - versioning, CHANGELOG, release evidence, `claude plugin tag --push` flow.
-- `docs/rollback-restore.md` - safe restore from previous tags or tracked-context snapshots.
+- `docs/rollback-restore.md` - safe restore from previous tags or tracked context snapshots.
 - `docs/dependency-updates.md` - pinned MCP runtime update policy.
 - `docs/observability.md` - diagnostics, CI artifacts, hook lifecycle debugging, failure triage.
 
