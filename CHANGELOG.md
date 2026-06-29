@@ -1,5 +1,14 @@
 # Changelog
 
+## [Unreleased]
+
+
+## [1.7.16] - 2026-06-29
+
+### Fixed
+
+- Resolve CodeQL uninitialized worker range variables.
+
 ## [1.7.15] - 2026-06-29
 
 ### Fixed
@@ -81,8 +90,6 @@
 All notable changes to this project are documented in this file.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and marketplace/plugin versions follow [Semantic Versioning](https://semver.org/).
-
-## [Unreleased]
 
 ## [1.7.1] - 2026-06-26
 

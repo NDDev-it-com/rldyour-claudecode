@@ -443,6 +443,8 @@ def _validate_effective(policy: dict[str, Any], *, strict: bool) -> tuple[list[s
         if not isinstance(value, int) or isinstance(value, bool) or value < 0:
             errors.append(f"{section}.{key} must be a non-negative integer")
 
+    worker_min: object = None
+    worker_max: object = None
     execution = policy.get("execution")
     if isinstance(execution, dict):
         worker_min = execution.get("worker_count_min")
