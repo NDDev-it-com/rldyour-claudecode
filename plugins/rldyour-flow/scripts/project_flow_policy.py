@@ -10,7 +10,6 @@ import subprocess
 from pathlib import Path
 from typing import Any
 
-
 SCHEMA_VERSION = 1
 TRACKED_POLICY = ".rldyour/project-policy.json"
 LOCAL_POLICY = ".rldyour/project-policy.local.json"
@@ -448,9 +447,14 @@ def _validate_effective(policy: dict[str, Any], *, strict: bool) -> tuple[list[s
     if isinstance(execution, dict):
         worker_min = execution.get("worker_count_min")
         worker_max = execution.get("worker_count_max")
-        if isinstance(worker_min, int) and not isinstance(worker_min, bool) and isinstance(worker_max, int) and not isinstance(worker_max, bool):
-            if worker_min > worker_max:
-                errors.append("execution.worker_count_min must be <= execution.worker_count_max")
+    if (
+        isinstance(worker_min, int)
+        and not isinstance(worker_min, bool)
+        and isinstance(worker_max, int)
+        and not isinstance(worker_max, bool)
+        and worker_min > worker_max
+    ):
+        errors.append("execution.worker_count_min must be <= execution.worker_count_max")
 
     return errors, warnings
 

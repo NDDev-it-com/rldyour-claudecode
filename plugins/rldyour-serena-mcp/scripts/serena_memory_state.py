@@ -8,7 +8,6 @@ import sys
 from pathlib import Path
 from typing import Any
 
-
 MEMORY_DIR = Path(".serena/memories")
 SYNC_STATE = Path(".serena/.serena_sync_state.json")
 AUTO_SYNC_HEAD = Path(".serena/.auto_sync_head")
@@ -281,9 +280,7 @@ def status() -> dict[str, Any]:
     if marker_matches_head:
         is_current = False
         memory_match_reason = "sync-marker-requires-refresh"
-    elif memory_count == 0:
-        is_current = True
-    elif memory_matches_head:
+    elif memory_count == 0 or memory_matches_head:
         is_current = True
     elif memory_semantically_current:
         is_current = acknowledged_head_matches or not non_knowledge_changed_files

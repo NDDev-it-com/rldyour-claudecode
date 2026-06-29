@@ -15,12 +15,11 @@ if str(SCRIPT_DIR) not in sys.path:
 
 from project_flow_policy import load_policy  # noqa: E402
 
-
 CODEX_DOC = "AGENTS.md"
 CLAUDE_DOC = ".claude/CLAUDE.md"
 LEGACY_CLAUDE_DOC = "CLAUDE.md"
 REQUIRED_AGENT_DOCS = (CODEX_DOC, CLAUDE_DOC)
-INSTRUCTION_DOCS = REQUIRED_AGENT_DOCS + (LEGACY_CLAUDE_DOC,)
+INSTRUCTION_DOCS = (*REQUIRED_AGENT_DOCS, LEGACY_CLAUDE_DOC)
 
 RUNTIME_IGNORED = {
     ".serena/.sync_marker",
@@ -137,9 +136,7 @@ def is_durable_candidate(path: str) -> bool:
         return False
     if matches(normalized, DURABLE_PATH_PATTERNS):
         return True
-    if "/" not in normalized and "." in normalized:
-        return True
-    return False
+    return bool("/" not in normalized and "." in normalized)
 
 
 def file_line_count(path: Path) -> int:
