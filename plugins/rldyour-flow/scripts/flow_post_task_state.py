@@ -16,7 +16,6 @@ if str(SCRIPT_DIR) not in sys.path:
 
 from project_flow_policy import load_policy  # noqa: E402
 
-
 RUNTIME_IGNORED = {
     ".serena/.sync_marker",
     ".serena/.serena_sync_state.json",
