@@ -4,7 +4,7 @@
   "verified_on": "2026-06-26",
   "baseline": {
     "claude_code": {
-      "version": "2.1.195",
+      "version": "2.1.196",
       "npm_package": "@anthropic-ai/claude-code",
       "ref": "https://code.claude.com/docs/en/changelog",
       "package_ref": "https://www.npmjs.com/package/@anthropic-ai/claude-code",
@@ -36,7 +36,8 @@
       "claude-code-2-1-175-enforce-available-models",
       "claude-code-2-1-176-language-footer-and-policy-fixes",
       "claude-code-2-1-177-runtime-rollup",
-      "claude-code-2-1-195-runtime-rollup"
+      "claude-code-2-1-195-runtime-rollup",
+      "claude-code-2-1-196-runtime-rollup"
     ]
   }
 }
