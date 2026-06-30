@@ -3,6 +3,12 @@
 ## [Unreleased]
 
 
+## [1.7.18] - 2026-06-30
+
+### Fixed
+
+- Refresh Claude Code runtime baseline to 2.1.196.
+
 ## [1.7.17] - 2026-06-30
 
 ### Fixed
