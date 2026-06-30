@@ -3,6 +3,12 @@
 ## [Unreleased]
 
 
+## [1.7.17] - 2026-06-30
+
+### Fixed
+
+- Fix published release artifact proof and Antigravity MCP parity.
+
 ## [1.7.16] - 2026-06-29
 
 ### Fixed
