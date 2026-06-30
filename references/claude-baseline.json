@@ -1,10 +1,10 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "schema_version": 1,
-  "verified_on": "2026-06-26",
+  "verified_on": "2026-07-01",
   "baseline": {
     "claude_code": {
-      "version": "2.1.196",
+      "version": "2.1.197",
       "npm_package": "@anthropic-ai/claude-code",
       "ref": "https://code.claude.com/docs/en/changelog",
       "package_ref": "https://www.npmjs.com/package/@anthropic-ai/claude-code",
@@ -37,7 +37,8 @@
       "claude-code-2-1-176-language-footer-and-policy-fixes",
       "claude-code-2-1-177-runtime-rollup",
       "claude-code-2-1-195-runtime-rollup",
-      "claude-code-2-1-196-runtime-rollup"
+      "claude-code-2-1-196-runtime-rollup",
+      "claude-code-2-1-197-sonnet-5-default"
     ]
   }
 }
