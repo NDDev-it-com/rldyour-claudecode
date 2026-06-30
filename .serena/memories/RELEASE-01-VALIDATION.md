@@ -1,7 +1,7 @@
 <!-- Memory Metadata
-Last updated: 2026-06-26
-Last verified: 2026-06-29
-Last commit: 254abff44129a84a3687b881b83a2498781e2ba7 chore(release): claude 1.7.18 (other)
+Last updated: 2026-07-01
+Last verified: 2026-07-01
+Last commit: 5119aa40e695944c45ec486412df0da24a09766f chore(release): claude 1.7.19
 Scope: release readiness, versioning, and artifact hygiene
 Area: RELEASE
 -->
@@ -17,16 +17,16 @@ release readiness, versioning, and artifact hygiene
 - `path:.github/workflows/release.yml`
 
 ## Last verified
-- date: 2026-06-26
-- commit: `fa1a49c`
-- checked by: tracked-context Claude migration
+- date: 2026-07-01
+- commit: `5119aa40e695944c45ec486412df0da24a09766f`
+- checked by: Claude Code 2.1.197 runtime baseline release sync
 
 ## Facts
-- Current rldyour-claudecode adapter VERSION is `1.7.18`; the release workflow publishes the matching numeric GitHub Release tag at the released commit.
+- Current rldyour-claudecode adapter VERSION is `1.7.19`; the release workflow publishes the matching numeric GitHub Release tag at the released commit.
 - Release memories record numeric versioning, tags, CI gates, and clean artifact hygiene.
 
 ## Evidence
-- `commit:fa1a49c`
+- `commit:5119aa40e695944c45ec486412df0da24a09766f`
 - `path:VERSION`
 - `path:CHANGELOG.md`
 - `path:.github/workflows/release.yml`
