@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-07-01
-Last verified: 2026-07-01
+Last updated: 2026-06-30
+Last verified: 2026-06-30
 Last commit: 5119aa40e695944c45ec486412df0da24a09766f chore(release): claude 1.7.19
 Scope: release readiness, versioning, and artifact hygiene
 Area: RELEASE
@@ -17,7 +17,7 @@ release readiness, versioning, and artifact hygiene
 - `path:.github/workflows/release.yml`
 
 ## Last verified
-- date: 2026-07-01
+- date: 2026-06-30
 - commit: `5119aa40e695944c45ec486412df0da24a09766f`
 - checked by: Claude Code 2.1.197 runtime baseline release sync
 
