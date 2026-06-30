@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-06-26
-Last verified: 2026-06-26
-Last commit: fa1a49c refactor(policy): track claude agent context on main
+Last verified: 2026-06-29
+Last commit: 118fc478655d15ffe8c12e616c1a8a205a17a0f5 chore(release): claude 1.7.17 (other)
 Scope: release readiness, versioning, and artifact hygiene
 Area: RELEASE
 -->
@@ -22,7 +22,7 @@ release readiness, versioning, and artifact hygiene
 - checked by: tracked-context Claude migration
 
 ## Facts
-- Current rldyour-claudecode adapter VERSION is `1.7.16`; the release workflow publishes the matching numeric GitHub Release tag at the released commit.
+- Current rldyour-claudecode adapter VERSION is `1.7.17`; the release workflow publishes the matching numeric GitHub Release tag at the released commit.
 - Release memories record numeric versioning, tags, CI gates, and clean artifact hygiene.
 
 ## Evidence
