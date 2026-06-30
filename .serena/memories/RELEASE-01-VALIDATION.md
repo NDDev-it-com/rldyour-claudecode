@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-06-26
 Last verified: 2026-06-29
-Last commit: 118fc478655d15ffe8c12e616c1a8a205a17a0f5 chore(release): claude 1.7.17 (other)
+Last commit: 254abff44129a84a3687b881b83a2498781e2ba7 chore(release): claude 1.7.18 (other)
 Scope: release readiness, versioning, and artifact hygiene
 Area: RELEASE
 -->
@@ -22,7 +22,7 @@ release readiness, versioning, and artifact hygiene
 - checked by: tracked-context Claude migration
 
 ## Facts
-- Current rldyour-claudecode adapter VERSION is `1.7.17`; the release workflow publishes the matching numeric GitHub Release tag at the released commit.
+- Current rldyour-claudecode adapter VERSION is `1.7.18`; the release workflow publishes the matching numeric GitHub Release tag at the released commit.
 - Release memories record numeric versioning, tags, CI gates, and clean artifact hygiene.
 
 ## Evidence
