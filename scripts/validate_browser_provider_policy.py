@@ -71,7 +71,7 @@ def validate() -> None:
         path = skills_root / skill / "SKILL.md"
         require(path.is_file(), f"missing browser skill: {skill}")
     env = (ROOT / "config/mcp-runtime-versions.env").read_text(encoding="utf-8")
-    require("PLAYWRIGHT_CLI_VERSION=0.1.14" in env, "Playwright CLI version pin missing")
+    require("PLAYWRIGHT_CLI_VERSION=0.1.15" in env, "Playwright CLI version pin missing")
     require("WEBWRIGHT_PIN=4a46f282ec37f27d6003cc498a977939d62d9015" in env, "Webwright pin missing")
 
 
