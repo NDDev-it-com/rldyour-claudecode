@@ -144,6 +144,7 @@ jobs:
           python3 - <<'PY' > release-evidence/sbom.spdx.json
           import datetime as dt
           import json
+          import sys
 
           package = json.load(open("package.json", encoding="utf-8"))
           version = open("VERSION", encoding="utf-8").read().strip()
@@ -192,7 +193,7 @@ jobs:
                   }
               ],
           }
-          json.dump(document, open("/dev/stdout", "w", encoding="utf-8"), indent=2)
+          json.dump(document, sys.stdout, indent=2)
           print()
           PY
           tar -czf release-evidence.tgz release-evidence/
