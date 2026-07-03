@@ -19,7 +19,7 @@ release readiness, versioning, and artifact hygiene
 ## Last verified
 - date: 2026-06-30
 - commit: `5119aa40e695944c45ec486412df0da24a09766f`
-- checked by: Claude Code 2.1.197 runtime baseline release sync
+- checked by: Claude Code 2.1.199 runtime baseline release sync
 
 ## Facts
 - Current rldyour-claudecode adapter VERSION is `1.7.19`; the release workflow publishes the matching numeric GitHub Release tag at the released commit.
