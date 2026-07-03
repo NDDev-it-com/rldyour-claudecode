@@ -3,6 +3,12 @@
 ## [Unreleased]
 
 
+## [1.7.21] - 2026-07-04
+
+### Security
+
+- Refresh GitHub Actions and CodeQL pins across the public module CI surface.
+
 ## [1.7.20] - 2026-07-03
 
 ### Fixed

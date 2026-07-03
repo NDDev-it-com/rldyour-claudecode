@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "rldyour-orchestrator",
-  "version": "1.7.20",
+  "version": "1.7.21",
   "description": "macOS cmux orchestrator-режим: один user-facing терминал-оркестратор делегирует задачи worker-терминалам через cmux send/read-screen/events и собирает JSON-отчёты с notify-сигналом завершения. Роль оркестратора активируется только явной декларацией пользователя в /ry-init; без этого плагина и без декларации сессии работают в standard-режиме. Устанавливается только на macOS.",
   "author": {
     "name": "Danil Silantyev (github:rldyourmnd), CEO NDDev",
