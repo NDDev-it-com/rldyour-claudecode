@@ -36,7 +36,7 @@ body:
     attributes:
       label: Claude Code CLI version
       description: Output of `claude --version`. Minimum supported is in `config/mcp-runtime-versions.env::CLAUDE_CODE_MIN_VERSION`.
-      placeholder: "2.1.197"
+      placeholder: "2.1.199"
     validations:
       required: true
 
