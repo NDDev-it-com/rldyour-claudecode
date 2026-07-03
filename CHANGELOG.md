@@ -3,12 +3,18 @@
 ## [Unreleased]
 
 
+## [1.7.20] - 2026-07-03
+
+### Fixed
+
+- Refresh runtime and dependency baselines.
+
 ## [1.7.19] - 2026-07-01
 
 ### Changed
 
-- Refresh Claude Code 2.1.197, OpenCode 1.17.12, and Playwright CLI 0.1.15 baselines.
-- Refresh Claude Code runtime baseline to 2.1.197 and record Sonnet 5 default runtime capability.
+- Refresh Claude Code 2.1.199, OpenCode 1.17.13, and Playwright CLI 0.1.15 baselines.
+- Refresh Claude Code runtime baseline to 2.1.199 and record the current runtime reliability rollup.
 
 ## [1.7.18] - 2026-06-30
 
