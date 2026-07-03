@@ -31,6 +31,7 @@ REQUIRED_BASELINE_SURFACES = {
     "claude-code-2-1-195-runtime-rollup": "2.1.195 runtime rollup",
     "claude-code-2-1-196-runtime-rollup": "2.1.196 runtime rollup",
     "claude-code-2-1-197-sonnet-5-default": "Claude Sonnet 5",
+    "claude-code-2-1-199-runtime-rollup": "2.1.199 runtime rollup",
 }
 
 REQUIRED_2_1_153_SURFACES = (
@@ -158,6 +159,13 @@ REQUIRED_2_1_197_SURFACES = (
     "2.1.197",
 )
 
+REQUIRED_2_1_199_SURFACES = (
+    "2.1.199 runtime rollup",
+    "stacked slash-skill invocations",
+    "background-agent",
+    "subagents",
+)
+
 VALID_DECISIONS = ("Adopt", "Adopted", "Future", "Hybrid", "Intentionally unused")
 
 
@@ -271,6 +279,10 @@ def main() -> int:
         for marker in REQUIRED_2_1_197_SURFACES:
             if marker not in text:
                 errors.append(f"{ADOPTION.relative_to(ROOT)} missing 2.1.197 surface {marker}")
+    if parsed_version >= version_tuple("2.1.199"):
+        for marker in REQUIRED_2_1_199_SURFACES:
+            if marker not in text:
+                errors.append(f"{ADOPTION.relative_to(ROOT)} missing 2.1.199 surface {marker}")
 
     for line in text.splitlines():
         if not line.startswith("| `") and not line.startswith("| `/"):
