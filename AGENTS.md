@@ -22,7 +22,7 @@ claims:
   reviewer_transport_marker: RLDYOUR_REPORT_EOF
   reviewer_report_dir_template: ".serena/reviews/<run_id>/"
   reviewer_run_id_format: "<UTC-ISO-compact>-<git-short-sha>"
-  claude_code_runtime_pin: "2.1.197"
+  claude_code_runtime_pin: "2.1.199"
   claude_code_feature_floor: "2.1.146"
   skill_listing_budget_fraction: 0.04
   max_skill_description_chars: 1536
@@ -43,7 +43,7 @@ claims:
 - `config/rldyour-contract.json` and `docs/contract-matrix.md` define the
   cross-tool contract.
 - `references/claude-baseline.json`, `package.json`, and
-  `config/mcp-runtime-versions.env` pin Claude Code `2.1.197`.
+  `config/mcp-runtime-versions.env` pin Claude Code `2.1.199`.
 
 ## Native Boundaries
 
