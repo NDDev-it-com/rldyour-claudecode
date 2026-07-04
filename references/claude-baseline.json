@@ -4,7 +4,7 @@
   "verified_on": "2026-07-03",
   "baseline": {
     "claude_code": {
-      "version": "2.1.199",
+      "version": "2.1.201",
       "npm_package": "@anthropic-ai/claude-code",
       "ref": "https://code.claude.com/docs/en/changelog",
       "package_ref": "https://www.npmjs.com/package/@anthropic-ai/claude-code",
