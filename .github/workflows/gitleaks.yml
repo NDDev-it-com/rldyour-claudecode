@@ -29,71 +29,11 @@ concurrency:
 jobs:
   gitleaks:
     name: gitleaks scan
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
     permissions:
       contents: read
-    steps:
-      - name: Harden runner (egress block + explicit allowlist)
-        uses: step-security/harden-runner@9af89fc71515a100421586dfdb3dc9c984fbf411  # v2.19.4
-        with:
-          egress-policy: block
-          allowed-endpoints: >
-            agent.api.stepsecurity.io:443
-            api.github.com:443
-            github.com:443
-            codeload.github.com:443
-            objects.githubusercontent.com:443
-            registry-1.docker.io:443
-            auth.docker.io:443
-            production.cloudflare.docker.com:443
-
-      - name: Checkout
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0  # v7.0.0
-        with:
-          fetch-depth: 0  # gitleaks needs full history for `--source` git mode
-
-      - name: Run gitleaks detect (full history)
-        run: |
-          set -euo pipefail
-          # Digest-pinned per OWASP A03:2025 (security review F-1).
-          # Re-resolve via: curl -s https://hub.docker.com/v2/repositories/zricethezav/gitleaks/tags/v8.30.1/ | jq -r .digest
-          # Workspace mounted rw (was ro) so --report-path can actually write the SARIF artifact
-          # (security review F-2 fix - report-path write to :ro mount silently dropped output).
-          # v8.30.1 patch bump: goreleaser update + report template cleanup + Go 1.24 build (no breaking changes).
-          image="zricethezav/gitleaks:v8.30.1@sha256:c00b6bd0aeb3071cbcb79009cb16a60dd9e0a7c60e2be9ab65d25e6bc8abbb7f"
-          for attempt in 1 2 3; do
-            if docker run --rm \
-              -v "${{ github.workspace }}:/repo" \
-              "$image" \
-              detect \
-                --source /repo \
-                --redact \
-                --no-banner \
-                --report-format sarif \
-                --report-path /repo/gitleaks-report.sarif \
-                --exit-code 1; then
-              exit 0
-            fi
-            status=$?
-            if [ "$status" -ne 125 ] || [ "$attempt" -eq 3 ]; then
-              exit "$status"
-            fi
-            sleep "$((attempt * 10))"
-          done
-
-      - name: Upload SARIF artifact (always, for forensic review)
-        if: always()
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
-        with:
-          name: gitleaks-sarif-${{ github.run_id }}
-          path: gitleaks-report.sarif
-          if-no-files-found: ignore
-          retention-days: 14
-
-      - name: Surface report on failure
-        if: failure()
-        run: |
-          if [ -f gitleaks-report.sarif ]; then
-            cat gitleaks-report.sarif
-          fi
+    uses: NDDev-it-com/nddev-ci-workflows/.github/workflows/secret-scan.yml@21bd3f7c3bbcbd7a9ecd3475b293d9e65aa8563a # 0.2.2
+    with:
+      report_format: sarif
+      report_path: gitleaks-report.sarif
+      upload_report: true
+      artifact_name: gitleaks-sarif-${{ github.run_id }}

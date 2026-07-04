@@ -4,12 +4,12 @@
   "required_status_checks": [
     "claude plugin validate",
     "Python + shell + JSON syntax + smoke (ubuntu-latest)",
-    "analyze (python)",
-    "analyze (actions)",
-    "gitleaks scan",
-    "cross-platform smoke (ubuntu-latest)",
-    "cross-platform smoke (windows-latest)",
-    "cross-platform smoke (macos-latest)"
+    "analyze (python) / CodeQL (python)",
+    "analyze (actions) / CodeQL (actions)",
+    "gitleaks scan / Gitleaks secret scan",
+    "cross-platform smoke (ubuntu-latest) / smoke (ubuntu-latest)",
+    "cross-platform smoke (windows-latest) / smoke (windows-latest)",
+    "cross-platform smoke (macos-latest) / smoke (macos-latest)"
   ],
   "strict_required_status_checks": true,
   "allow_force_pushes": false,

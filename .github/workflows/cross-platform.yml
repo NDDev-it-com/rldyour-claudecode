@@ -24,46 +24,36 @@ concurrency:
 jobs:
   smoke:
     name: cross-platform smoke (${{ matrix.os }})
-    runs-on: ${{ matrix.os }}
-    timeout-minutes: 10
+    permissions:
+      contents: read
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-    steps:
-      - name: Checkout
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
-        with:
-          persist-credentials: false
+    uses: NDDev-it-com/nddev-ci-workflows/.github/workflows/cross-platform-smoke.yml@21bd3f7c3bbcbd7a9ecd3475b293d9e65aa8563a # 0.2.2
+    with:
+      os_list: '["${{ matrix.os }}"]'
+      timeout_minutes: 10
+      command: |
+        python - <<'PY'
+        from pathlib import Path
+        import compileall
+        import json
 
-      - name: Set up Python
-        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
-        with:
-          python-version: '3.13'
+        required = [
+            "VERSION",
+            "README.md",
+            ".claude-plugin/marketplace.json",
+            ".github/branch-protection/main.json",
+        ]
+        missing = [path for path in required if not Path(path).exists()]
+        if missing:
+            raise SystemExit("missing required path(s): " + ", ".join(missing))
 
-      - name: Cross-platform metadata smoke
-        shell: bash
-        run: |
-          set -euo pipefail
-          python - <<'PY'
-          from pathlib import Path
-          import compileall
-          import json
+        json.loads(Path(".claude-plugin/marketplace.json").read_text(encoding="utf-8"))
+        json.loads(Path(".github/branch-protection/main.json").read_text(encoding="utf-8"))
 
-          required = [
-              "VERSION",
-              "README.md",
-              ".claude-plugin/marketplace.json",
-              ".github/branch-protection/main.json",
-          ]
-          missing = [path for path in required if not Path(path).exists()]
-          if missing:
-              raise SystemExit("missing required path(s): " + ", ".join(missing))
-
-          json.loads(Path(".claude-plugin/marketplace.json").read_text(encoding="utf-8"))
-          json.loads(Path(".github/branch-protection/main.json").read_text(encoding="utf-8"))
-
-          if not compileall.compile_dir("scripts", quiet=1):
-              raise SystemExit("scripts/ Python compile failed")
-          print("cross-platform metadata smoke passed")
-          PY
+        if not compileall.compile_dir("scripts", quiet=1):
+            raise SystemExit("scripts/ Python compile failed")
+        print("cross-platform metadata smoke passed")
+        PY
