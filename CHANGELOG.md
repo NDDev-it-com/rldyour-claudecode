@@ -3,6 +3,12 @@
 ## [Unreleased]
 
 
+## [1.7.25] - 2026-07-04
+
+### Fixed
+
+- Migrate CI workflows to nddev-ci-workflows reusable contracts.
+
 ## [1.7.24] - 2026-07-04
 
 ### Changed
