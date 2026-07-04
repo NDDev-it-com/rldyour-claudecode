@@ -3,6 +3,12 @@
 ## [Unreleased]
 
 
+## [1.7.24] - 2026-07-04
+
+### Changed
+
+- Complete Claude Code 2.1.201 runtime surface coverage: add the 2.1.201 surface-adoption rollup row and bring README, cc-canon, dependency-updates, ry-start workflow contract, and marketplace min-version parity, plus root model-policy/ry-repair-contract/tuple surfaces, to 2.1.201.
+
 ## [1.7.23] - 2026-07-04
 
 ### Changed
