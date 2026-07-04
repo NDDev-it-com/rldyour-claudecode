@@ -3,6 +3,12 @@
 ## [Unreleased]
 
 
+## [1.7.22] - 2026-07-04
+
+### Changed
+
+- Add a 7-day Dependabot cooldown on GitHub Actions updates (and grouped updates where missing) for supply-chain hardening.
+
 ## [1.7.21] - 2026-07-04
 
 ### Security
