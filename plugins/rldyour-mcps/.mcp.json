@@ -36,7 +36,9 @@
         "--headless",
         "--isolated",
         "--no-usage-statistics",
-        "--no-performance-crux"
+        "--no-performance-crux",
+        "--browserUrl",
+        "http://127.0.0.1:9222"
       ]
     },
     "context7": {
