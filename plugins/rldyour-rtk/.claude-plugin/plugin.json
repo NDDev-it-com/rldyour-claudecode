@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "rldyour-rtk",
+  "version": "1.7.30",
+  "description": "rtk token-economy core: гарантированный PreToolUse Bash hook переписывает shell-команды через rtk (Rust Token Killer), сжимая вывод до попадания в контекст. Включает skill token-economy и /rtk-gain. Graceful passthrough, если rtk не установлен. Guaranteed Bash-output compression core.",
+  "author": {
+    "name": "Danil Silantyev (github:rldyourmnd), CEO NDDev",
+    "url": "https://github.com/rldyourmnd"
+  },
+  "license": "AGPL-3.0-or-later",
+  "homepage": "https://github.com/NDDev-it-com/rldyour-claudecode/tree/main/plugins/rldyour-rtk",
+  "repository": "https://github.com/NDDev-it-com/rldyour-claudecode",
+  "keywords": [
+    "rtk",
+    "token-economy",
+    "hooks",
+    "bash",
+    "output-compression",
+    "rldyour"
+  ],
+  "dependencies": []
+}

@@ -210,6 +210,25 @@
         "rldyour"
       ],
       "license": "AGPL-3.0-or-later"
+    },
+    {
+      "name": "rldyour-rtk",
+      "source": "./plugins/rldyour-rtk",
+      "description": "rtk token-economy core: гарантированный PreToolUse Bash hook сжимает вывод команд через rtk (Rust Token Killer) до попадания в контекст + skill token-economy + /rtk-gain. Внешний бинарь rtk (Apache-2.0), не MCP; graceful passthrough без rtk.",
+      "version": "1.7.30",
+      "author": {
+        "name": "Danil Silantyev (github:rldyourmnd), CEO NDDev"
+      },
+      "category": "development",
+      "tags": [
+        "rtk",
+        "token-economy",
+        "hooks",
+        "bash",
+        "output-compression",
+        "rldyour"
+      ],
+      "license": "AGPL-3.0-or-later"
     }
   ]
 }

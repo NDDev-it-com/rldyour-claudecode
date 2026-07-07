@@ -20,6 +20,7 @@ This matrix is the human-readable projection of the machine-readable rldyour con
 | mcps | Single-owner MCP transport layer | rldyour-mcps | rldyour-mcps | rldyour-mcps | native MCP servers in .gemini/settings.json | native MCP servers in .mimocode/mimocode.jsonc |
 | orchestrator | macOS cmux orchestrator and worker terminal roles | rldyour-orchestrator | rldyour-orchestrator | rldyour-orchestrator | worker-only: cmux-worker skill present; orchestrator unsupported | worker-only: cmux-worker skill present; orchestrator unsupported |
 | rules | Quality, architecture, dependency, verification rules | rldyour-rules | rldyour-rules | rldyour-rules | adapter-specific: not provided as a native surface | native skills/agents via .mimocode/skills and .mimocode/command/rules-review.md |
+| rtk | rtk token-economy: shell-output compression at the Bash boundary | rldyour-rtk | rldyour-rtk | follow-up: rtk token-economy not provided in this release | follow-up: rtk token-economy not provided in this release | follow-up: rtk token-economy not provided in this release |
 | security | Defensive security guidance and review | rldyour-security | rldyour-security | rldyour-security | native skills/agents | native skills/agents |
 | serena-mcp | Serena semantic code workflow and memory sync | rldyour-serena-mcp | rldyour-serena-mcp | rldyour-serena-mcp | native skills/agents via serena-curator agent and serena-memory-sync skill | native skills/agents via rldyour-memory-sync agent and serena-memory-sync skill |
 

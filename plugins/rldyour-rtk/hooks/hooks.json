@@ -1,0 +1,21 @@
+{
+  "$schema": "../../../config/schemas/hooks.json",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/bin/bash",
+            "args": [
+              "${CLAUDE_PLUGIN_ROOT}/hooks/rtk_rewrite.sh"
+            ],
+            "timeout": 10,
+            "statusMessage": "rtk token economy"
+          }
+        ]
+      }
+    ]
+  }
+}

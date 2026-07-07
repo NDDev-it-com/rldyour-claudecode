@@ -190,6 +190,25 @@
       }
     },
     {
+      "id": "rtk",
+      "description": "rtk token-economy: shell-output compression at the Bash boundary",
+      "claude": {
+        "plugin": "rldyour-rtk"
+      },
+      "codex": {
+        "plugin": "rldyour-rtk"
+      },
+      "opencode": {
+        "status": "follow-up: rtk token-economy not provided in this release"
+      },
+      "gemini": {
+        "status": "follow-up: rtk token-economy not provided in this release"
+      },
+      "mimocode": {
+        "status": "follow-up: rtk token-economy not provided in this release"
+      }
+    },
+    {
       "id": "security",
       "description": "Defensive security guidance and review",
       "claude": {
