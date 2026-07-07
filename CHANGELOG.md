@@ -3,6 +3,17 @@
 ## [Unreleased]
 
 
+## [1.7.29] - 2026-07-07
+
+### Fixed
+
+- Realign the release line: the `1.7.28` tag was created one commit before
+  the SECURITY supported-versions table alignment landed, so the tag could
+  not match the pinned expected head (SECURITY.md is release-relevant by
+  the commit-layer policy). `1.7.29` tags the fully aligned tree and
+  supersedes `1.7.28` as the current release.
+
+
 ## [1.7.28] - 2026-07-07
 
 ### Added
