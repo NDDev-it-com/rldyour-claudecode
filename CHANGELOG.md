@@ -3,6 +3,28 @@
 ## [Unreleased]
 
 
+## [1.7.28] - 2026-07-07
+
+### Added
+
+- Installer stage 9: managed model and env defaults merged into
+  `~/.claude/settings.json` (user keys preserved): `model` `opus[1m]`,
+  `ANTHROPIC_DEFAULT_OPUS_MODEL=claude-opus-4-8`,
+  `BASH_DEFAULT_TIMEOUT_MS=600000`, `BASH_MAX_TIMEOUT_MS=1200000`,
+  `CLAUDE_CODE_MAX_OUTPUT_TOKENS=80000` (owner max-power directive
+  2026-07-07; keeps the `opus[1m]` alias while pinning the Opus lane to
+  Opus 4.8).
+
+### Changed
+
+- Adopt the Claude Code `2.1.202` runtime baseline (npm latest, published
+  2026-07-06): `/config` Dynamic workflow size advisory setting, workflow
+  OpenTelemetry attributes, `/review` single-pass revert, and runtime
+  reliability fixes; no marketplace/hook/skill/MCP config surface changes
+  required. Pins updated across package.json, claude-baseline.json,
+  mcp-runtime-versions.env, cc-canon, marketplace-policy, and docs.
+
+
 ## [1.7.27] - 2026-07-04
 
 ### Fixed
