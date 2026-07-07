@@ -615,6 +615,54 @@ stage_8_statusline() {
 
 # ----- main -----------------------------------------------------------------
 
+
+stage_9_model_env() {
+  step "Stage 9: managed model and env defaults (owner max-power policy)"
+
+  local model_target='opus[1m]'
+
+  if [[ "$DRY_RUN" -eq 1 ]]; then
+    info "dry-run: would set settings.json model -> $model_target"
+    info "dry-run: would set settings.json env.ANTHROPIC_DEFAULT_OPUS_MODEL -> claude-opus-4-8"
+    info "dry-run: would set settings.json env.BASH_DEFAULT_TIMEOUT_MS -> 600000"
+    info "dry-run: would set settings.json env.BASH_MAX_TIMEOUT_MS -> 1200000"
+    info "dry-run: would set settings.json env.CLAUDE_CODE_MAX_OUTPUT_TOKENS -> 80000"
+    return 0
+  fi
+
+  local base="{}"
+  if [[ -f "$SETTINGS_PATH" ]]; then
+    base="$(cat "$SETTINGS_PATH")"
+  fi
+
+  local tmp_settings
+  tmp_settings="$(mktemp "${SETTINGS_PATH}.XXXXXX")"
+  # Merge semantics: enforce the managed model and the four managed env keys,
+  # preserve every other user setting and env entry.
+  if ! printf '%s' "$base" | jq --arg model "$model_target" \
+    '.model = $model
+     | .env = ((.env // {}) + {
+         ANTHROPIC_DEFAULT_OPUS_MODEL: "claude-opus-4-8",
+         BASH_DEFAULT_TIMEOUT_MS: "600000",
+         BASH_MAX_TIMEOUT_MS: "1200000",
+         CLAUDE_CODE_MAX_OUTPUT_TOKENS: "80000"
+       })' >"$tmp_settings"; then
+    rm -f "$tmp_settings"
+    die "jq rewrite of $SETTINGS_PATH for model/env failed; original untouched"
+  fi
+  mv "$tmp_settings" "$SETTINGS_PATH"
+
+  [[ "$(jq -r '.model // empty' "$SETTINGS_PATH")" == "$model_target" ]] \
+    || die "settings.json model verification failed"
+  [[ "$(jq -r '.env.ANTHROPIC_DEFAULT_OPUS_MODEL // empty' "$SETTINGS_PATH")" == "claude-opus-4-8" ]] \
+    || die "settings.json env.ANTHROPIC_DEFAULT_OPUS_MODEL verification failed"
+  [[ "$(jq -r '.env.CLAUDE_CODE_MAX_OUTPUT_TOKENS // empty' "$SETTINGS_PATH")" == "80000" ]] \
+    || die "settings.json env.CLAUDE_CODE_MAX_OUTPUT_TOKENS verification failed"
+
+  ok "settings.json model -> $model_target"
+  ok "settings.json env -> ANTHROPIC_DEFAULT_OPUS_MODEL=claude-opus-4-8 + bash timeouts + max output tokens"
+}
+
 main() {
   require_command claude
   require_command jq
@@ -635,6 +683,7 @@ main() {
   stage_should_run 6 && stage_6_install
   stage_should_run 7 && stage_7_verify
   stage_should_run 8 && stage_8_statusline
+  stage_should_run 9 && stage_9_model_env
 
   printf '\n%s%sInstall finished.%s\n' "$C_GREEN" "$C_BOLD" "$C_RESET" >&2
   if [[ "$DRY_RUN" -eq 1 ]]; then
