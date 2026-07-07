@@ -3,6 +3,12 @@
 ## [Unreleased]
 
 
+## [1.7.30] - 2026-07-08
+
+### Fixed
+
+- CloakBrowser default privacy-first browser backend across all adapters (ADR 0003).
+
 ## [1.7.29] - 2026-07-07
 
 ### Fixed
