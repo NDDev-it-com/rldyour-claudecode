@@ -7,7 +7,7 @@ runtime, hook, subagent, and skill-budget facts concise.
 <!-- sync_contract:
 claims:
   mcp_owner: rldyour-mcps
-  hook_owners: [rldyour-flow, rldyour-serena-mcp]
+  hook_owners: [rldyour-flow, rldyour-serena-mcp, rldyour-rtk]
   lsp_owner: rldyour-lsps
   reviewer_transport_marker: RLDYOUR_REPORT_EOF
   reviewer_report_dir_template: ".serena/reviews/<run_id>/"
@@ -18,9 +18,9 @@ claims:
   managed_env_defaults: "ANTHROPIC_DEFAULT_OPUS_MODEL=claude-opus-4-8, BASH_DEFAULT_TIMEOUT_MS=600000, BASH_MAX_TIMEOUT_MS=1200000, CLAUDE_CODE_MAX_OUTPUT_TOKENS=80000"
   skill_listing_budget_fraction: 0.04
   max_skill_description_chars: 1536
-  plugin_count: 10
-  skill_count: 38
-  command_count: 11
+  plugin_count: 11
+  skill_count: 39
+  command_count: 12
   subagent_count: 8
 -->
 
@@ -39,15 +39,18 @@ The pin sources are `package.json`, `references/claude-baseline.json`, and
 - `rldyour-orchestrator`: macOS cmux orchestrator/worker role skills only.
 - `rldyour-explore`, `rldyour-security`, `rldyour-browser`, `rldyour-design`,
   `rldyour-lsps`, and `rldyour-rules`: domain plugins.
+- `rldyour-rtk`: rtk token-economy core - guaranteed PreToolUse Bash hook,
+  `token-economy` skill, and `/rtk-gain`.
 
-Current inventory: 10 plugins, 38 skills, 11 slash commands, and 8 subagents.
+Current inventory: 11 plugins, 39 skills, 12 slash commands, and 8 subagents.
 
 ## Hook Canon
 
-Only `rldyour-flow` and `rldyour-serena-mcp` own hooks. Stop hooks are advisory
+`rldyour-flow`, `rldyour-serena-mcp`, and `rldyour-rtk` own hooks. Stop hooks are advisory
 enforcement gates: they compute state and block with guidance, while the main
 workflow performs memory sync, tests, commits, pushes, and release synchronization.
-The single registered Claude Stop hook is the Flow dispatcher.
+The single registered Claude Stop hook is the Flow dispatcher. `rldyour-rtk` owns a
+`PreToolUse` Bash hook that rewrites supported commands through rtk for token-economy.
 
 | Event | Owner | Script | Timeout |
 |---|---|---|---|
