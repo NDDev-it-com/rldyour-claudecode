@@ -27,6 +27,17 @@ Skip when: question can be answered by docs or code (use `tech-research`), or it
 4. Cross-reference dated info between independent sources
 5. Quote directly when the claim is non-trivial; never paraphrase as established fact
 
+## Browser-backed retrieval (CloakBrowser standard)
+
+WebSearch and WebFetch are non-browser tools - use them for quick lookups and
+static fetches. When research needs a real browser (JS-rendered pages,
+search-engine navigation, login-gated or anti-bot sources), route it through the
+browser providers, which run on the **CloakBrowser** privacy-first backend
+(control-plane ADR 0003 + `config/browser-automation-policy.json`): Webwright for
+long-horizon retrieval, Playwright CLI for navigation/snapshots, Chrome DevTools
+MCP for inspection. Never launch a raw stock-Chromium browser for internet
+research; the CloakBrowser CDP daemon (`127.0.0.1:9222`) is the mandated engine.
+
 ## Output style
 
 - Date-stamp every claim ("As of 2026-05-...", "vN.M.K release notes")
