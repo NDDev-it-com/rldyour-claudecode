@@ -15,3 +15,5 @@ Run `rtk gain $ARGUMENTS`:
 
 If rtk is not installed, say so and point to `brew install rtk`
 (github.com/rtk-ai/rtk). Never install it silently.
+
+Reply in Russian when the owner writes in Russian; otherwise reply in English.
