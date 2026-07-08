@@ -3,6 +3,12 @@
 ## [Unreleased]
 
 
+## [1.8.1] - 2026-07-08
+
+### Fixed
+
+- State Russian owner-facing response policy in /rtk-gain (bilingual command compliance).
+
 ## [1.8.0] - 2026-07-08
 
 ### Added
