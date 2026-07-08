@@ -22,7 +22,7 @@ release readiness, versioning, and artifact hygiene
 - checked by: Codex ry-start memory taxonomy sync
 
 ## Facts
-- Current rldyour-claudecode adapter VERSION is `1.8.2`; the release workflow publishes the matching numeric GitHub Release tag at the released commit.
+- Current rldyour-claudecode adapter VERSION is `1.8.3`; the release workflow publishes the matching numeric GitHub Release tag at the released commit.
 - Release memories record numeric versioning, tags, CI gates, and clean artifact hygiene.
 
 ## Evidence
