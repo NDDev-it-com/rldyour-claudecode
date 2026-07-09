@@ -1,7 +1,7 @@
 <!-- Memory Metadata
-Last updated: 2026-07-07
-Last verified: 2026-07-07
-Last commit: 31254f70db4022998e8d289027f946653ce1921e chore(release): claude 1.7.20 (other)
+Last updated: 2026-07-10
+Last verified: 2026-07-10
+Last commit: 61dc24cb940a89d692d5754e7fe66082b53d6feb feat(browser): enforce managed CloakBrowser transport (other)
 Scope: release readiness, versioning, and artifact hygiene
 Area: RELEASE
 -->
@@ -17,16 +17,16 @@ release readiness, versioning, and artifact hygiene
 - `path:.github/workflows/release.yml`
 
 ## Last verified
-- date: 2026-05-22
-- commit: `54ef94c86d27775f294101b9da5a785cb3f5c1a9`
-- checked by: Codex ry-start memory taxonomy sync
+- date: 2026-07-10
+- commit: `61dc24cb940a89d692d5754e7fe66082b53d6feb`
+- checked by: Codex adapter release finalization
 
 ## Facts
-- Current rldyour-claudecode adapter VERSION is `1.8.3`; the release workflow publishes the matching numeric GitHub Release tag at the released commit.
+- Current rldyour-claudecode adapter VERSION is `1.8.4`; the release workflow publishes the matching numeric GitHub Release tag at the released commit.
 - Release memories record numeric versioning, tags, CI gates, and clean artifact hygiene.
 
 ## Evidence
-- `commit:54ef94c86d27775f294101b9da5a785cb3f5c1a9`
+- `commit:61dc24cb940a89d692d5754e7fe66082b53d6feb`
 - `path:VERSION`
 - `path:CHANGELOG.md`
 - `path:.github/workflows/release.yml`
