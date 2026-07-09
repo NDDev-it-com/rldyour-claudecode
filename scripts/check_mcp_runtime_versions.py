@@ -32,9 +32,20 @@ from pathlib import Path
 SERVER_TO_ENV = {
     "serena": ("SERENA_AGENT_VERSION", "serena-agent=="),
     "sequential-thinking": ("SEQUENTIAL_THINKING_MCP_VERSION", "@modelcontextprotocol/server-sequential-thinking@"),
-    "chrome-devtools": ("CHROME_DEVTOOLS_MCP_VERSION", "chrome-devtools-mcp@"),
     "context7": ("CONTEXT7_MCP_VERSION", "@upstash/context7-mcp@"),
     "shadcn": ("SHADCN_VERSION", "shadcn@"),
+}
+
+MANAGED_WRAPPER_TO_ENV = {
+    "chrome-devtools": {
+        "env_key": "CHROME_DEVTOOLS_MCP_VERSION",
+        "command": "/bin/sh",
+        "args": [
+            "-c",
+            'exec "$HOME/.local/bin/chrome-devtools-mcp" --headless --isolated '
+            "--no-usage-statistics --no-performance-crux",
+        ],
+    }
 }
 
 HTTP_TO_ENV = {
@@ -164,6 +175,21 @@ def main() -> int:
             fail = 1
             continue
         print(f"OK {name}: {actual}")
+
+    for name, spec in MANAGED_WRAPPER_TO_ENV.items():
+        cfg = servers.get(name)
+        expected = env.get(spec["env_key"], "")
+        if not cfg:
+            print(f"FAIL .mcp.json missing managed-wrapper server {name!r}", file=sys.stderr)
+            fail = 1
+        elif cfg.get("command") != spec["command"] or cfg.get("args") != spec["args"]:
+            print(f"FAIL {name}: managed wrapper transport drift", file=sys.stderr)
+            fail = 1
+        elif not expected:
+            print(f"FAIL {env_path.name} missing {spec['env_key']} (server {name})", file=sys.stderr)
+            fail = 1
+        else:
+            print(f"OK {name}: {expected} (bootstrap-managed wrapper)")
 
     for name, env_key in HTTP_TO_ENV.items():
         cfg = servers.get(name)

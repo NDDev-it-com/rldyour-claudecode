@@ -49,9 +49,9 @@ for name, cfg in mcp.get("mcpServers", {}).items():
     # enforced by check_mcp_runtime_versions.py. Without this allowlist, a
     # typo or accidental removal of a version literal in a non-host-binary
     # server entry would silently pass.
-    HOST_BINARY_ALLOWLIST = {"github", "dart-flutter"}
-    if pin is None and name not in HOST_BINARY_ALLOWLIST:
-        print(f"FAIL {name}: no version pin in args {args!r}; pin via ==X.Y.Z or @X.Y.Z, or add to HOST_BINARY_ALLOWLIST", file=sys.stderr)
+    EXTERNAL_PIN_ALLOWLIST = {"github", "dart-flutter", "chrome-devtools"}
+    if pin is None and name not in EXTERNAL_PIN_ALLOWLIST:
+        print(f"FAIL {name}: no version pin in args {args!r}; pin via ==X.Y.Z or @X.Y.Z, or add to EXTERNAL_PIN_ALLOWLIST", file=sys.stderr)
         fail = 1
         continue
     print(f"OK {name}: pin={pin!r}")

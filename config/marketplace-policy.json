@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "_description": "Centralized rldyour-claudecode marketplace invariants. Read by validate_marketplace.sh + future validate_boundaries.py. When you add a new plugin or change ownership boundaries, update this file in the same commit.",
-  "verified_on": "2026-07-03",
+  "verified_on": "2026-07-10",
   "mcp_owner": "rldyour-mcps",
   "hook_owners": [
     "rldyour-flow",
@@ -86,7 +86,7 @@
   ],
   "skill_listing_budget_fraction": 0.04,
   "max_skill_description_chars": 1536,
-  "claude_code_min_version": "2.1.202",
+  "claude_code_min_version": "2.1.205",
   "tag_conventions": {
     "marketplace": "marketplace--v<X.Y.Z>",
     "plugin": "<plugin-name>--v<X.Y.Z>"

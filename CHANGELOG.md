@@ -3,6 +3,16 @@
 ## [Unreleased]
 
 
+## [1.8.4] - 2026-07-10
+
+### Changed
+
+- Route Claude Code Chrome DevTools MCP through the exact managed CloakBrowser
+  wrapper and align Playwright CLI to `0.1.17`.
+- Adopt the published Claude Code `2.1.205` runtime baseline, including its
+  setup-checkup, background-agent, structured-output, and safety fixes.
+
+
 ## [1.8.3] - 2026-07-08
 
 ### Changed

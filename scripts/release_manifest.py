@@ -35,6 +35,7 @@ HOST_BINARY_SERVERS: dict[str, dict[str, str]] = {
     "github": {"binary": "github-mcp-server", "version_env": "GITHUB_MCP_SERVER_VERSION"},
     "dart-flutter": {"binary": "dart", "version_env": "DART_SDK_VERSION"},
 }
+MANAGED_WRAPPER_PINS = {"chrome-devtools": "CHROME_DEVTOOLS_MCP_VERSION"}
 
 
 def git(*args: str) -> str:
@@ -73,7 +74,7 @@ def extract_pin(args: list[str]) -> str | None:
     Recognises three forms produced by `bunx`/`uvx`/native commands:
       1. Python-style `package==1.2.3` (uvx style).
       2. Scoped npm `@scope/name@1.2.3` (`bunx @anthropic-ai/mcp@1`).
-      3. Unscoped npm `name@1.2.3` (`bunx chrome-devtools-mcp@1.5.0`).
+      3. Unscoped npm `name@1.2.3` (`bunx shadcn@4.13.0`).
 
     Returns the first matching token or `None` if none match.
     """
@@ -180,7 +181,7 @@ def main() -> int:
 
         args_raw = cfg.get("args", [])
         args: list[str] = args_raw if isinstance(args_raw, list) else []
-        pin = extract_pin(args)
+        pin = extract_pin(args) or env_values.get(MANAGED_WRAPPER_PINS.get(name, ""))
         host_pin = host_binary_pins.get(name)
         # Integration F-3 + Security F-10 closure: surface silent-null pins
         # to stderr so operators see the gap during release builds rather
@@ -206,6 +207,8 @@ def main() -> int:
             "pin": pin,
             "always_load": bool(cfg.get("alwaysLoad")),
         }
+        if name in MANAGED_WRAPPER_PINS:
+            entry["pin_source"] = "config/mcp-runtime-versions.env"
         if host_pin is not None:
             entry["host_binary_pin"] = host_pin
             entry["pin_source"] = "config/mcp-runtime-versions.env"

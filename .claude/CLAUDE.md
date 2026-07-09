@@ -12,7 +12,7 @@ claims:
   reviewer_transport_marker: RLDYOUR_REPORT_EOF
   reviewer_report_dir_template: ".serena/reviews/<run_id>/"
   reviewer_run_id_format: "<UTC-ISO-compact>-<git-short-sha>"
-  claude_code_runtime_pin: "2.1.202"
+  claude_code_runtime_pin: "2.1.205"
   claude_code_feature_floor: "2.1.146"
   managed_model_default: "opus[1m]"
   managed_env_defaults: "ANTHROPIC_DEFAULT_OPUS_MODEL=claude-opus-4-8, BASH_DEFAULT_TIMEOUT_MS=600000, BASH_MAX_TIMEOUT_MS=1200000, CLAUDE_CODE_MAX_OUTPUT_TOKENS=80000"
@@ -26,7 +26,7 @@ claims:
 
 ## Runtime
 
-Claude Code runtime pin is `2.1.202`. The compatibility floor is `2.1.146`.
+Claude Code runtime pin is `2.1.205`. The compatibility floor is `2.1.146`.
 The pin sources are `package.json`, `references/claude-baseline.json`, and
 `config/mcp-runtime-versions.env`.
 
