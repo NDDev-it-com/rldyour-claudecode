@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+### Changed
+
+- Repin every reusable `nddev-ci-workflows` caller to the signed `0.5.1`
+  release and add an exact pin regression test.
+
 
 ## [1.8.4] - 2026-07-10
 

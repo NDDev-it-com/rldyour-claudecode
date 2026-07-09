@@ -6,6 +6,13 @@ paid private-repository Actions minutes. The split still keeps CI signal clear:
 required gates prove the repo is valid, while advisory gates surface upstream
 drift separately.
 
+## Shared workflow pin
+
+Every reusable `NDDev-it-com/nddev-ci-workflows` caller is pinned to signed
+release `0.5.1` at commit
+`ac4d1f469f5974741c7449305ffcbd5f05a5a47f`. The repository test
+`tests/test_shared_workflow_pin.py` rejects a mixed SHA or version comment.
+
 ## Required PR gates (run on every push to `main` and every PR)
 
 These workflows must be green before any merge.
