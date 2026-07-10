@@ -201,7 +201,7 @@ def validate_tag_alignment(root: Path, version: str) -> list[str]:
     if tag_sha is None:
         warnings.append(
             f"INFO tag '{candidate}' does not yet exist locally - "
-            f"release.yml will create it on tag push"
+            "root release automation may create it only after exact-SHA CI is stable green"
         )
         return warnings
     if tag_sha != head:
