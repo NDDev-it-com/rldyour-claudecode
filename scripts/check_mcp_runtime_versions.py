@@ -43,6 +43,7 @@ MANAGED_WRAPPER_TO_ENV = {
         "args": [
             "-c",
             'exec "$HOME/.local/bin/chrome-devtools-mcp" --headless --isolated '
+            +
             "--no-usage-statistics --no-performance-crux",
         ],
     }
