@@ -16,7 +16,7 @@ These commands surface what Claude Code has actually loaded - always trust them 
 | `/hooks` | Active hooks per event with their handler types |
 | `/mcp` | Connected MCP servers, tool counts, status (since v2.1.122 marks "connected · tools fetch failed") |
 | `/permissions` | Allow/deny rules from settings.json |
-| `/doctor` | Auto-updater health + invalid keys + schema errors. Since v2.1.121 also warns about MCP servers overridden by higher-precedence scope |
+| `/doctor` | Full setup checkup and repair surface: updater health, invalid keys, schema errors, higher-precedence MCP overrides, and since v2.1.206 an advisory proposal to trim checked-in `CLAUDE.md` content that can be derived from the codebase. Treat trimming as a review suggestion; instruction docs remain source-backed tracked files. |
 
 ## Plugin-loading debug
 

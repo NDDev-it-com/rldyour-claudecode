@@ -33,6 +33,7 @@ REQUIRED_BASELINE_SURFACES = {
     "claude-code-2-1-197-sonnet-5-default": "Claude Sonnet 5",
     "claude-code-2-1-199-runtime-rollup": "2.1.199 runtime rollup",
     "claude-code-2-1-205-runtime-rollup": "2.1.205 runtime rollup",
+    "claude-code-2-1-206-runtime-rollup": "2.1.206 runtime rollup",
 }
 
 REQUIRED_2_1_153_SURFACES = (
@@ -174,6 +175,17 @@ REQUIRED_2_1_205_SURFACES = (
     "`/doctor`",
 )
 
+REQUIRED_2_1_206_SURFACES = (
+    "2.1.206 runtime rollup",
+    "`/cd` path suggestions",
+    "`/commit-push-pr`",
+    "`EnterWorktree`",
+    "`request_timeout_ms`",
+    "checked-in `CLAUDE.md`",
+    "OAuth refresh",
+    "resume input",
+)
+
 VALID_DECISIONS = ("Adopt", "Adopted", "Future", "Hybrid", "Intentionally unused")
 
 
@@ -295,6 +307,10 @@ def main() -> int:
         for marker in REQUIRED_2_1_205_SURFACES:
             if marker not in text:
                 errors.append(f"{ADOPTION.relative_to(ROOT)} missing 2.1.205 surface {marker}")
+    if parsed_version >= version_tuple("2.1.206"):
+        for marker in REQUIRED_2_1_206_SURFACES:
+            if marker not in text:
+                errors.append(f"{ADOPTION.relative_to(ROOT)} missing 2.1.206 surface {marker}")
 
     for line in text.splitlines():
         if not line.startswith("| `") and not line.startswith("| `/"):

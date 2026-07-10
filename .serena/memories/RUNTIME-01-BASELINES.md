@@ -1,7 +1,7 @@
 <!-- Memory Metadata
-Last updated: 2026-05-22
-Last verified: 2026-05-22
-Last commit: fa1a49c refactor(policy): track claude agent context on main
+Last updated: 2026-07-10
+Last verified: 2026-07-10
+Last commit: 9e6d4bf2d6287762c9cbdba4a8357cd071e51978 ci(deps): repin reusable workflows to 0.5.1
 Scope: CLI runtime and package baselines
 Area: RUNTIME
 -->
@@ -13,18 +13,26 @@ CLI runtime and package baselines
 
 ## Current source of truth
 - `path:references/claude-baseline.json`
+- `path:package.json`
+- `path:config/mcp-runtime-versions.env`
+- `path:references/claude-surface-adoption.md`
 
 ## Last verified
-- date: 2026-05-22
-- commit: `fa1a49c`
-- checked by: Codex ry-start memory taxonomy sync
+- date: 2026-07-10
+- commit: `9e6d4bf2d6287762c9cbdba4a8357cd071e51978`
+- checked by: Claude Code stable-baseline refresh
 
 ## Facts
+- Claude Code `2.1.206` is the current adapter runtime pin in `package.json`, `references/claude-baseline.json`, and `config/mcp-runtime-versions.env`.
+- npm `latest` and `next` resolve to `2.1.206`; the official upstream changelog records MCP timeout/OAuth, worktree-confirmation, resume-input, background-agent, login, model-picker, and `/doctor` reliability changes without an adapter schema migration.
 - Runtime memories record pinned CLI/package baselines and freshness checks.
 
 ## Evidence
-- `commit:fa1a49c`
+- `commit:9e6d4bf2d6287762c9cbdba4a8357cd071e51978`
 - `path:references/claude-baseline.json`
+- `path:package.json`
+- `path:config/mcp-runtime-versions.env`
+- `https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md`
 
 ## Known pitfalls
 - Treat this memory as derived context. Current code, configuration, runtime output, and GitHub state override stale memory text.
@@ -61,6 +69,8 @@ Update after verified changes to the referenced source-of-truth files.
 
 ## Validation Commands
 
+- Run `python3 scripts/validate_claude_surface_adoption.py` to verify that every runtime fix in the baseline has a documented adapter decision.
+- Run `python3 scripts/validate_release_state.py` to verify runtime and adapter release metadata parity.
 - Run the rldyour control-plane Serena memory validators in strict mode: `validate_serena_memory_schema` (`--strict-mode strict-all`) and `validate_serena_memory_semantics` (`--strict-current-facts --strict-metadata-dates --strict-evidence-commits`).
 
 ## Repair Procedure

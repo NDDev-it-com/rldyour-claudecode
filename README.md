@@ -6,9 +6,9 @@
 
 | Field | Value |
 |---|---|
-| Adapter version | `1.8.4` |
-| Runtime baseline | Claude Code `2.1.205` (`@anthropic-ai/claude-code`) |
-| GitHub release tag | `1.8.4` |
+| Adapter version | `1.8.5` |
+| Runtime baseline | Claude Code `2.1.206` (`@anthropic-ai/claude-code`) |
+| GitHub release tag | `1.8.5` |
 
 Runtime pin sources: `package.json`, `references/claude-baseline.json`, `config/mcp-runtime-versions.env`. Compatibility floor: `v2.1.146+`.
 
@@ -81,17 +81,17 @@ git status -sb
 
 | Plugin | Version | Skills | Commands | Agents | Hooks | Scripts | References | MCP | LSP |
 |---|---|---|---|---|---|---|---|---|---|
-| `rldyour-mcps` | `1.8.4` | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 0 |
-| `rldyour-explore` | `1.8.4` | 2 | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| `rldyour-serena-mcp` | `1.8.4` | 2 | 0 | 1 | 4 | 3 | 0 | 0 | 0 |
-| `rldyour-security` | `1.8.4` | 2 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| `rldyour-browser` | `1.8.4` | 6 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| `rldyour-design` | `1.8.4` | 5 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| `rldyour-lsps` | `1.8.4` | 4 | 0 | 0 | 0 | 2 | 3 | 0 | 1 |
-| `rldyour-flow` | `1.8.4` | 8 | 7 | 6 | 5 | 7 | 7 | 0 | 0 |
-| `rldyour-orchestrator` | `1.8.4` | 2 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| `rldyour-rules` | `1.8.4` | 7 | 1 | 0 | 0 | 0 | 6 | 0 | 0 |
-| `rldyour-rtk` | `1.8.4` | 1 | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
+| `rldyour-mcps` | `1.8.5` | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 0 |
+| `rldyour-explore` | `1.8.5` | 2 | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
+| `rldyour-serena-mcp` | `1.8.5` | 2 | 0 | 1 | 4 | 3 | 0 | 0 | 0 |
+| `rldyour-security` | `1.8.5` | 2 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
+| `rldyour-browser` | `1.8.5` | 6 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| `rldyour-design` | `1.8.5` | 5 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
+| `rldyour-lsps` | `1.8.5` | 4 | 0 | 0 | 0 | 2 | 3 | 0 | 1 |
+| `rldyour-flow` | `1.8.5` | 8 | 7 | 6 | 5 | 7 | 7 | 0 | 0 |
+| `rldyour-orchestrator` | `1.8.5` | 2 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| `rldyour-rules` | `1.8.5` | 7 | 1 | 0 | 0 | 0 | 6 | 0 | 0 |
+| `rldyour-rtk` | `1.8.5` | 1 | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
 
 <!-- inventory:end -->
 

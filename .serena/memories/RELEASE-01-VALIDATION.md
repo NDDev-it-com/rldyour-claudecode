@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-07-10
 Last verified: 2026-07-10
-Last commit: 61dc24cb940a89d692d5754e7fe66082b53d6feb feat(browser): enforce managed CloakBrowser transport (other)
+Last commit: 9e6d4bf2d6287762c9cbdba4a8357cd071e51978 ci(deps): repin reusable workflows to 0.5.1
 Scope: release readiness, versioning, and artifact hygiene
 Area: RELEASE
 -->
@@ -18,15 +18,15 @@ release readiness, versioning, and artifact hygiene
 
 ## Last verified
 - date: 2026-07-10
-- commit: `61dc24cb940a89d692d5754e7fe66082b53d6feb`
-- checked by: Codex adapter release finalization
+- commit: `9e6d4bf2d6287762c9cbdba4a8357cd071e51978`
+- checked by: Claude adapter release preparation
 
 ## Facts
-- Current rldyour-claudecode adapter VERSION is `1.8.4`; the release workflow publishes the matching numeric GitHub Release tag at the released commit.
+- Current rldyour-claudecode adapter VERSION is `1.8.5`; the release workflow publishes the matching numeric GitHub Release tag at the released commit.
 - Release memories record numeric versioning, tags, CI gates, and clean artifact hygiene.
 
 ## Evidence
-- `commit:61dc24cb940a89d692d5754e7fe66082b53d6feb`
+- `commit:9e6d4bf2d6287762c9cbdba4a8357cd071e51978`
 - `path:VERSION`
 - `path:CHANGELOG.md`
 - `path:.github/workflows/release.yml`

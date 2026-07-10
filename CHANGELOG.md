@@ -2,8 +2,15 @@
 
 ## [Unreleased]
 
+## [1.8.5] - 2026-07-10
+
 ### Changed
 
+- Adopt the published Claude Code `2.1.206` runtime baseline, including MCP
+  timeout/OAuth fixes, safer external-worktree entry, and background-agent,
+  resume-input, model-picker, and `/doctor` reliability improvements.
+- Enforce Claude runtime-surface and exact browser-wrapper policy validation in
+  the full marketplace/release harness.
 - Repin every reusable `nddev-ci-workflows` caller to the signed `0.5.1`
   release and add an exact pin regression test.
 

@@ -120,6 +120,12 @@ step "Cross-tool rldyour contract"
 python3 scripts/validate_contract.py
 python3 scripts/generate_contract_matrix.py --check
 
+step "Claude Code runtime surface adoption"
+python3 scripts/validate_claude_surface_adoption.py
+
+step "Browser provider policy"
+python3 scripts/validate_browser_provider_policy.py
+
 step "Instruction docs presence"
 if [ -f scripts/validate_instruction_docs.py ]; then
   python3 scripts/validate_instruction_docs.py --require-agent-docs
