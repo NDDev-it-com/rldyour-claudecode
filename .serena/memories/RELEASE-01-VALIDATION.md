@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-07-10
 Last verified: 2026-07-10
-Last commit: 7f74e410781fbf6937e27e5d1d07e4cadb9c7900 chore(release): publish Claude adapter 1.8.5
+Last commit: 7c944516ba17ce1ea498b5f87cbd3fc0c36b4bfb feat(browser): enforce managed CloakBrowser skill boundary
 Scope: release readiness, versioning, and artifact hygiene
 Area: RELEASE
 -->
@@ -18,15 +18,24 @@ release readiness, versioning, and artifact hygiene
 
 ## Last verified
 - date: 2026-07-10
-- commit: `7f74e410781fbf6937e27e5d1d07e4cadb9c7900`
-- checked by: Claude adapter 1.8.6 release preparation
+- commit: `7c944516ba17ce1ea498b5f87cbd3fc0c36b4bfb`
+- checked by: Claude adapter 1.8.7 browser boundary release preparation
 
 ## Facts
-- Current rldyour-claudecode adapter VERSION is `1.8.6`; the release workflow publishes the matching numeric GitHub Release tag at the released commit.
+- Current rldyour-claudecode adapter VERSION is `1.8.7`; the release workflow
+  publishes only a pre-existing signed numeric tag created by root automation
+  after exact-SHA branch CI is stable green.
+- Release `1.8.7` retires the Webwright runtime and enforces the exact
+  health-gated two-provider browser boundary across every browser skill while
+  preserving Claude Code `2.1.206`, MCP pins, and reusable CI `0.5.1`.
+- The local release evidence is 122 passing pytest tests plus the complete
+  marketplace, schema, routing, hook, contract, runtime-pin, Ruff, Pyright, and
+  release-state gates.
 - Release memories record numeric versioning, tags, CI gates, and clean artifact hygiene.
 
 ## Evidence
-- `commit:7f74e410781fbf6937e27e5d1d07e4cadb9c7900`
+- `commit:7324c1faa4fe2f79bd832333d2cfd520f374d2f9`
+- `commit:7c944516ba17ce1ea498b5f87cbd3fc0c36b4bfb`
 - `path:VERSION`
 - `path:CHANGELOG.md`
 - `path:.github/workflows/release.yml`

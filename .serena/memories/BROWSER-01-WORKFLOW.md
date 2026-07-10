@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-07-10
 Last verified: 2026-07-10
-Last commit: 9e6d4bf2d6287762c9cbdba4a8357cd071e51978 ci(deps): repin reusable workflows to 0.5.1
+Last commit: 7c944516ba17ce1ea498b5f87cbd3fc0c36b4bfb feat(browser): enforce managed CloakBrowser skill boundary
 Scope: browser-visible validation and debugging workflows
 Area: BROWSER
 -->
@@ -20,16 +20,17 @@ browser-visible validation and debugging workflows
 
 ## Last verified
 - date: 2026-07-10
-- commit: `9e6d4bf2d6287762c9cbdba4a8357cd071e51978`
-- checked by: Claude browser-provider boundary verification
+- commit: `7c944516ba17ce1ea498b5f87cbd3fc0c36b4bfb`
+- checked by: Claude CloakBrowser skill-boundary verification
 
 ## Facts
-- Browser memories route UI and runtime validation through Webwright, Playwright CLI, and Chrome DevTools MCP when relevant.
-- Chrome DevTools MCP must use the exact `/bin/sh -c` transport that executes `$HOME/.local/bin/chrome-devtools-mcp` with the managed privacy flags.
-- The bootstrap owns CloakBrowser identity, version, endpoint, and health checks. This adapter intentionally carries no duplicate CloakBrowser version source and permits no stock-browser fallback.
+- Before every browser action, run exact `$HOME/.local/bin/cloakbrowser-cdp-health`; missing or nonzero health stops the action as `NOT_PROVEN`.
+- Browser execution is limited to exact `$HOME/.local/bin/playwright-cli` and the exact managed `/bin/sh -c` Chrome DevTools MCP wrapper. `run-code` and `--filename` are forbidden.
+- `webwright-task` is a compatibility workflow routed to the two managed providers. The Webwright Python runtime, stock/raw/in-app Browser, browser-agent/repl/computer-use surfaces, raw Playwright, direct packages, alternate CDP/executable/config paths, and all fallbacks are forbidden.
+- The bootstrap owns CloakBrowser identity, version, endpoint, health implementation, and managed binaries; this adapter owns the fail-closed skill boundary and structural validator.
 
 ## Evidence
-- `commit:9e6d4bf2d6287762c9cbdba4a8357cd071e51978`
+- `commit:7c944516ba17ce1ea498b5f87cbd3fc0c36b4bfb`
 - `path:README.md`
 - `path:plugins/rldyour-browser`
 - `path:plugins/rldyour-mcps/.mcp.json`
@@ -70,7 +71,7 @@ Update after verified changes to the referenced source-of-truth files.
 
 ## Validation Commands
 
-- Run `python3 scripts/validate_browser_provider_policy.py` to verify provider roles and the exact bootstrap-managed Chrome DevTools transport.
+- Run `python3 scripts/validate_browser_provider_policy.py` to verify the exact boundary in all six browser skills, the managed provider inventory, the exact Chrome transport, health-gated command examples, and absence of Webwright runtime pins.
 - Run the rldyour control-plane Serena memory validators in strict mode: `validate_serena_memory_schema` (`--strict-mode strict-all`) and `validate_serena_memory_semantics` (`--strict-current-facts --strict-metadata-dates --strict-evidence-commits`).
 
 ## Repair Procedure
