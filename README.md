@@ -6,9 +6,9 @@
 
 | Field | Value |
 |---|---|
-| Adapter version | `1.8.6` |
+| Adapter version | `1.8.7` |
 | Runtime baseline | Claude Code `2.1.206` (`@anthropic-ai/claude-code`) |
-| GitHub release tag | `1.8.6` |
+| GitHub release tag | `1.8.7` |
 
 Runtime pin sources: `package.json`, `references/claude-baseline.json`, `config/mcp-runtime-versions.env`. Compatibility floor: `v2.1.146+`.
 
@@ -86,17 +86,17 @@ git status -sb
 
 | Plugin | Version | Skills | Commands | Agents | Hooks | Scripts | References | MCP | LSP |
 |---|---|---|---|---|---|---|---|---|---|
-| `rldyour-mcps` | `1.8.6` | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 0 |
-| `rldyour-explore` | `1.8.6` | 2 | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| `rldyour-serena-mcp` | `1.8.6` | 2 | 0 | 1 | 4 | 3 | 0 | 0 | 0 |
-| `rldyour-security` | `1.8.6` | 2 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| `rldyour-browser` | `1.8.6` | 6 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| `rldyour-design` | `1.8.6` | 5 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| `rldyour-lsps` | `1.8.6` | 4 | 0 | 0 | 0 | 2 | 3 | 0 | 1 |
-| `rldyour-flow` | `1.8.6` | 8 | 7 | 6 | 5 | 7 | 7 | 0 | 0 |
-| `rldyour-orchestrator` | `1.8.6` | 2 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| `rldyour-rules` | `1.8.6` | 7 | 1 | 0 | 0 | 0 | 6 | 0 | 0 |
-| `rldyour-rtk` | `1.8.6` | 1 | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
+| `rldyour-mcps` | `1.8.7` | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 0 |
+| `rldyour-explore` | `1.8.7` | 2 | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
+| `rldyour-serena-mcp` | `1.8.7` | 2 | 0 | 1 | 4 | 3 | 0 | 0 | 0 |
+| `rldyour-security` | `1.8.7` | 2 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
+| `rldyour-browser` | `1.8.7` | 6 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| `rldyour-design` | `1.8.7` | 5 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
+| `rldyour-lsps` | `1.8.7` | 4 | 0 | 0 | 0 | 2 | 3 | 0 | 1 |
+| `rldyour-flow` | `1.8.7` | 8 | 7 | 6 | 5 | 7 | 7 | 0 | 0 |
+| `rldyour-orchestrator` | `1.8.7` | 2 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| `rldyour-rules` | `1.8.7` | 7 | 1 | 0 | 0 | 0 | 6 | 0 | 0 |
+| `rldyour-rtk` | `1.8.7` | 1 | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
 
 <!-- inventory:end -->
 
@@ -109,7 +109,7 @@ Plugin briefs:
 - **`rldyour-flow`** - autonomous SDLC orchestration with seven slash commands (`ry-init`, `ry-start`, `ry-newp`, `ry-review`, `ry-deploy`, `ry-sync`, `ry-repair`), six reviewer subagents (architecture/quality/consistency/integration/verification/security tracks), advisory SessionStart, PreToolUse:Bash, PostToolUse:Bash, and Stop hooks, scoped context packs, instruction docs sync, and post-task synchronization.
 - **`rldyour-explore`** - deep multi-source research via `ry-explore` subagent (`model: opus[1m]`, `effort: max`) and tech/web research skills routing through Context7, DeepWiki, Grep, and authoritative web sources.
 - **`rldyour-security`** - non-blocking OWASP Top 10 2025 secure-implementation guidance plus the `ry-sec-review` defensive review skill.
-- **`rldyour-browser`** - provider-routed browser workflows for Webwright, Playwright CLI, and Chrome DevTools MCP.
+- **`rldyour-browser`** - fail-closed CloakBrowser workflows through the exact managed Playwright CLI and Chrome DevTools MCP transports.
 - **`rldyour-design`** - Figma → code, centralized token-based design system, strict Feature-Sliced Design frontend architecture, shadcn/ui, ReactBits, and browser-validation workflows.
 - **`rldyour-lsps`** - language-server routing, health checks, brew-first setup profiles, and Serena LSP integration guidance.
 - **`rldyour-orchestrator`** - macOS cmux orchestrator/worker role skills (opt-in; not the default execution mode).
@@ -119,11 +119,22 @@ MCP permissions and model policy: declared in `plugins/rldyour-flow/references/`
 
 ## Browser / Design / DevTools Routing
 
-Three browser providers are active in this adapter, each with a distinct role:
+Two browser execution providers are active in this adapter. Every browser
+action first runs exact `$HOME/.local/bin/cloakbrowser-cdp-health`; a missing or
+nonzero check stops with `NOT_PROVEN` and no fallback:
 
-- **Webwright** (`rldyour-browser` skills) - primary autonomous browser workflow skill for end-to-end web task automation, validation, and data extraction.
-- **Playwright CLI** (`rldyour-browser` skills) - CLI-driven Playwright test automation, spec generation, and assertion workflows.
-- **Chrome DevTools MCP** (`rldyour-mcps`, server `chrome-devtools`) - low-level DevTools Protocol access for performance profiling, network inspection, console capture, screenshot, and heap snapshots; always served through the pinned MCP server.
+- **Managed Playwright CLI** (`$HOME/.local/bin/playwright-cli`) - browser flow
+  evidence. `run-code`, `--filename`, raw Playwright, package runners, and
+  alternate executables/configs are forbidden.
+- **Managed Chrome DevTools MCP** (`rldyour-mcps`, server `chrome-devtools`) -
+  specialist console, network, runtime, layout, performance, Lighthouse, and
+  memory diagnosis through the exact CloakBrowser wrapper transport.
+
+`webwright-task` remains as a compatibility skill name for long-horizon intent,
+but routes to these managed providers and never executes the Webwright Python
+runtime. Stock/raw/in-app Browser, `browser_agent`, `node_repl`, computer-use,
+Playwright MCP, alternate CDP endpoints, direct packages, and all fallbacks are
+forbidden.
 
 Design workflows route through `rldyour-design`: Figma → code via the Figma MCP server, centralized design tokens, Feature-Sliced Design frontend architecture, shadcn/ui component integration, ReactBits patterns, and browser-validation confirmation steps.
 

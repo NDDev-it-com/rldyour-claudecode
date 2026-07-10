@@ -69,8 +69,9 @@ must be run after a bump.
 
 ### Consequences
 
-- Good: all 11 active MCP servers are enforceable; browser flow automation
-  remains outside MCP through Webwright and Playwright CLI.
+- Good: all 11 active MCP servers are enforceable; browser flow execution is
+  health-gated and limited to exact managed Playwright CLI outside MCP plus the
+  exact managed Chrome DevTools MCP transport. The Webwright runtime is retired.
 - Good: env file readable by humans + scripts without JSON parsing.
 - Good: pin=None silently passing is structurally prevented.
 - Bad: bumps require two-file edits. Mitigation: project rule documented

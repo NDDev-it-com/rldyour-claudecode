@@ -1997,7 +1997,6 @@
   "browser_providers": {
     "policy": "root config/browser-automation-policy.json",
     "required_common_providers": [
-      "webwright",
       "playwright-cli",
       "chrome-devtools-mcp"
     ],
@@ -2007,9 +2006,11 @@
     "cli_providers": [
       "playwright-cli"
     ],
-    "task_harness_providers": [
-      "webwright"
+    "compatibility_workflows": [
+      "webwright-task"
     ],
-    "webwright_support": "adapter-owned-cli-wrapper; upstream-native NOT_PROVEN"
+    "forbidden_runtime_providers": [
+      "webwright"
+    ]
   }
 }

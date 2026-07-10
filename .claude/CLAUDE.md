@@ -73,7 +73,9 @@ user Claude settings so bilingual skill descriptions remain discoverable.
 
 ## Boundaries
 
-Claude subagents are not cmux orchestrators. Webwright, Playwright CLI, and
-Chrome DevTools MCP keep their global browser-provider roles. Configure only
-providers listed in the approved active inventory and avoid tool-specific
-negative validator tombstones.
+Claude subagents are not cmux orchestrators. Before every browser action they
+must run exact `$HOME/.local/bin/cloakbrowser-cdp-health`; missing or nonzero
+health stops the task as `NOT_PROVEN`. Browser execution is limited to exact
+`$HOME/.local/bin/playwright-cli` and the adapter-configured managed Chrome
+DevTools MCP transport. `webwright-task` is a compatibility route only; the
+Webwright runtime and every alternate browser path or fallback are forbidden.

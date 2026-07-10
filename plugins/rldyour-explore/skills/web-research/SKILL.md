@@ -32,11 +32,11 @@ Skip when: question can be answered by docs or code (use `tech-research`), or it
 WebSearch and WebFetch are non-browser tools - use them for quick lookups and
 static fetches. When research needs a real browser (JS-rendered pages,
 search-engine navigation, login-gated or anti-bot sources), route it through the
-browser providers, which run on the **CloakBrowser** privacy-first backend
-(control-plane ADR 0003 + `config/browser-automation-policy.json`): Webwright for
-long-horizon retrieval, Playwright CLI for navigation/snapshots, Chrome DevTools
-MCP for inspection. Never launch a raw stock-Chromium browser for internet
-research; the CloakBrowser CDP daemon (`127.0.0.1:9222`) is the mandated engine.
+browser skills. Before every browser action, run exact
+`$HOME/.local/bin/cloakbrowser-cdp-health`; missing or nonzero health means
+`NOT_PROVEN`. Use only exact `$HOME/.local/bin/playwright-cli` or the approved
+managed Chrome DevTools MCP transport. The Webwright runtime, stock/raw/in-app
+Browser, alternate CDP/executable/config paths, and all fallbacks are forbidden.
 
 ## Output style
 

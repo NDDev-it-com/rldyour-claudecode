@@ -55,9 +55,12 @@ claims:
   surfaces only.
 - Do not copy Codex, OpenCode, or Gemini-native command/config syntax into this
   adapter except as explicitly marked comparison notes.
-- Browser routing stays global: Webwright for long-horizon workflows,
-  Playwright CLI for low-level screenshots/snapshots/traces, and Chrome
-  DevTools MCP for DevTools/performance/network/console/memory/Lighthouse.
+- Every browser action first runs exact
+  `$HOME/.local/bin/cloakbrowser-cdp-health` and fails closed as `NOT_PROVEN`.
+  Execution is limited to exact `$HOME/.local/bin/playwright-cli` and the
+  adapter-configured managed Chrome DevTools MCP transport. `webwright-task`
+  is compatibility routing only; the Webwright runtime and all browser
+  fallbacks are forbidden.
 - cmux orchestration is terminal-session-only. Claude subagents are not cmux
   orchestrators.
 

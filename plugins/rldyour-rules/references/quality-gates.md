@@ -14,7 +14,7 @@ Run the checks that match the touched stack and risk:
 - Generated artifact checks.
 - Migration checks.
 - Security checks (project security scripts and CI security artifacts).
-- Browser checks for UI-visible work (Playwright CLI evidence plus Chrome DevTools MCP diagnosis; Webwright for long-horizon reusable web tasks).
+- Browser checks for UI-visible work use the mandatory CloakBrowser health gate and only exact managed Playwright CLI evidence plus managed Chrome DevTools MCP diagnosis; unavailable health or runtime is `NOT_PROVEN` with no fallback.
 - Deploy checks for server changes.
 
 ## May 2026 Tooling Defaults

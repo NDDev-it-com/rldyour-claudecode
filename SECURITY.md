@@ -9,8 +9,8 @@ every historical patch in the line.
 
 | Version | Supported |
 |---------|-----------|
-| Current exact tag `1.8.6` | yes |
-| Older `1.1.*` tags | no; upgrade to current exact tag |
+| Current exact tag `1.8.7` | yes |
+| Older patch tags | no; upgrade to current exact tag |
 | Older minor / major lines | no |
 
 When a security issue lands, the wave bumps every plugin to the same

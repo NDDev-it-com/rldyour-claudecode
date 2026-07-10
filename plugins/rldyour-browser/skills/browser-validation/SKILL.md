@@ -1,35 +1,45 @@
 ---
 name: browser-validation
-description: "Валидация UI и пользовательских сценариев в браузере через Playwright CLI evidence. Используй для: проверь UI, проверь в браузере, скриншот, регрессия, адаптив, бизнес-логика, визуально. EN triggers: validate UI, browser check, regression test, responsive check, business logic in browser, screenshot, visual QA."
+description: "Валидация UI и пользовательских сценариев через управляемый Playwright CLI. Используй для: проверь UI, проверь в браузере, визуально, скриншот, регрессия, адаптив, бизнес-логика. EN triggers: validate UI, browser check, regression, responsive, business logic, screenshot."
+allowed-tools:
+  - Bash
+  - mcp__plugin_rldyour-mcps_chrome-devtools__*
 ---
 
 # Browser Validation
 
-## Purpose
+## Mandatory CloakBrowser Boundary
 
-Validate browser-facing work with repeatable evidence. Use Playwright CLI as the primary low-level provider for browser flow validation and screenshots. Store artifacts under `browser/` and do not commit them.
+This boundary applies before every browser action:
+
+1. Run exactly:
+
+   ```bash
+   $HOME/.local/bin/cloakbrowser-cdp-health
+   ```
+
+   If the command is missing or exits nonzero, stop immediately and report `NOT_PROVEN`.
+2. Browser execution is permitted only through:
+   - the exact `$HOME/.local/bin/playwright-cli` executable; `run-code` and `--filename` are forbidden;
+   - the approved Chrome DevTools MCP transport, exactly `/bin/sh -c 'exec "$HOME/.local/bin/chrome-devtools-mcp" --headless --isolated --no-usage-statistics --no-performance-crux'`.
+3. Never execute the Webwright Python runtime, stock/raw/in-app Browser, `browser_agent`, `node_repl`, computer-use, Playwright MCP, raw Playwright, `bunx`, `npx`, direct package invocations, alternate CDP endpoints, alternate browser executables, alternate browser configs, or any fallback. No fallback is allowed.
 
 ## Workflow
 
-1. Pick a named session such as `PLAYWRIGHT_CLI_SESSION="${RY_PROJECT_SLUG:-rldyour}"`.
-2. Open the target URL with `playwright-cli` and a deterministic viewport.
-3. Capture a snapshot and screenshot under `browser/`.
-4. Exercise the changed flow: navigation, forms, buttons, dialogs, modals, tabs, loading/error/empty states, and business rules.
-5. Capture desktop and mobile screenshots when layout or responsive behavior changed.
-6. Check console and requests with Playwright CLI for ordinary validation.
-7. Hand off to `browser-debug` when console/network/runtime/performance/memory/Lighthouse diagnosis is required.
-8. Re-run the same Playwright CLI commands after fixes.
-
-Useful command shape:
+1. Choose a named session and run the mandatory health command.
+2. Open the target through the exact managed CLI and exercise navigation, forms, buttons, dialogs, tabs, loading/error/empty states, responsive behavior, and business rules.
+3. Rerun the health command immediately before every subsequent browser action.
+4. Capture CLI-emitted snapshot, screenshot, trace, console, and request evidence without using custom filename flags.
+5. For deep diagnosis, rerun health and use only the approved managed Chrome DevTools MCP transport.
+6. Repeat the same health-gated actions after fixes.
 
 ```bash
-PLAYWRIGHT_CLI_SESSION="${RY_PROJECT_SLUG:-rldyour}" playwright-cli open "$URL"
-playwright-cli -s="${RY_PROJECT_SLUG:-rldyour}" snapshot --filename browser/snapshot.yaml
-playwright-cli -s="${RY_PROJECT_SLUG:-rldyour}" screenshot --filename browser/ui-desktop.png
-playwright-cli -s="${RY_PROJECT_SLUG:-rldyour}" console error
-playwright-cli -s="${RY_PROJECT_SLUG:-rldyour}" requests
+$HOME/.local/bin/cloakbrowser-cdp-health
+PLAYWRIGHT_CLI_SESSION="${RY_PROJECT_SLUG:-rldyour}" $HOME/.local/bin/playwright-cli open "$URL"
+$HOME/.local/bin/cloakbrowser-cdp-health
+$HOME/.local/bin/playwright-cli -s="${RY_PROJECT_SLUG:-rldyour}" snapshot
+$HOME/.local/bin/cloakbrowser-cdp-health
+$HOME/.local/bin/playwright-cli -s="${RY_PROJECT_SLUG:-rldyour}" screenshot
 ```
 
-## Evidence Contract
-
-Report the exact evidence paths and residual risk. A browser-visible change is not done until the relevant screenshot, snapshot, flow result, and runtime-health checks are proven or explicitly marked `NOT_PROVEN` with a bounded reason.
+Report the exact emitted evidence paths and residual risk. If any required action cannot run inside this boundary, report `NOT_PROVEN`.

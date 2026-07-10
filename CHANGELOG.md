@@ -2,6 +2,24 @@
 
 ## [Unreleased]
 
+## [1.8.7] - 2026-07-10
+
+### Security
+
+- Require every browser-capable skill to run the exact managed CloakBrowser
+  health preflight before every action and stop as `NOT_PROVEN` on failure.
+- Restrict execution to exact managed Playwright CLI and Chrome DevTools MCP,
+  reject Playwright code/file escapes and every raw, stock, in-app, alternate
+  CDP/config/executable, package-runner, or fallback surface.
+- Retire the Webwright Python runtime and preserve `webwright-task` only as a
+  compatibility route into the two managed providers, with validator mutation
+  coverage for missing gates and alternate provider paths.
+
+### Fixed
+
+- Correct release-state guidance so missing tags remain root-created only after
+  stable-green exact-SHA CI; the adapter release workflow never creates tags.
+
 ## [1.8.6] - 2026-07-10
 
 ### Changed
