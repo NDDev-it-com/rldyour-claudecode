@@ -6,11 +6,16 @@
 
 | Field | Value |
 |---|---|
-| Adapter version | `1.8.5` |
+| Adapter version | `1.8.6` |
 | Runtime baseline | Claude Code `2.1.206` (`@anthropic-ai/claude-code`) |
-| GitHub release tag | `1.8.5` |
+| GitHub release tag | `1.8.6` |
 
 Runtime pin sources: `package.json`, `references/claude-baseline.json`, `config/mcp-runtime-versions.env`. Compatibility floor: `v2.1.146+`.
+
+Current exact package pins include Sequential Thinking MCP `2026.7.4` and
+Context7 MCP `3.2.3`; `plugins/rldyour-mcps/.mcp.json` remains the canonical
+Claude transport definition and `config/mcp-runtime-versions.env` its CI
+parity companion.
 
 Managed owner defaults (installer stage 9, merged into `~/.claude/settings.json` preserving user keys): `model` `opus[1m]`, and env `ANTHROPIC_DEFAULT_OPUS_MODEL=claude-opus-4-8`, `BASH_DEFAULT_TIMEOUT_MS=600000`, `BASH_MAX_TIMEOUT_MS=1200000`, `CLAUDE_CODE_MAX_OUTPUT_TOKENS=80000`; the strongest-model, max-power posture.
 
@@ -81,17 +86,17 @@ git status -sb
 
 | Plugin | Version | Skills | Commands | Agents | Hooks | Scripts | References | MCP | LSP |
 |---|---|---|---|---|---|---|---|---|---|
-| `rldyour-mcps` | `1.8.5` | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 0 |
-| `rldyour-explore` | `1.8.5` | 2 | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| `rldyour-serena-mcp` | `1.8.5` | 2 | 0 | 1 | 4 | 3 | 0 | 0 | 0 |
-| `rldyour-security` | `1.8.5` | 2 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| `rldyour-browser` | `1.8.5` | 6 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| `rldyour-design` | `1.8.5` | 5 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| `rldyour-lsps` | `1.8.5` | 4 | 0 | 0 | 0 | 2 | 3 | 0 | 1 |
-| `rldyour-flow` | `1.8.5` | 8 | 7 | 6 | 5 | 7 | 7 | 0 | 0 |
-| `rldyour-orchestrator` | `1.8.5` | 2 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| `rldyour-rules` | `1.8.5` | 7 | 1 | 0 | 0 | 0 | 6 | 0 | 0 |
-| `rldyour-rtk` | `1.8.5` | 1 | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
+| `rldyour-mcps` | `1.8.6` | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 0 |
+| `rldyour-explore` | `1.8.6` | 2 | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
+| `rldyour-serena-mcp` | `1.8.6` | 2 | 0 | 1 | 4 | 3 | 0 | 0 | 0 |
+| `rldyour-security` | `1.8.6` | 2 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
+| `rldyour-browser` | `1.8.6` | 6 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| `rldyour-design` | `1.8.6` | 5 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
+| `rldyour-lsps` | `1.8.6` | 4 | 0 | 0 | 0 | 2 | 3 | 0 | 1 |
+| `rldyour-flow` | `1.8.6` | 8 | 7 | 6 | 5 | 7 | 7 | 0 | 0 |
+| `rldyour-orchestrator` | `1.8.6` | 2 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| `rldyour-rules` | `1.8.6` | 7 | 1 | 0 | 0 | 0 | 6 | 0 | 0 |
+| `rldyour-rtk` | `1.8.6` | 1 | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
 
 <!-- inventory:end -->
 

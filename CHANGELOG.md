@@ -2,6 +2,17 @@
 
 ## [Unreleased]
 
+## [1.8.6] - 2026-07-10
+
+### Changed
+
+- Refresh Sequential Thinking MCP from `2025.12.18` to `2026.7.4` and
+  Context7 MCP from `3.2.2` to `3.2.3` after exact-package metadata,
+  capability, safe-call, and vulnerability verification.
+- Preserve Claude Code `2.1.206`, every other runtime pin, the
+  bootstrap-owned CloakBrowser transport, the exact Chrome DevTools wrapper,
+  and reusable CI `0.5.1`.
+
 ## [1.8.5] - 2026-07-10
 
 ### Changed

@@ -1,7 +1,7 @@
 <!-- Memory Metadata
-Last updated: 2026-05-22
-Last verified: 2026-05-22
-Last commit: fa1a49c refactor(policy): track claude agent context on main
+Last updated: 2026-07-10
+Last verified: 2026-07-10
+Last commit: 7f74e410781fbf6937e27e5d1d07e4cadb9c7900 chore(release): publish Claude adapter 1.8.5
 Scope: validation gates and test suites
 Area: TESTS
 -->
@@ -17,15 +17,21 @@ validation gates and test suites
 - `path:README.md`
 
 ## Last verified
-- date: 2026-05-22
-- commit: `fa1a49c`
-- checked by: Codex ry-start memory taxonomy sync
+- date: 2026-07-10
+- commit: `7f74e410781fbf6937e27e5d1d07e4cadb9c7900`
+- checked by: Claude adapter MCP runtime pin refresh
 
 ## Facts
-- Test memories record which suites and smoke tests prove the touched behavior.
+- `scripts/check_mcp_runtime_versions.py` proves canonical/env pin parity and
+  preserves the exact managed Chrome wrapper.
+- `scripts/smoke_mcp_capabilities.sh` proves MCP initialize and tools/list;
+  release preparation additionally performs read-only safe calls for both
+  updated exact packages.
+- `scripts/validate_marketplace.sh`, the full pytest suite, release-state,
+  instruction, browser, and static gates form the release matrix.
 
 ## Evidence
-- `commit:fa1a49c`
+- `commit:7f74e410781fbf6937e27e5d1d07e4cadb9c7900`
 - `path:scripts`
 - `path:.github/workflows`
 - `path:README.md`
@@ -65,6 +71,9 @@ Update after verified changes to the referenced source-of-truth files.
 
 ## Validation Commands
 
+- Run `bash scripts/validate_marketplace.sh` for the full adapter harness.
+- Run `uv run --with pytest --with pyyaml python -m pytest -q` for unit and
+  integration coverage.
 - Run the rldyour control-plane Serena memory validators in strict mode: `validate_serena_memory_schema` (`--strict-mode strict-all`) and `validate_serena_memory_semantics` (`--strict-current-facts --strict-metadata-dates --strict-evidence-commits`).
 
 ## Repair Procedure

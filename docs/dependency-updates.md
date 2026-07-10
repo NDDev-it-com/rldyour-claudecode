@@ -9,6 +9,9 @@ Policy and procedure for updating MCP runtime pins and Claude Code minimum versi
 - `scripts/check_mcp_runtime_versions.py` - enforces parity between the two.
 - `.github/workflows/dependency-check.yml` - scheduled (Mondays 06:00 UTC) drift check + manual via `workflow_dispatch`.
 
+Current verified package pins: Sequential Thinking MCP `2026.7.4` and Context7
+MCP `3.2.3`. Claude Code remains pinned independently at `2.1.206`.
+
 ## Pinning rules (hard)
 
 - **stdio servers**: pin with `==X.Y.Z` (uvx) or `@X.Y.Z` (bunx).

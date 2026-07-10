@@ -1,7 +1,7 @@
 <!-- Memory Metadata
-Last updated: 2026-05-22
-Last verified: 2026-05-22
-Last commit: fa1a49c refactor(policy): track claude agent context on main
+Last updated: 2026-07-10
+Last verified: 2026-07-10
+Last commit: 7f74e410781fbf6937e27e5d1d07e4cadb9c7900 chore(release): publish Claude adapter 1.8.5
 Scope: MCP runtime transport and pin policy
 Area: MCP
 -->
@@ -13,19 +13,26 @@ MCP runtime transport and pin policy
 
 ## Current source of truth
 - `path:plugins/rldyour-mcps/.mcp.json`
+- `path:config/mcp-runtime-versions.env`
 - `path:README.md`
 
 ## Last verified
-- date: 2026-05-22
-- commit: `fa1a49c`
-- checked by: Codex ry-start memory taxonomy sync
+- date: 2026-07-10
+- commit: `7f74e410781fbf6937e27e5d1d07e4cadb9c7900`
+- checked by: Claude adapter MCP runtime pin refresh
 
 ## Facts
-- MCP memories record server ownership, transports, versions, and toolset constraints.
+- `plugins/rldyour-mcps/.mcp.json` pins Sequential Thinking MCP `2026.7.4`
+  and Context7 MCP `3.2.3`; `config/mcp-runtime-versions.env` mirrors both
+  values for validators and CI.
+- Chrome DevTools MCP remains an exact bootstrap-owned `/bin/sh -c` wrapper
+  transport through `$HOME/.local/bin/chrome-devtools-mcp`; this pin refresh
+  does not change CloakBrowser ownership or permit another browser backend.
 
 ## Evidence
-- `commit:fa1a49c`
+- `commit:7f74e410781fbf6937e27e5d1d07e4cadb9c7900`
 - `path:plugins/rldyour-mcps/.mcp.json`
+- `path:config/mcp-runtime-versions.env`
 - `path:README.md`
 
 ## Known pitfalls
@@ -63,6 +70,11 @@ Update after verified changes to the referenced source-of-truth files.
 
 ## Validation Commands
 
+- Run `python3 scripts/check_mcp_runtime_versions.py` for canonical/env parity
+  and exact managed-wrapper enforcement.
+- Run `bash scripts/smoke_mcp_capabilities.sh --server sequential-thinking`
+  and the Context7 exact-package probe with credentials or an isolated
+  read-only safe call.
 - Run the rldyour control-plane Serena memory validators in strict mode: `validate_serena_memory_schema` (`--strict-mode strict-all`) and `validate_serena_memory_semantics` (`--strict-current-facts --strict-metadata-dates --strict-evidence-commits`).
 
 ## Repair Procedure

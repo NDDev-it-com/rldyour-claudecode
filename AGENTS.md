@@ -39,7 +39,8 @@ claims:
 
 - `.claude-plugin/marketplace.json` is the marketplace manifest.
 - `plugins/*/.claude-plugin/plugin.json` are per-plugin manifests.
-- `plugins/rldyour-mcps/.mcp.json` is the single MCP transport owner.
+- `plugins/rldyour-mcps/.mcp.json` is the single MCP transport owner and
+  currently pins Sequential Thinking MCP `2026.7.4` and Context7 MCP `3.2.3`.
 - `plugins/rldyour-flow/hooks/hooks.json`,
   `plugins/rldyour-serena-mcp/hooks/hooks.json`, and
   `plugins/rldyour-rtk/hooks/hooks.json` are the only hook owners.

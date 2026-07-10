@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-07-10
 Last verified: 2026-07-10
-Last commit: 9e6d4bf2d6287762c9cbdba4a8357cd071e51978 ci(deps): repin reusable workflows to 0.5.1
+Last commit: 7f74e410781fbf6937e27e5d1d07e4cadb9c7900 chore(release): publish Claude adapter 1.8.5
 Scope: CLI runtime and package baselines
 Area: RUNTIME
 -->
@@ -19,19 +19,23 @@ CLI runtime and package baselines
 
 ## Last verified
 - date: 2026-07-10
-- commit: `9e6d4bf2d6287762c9cbdba4a8357cd071e51978`
-- checked by: Claude Code stable-baseline refresh
+- commit: `7f74e410781fbf6937e27e5d1d07e4cadb9c7900`
+- checked by: Claude adapter MCP runtime pin refresh
 
 ## Facts
 - Claude Code `2.1.206` is the current adapter runtime pin in `package.json`, `references/claude-baseline.json`, and `config/mcp-runtime-versions.env`.
 - npm `latest` and `next` resolve to `2.1.206`; the official upstream changelog records MCP timeout/OAuth, worktree-confirmation, resume-input, background-agent, login, model-picker, and `/doctor` reliability changes without an adapter schema migration.
+- Sequential Thinking MCP `2026.7.4` and Context7 MCP `3.2.3` are the
+  current exact stdio package pins. Their existing `bunx` launch shape is
+  unchanged.
 - Runtime memories record pinned CLI/package baselines and freshness checks.
 
 ## Evidence
-- `commit:9e6d4bf2d6287762c9cbdba4a8357cd071e51978`
+- `commit:7f74e410781fbf6937e27e5d1d07e4cadb9c7900`
 - `path:references/claude-baseline.json`
 - `path:package.json`
 - `path:config/mcp-runtime-versions.env`
+- `path:plugins/rldyour-mcps/.mcp.json`
 - `https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md`
 
 ## Known pitfalls

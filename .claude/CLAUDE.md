@@ -30,6 +30,10 @@ Claude Code runtime pin is `2.1.206`. The compatibility floor is `2.1.146`.
 The pin sources are `package.json`, `references/claude-baseline.json`, and
 `config/mcp-runtime-versions.env`.
 
+The current exact package pins are Sequential Thinking MCP `2026.7.4` and
+Context7 MCP `3.2.3`. Claude reads their canonical stdio transports from
+`plugins/rldyour-mcps/.mcp.json`; the env file is the CI parity companion.
+
 ## Plugin Inventory
 
 - `rldyour-mcps`: MCP transport owner for 11 active MCP servers.

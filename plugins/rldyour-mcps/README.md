@@ -17,6 +17,10 @@ stdio servers pinned with `==X.Y.Z` (uvx) or `@X.Y.Z` (bunx). HTTP servers pinne
 
 `scripts/check_mcp_runtime_versions.py` enforces parity. CI `dependency-check.yml` runs the same check on a weekly schedule.
 
+Current verified package pins are Sequential Thinking MCP `2026.7.4` and
+Context7 MCP `3.2.3`. Both continue to use their existing `bunx` stdio entry
+points; changing either transport requires a separate compatibility decision.
+
 ## Runtime SDK requirements
 
 - **Dart SDK 3.9+** required by `dart-flutter` MCP (`dart mcp-server` is a Dart SDK 3.9+ feature; toolchain pinning lives in `pubspec.yaml`, not `.mcp.json`). `scripts/bootstrap_check.sh` enforces this gate on bootstrap. Source: `https://docs.flutter.dev/ai/mcp-server` (2026-05).

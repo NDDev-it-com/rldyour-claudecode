@@ -1,7 +1,7 @@
 <!-- Memory Metadata
 Last updated: 2026-07-10
 Last verified: 2026-07-10
-Last commit: 9e6d4bf2d6287762c9cbdba4a8357cd071e51978 ci(deps): repin reusable workflows to 0.5.1
+Last commit: 7f74e410781fbf6937e27e5d1d07e4cadb9c7900 chore(release): publish Claude adapter 1.8.5
 Scope: release readiness, versioning, and artifact hygiene
 Area: RELEASE
 -->
@@ -18,15 +18,15 @@ release readiness, versioning, and artifact hygiene
 
 ## Last verified
 - date: 2026-07-10
-- commit: `9e6d4bf2d6287762c9cbdba4a8357cd071e51978`
-- checked by: Claude adapter release preparation
+- commit: `7f74e410781fbf6937e27e5d1d07e4cadb9c7900`
+- checked by: Claude adapter 1.8.6 release preparation
 
 ## Facts
-- Current rldyour-claudecode adapter VERSION is `1.8.5`; the release workflow publishes the matching numeric GitHub Release tag at the released commit.
+- Current rldyour-claudecode adapter VERSION is `1.8.6`; the release workflow publishes the matching numeric GitHub Release tag at the released commit.
 - Release memories record numeric versioning, tags, CI gates, and clean artifact hygiene.
 
 ## Evidence
-- `commit:9e6d4bf2d6287762c9cbdba4a8357cd071e51978`
+- `commit:7f74e410781fbf6937e27e5d1d07e4cadb9c7900`
 - `path:VERSION`
 - `path:CHANGELOG.md`
 - `path:.github/workflows/release.yml`
