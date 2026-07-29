@@ -70,7 +70,13 @@ verification:
 
 agent:
   context_profile: "project-default"
-  generated_agents: true
+  # generated_agents is false because AGENTS.md and .claude/CLAUDE.md are
+  # author-owned, repository-curated instruction in this project (not GDS
+  # projections). Setting this to false keeps the projection generator from
+  # overwriting them; GDS continues to manage only the .gds/ pin files
+  # (bundle.lock.yaml + compiled-policy.json). See
+  # core/projections/generator.go TestGeneratedAgentsFalsePreservesRepositoryOwnedInstructions.
+  generated_agents: false
   serena:
     enabled: true
     provenance_required: true
