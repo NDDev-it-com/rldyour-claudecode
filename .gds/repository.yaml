@@ -5,6 +5,7 @@ repository:
   display_name: "rldyour-claudecode"
   roles:
     - "project"
+    - "module"
   lifecycle: "active"
 
 provider:
@@ -80,6 +81,15 @@ agent:
   serena:
     enabled: true
     provenance_required: true
+
+module:
+  contract: "public"
+  consumption:
+    - "git-submodule"
+  compatibility: "commit-contract"
+  pin_policy: "default-branch-commit"
+  publication:
+    github_release: "optional"
 
 release:
   mode: "github-release"
