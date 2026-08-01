@@ -49,3 +49,32 @@ updates:
     commit-message:
       prefix: build
       include: scope
+
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: "UTC"
+    open-pull-requests-limit: 5
+    cooldown:
+      default-days: 7
+    commit-message:
+      prefix: "chore(deps)"
+      include: scope
+    labels:
+      - dependencies
+      - pip
+    groups:
+      pip-minor:
+        applies-to: version-updates
+        update-types: ["minor", "patch"]
+        patterns: ["*"]
+      pip-major:
+        applies-to: version-updates
+        update-types: ["major"]
+        patterns: ["*"]
+      pip-security:
+        applies-to: security-updates
+        patterns: ["*"]
