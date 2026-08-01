@@ -24,7 +24,7 @@ def test_all_shared_workflow_callers_use_one_verified_pin() -> None:
             if f"{SHARED_REPO}/" in line:
                 callers.append((path, line_number, line))
 
-    assert callers, "no nddev-ci-workflows reusable callers found"
+    assert callers, "no ci-workflows reusable callers found"
     drift = [
         f"{path.relative_to(ROOT)}:{line_number}: {line.strip()}"
         for path, line_number, line in callers
