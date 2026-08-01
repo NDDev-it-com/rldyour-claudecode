@@ -6,7 +6,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 WORKFLOWS = ROOT / ".github/workflows"
 WORKFLOW_DOC = WORKFLOWS / "README.md"
-SHARED_REPO = "NDDev-it-com/nddev-ci-workflows"
+SHARED_REPO = "NDDev-it-com/ci-workflows"
 SHARED_SHA = "ac4d1f469f5974741c7449305ffcbd5f05a5a47f"
 SHARED_VERSION = "0.5.1"
 PIN_RE = re.compile(
