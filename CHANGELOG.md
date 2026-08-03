@@ -4,6 +4,23 @@
 
 ### Removed
 
+- **The `rldyour-rtk` plugin, by owner decision.** rtk is not needed anywhere in
+  the estate, so the plugin tree, its `PreToolUse` Bash hook
+  (`hooks/rtk_rewrite.sh`), the `token-economy` skill, `/rtk-gain`, the
+  marketplace and marketplace-policy entries, the `rtk` capability row in the
+  contract and the contract matrix, and the `RTK_VERSION` /
+  `RTK_INSTALL_SOURCE` pins are all gone. Inventory drops to 10 plugins, 38
+  skills, and 11 slash commands; hook owners are now `rldyour-flow` and
+  `rldyour-serena-mcp` only.
+
+  Worth recording: **no plugin owns a `PreToolUse` hook any more.** That event
+  sees every shell command in the session, so re-adding one there is an explicit
+  owner decision rather than a routine change. `macos-ubuntu-bootstrap` 2.4.0
+  removed the matching installer, and the binary is deleted from the owner
+  desktop.
+
+### Removed
+
 - **The `github` MCP server (ADR-0005 superseded).** It ran
   `github-mcp-server stdio`, a host binary whose only recorded install route was
   `brew install github-mcp-server`; no bootstrap path installed it on Ubuntu, and
