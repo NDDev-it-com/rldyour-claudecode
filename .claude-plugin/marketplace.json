@@ -10,7 +10,7 @@
     {
       "name": "rldyour-mcps",
       "source": "./plugins/rldyour-mcps",
-      "description": "Транспортный слой MCP - 11 серверов с зафиксированными версиями: Serena, Sequential Thinking, Chrome DevTools, Context7, DeepWiki, Grep, shadcn, Dart/Flutter, Figma, OpenAI Docs, GitHub.",
+      "description": "Транспортный слой MCP - 10 серверов с зафиксированными версиями: Serena, Sequential Thinking, Chrome DevTools, Context7, DeepWiki, Grep, shadcn, Dart/Flutter, Figma, OpenAI Docs.",
       "version": "1.8.8",
       "author": {
         "name": "Danil Silantyev (github:rldyourmnd), CEO NDDev"
