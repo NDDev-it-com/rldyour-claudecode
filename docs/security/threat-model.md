@@ -70,7 +70,7 @@ silently to a malicious version.
 - `scripts/refresh_actions_pins.sh` re-resolves tags to fresh SHAs via
   `gh api`.
 - Docker images used by workflow scanners are digest-pinned.
-- All 11 active MCP servers are pinned per ADR-0007. Every browser action is
+- All 10 active MCP servers are pinned per ADR-0007. Every browser action is
   gated by exact `$HOME/.local/bin/cloakbrowser-cdp-health` and limited to exact
   managed Playwright CLI or the managed Chrome DevTools MCP wrapper. The
   Webwright Python runtime, raw/stock/in-app browsers, alternate CDP paths,
@@ -132,8 +132,8 @@ merge, publish without human approval).
 caches.
 
 **Mitigations**:
-- `${CONTEXT7_API_KEY}` and `${GITHUB_PERSONAL_ACCESS_TOKEN}` are
-  `${VAR}` expansion only - never literals.
+- `${CONTEXT7_API_KEY}` is `${VAR}` expansion only - never a literal. It is the
+  only secret any MCP server in this marketplace consumes.
 - `plugins/rldyour-mcps/.env.example` documents required vars without
   any value.
 - `.gitignore` excludes `.env*` except `.env.example`; runtime markers

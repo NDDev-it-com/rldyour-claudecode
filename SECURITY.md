@@ -60,7 +60,7 @@ threat model focuses on:
   trust is the user's responsibility.
 - Issues that require credentials leaks from your own environment. The
   repo does not store any credentials; `bootstrap_check.sh` enforces that
-  required env vars (`CONTEXT7_API_KEY`, `GITHUB_PERSONAL_ACCESS_TOKEN`)
+  required env vars (`CONTEXT7_API_KEY`)
   are present locally before any MCP server starts.
 
 ## Defensive Tooling

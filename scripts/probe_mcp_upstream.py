@@ -5,7 +5,7 @@ Compares config/mcp-runtime-versions.env against:
 - npm registry for bunx servers (sequential-thinking, chrome-devtools, context7,
   shadcn)
 - PyPI JSON for uvx-installed packages (serena-agent)
-- Homebrew formula JSON for system binaries (github-mcp-server)
+- the official Dart archive for the Dart SDK that ships `dart mcp-server`
 
 Each probe is best-effort: a network failure is reported as INFO, not FAIL.
 The script exits 0 always; output is consumed by the dependency-check.yml
@@ -25,7 +25,6 @@ from pathlib import Path
 
 NPM_REGISTRY = "https://registry.npmjs.org"
 PYPI = "https://pypi.org/pypi"
-HOMEBREW = "https://formulae.brew.sh/api/formula"
 
 # Maps env var -> (registry, package identifier).
 PROBES: tuple[tuple[str, str, str], ...] = (
@@ -34,11 +33,10 @@ PROBES: tuple[tuple[str, str, str], ...] = (
     ("CHROME_DEVTOOLS_MCP_VERSION", "npm", "chrome-devtools-mcp"),
     ("CONTEXT7_MCP_VERSION", "npm", "@upstash/context7-mcp"),
     ("SHADCN_VERSION", "npm", "shadcn"),
-    ("GITHUB_MCP_SERVER_VERSION", "brew", "github-mcp-server"),
     # Dart SDK ships the `dart mcp-server` host binary; track latest stable
     # from the official Dart archive so weekly drift checks notify on new
-    # 3.x.y releases (host binary needs `brew upgrade dart` or equivalent
-    # SDK update, then bump DART_SDK_VERSION in config/mcp-runtime-versions.env).
+    # 3.x.y releases. Bumping it means bumping DART_SDK_VERSION here AND the
+    # tracked archive digests in macos-ubuntu-bootstrap, which owns the install.
     ("DART_SDK_VERSION", "dart-stable", "dart"),
 )
 
@@ -57,7 +55,7 @@ def load_env(path: Path) -> dict[str, str]:
 def fetch_json(url: str, timeout: float = 10.0) -> dict[str, object] | None:
     # Hard scheme guard: urllib supports file:// and other local schemes by
     # default. All URLs in this script are constructed from hardcoded
-    # NPM_REGISTRY/PYPI/HOMEBREW base strings + hardcoded package names, but the
+    # NPM_REGISTRY/PYPI base strings + hardcoded package names, but the
     # static guard documents the intent and prevents future contributors from
     # accidentally accepting a file:// URL through the same code path.
     if not url.startswith(("https://", "http://")):
@@ -90,22 +88,11 @@ def latest_pypi(package: str) -> str | None:
     return None
 
 
-def latest_brew(formula: str) -> str | None:
-    data = fetch_json(f"{HOMEBREW}/{formula}.json")
-    if data is None:
-        return None
-    versions = data.get("versions", {})
-    if isinstance(versions, dict):
-        stable = versions.get("stable")
-        return str(stable) if isinstance(stable, str) else None
-    return None
-
-
 def latest_dart_stable(package: str) -> str | None:
     """Latest Dart SDK stable release per https://storage.googleapis.com/dart-archive/.
 
     The `package` argument keeps the registry function signature uniform with
-    the npm/pypi/brew probes; only the literal value "dart" is supported.
+    the npm/pypi probes; only the literal value "dart" is supported.
     """
     if package != "dart":
         return None
@@ -142,8 +129,6 @@ def main() -> int:
             latest = latest_npm(package)
         elif registry == "pypi":
             latest = latest_pypi(package)
-        elif registry == "brew":
-            latest = latest_brew(package)
         elif registry == "dart-stable":
             latest = latest_dart_stable(package)
         else:

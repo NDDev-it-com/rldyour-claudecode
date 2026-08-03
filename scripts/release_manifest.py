@@ -32,7 +32,6 @@ NPM_PIN_RE = re.compile(
 # Host-binary MCP servers - their pin is not in `.mcp.json` `args` but in the
 # `config/mcp-runtime-versions.env` file (system toolchain binaries).
 HOST_BINARY_SERVERS: dict[str, dict[str, str]] = {
-    "github": {"binary": "github-mcp-server", "version_env": "GITHUB_MCP_SERVER_VERSION"},
     "dart-flutter": {"binary": "dart", "version_env": "DART_SDK_VERSION"},
 }
 MANAGED_WRAPPER_PINS = {"chrome-devtools": "CHROME_DEVTOOLS_MCP_VERSION"}

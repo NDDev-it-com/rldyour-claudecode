@@ -2,6 +2,34 @@
 
 ## [Unreleased]
 
+### Removed
+
+- **The `github` MCP server (ADR-0005 superseded).** It ran
+  `github-mcp-server stdio`, a host binary whose only recorded install route was
+  `brew install github-mcp-server`; no bootstrap path installed it on Ubuntu, and
+  `GITHUB_PERSONAL_ACCESS_TOKEN` was never provisioned. On a provisioned Ubuntu
+  26.04 desktop the server could not start - the same practical outcome as the
+  Copilot 403 that ADR-0005 set out to fix. Repository work goes through the `gh`
+  CLI, which the bootstrap does install. The marketplace now declares 10 MCP
+  servers, and `GITHUB_PERSONAL_ACCESS_TOKEN` is no longer a required env var.
+
+### Fixed
+
+- **`CHROME_DEVTOOLS_MCP_VERSION` corrected from `1.5.0` to `1.6.0`.** The
+  bootstrap installs the wrapper at exactly `1.6.0` and its verifiers gate on
+  that literal, so the two sources of truth had silently diverged. Nothing caught
+  it because `.mcp.json` carries only the wrapper path, not a version literal.
+
+- **Two false claims about Dart and env enforcement.**
+  `config/mcp-runtime-versions.env` stated that Dart SDK `3.12.2` "matches what
+  the bootstrap installs" while no bootstrap path installed Dart on any platform,
+  and `plugins/rldyour-mcps/README.md` plus `docs/runtime-env.md` claimed
+  `scripts/bootstrap_check.sh` enforced a Dart gate and mandatory secrets. That
+  script checks `python3`, `git`, tracked-context paths, and ignore rules - it has
+  never checked either. Dart is now genuinely installed by
+  `macos-ubuntu-bootstrap` contract `2.3.0`, and the docs describe what the code
+  actually does.
+
 
 ## [1.8.8] - 2026-07-10
 
