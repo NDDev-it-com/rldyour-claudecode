@@ -6,7 +6,7 @@
 
 ## Context and Problem Statement
 
-11 MCP servers (`rldyour-mcps`) span four transport types: stdio uvx
+10 MCP servers (`rldyour-mcps`) span four transport types: stdio uvx
 (serena), stdio bunx (sequential-thinking, context7, shadcn), managed local
 wrapper (chrome-devtools), HTTP (deepwiki, grep, figma,
 openai-docs), and stdio host binary (github, dart-flutter). Without
@@ -69,7 +69,7 @@ must be run after a bump.
 
 ### Consequences
 
-- Good: all 11 active MCP servers are enforceable; browser flow execution is
+- Good: all 10 active MCP servers are enforceable; browser flow execution is
   health-gated and limited to exact managed Playwright CLI outside MCP plus the
   exact managed Chrome DevTools MCP transport. The Webwright runtime is retired.
 - Good: env file readable by humans + scripts without JSON parsing.
@@ -79,7 +79,7 @@ must be run after a bump.
 
 ## Confirmation
 
-- `python3 scripts/check_mcp_runtime_versions.py` reports OK for all 11
+- `python3 scripts/check_mcp_runtime_versions.py` reports OK for all 10
   active MCP servers (5 stdio + 4 HTTP + 2 host binaries).
 - `bash scripts/smoke_mcp_runtime.sh` exits non-zero on any pin=None
   outside HOST_BINARY_ALLOWLIST.
