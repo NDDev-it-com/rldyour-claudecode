@@ -9,7 +9,7 @@ Decisions are recorded in MADR 4.0.0 format. The format and policy live in
 | 0002 | Accepted | [Two-file AGENTS.md and .claude/CLAUDE.md split](./0002-dual-doc-agents-claude-split.md) |
 | 0003 | Accepted | [Bilingual skill descriptions and listing budget](./0003-bilingual-skill-descriptions.md) |
 | 0004 | Accepted | [File-first reviewer transport with RLDYOUR_REPORT_EOF heredoc](./0004-file-first-reviewer-transport.md) |
-| 0005 | Accepted | [Local stdio GitHub MCP server](./0005-local-stdio-github-mcp.md) |
+| 0005 | Superseded | [Local stdio GitHub MCP server](./0005-local-stdio-github-mcp.md) |
 | 0006 | Accepted | [MCP and hook ownership boundaries](./0006-mcp-hook-ownership-boundaries.md) |
 | 0007 | Accepted | [MCP runtime pinning strategy](./0007-mcp-runtime-pinning-strategy.md) |
 | 0008 | Accepted | [CI security baseline without paid add-ons](./0008-ci-baseline-without-paid-addons.md) |

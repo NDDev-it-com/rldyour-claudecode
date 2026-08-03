@@ -1,8 +1,20 @@
 # ADR-0005: Local stdio GitHub MCP server
 
-- **Status**: accepted
+- **Status**: superseded (2026-08-03) — the `github` MCP server is removed
 - **Date**: 2026-05-17
 - **Decision-Makers**: rldyourmnd
+
+> **Superseded.** Moving off the Copilot-gated HTTP endpoint was correct, but the
+> stdio replacement traded one unavailable dependency for another: it required a
+> `github-mcp-server` host binary whose only recorded install route was
+> `brew install github-mcp-server`, and no bootstrap path installed it on Ubuntu.
+> On a provisioned Ubuntu 26.04 desktop the binary was absent and
+> `GITHUB_PERSONAL_ACCESS_TOKEN` was unset, so the server could not start at all —
+> the same practical outcome as the 403 this ADR set out to fix. The server was
+> removed by owner decision on 2026-08-03. Repository, issue, and pull-request
+> work goes through the `gh` CLI, which `macos-ubuntu-bootstrap` does install and
+> `scripts/auth-handoff.sh` covers for sign-in. Reintroducing an MCP server for
+> GitHub requires a host-binary install path on every supported platform first.
 
 ## Context and Problem Statement
 

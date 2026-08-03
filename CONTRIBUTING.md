@@ -11,9 +11,8 @@ That's the canonical way to extend this marketplace.
 ## Quick start
 
 ```bash
-# Required env (bootstrap_check.sh enforces both before any MCP starts):
+# Required env (Claude Code aborts MCP config parse when it is unset):
 export CONTEXT7_API_KEY=<your-context7-key>
-export GITHUB_PERSONAL_ACCESS_TOKEN=<your-github-pat-repo+read:org>
 
 # Local install:
 git clone https://github.com/NDDev-it-com/rldyour-claudecode.git

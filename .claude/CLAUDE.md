@@ -36,7 +36,7 @@ Context7 MCP `3.2.3`. Claude reads their canonical stdio transports from
 
 ## Plugin Inventory
 
-- `rldyour-mcps`: MCP transport owner for 11 active MCP servers.
+- `rldyour-mcps`: MCP transport owner for 10 active MCP servers.
 - `rldyour-serena-mcp`: Serena code workflow, memory sync, and lifecycle hooks.
 - `rldyour-flow`: SDLC commands, reviewer agents, post-task sync, and Stop
   lifecycle dispatcher.

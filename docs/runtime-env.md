@@ -7,31 +7,23 @@ so missing secrets fail at session start rather than silently degrading.
 
 ## Required (fail-fast)
 
-These two variables are mandatory. `scripts/bootstrap_check.sh` FAILs when
-either is unset.
+One variable is mandatory.
 
 | Variable | Used by | Purpose | Where to obtain |
 | --- | --- | --- | --- |
 | `CONTEXT7_API_KEY` | `plugins/rldyour-mcps/.mcp.json` `context7.env` | API key for the Upstash Context7 MCP server (`@upstash/context7-mcp`). | https://context7.com (dashboard -> API keys) |
-| `GITHUB_PERSONAL_ACCESS_TOKEN` | `plugins/rldyour-mcps/.mcp.json` `github.env` | PAT consumed by the local `github-mcp-server stdio` binary. | GitHub Settings -> Developer settings -> PAT. No Copilot subscription required. See PAT scope guidance below. |
 
-### PAT scope guidance
+`GITHUB_PERSONAL_ACCESS_TOKEN` is no longer used: the `github` MCP server was
+removed because it needed a `github-mcp-server` host binary that no bootstrap
+path installed on Ubuntu. Use the `gh` CLI for repository, issue, and
+pull-request work; it is installed by `macos-ubuntu-bootstrap` and authenticated
+through `gh auth login`.
 
-Two PAT types are supported by `github-mcp-server`:
-
-**Fine-grained PAT (recommended for least privilege)** - pick only the resources
-the MCP server actually touches. For `--toolsets=repos,issues,pull_requests,users,context`
-the minimum is:
-- Repository permissions: `Contents: Read & write`, `Issues: Read & write`,
-  `Pull requests: Read & write`, `Metadata: Read-only`, `Commit statuses: Read-only`.
-- Account permissions: `Read access to user email` (optional, for user lookups).
-- Resource scope: select only the repositories the MCP needs (private + public
-  it should be able to operate on); avoid "all repositories" unless required.
-
-**Classic PAT (legacy, broader scope)** - if fine-grained PAT is not viable
-(some org policies still require classic), use `repo` + `read:org`. Caveat:
-`repo` includes `workflow` and PR write across **all** repositories the user
-can access, which is wider than fine-grained equivalents. Prefer fine-grained.
+**`scripts/bootstrap_check.sh` does not enforce this variable.** It verifies
+tooling (`python3`, `git`), tracked context paths, and ignore rules only. The
+documentation previously claimed it FAILed on unset secrets; it never did.
+Claude Code's own `${VAR}`-without-fallback parse abort is the real fail-fast
+mechanism, and it fires at session start.
 
 Rotate the PAT at least every 90 days. Never commit it to git; the repo
 `.gitignore` blocks `.env`, `.env.*`, `*.pem`, `*.key` already.
@@ -65,19 +57,17 @@ read them when present. Leaving them unset is the production default.
 
 ### Why `RLDYOUR_SKIP_ENV_CHECK` is intentionally absent
 
-`scripts/bootstrap_check.sh` enforces `CONTEXT7_API_KEY` and
-`GITHUB_PERSONAL_ACCESS_TOKEN` as **mandatory** for any session because
-`plugins/rldyour-mcps/.mcp.json` references them via `${VAR}` (no fallback)
-and Claude Code aborts config parse when they are unset. A bypass flag
-would let the operator skip the check, but the downstream failure mode
-(MCP servers refusing to start with confusing error messages) is worse
-than the upfront block. Fix the env, not the check. (Verification F-5 closure.)
+`plugins/rldyour-mcps/.mcp.json` references `CONTEXT7_API_KEY` via `${VAR}` with
+no fallback, and Claude Code aborts config parse when it is unset. A bypass flag
+would let the operator skip that constraint, but the downstream failure mode
+(MCP servers refusing to start with confusing error messages) is worse than the
+upfront failure. Fix the env, not the check. (Verification F-5 closure.)
 
 ## Setup procedure
 
 1. Copy `plugins/rldyour-mcps/.env.example` to your shell profile / `.env`
    file consumed before launching Claude Code.
-2. Set `CONTEXT7_API_KEY` and `GITHUB_PERSONAL_ACCESS_TOKEN`.
+2. Set `CONTEXT7_API_KEY`.
 3. Run `bash scripts/bootstrap_check.sh` once to verify the environment
    plus all other bootstrap invariants.
 4. Launch `claude` from the repository root.
