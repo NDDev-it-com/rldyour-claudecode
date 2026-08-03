@@ -9,9 +9,8 @@ mirrored in the env file with the matching value, and every env entry must
 reference a real server in `.mcp.json`.
 
 Modes:
-  default       Missing host binaries (e.g. `dart`, `github-mcp-server`) are
-                INFO only - useful in CI where the runner may legitimately not
-                ship those binaries.
+  default       A missing host binary (`dart`) is INFO only - useful in CI where
+                the runner may legitimately not ship it.
   --strict      Missing host binaries become FAIL. Use on release-build
                 machines where the binaries are required to be present.
 
@@ -62,11 +61,6 @@ HTTP_TO_ENV = {
 # bottles, Dart SDK, etc.). Bumping the env pin must be paired with verifying
 # the host binary installed locally and on CI runners.
 SYSTEM_BINARY_TO_ENV = {
-    "github": {
-        "env_key": "GITHUB_MCP_SERVER_VERSION",
-        "binary": "github-mcp-server",
-        "version_regex": r"Version:\s*(\S+)",
-    },
     "dart-flutter": {
         "env_key": "DART_SDK_VERSION",
         "binary": "dart",
@@ -126,8 +120,8 @@ def main() -> int:
         "--strict",
         action="store_true",
         help=(
-            "Treat missing host binaries (github-mcp-server, dart) as FAIL "
-            "instead of INFO. Use on release-build machines."
+            "Treat a missing host binary (dart) as FAIL instead of INFO. "
+            "Use on release-build machines."
         ),
     )
     cli = parser.parse_args()

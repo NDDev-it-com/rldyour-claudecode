@@ -6,8 +6,8 @@
 #      no @latest, no unpinned uvx --from.
 #   2. HTTP MCP servers respond to a Streamable HTTP `initialize` POST preflight
 #      (200/204 = OK; 401/403 = OAuth-gated, accepted; 405 only for SSE GET fallback).
-#   3. Required env vars (CONTEXT7_API_KEY, GITHUB_PERSONAL_ACCESS_TOKEN) are
-#      either set or documented in .env.example.
+#   3. Required env vars (CONTEXT7_API_KEY) are either set or documented in
+#      .env.example.
 #
 # This is a fast (≤30s) smoke. Capability-level probes (JSON-RPC initialize
 # + tools/list per server) live in scripts/smoke_mcp_capabilities.sh.
@@ -44,12 +44,13 @@ for name, cfg in mcp.get("mcpServers", {}).items():
         print(f"FAIL {name}: unpinned @latest in args: {args!r}", file=sys.stderr)
         fail = 1
         continue
-    # Host-binary servers (github-mcp-server, dart) carry no version literal
-    # in args - their pin lives in config/mcp-runtime-versions.env and is
-    # enforced by check_mcp_runtime_versions.py. Without this allowlist, a
-    # typo or accidental removal of a version literal in a non-host-binary
-    # server entry would silently pass.
-    EXTERNAL_PIN_ALLOWLIST = {"github", "dart-flutter", "chrome-devtools"}
+    # Host-binary servers (dart) and the bootstrap-owned wrapper
+    # (chrome-devtools) carry no version literal in args - their pins live in
+    # config/mcp-runtime-versions.env and are enforced by
+    # check_mcp_runtime_versions.py. Without this allowlist, a typo or accidental
+    # removal of a version literal in a non-host-binary server entry would
+    # silently pass.
+    EXTERNAL_PIN_ALLOWLIST = {"dart-flutter", "chrome-devtools"}
     if pin is None and name not in EXTERNAL_PIN_ALLOWLIST:
         print(f"FAIL {name}: no version pin in args {args!r}; pin via ==X.Y.Z or @X.Y.Z, or add to EXTERNAL_PIN_ALLOWLIST", file=sys.stderr)
         fail = 1

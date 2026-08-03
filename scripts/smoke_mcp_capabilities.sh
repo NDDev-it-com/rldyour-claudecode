@@ -21,8 +21,7 @@
 #     CI just lacks credentials)
 #   - 401 with auth header sent → FAIL (token rejected - wrong scopes/expired)
 #   - 403 always → FAIL with explicit message ("entitlement-denied or org
-#     policy blocks the configured token") - this is the failure mode that
-#     `api.githubcopilot.com/mcp/` returns for non-Copilot accounts.
+#     policy blocks the configured token").
 #
 # Optional flags:
 #   --server <name>     run only this server (e.g. --server serena)
@@ -421,8 +420,8 @@ def smoke_http(name, cfg, timeout_s):
     if status == 403:
         return (
             "FAIL",
-            "HTTP 403 - entitlement denied (token valid but account/org lacks access; "
-            "for github MCP this means no Copilot allowlist - switch to stdio github-mcp-server)"
+            "HTTP 403 - entitlement denied (token valid but account/org lacks "
+            "access to this MCP endpoint)"
         )
 
     if status not in (200, 204):
