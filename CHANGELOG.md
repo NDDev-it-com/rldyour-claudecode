@@ -8,7 +8,7 @@
   `github-mcp-server stdio`, a host binary whose only recorded install route was
   `brew install github-mcp-server`; no bootstrap path installed it on Ubuntu, and
   `GITHUB_PERSONAL_ACCESS_TOKEN` was never provisioned. On a provisioned Ubuntu
-  26.04 desktop the server could not start — the same practical outcome as the
+  26.04 desktop the server could not start - the same practical outcome as the
   Copilot 403 that ADR-0005 set out to fix. Repository work goes through the `gh`
   CLI, which the bootstrap does install. The marketplace now declares 10 MCP
   servers, and `GITHUB_PERSONAL_ACCESS_TOKEN` is no longer a required env var.
@@ -25,7 +25,7 @@
   the bootstrap installs" while no bootstrap path installed Dart on any platform,
   and `plugins/rldyour-mcps/README.md` plus `docs/runtime-env.md` claimed
   `scripts/bootstrap_check.sh` enforced a Dart gate and mandatory secrets. That
-  script checks `python3`, `git`, tracked-context paths, and ignore rules — it has
+  script checks `python3`, `git`, tracked-context paths, and ignore rules - it has
   never checked either. Dart is now genuinely installed by
   `macos-ubuntu-bootstrap` contract `2.3.0`, and the docs describe what the code
   actually does.

@@ -23,7 +23,7 @@ points; changing either transport requires a separate compatibility decision.
 
 ## Runtime SDK requirements
 
-- **Dart SDK 3.9+** required by `dart-flutter` MCP (`dart mcp-server` is a Dart SDK 3.9+ feature; toolchain pinning lives in `pubspec.yaml`, not `.mcp.json`). The SDK is provisioned by `macos-ubuntu-bootstrap` contract `2.3.0` and later (Ubuntu: tracked SDK archive `3.12.2`; macOS: Homebrew `dart-sdk`), and both of that adapter's verifiers gate on `dart mcp-server --version` responding — not merely on `dart` resolving. `scripts/bootstrap_check.sh` does **not** gate this; it checks only `python3`, `git`, and `node`. Source: `https://docs.flutter.dev/ai/mcp-server` (2026-05).
+- **Dart SDK 3.9+** required by `dart-flutter` MCP (`dart mcp-server` is a Dart SDK 3.9+ feature; toolchain pinning lives in `pubspec.yaml`, not `.mcp.json`). The SDK is provisioned by `macos-ubuntu-bootstrap` contract `2.3.0` and later (Ubuntu: tracked SDK archive `3.12.2`; macOS: Homebrew `dart-sdk`), and both of that adapter's verifiers gate on `dart mcp-server --version` responding - not merely on `dart` resolving. `scripts/bootstrap_check.sh` does **not** gate this; it checks only `python3`, `git`, and `node`. Source: `https://docs.flutter.dev/ai/mcp-server` (2026-05).
 
 ## Special notes
 
