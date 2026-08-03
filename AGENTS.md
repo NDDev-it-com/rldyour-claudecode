@@ -17,7 +17,7 @@ Canonical public description: rldyour AI CLI configuration for Claude Code: plug
 <!-- sync_contract:
 claims:
   mcp_owner: rldyour-mcps
-  hook_owners: [rldyour-flow, rldyour-serena-mcp, rldyour-rtk]
+  hook_owners: [rldyour-flow, rldyour-serena-mcp]
   lsp_owner: rldyour-lsps
   reviewer_transport_marker: RLDYOUR_REPORT_EOF
   reviewer_report_dir_template: ".serena/reviews/<run_id>/"
@@ -29,9 +29,9 @@ claims:
   skill_listing_budget_fraction: 0.04
   max_skill_description_chars: 1536
   tracked-context_branch: tracked-context
-  plugin_count: 11
-  skill_count: 39
-  command_count: 12
+  plugin_count: 10
+  skill_count: 38
+  command_count: 11
   subagent_count: 8
 -->
 
@@ -41,9 +41,8 @@ claims:
 - `plugins/*/.claude-plugin/plugin.json` are per-plugin manifests.
 - `plugins/rldyour-mcps/.mcp.json` is the single MCP transport owner and
   currently pins Sequential Thinking MCP `2026.7.4` and Context7 MCP `3.2.3`.
-- `plugins/rldyour-flow/hooks/hooks.json`,
-  `plugins/rldyour-serena-mcp/hooks/hooks.json`, and
-  `plugins/rldyour-rtk/hooks/hooks.json` are the only hook owners.
+- `plugins/rldyour-flow/hooks/hooks.json` and
+  `plugins/rldyour-serena-mcp/hooks/hooks.json` are the only hook owners.
 - `config/rldyour-contract.json` and `docs/contract-matrix.md` define the
   cross-tool contract.
 - `references/claude-baseline.json`, `package.json`, and
@@ -73,10 +72,9 @@ claims:
 The single registered Claude Stop hook is the Flow dispatcher above. Stop hooks
 are advisory enforcement gates. They compute sync state and block with guidance;
 the main workflow performs memory sync, validation, commits, pushes, and
-git synchronization. `rldyour-rtk` additionally owns a `PreToolUse` Bash hook
-(`hooks/rtk_rewrite.sh` -> `rtk hook claude`, 10s) that transparently rewrites
-supported shell commands through rtk for token-economy and degrades to a no-op
-passthrough when rtk is absent.
+git synchronization. No plugin owns a `PreToolUse` hook, so nothing rewrites or
+intercepts a Bash command before it runs. Do not add one without an explicit
+owner decision: a hook on that event sees every shell command in the session.
 
 ## Validation
 

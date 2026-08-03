@@ -1,7 +1,7 @@
 <!-- Memory Metadata
-Last updated: 2026-05-22
-Last verified: 2026-05-22
-Last commit: fa1a49c refactor(policy): track claude agent context on main
+Last updated: 2026-08-04
+Last verified: 2026-08-04
+Last commit: 6d64f43 feat(rtk)!: remove the rldyour-rtk plugin and every rtk declaration
 Scope: deterministic hook lifecycle behavior
 Area: HOOKS
 -->
@@ -16,12 +16,13 @@ deterministic hook lifecycle behavior
 - `path:scripts/smoke_hooks.sh`
 
 ## Last verified
-- date: 2026-05-22
-- commit: `fa1a49c`
+- date: 2026-08-04
+- commit: `6d64f43`
 - checked by: Codex ry-start memory taxonomy sync
 
 ## Facts
 - Hook memories record bounded, deterministic lifecycle behavior and the authoritative Stop owner.
+- No plugin owns a `PreToolUse` hook. That event observes every shell command in a session, so registering one there is an explicit owner decision rather than a routine change. Hook owners are `rldyour-flow` (the single registered Stop dispatcher) and `rldyour-serena-mcp`.
 
 ## Evidence
 - `commit:fa1a49c`

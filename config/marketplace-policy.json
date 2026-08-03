@@ -5,8 +5,7 @@
   "mcp_owner": "rldyour-mcps",
   "hook_owners": [
     "rldyour-flow",
-    "rldyour-serena-mcp",
-    "rldyour-rtk"
+    "rldyour-serena-mcp"
   ],
   "lsp_owner": "rldyour-lsps",
   "skills_only_plugins": [
@@ -46,8 +45,7 @@
     ],
     "rldyour-orchestrator": [
       "rldyour-flow"
-    ],
-    "rldyour-rtk": []
+    ]
   },
   "protected_branches": [
     "main",
