@@ -1,0 +1,95 @@
+schema_version: 1
+
+repository:
+  id: "repo_01KYQWYHVWP8NRZ5E233GFWQ0H"
+  display_name: "rldyour-claudecode"
+  roles:
+    - "project"
+    - "module"
+  lifecycle: "active"
+
+provider:
+  type: "github"
+  installation: "installation:github-organization"
+  repository_id: 1231429433
+  owner: "NDDev-it-com"
+  name: "rldyour-claudecode"
+
+classification:
+  portfolios:
+    - "portfolio:organization-projects"
+  visibility_contract: "public"
+  data_classification: "public"
+
+policy:
+  profiles:
+    - "repository-default"
+    - "organization-default"
+  rollout_ring: "standard"
+
+git:
+  default_branch: "main"
+  integration: "pull-request"
+  branch_model: "task-branches"
+  handoff_pr: "preferred"
+  cleanup: "merged-only"
+
+verification:
+  commands:
+    lint:
+      - "ruff check ."
+    typecheck:
+      - "pyright"
+    test:
+      - "pytest"
+    fast:
+      - "python3 scripts/validate_json_schemas.py"
+      - "python3 scripts/validate_plugin_versions.py"
+      - "python3 scripts/validate_boundaries.py"
+      - "python3 scripts/validate_skill_routing.py"
+      - "python3 scripts/validate_agent_tools.py"
+      - "python3 scripts/validate_text_hygiene.py"
+    pr-required:
+      - "python3 scripts/validate_json_schemas.py"
+      - "python3 scripts/validate_plugin_versions.py"
+      - "python3 scripts/validate_boundaries.py"
+      - "python3 scripts/validate_skill_routing.py"
+      - "bash scripts/smoke_hooks.sh"
+      - "pytest"
+    full:
+      - "claude plugin validate ."
+      - "python3 scripts/validate_json_schemas.py"
+      - "python3 scripts/validate_boundaries.py"
+      - "pytest"
+    release:
+      - "python3 scripts/validate_release_state.py"
+  required:
+    - "lint"
+    - "test"
+    - "fast"
+    - "pr-required"
+
+agent:
+  context_profile: "project-default"
+  # generated_agents is false because AGENTS.md and .claude/CLAUDE.md are
+  # author-owned, repository-curated instruction in this project (not GDS
+  # projections). Setting this to false keeps the projection generator from
+  # overwriting them; GDS continues to manage only the .gds/ pin files
+  # (bundle.lock.yaml + compiled-policy.json). See
+  # core/projections/generator.go TestGeneratedAgentsFalsePreservesRepositoryOwnedInstructions.
+  generated_agents: false
+  serena:
+    enabled: true
+    provenance_required: true
+
+module:
+  contract: "public"
+  consumption:
+    - "git-submodule"
+  compatibility: "commit-contract"
+  pin_policy: "default-branch-commit"
+  publication:
+    github_release: "optional"
+
+release:
+  mode: "github-release"

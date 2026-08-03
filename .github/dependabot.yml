@@ -34,6 +34,9 @@ updates:
 
   # Track the Claude Code CLI pin in /package.json (devDependencies).
   # Single-package ecosystem so the PR title is unambiguous; no grouping.
+      github-actions-security:
+        applies-to: security-updates
+        patterns: ['*']
   - package-ecosystem: npm
     directory: /
     schedule:
@@ -49,3 +52,46 @@ updates:
     commit-message:
       prefix: build
       include: scope
+
+    cooldown:
+      default-days: 7
+    groups:
+      npm-minor:
+        applies-to: version-updates
+        update-types: [minor, patch]
+        patterns: ['*']
+      npm-major:
+        applies-to: version-updates
+        update-types: [major]
+        patterns: ['*']
+      npm-security:
+        applies-to: security-updates
+        patterns: ['*']
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: "UTC"
+    open-pull-requests-limit: 5
+    cooldown:
+      default-days: 7
+    commit-message:
+      prefix: "chore(deps)"
+      include: scope
+    labels:
+      - dependencies
+      - pip
+    groups:
+      pip-minor:
+        applies-to: version-updates
+        update-types: ["minor", "patch"]
+        patterns: ["*"]
+      pip-major:
+        applies-to: version-updates
+        update-types: ["major"]
+        patterns: ["*"]
+      pip-security:
+        applies-to: security-updates
+        patterns: ["*"]

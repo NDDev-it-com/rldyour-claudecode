@@ -14,17 +14,19 @@
   "strict_required_status_checks": true,
   "allow_force_pushes": false,
   "allow_deletions": false,
-  "require_linear_history": true,
+  "require_linear_history": false,
   "required_pull_request_reviews": {
-    "required_approving_review_count": 1,
+    "required_approving_review_count": 0,
     "dismiss_stale_reviews": true,
-    "require_code_owner_review": true
+    "require_code_owner_review": false
   },
   "enforce_admins": false,
   "notes": [
     "This file documents the desired branch protection state for the public main branch.",
     "Apply it through GitHub Settings -> Branches or through a ruleset matching this shape.",
     "Required status checks are selected from workflows that run on every pull request to main.",
-    "Path-filtered or scheduled-only jobs are intentionally not required here because GitHub branch protection waits for required checks even when a workflow is not triggered."
+    "Path-filtered or scheduled-only jobs are intentionally not required here because GitHub branch protection waits for required checks even when a workflow is not triggered.",
+    "Linear history is OFF on purpose: the estate policy is merge commits only (squash and rebase are disabled), and required_linear_history forbids merge commits - the two cannot both hold.",
+    "Approvals are 0 and code-owner review is off because this is a single-maintainer repository: GitHub does not allow approving your own pull request, so any non-zero requirement is satisfiable only by an admin bypass on every merge."
   ]
 }
