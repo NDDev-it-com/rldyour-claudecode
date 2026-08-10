@@ -78,3 +78,15 @@ health stops the task as `NOT_PROVEN`. Browser execution is limited to exact
 `$HOME/.local/bin/playwright-cli` and the adapter-configured managed Chrome
 DevTools MCP transport. `webwright-task` is a compatibility route only; the
 Webwright runtime and every alternate browser path or fallback are forbidden.
+
+## CI runner selection
+
+This repository is public, so `pull_request` executes untrusted fork code.
+Every caller of a `NDDev-it-com/ci-workflows` reusable that exposes a `runner`
+input passes `runner: ubuntu-latest` explicitly, and must keep it. Several of
+those reusables default `runner` to the estate's self-hosted `amsterdam`
+label, and a default is a property of the **pinned commit**, not of this
+repository — so dropping the explicit value would let a routine pin bump route
+fork PRs onto trusted private infrastructure with no diff here to review. On
+any ci-workflows pin bump, diff `inputs.runner.default` between the old and
+new commit before merging.
