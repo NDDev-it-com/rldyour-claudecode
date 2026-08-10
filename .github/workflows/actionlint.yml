@@ -29,3 +29,9 @@ jobs:
     permissions:
       contents: read
     uses: NDDev-it-com/ci-workflows/.github/workflows/actionlint.yml@ac4d1f469f5974741c7449305ffcbd5f05a5a47f # 0.5.1
+    with:
+      # Public repo: pull_request runs untrusted fork code. Pin the hosted runner
+      # explicitly — several ci-workflows reusables now default `runner` to the
+      # self-hosted `amsterdam` label, so inheriting the default on a pin bump
+      # would put fork PRs on trusted private infrastructure.
+      runner: ubuntu-latest
