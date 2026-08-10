@@ -1,6 +1,6 @@
 <!-- Memory Metadata
-Last updated: 2026-05-22
-Last verified: 2026-05-22
+Last updated: 2026-08-10
+Last verified: 2026-08-10
 Last commit: fa1a49c refactor(policy): track claude agent context on main
 Scope: GitHub Actions and local CI policy
 Area: CI
@@ -16,14 +16,17 @@ GitHub Actions and local CI policy
 - `path:README.md`
 
 ## Last verified
-- date: 2026-05-22
+- date: 2026-08-10
 - commit: `fa1a49c`
 - checked by: Codex ry-start memory taxonomy sync
 
 ## Facts
+- Every caller of a `ci-workflows` reusable that exposes a `runner` input passes `runner: ubuntu-latest` explicitly. This repository is public, so `pull_request` executes untrusted fork code; the reusable's `runner` default is a property of the **pinned commit**, and on current ci-workflows main 39 of 46 reusables default it to the estate's self-hosted `amsterdam` label. At the pin in use the default is still `ubuntu-latest`, so the explicit value is currently a no-op and becomes load-bearing at the next pin bump. On any pin bump, diff `inputs.runner.default` between the old and new commit.
+- `ci-workflows` enforces the same rule for its own self-calls and its published examples, but nothing extends it to external consumers, so the constraint lives in this repository's `AGENTS.md` and `.claude/CLAUDE.md`.
 - CI memories record which checks prove repository integrity and which checks are intentionally lightweight.
 
 ## Evidence
+- `commit:123f862` explicit hosted runner in ci-workflows callers
 - `commit:fa1a49c`
 - `path:.github/workflows`
 - `path:README.md`
