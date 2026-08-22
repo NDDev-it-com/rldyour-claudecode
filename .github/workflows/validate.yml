@@ -18,8 +18,8 @@ permissions: {}
 # Cancel redundant runs on the same ref to save CI minutes and surface
 # the freshest result first.
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.run_id }}
+  cancel-in-progress: false
 
 jobs:
   validate-marketplace:

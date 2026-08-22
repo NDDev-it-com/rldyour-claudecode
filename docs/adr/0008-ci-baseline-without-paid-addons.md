@@ -61,7 +61,8 @@ Cross-cutting:
 - **Top-level `permissions: {}`**: deny-all default; per-job permissions
   grant minimum scope (`contents: read` for validators,
   `contents: write` only for release.yml `gh release create`).
-- **Concurrency**: `cancel-in-progress: true` on validate/actionlint;
+- **Concurrency**: run-id-unique groups with `cancel-in-progress: false`, so
+  every queued or running evidence job finishes;
   `cancel-in-progress: false` on release (releases must complete).
 
 ### Consequences
