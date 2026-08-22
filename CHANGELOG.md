@@ -3,6 +3,12 @@
 ## [Unreleased]
 
 
+## [1.8.10] - 2026-08-23
+
+### Fixed
+
+- Migrate reusable CI to the public OpenNetwork engine.
+
 ## [1.8.9] - 2026-08-22
 
 ### Removed
