@@ -30,7 +30,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-    uses: NDDev-it-com/ci-workflows/.github/workflows/cross-platform-smoke.yml@7f69c724923d06b2c2057c5a6ad341c37f1a8995 # 0.13.3
+    uses: NDDev-OpenNetwork/ci-workflows/.github/workflows/cross-platform-smoke.yml@36bea6e4ac643872e9a504b2fe19aad9487e398a # 0.2.0-dev
     with:
       os_list: '["${{ matrix.os }}"]'
       timeout_minutes: 10

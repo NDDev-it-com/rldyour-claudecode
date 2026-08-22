@@ -6,9 +6,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 WORKFLOWS = ROOT / ".github/workflows"
 WORKFLOW_DOC = WORKFLOWS / "README.md"
-SHARED_REPO = "NDDev-it-com/ci-workflows"
-SHARED_SHA = "7f69c724923d06b2c2057c5a6ad341c37f1a8995"
-SHARED_VERSION = "0.13.3"
+SHARED_REPO = "NDDev-OpenNetwork/ci-workflows"
+SHARED_SHA = "36bea6e4ac643872e9a504b2fe19aad9487e398a"
+SHARED_VERSION = "0.2.0-dev"
 PIN_RE = re.compile(
     rf"^\s*(?:-\s*)?uses:\s*{re.escape(SHARED_REPO)}/[^@\s]+@{SHARED_SHA}"
     rf"\s+#\s*{re.escape(SHARED_VERSION)}\s*$"
@@ -35,5 +35,5 @@ def test_all_shared_workflow_callers_use_one_verified_pin() -> None:
 
 def test_shared_workflow_pin_is_documented() -> None:
     text = WORKFLOW_DOC.read_text(encoding="utf-8")
-    assert f"release `{SHARED_VERSION}`" in text
+    assert f"engine version `{SHARED_VERSION}`" in text
     assert f"`{SHARED_SHA}`" in text
