@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+
+## [1.8.9] - 2026-08-22
+
 ### Removed
 
 - **The `rldyour-rtk` plugin, by owner decision.** rtk is not needed anywhere in
@@ -47,6 +50,9 @@
   `macos-ubuntu-bootstrap` contract `2.3.0`, and the docs describe what the code
   actually does.
 
+### Changed
+
+- Release the accumulated runtime, security, and contract corrections already present on main.
 
 ## [1.8.8] - 2026-07-10
 
