@@ -34,6 +34,7 @@ REQUIRED_BASELINE_SURFACES = {
     "claude-code-2-1-199-runtime-rollup": "2.1.199 runtime rollup",
     "claude-code-2-1-205-runtime-rollup": "2.1.205 runtime rollup",
     "claude-code-2-1-206-runtime-rollup": "2.1.206 runtime rollup",
+    "claude-code-2-1-220-runtime-rollup": "2.1.220 runtime rollup",
 }
 
 REQUIRED_2_1_153_SURFACES = (

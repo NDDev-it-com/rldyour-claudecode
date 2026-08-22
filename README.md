@@ -7,7 +7,7 @@
 | Field | Value |
 |---|---|
 | Adapter version | `1.8.9` |
-| Runtime baseline | Claude Code `2.1.206` (`@anthropic-ai/claude-code`) |
+| Runtime baseline | Claude Code `2.1.220` (`@anthropic-ai/claude-code`) |
 | GitHub release tag | `1.8.9` |
 
 Runtime pin sources: `package.json`, `references/claude-baseline.json`, `config/mcp-runtime-versions.env`. Compatibility floor: `v2.1.146+`.

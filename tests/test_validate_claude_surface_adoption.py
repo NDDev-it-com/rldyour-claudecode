@@ -16,21 +16,22 @@ def load_module():
     return module
 
 
-def test_current_baseline_pins_2_1_206_runtime_rollup() -> None:
+def test_current_baseline_pins_2_1_220_runtime_rollup() -> None:
     baseline = json.loads(
         (ROOT / "references" / "claude-baseline.json").read_text(encoding="utf-8")
     )
     claude = baseline["baseline"]["claude_code"]
     required = baseline["baseline"]["required_runtime_fixes"]
 
-    assert claude["version"] == "2.1.206"
-    assert claude["package_published_at"] == "2026-07-09T17:54:03.009Z"
+    assert claude["version"] == "2.1.220"
+    assert claude["package_published_at"] == "2026-07-24T23:11:21.821Z"
     assert claude["npm_dist_tags"] == {
-        "latest": "2.1.206",
-        "next": "2.1.206",
+        "latest": "2.1.220",
+        "next": "2.1.220",
         "stable": "2.1.197",
     }
     assert "claude-code-2-1-206-runtime-rollup" in required
+    assert "claude-code-2-1-220-runtime-rollup" in required
 
 
 def test_duplicate_required_runtime_fixes_are_rejected(tmp_path: Path, monkeypatch) -> None:
