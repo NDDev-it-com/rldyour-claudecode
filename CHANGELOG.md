@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 
+## [1.8.13] - 2026-08-25
+
+### Fixed
+
+- Synchronize README and durable release-memory current-version claims with
+  the exact immutable adapter release identity.
+
 ## [1.8.12] - 2026-08-25
 
 ### Fixed
