@@ -22,7 +22,7 @@ release readiness, versioning, and artifact hygiene
 - checked by: Claude adapter 1.8.7 browser boundary release preparation
 
 ## Facts
-- Current rldyour-claudecode adapter VERSION is `1.8.10`; the release workflow
+- Current rldyour-claudecode adapter VERSION is `1.8.13`; the release workflow
   publishes only a pre-existing signed numeric tag created by root automation
   after exact-SHA branch CI is stable green.
 - Release `1.8.10` retires the Webwright runtime and enforces the exact
