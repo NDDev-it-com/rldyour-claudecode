@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [1.8.11] - 2026-08-25
+
+### Fixed
+
+- Advance every reusable CI caller to the released OpenNetwork workflow engine
+  `0.1.8`, restoring root control-plane secret-scan and CodeQL capability proof.
 
 ## [1.8.10] - 2026-08-23
 
