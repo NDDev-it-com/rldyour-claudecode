@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 
+## [1.8.12] - 2026-08-25
+
+### Fixed
+
+- Synchronize the exact supported security tag with the immutable adapter
+  release identity required by the root control-plane policy.
+
 ## [1.8.11] - 2026-08-25
 
 ### Fixed
