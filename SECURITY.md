@@ -9,7 +9,7 @@ every historical patch in the line.
 
 | Version | Supported |
 |---------|-----------|
-| Current exact tag `1.8.13` | yes |
+| Current exact tag `1.8.14` | yes |
 | Older patch tags | no; upgrade to current exact tag |
 | Older minor / major lines | no |
 
