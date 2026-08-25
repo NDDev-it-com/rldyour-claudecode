@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 
+
+## [1.8.14] - 2026-08-25
+
+### Fixed
+
+- Pin ci-workflows 0.1.10 and retain durable tool-cache evidence.
+
 ## [1.8.13] - 2026-08-25
 
 ### Fixed
