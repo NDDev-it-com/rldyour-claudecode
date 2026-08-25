@@ -7,7 +7,7 @@ ROOT = Path(__file__).resolve().parents[1]
 WORKFLOWS = ROOT / ".github/workflows"
 WORKFLOW_DOC = WORKFLOWS / "README.md"
 SHARED_REPO = "NDDev-OpenNetwork/ci-workflows"
-SHARED_SHA = "1eaaa687f32f81c33ac99be3db0b76d0204420b8"
+SHARED_SHA = "66fc19d6ee02c703bc219aa4f31d5f98a3def54b"
 SHARED_VERSION = "0.1.8"
 PIN_RE = re.compile(
     rf"^\s*(?:-\s*)?uses:\s*{re.escape(SHARED_REPO)}/[^@\s]+@{SHARED_SHA}"
