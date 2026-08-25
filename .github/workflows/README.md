@@ -9,8 +9,8 @@ drift separately.
 ## Shared workflow pin
 
 Every reusable `NDDev-OpenNetwork/ci-workflows` caller is pinned to public
-engine version `0.1.8` at commit
-`1eaaa687f32f81c33ac99be3db0b76d0204420b8`. The repository test
+engine version `0.1.10` at commit
+`66fc19d6ee02c703bc219aa4f31d5f98a3def54b`. The repository test
 `tests/test_shared_workflow_pin.py` rejects a mixed SHA or version comment.
 
 ## Required PR gates (run on every push to `main` and every PR)
