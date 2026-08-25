@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "verified_on": "2026-06-09",
-  "owner_repo": "NDDev-it-com/rldyour-claudecode",
+  "owner_repo": "rldyourmnd/rldyour-claudecode",
   "adapters": [
     "claude",
     "codex",

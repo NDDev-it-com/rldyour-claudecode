@@ -41,7 +41,7 @@ Examples of unacceptable behavior:
 Instances of abusive, harassing, or otherwise unacceptable behavior may
 be reported to the project maintainer through a private GitHub Security
 Advisory at
-`https://github.com/NDDev-it-com/rldyour-claudecode/security/advisories/new`
+`https://github.com/rldyourmnd/rldyour-claudecode/security/advisories/new`
 (yes - the same channel as security disclosure; the advisory mechanism
 is the only private message channel for this repo).
 

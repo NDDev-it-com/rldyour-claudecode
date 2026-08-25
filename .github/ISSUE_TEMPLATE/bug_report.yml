@@ -11,7 +11,7 @@ body:
         lack a clear repro path are likely to be closed without action.
 
         For security issues, do NOT open a public Issue. Instead, open a
-        private Security Advisory: https://github.com/NDDev-it-com/rldyour-claudecode/security/advisories/new
+        private Security Advisory: https://github.com/rldyourmnd/rldyour-claudecode/security/advisories/new
 
   - type: input
     id: version

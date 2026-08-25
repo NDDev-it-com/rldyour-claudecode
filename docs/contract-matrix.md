@@ -6,7 +6,7 @@ This matrix is the human-readable projection of the machine-readable rldyour con
 
 - Schema version: `1`
 - Verified on: `2026-06-09`
-- Owner repository: `NDDev-it-com/rldyour-claudecode`
+- Owner repository: `rldyourmnd/rldyour-claudecode`
 
 ## Domains
 

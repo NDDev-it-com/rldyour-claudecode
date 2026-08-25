@@ -22,7 +22,7 @@ versioning contract).
 Please use **GitHub Security Advisories** as the primary channel:
 
 - Open a private advisory at
-  `https://github.com/NDDev-it-com/rldyour-claudecode/security/advisories/new`.
+  `https://github.com/rldyourmnd/rldyour-claudecode/security/advisories/new`.
 - GitHub notifies the maintainer privately; the advisory stays embargoed
   until a fix is published.
 

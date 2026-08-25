@@ -6,25 +6,32 @@ repository:
   roles:
     - "project"
     - "module"
-  lifecycle: "active"
+  lifecycle: "archived"
 
 provider:
   type: "github"
-  installation: "installation:github-organization"
+  installation: "installation:github-personal"
   repository_id: 1231429433
-  owner: "NDDev-it-com"
+  owner: "rldyourmnd"
   name: "rldyour-claudecode"
+  # A transfer keeps the numeric repository id, so this is the same
+  # repository under a new locator. The previous one is retained:
+  # dropping it would break alias history for anything that resolved
+  # the repository by its old path.
+  aliases:
+    - owner: "NDDev-it-com"
+      name: "rldyour-claudecode"
 
 classification:
   portfolios:
-    - "portfolio:organization-projects"
+    - "portfolio:archived-projects"
   visibility_contract: "public"
   data_classification: "public"
 
 policy:
   profiles:
     - "repository-default"
-    - "organization-default"
+    - "personal-default"
   rollout_ring: "standard"
 
 git:

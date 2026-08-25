@@ -2483,7 +2483,7 @@ official docs at 2026-05-17).
   precision, `TECHDEBT-01-NOW` Source Of Truth (11 anchors), D19-D23
   closures.
 - **Wave 5 consolidation** - repository transferred from `rldyourmnd/rldyour-claude`
-  to `NDDev-it-com/rldyour-claudecode` (private). Marketplace slug
+  to `rldyourmnd/rldyour-claudecode` (private). Marketplace slug
   renamed to `rldyour-claudecode`. CI hardening per OWASP A01:2025 +
   A03:2025: SHA-pinned `actions/checkout@v6.0.2`,
   `actions/setup-{node,python}@v6.x`,
@@ -3009,33 +3009,33 @@ Release boundary cut after the 2026-05-08..2026-05-12 wave of best-practice, MCP
   shell syntax checks, frontmatter presence verification on all skills,
   agents, and commands.
 
-[Unreleased]: https://github.com/NDDev-it-com/rldyour-claudecode/compare/1.0.0...HEAD
-[1.0.0]: https://github.com/NDDev-it-com/rldyour-claudecode/compare/0.7.0...1.0.0
-[0.7.0]: https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/0.7.0
-[0.6.9]: https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/0.6.9
-[0.6.8]: https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/0.6.8
-[0.6.7]: https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/marketplace--v0.6.7
-[0.6.6]: https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/marketplace--v0.6.6
-[0.6.5]: https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/marketplace--v0.6.5
-[0.6.4]: https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/marketplace--v0.6.4
-[0.6.3]: https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/marketplace--v0.6.3
-[0.6.2]: https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/marketplace--v0.6.2
-[0.6.1]: https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/marketplace--v0.6.1
-[0.6.0]: https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/marketplace--v0.6.0
-[0.5.2]: https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/marketplace--v0.5.2
-[0.4.0]: https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/marketplace--v0.4.0
-[0.3.0]: https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/marketplace--v0.3.0
-[0.2.3]: https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/marketplace--v0.2.3
-[0.2.2]: https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/marketplace--v0.2.2
-[0.2.1]: https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/marketplace--v0.2.1
-[0.2.0]: https://github.com/NDDev-it-com/rldyour-claudecode/releases/tag/marketplace--v0.2.0
-[0.1.9]: https://github.com/NDDev-it-com/rldyour-claudecode/commit/99f9809
-[0.1.8]: https://github.com/NDDev-it-com/rldyour-claudecode/commit/9bf3c70
-[0.1.7]: https://github.com/NDDev-it-com/rldyour-claudecode/commit/eaccf59
-[0.1.6]: https://github.com/NDDev-it-com/rldyour-claudecode/commit/bf54d02
-[0.1.5]: https://github.com/NDDev-it-com/rldyour-claudecode/commit/bf54d02
-[0.1.4]: https://github.com/NDDev-it-com/rldyour-claudecode/commit/eaccf59
-[0.1.3]: https://github.com/NDDev-it-com/rldyour-claudecode/commits/main
-[0.1.2]: https://github.com/NDDev-it-com/rldyour-claudecode/commit/d50e94c
-[0.1.1]: https://github.com/NDDev-it-com/rldyour-claudecode/commit/ef18bd9
-[0.1.0]: https://github.com/NDDev-it-com/rldyour-claudecode/commit/ef18bd9
+[Unreleased]: https://github.com/rldyourmnd/rldyour-claudecode/compare/1.0.0...HEAD
+[1.0.0]: https://github.com/rldyourmnd/rldyour-claudecode/compare/0.7.0...1.0.0
+[0.7.0]: https://github.com/rldyourmnd/rldyour-claudecode/releases/tag/0.7.0
+[0.6.9]: https://github.com/rldyourmnd/rldyour-claudecode/releases/tag/0.6.9
+[0.6.8]: https://github.com/rldyourmnd/rldyour-claudecode/releases/tag/0.6.8
+[0.6.7]: https://github.com/rldyourmnd/rldyour-claudecode/releases/tag/marketplace--v0.6.7
+[0.6.6]: https://github.com/rldyourmnd/rldyour-claudecode/releases/tag/marketplace--v0.6.6
+[0.6.5]: https://github.com/rldyourmnd/rldyour-claudecode/releases/tag/marketplace--v0.6.5
+[0.6.4]: https://github.com/rldyourmnd/rldyour-claudecode/releases/tag/marketplace--v0.6.4
+[0.6.3]: https://github.com/rldyourmnd/rldyour-claudecode/releases/tag/marketplace--v0.6.3
+[0.6.2]: https://github.com/rldyourmnd/rldyour-claudecode/releases/tag/marketplace--v0.6.2
+[0.6.1]: https://github.com/rldyourmnd/rldyour-claudecode/releases/tag/marketplace--v0.6.1
+[0.6.0]: https://github.com/rldyourmnd/rldyour-claudecode/releases/tag/marketplace--v0.6.0
+[0.5.2]: https://github.com/rldyourmnd/rldyour-claudecode/releases/tag/marketplace--v0.5.2
+[0.4.0]: https://github.com/rldyourmnd/rldyour-claudecode/releases/tag/marketplace--v0.4.0
+[0.3.0]: https://github.com/rldyourmnd/rldyour-claudecode/releases/tag/marketplace--v0.3.0
+[0.2.3]: https://github.com/rldyourmnd/rldyour-claudecode/releases/tag/marketplace--v0.2.3
+[0.2.2]: https://github.com/rldyourmnd/rldyour-claudecode/releases/tag/marketplace--v0.2.2
+[0.2.1]: https://github.com/rldyourmnd/rldyour-claudecode/releases/tag/marketplace--v0.2.1
+[0.2.0]: https://github.com/rldyourmnd/rldyour-claudecode/releases/tag/marketplace--v0.2.0
+[0.1.9]: https://github.com/rldyourmnd/rldyour-claudecode/commit/99f9809
+[0.1.8]: https://github.com/rldyourmnd/rldyour-claudecode/commit/9bf3c70
+[0.1.7]: https://github.com/rldyourmnd/rldyour-claudecode/commit/eaccf59
+[0.1.6]: https://github.com/rldyourmnd/rldyour-claudecode/commit/bf54d02
+[0.1.5]: https://github.com/rldyourmnd/rldyour-claudecode/commit/bf54d02
+[0.1.4]: https://github.com/rldyourmnd/rldyour-claudecode/commit/eaccf59
+[0.1.3]: https://github.com/rldyourmnd/rldyour-claudecode/commits/main
+[0.1.2]: https://github.com/rldyourmnd/rldyour-claudecode/commit/d50e94c
+[0.1.1]: https://github.com/rldyourmnd/rldyour-claudecode/commit/ef18bd9
+[0.1.0]: https://github.com/rldyourmnd/rldyour-claudecode/commit/ef18bd9

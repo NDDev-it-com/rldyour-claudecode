@@ -223,7 +223,7 @@ NOT_PROVEN policy: any validation that requires a live network call, a running C
 
 ## Release / Rollback
 
-Releases are tag-driven: each public product version requires a matching numeric GitHub Release at `github.com/NDDev-it-com/rldyour-claudecode/releases`. A `VERSION` file bump alone is not sufficient - the GitHub Release must exist.
+Releases are tag-driven: each public product version requires a matching numeric GitHub Release at `github.com/rldyourmnd/rldyour-claudecode/releases`. A `VERSION` file bump alone is not sufficient - the GitHub Release must exist.
 
 Marketplace release version lives in `VERSION`. Per-plugin behavior versions stay in `plugins/<plugin>/.claude-plugin/plugin.json`. Release notes live in `CHANGELOG.md` (Keep-a-Changelog format).
 
@@ -248,12 +248,12 @@ Default version movement is patch (`+0.0.1`) after a public GitHub Release exist
 
 **Author:** Danil Silantyev (github:rldyourmnd), CEO NDDev.
 
-**Issues:** [github.com/NDDev-it-com/rldyour-claudecode/issues](https://github.com/NDDev-it-com/rldyour-claudecode/issues) - bug reports, regression evidence, missing-component requests.
+**Issues:** [github.com/rldyourmnd/rldyour-claudecode/issues](https://github.com/rldyourmnd/rldyour-claudecode/issues) - bug reports, regression evidence, missing-component requests.
 
-**Discussions:** [github.com/NDDev-it-com/rldyour-claudecode/discussions](https://github.com/NDDev-it-com/rldyour-claudecode/discussions) - general questions, workflow advice, plugin behaviour clarifications, sharing usage patterns.
+**Discussions:** [github.com/rldyourmnd/rldyour-claudecode/discussions](https://github.com/rldyourmnd/rldyour-claudecode/discussions) - general questions, workflow advice, plugin behaviour clarifications, sharing usage patterns.
 
-**Releases:** [github.com/NDDev-it-com/rldyour-claudecode/releases](https://github.com/NDDev-it-com/rldyour-claudecode/releases) - numeric product tags (`X.Y.Z`) with release notes from CHANGELOG.
+**Releases:** [github.com/rldyourmnd/rldyour-claudecode/releases](https://github.com/rldyourmnd/rldyour-claudecode/releases) - numeric product tags (`X.Y.Z`) with release notes from CHANGELOG.
 
-**Security contact:** Report vulnerabilities via [GitHub Security Advisories](https://github.com/NDDev-it-com/rldyour-claudecode/security/advisories) for this repository. Do not open public issues for security reports.
+**Security contact:** Report vulnerabilities via [GitHub Security Advisories](https://github.com/rldyourmnd/rldyour-claudecode/security/advisories) for this repository. Do not open public issues for security reports.
 
 This is a personal marketplace - response time is best-effort, no SLA. Feel free to fork and tailor to your own workflow.
