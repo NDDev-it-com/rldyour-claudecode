@@ -7,7 +7,7 @@
   "license": "AGPL-3.0-or-later",
   "repository": {
     "type": "git",
-    "url": "https://github.com/NDDev-it-com/rldyour-claudecode.git"
+    "url": "https://github.com/rldyourmnd/rldyour-claudecode.git"
   },
   "engines": {
     "node": ">=22.0.0"

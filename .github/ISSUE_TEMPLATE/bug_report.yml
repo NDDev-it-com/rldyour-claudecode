@@ -58,7 +58,7 @@ body:
       label: Reproduction steps
       description: Exact commands that reproduce the issue. Start from a clean checkout.
       placeholder: |
-        1. git clone https://github.com/NDDev-it-com/rldyour-claudecode.git
+        1. git clone https://github.com/rldyourmnd/rldyour-claudecode.git
         2. cd rldyour-claudecode
         3. bash scripts/install-rldyour-marketplace.sh
         4. claude  # then type: /rldyour-flow:ry-init

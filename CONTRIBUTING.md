@@ -15,7 +15,7 @@ That's the canonical way to extend this marketplace.
 export CONTEXT7_API_KEY=<your-context7-key>
 
 # Local install:
-git clone https://github.com/NDDev-it-com/rldyour-claudecode.git
+git clone https://github.com/rldyourmnd/rldyour-claudecode.git
 cd rldyour-claudecode
 bash scripts/install-rldyour-marketplace.sh
 
